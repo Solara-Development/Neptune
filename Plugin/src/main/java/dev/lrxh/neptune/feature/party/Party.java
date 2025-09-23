@@ -29,12 +29,12 @@ public class Party {
     private boolean open;
     private int maxUsers;
 
-    public Party(UUID leader, Neptune plugin) {
+    public Party(UUID leader, int max, Neptune plugin) {
         this.leader = leader;
         this.users = new HashSet<>();
         this.users.add(leader);
         this.open = false;
-        this.maxUsers = 10;
+        this.maxUsers = max;
         this.duelRequest = true;
         this.plugin = plugin;
 

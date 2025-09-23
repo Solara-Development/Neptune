@@ -31,6 +31,7 @@ import lombok.Setter;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -397,7 +398,7 @@ public class Profile implements IProfile {
             MessagesLocale.PARTY_ALREADY_IN.send(playerUUID);
             return null;
         }
-        Party party = new Party(playerUUID, plugin);
+        Party party = new Party(playerUUID, getPartyLimit(), plugin);
         PartyService.get().addParty(party);
         API.getProfile(playerUUID).getGameData().setParty(party);
         MessagesLocale.PARTY_CREATE.send(playerUUID);
@@ -419,6 +420,22 @@ public class Profile implements IProfile {
     public void acceptDuel(UUID senderUUID) {
         ((DuelRequest) gameData.getRequests().get(senderUUID)).start(playerUUID);
         gameData.removeRequest(senderUUID);
+    }
+
+    public int getPartyLimit() {
+        int max = 10;
+        for (PermissionAttachmentInfo perm : getPlayer().getEffectivePermissions()) {
+            String permission = perm.getPermission();
+            if (permission.startsWith("neptune.party.max.")) {
+                try {
+                    int value = Integer.parseInt(permission.substring("neptune.party.max.".length()));
+                    if (value > max) {
+                        max = value;
+                    }
+                } catch (NumberFormatException ignore) {}
+            }
+        }
+        return max;
     }
 
     public Match getMatch() {

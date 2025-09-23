@@ -203,6 +203,7 @@ public enum MessagesLocale implements IDataAccessor {
             "&fSize: &b<size>/<party-max>",
             "&7&m------------------------------------------------"),
     PARTY_MAX_SIZE("PARTY.MAX_SIZE_REACHED", DataType.STRING_LIST, "&cYou have reached max party size"),
+    PARTY_MAX_SIZE_SETTING("PARTY.MAX_SIZE_SETTING_REACHED", DataType.STRING_LIST, "&cThis party can only have a size limit of <max> players!"),
     PARTY_NOT_ENOUGH_MEMBERS("PARTY.NOT_ENOUGH_MEMBERS", DataType.STRING_LIST,
             "&cYou need at least 2 players to start a party event."),
     PARTY_HELP("PARTY.HELP", "Message sent on /party help", DataType.STRING_LIST,
