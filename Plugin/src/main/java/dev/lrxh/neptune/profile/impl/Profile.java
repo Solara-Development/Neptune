@@ -232,19 +232,6 @@ public class Profile implements IProfile {
         handleVisibility();
     }
 
-    public String getProfileState() {
-        switch (state) {
-            case IN_CUSTOM: return customState;
-            case IN_LOBBY: return "neptune:in_lobby";
-            case IN_GAME: return "neptune:in_game";
-            case IN_KIT_EDITOR: return "neptune:in_kiteditor";
-            case IN_PARTY: return "neptune:in_party";
-            case IN_SPECTATOR: return "neptune:spectating";
-            case IN_QUEUE: return "neptune:in_queue";
-            default: return "";
-        }
-    }
-
     @Override
     public void toLobby() {
         setState(ProfileState.IN_LOBBY);
