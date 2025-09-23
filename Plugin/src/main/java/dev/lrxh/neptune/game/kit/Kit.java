@@ -4,6 +4,7 @@ import dev.lrxh.api.arena.IArena;
 import dev.lrxh.api.kit.IKit;
 import dev.lrxh.api.kit.IKitRule;
 import dev.lrxh.neptune.API;
+import dev.lrxh.neptune.configs.impl.SettingsLocale;
 import dev.lrxh.neptune.game.arena.Arena;
 import dev.lrxh.neptune.game.kit.impl.KitRule;
 import dev.lrxh.neptune.game.match.impl.participant.Participant;
@@ -14,7 +15,6 @@ import dev.lrxh.neptune.profile.impl.Profile;
 import dev.lrxh.neptune.utils.ItemUtils;
 import dev.lrxh.neptune.utils.PlayerUtil;
 import dev.lrxh.neptune.utils.PotionEffectUtils;
-import dev.lrxh.neptune.utils.ServerUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -195,6 +195,8 @@ public class Kit implements IKit {
         for (Arena arena : arenas) {
             if (!arena.isEnabled())
                 continue;
+            if (arena.isUsed() && SettingsLocale.ARENA_DUPLICATES.getBoolean())
+                continue;
             if (!arena.isSetup() || !arena.isDoneLoading())
                 continue;
             arenas1.add(arena);
@@ -204,6 +206,11 @@ public class Kit implements IKit {
             return CompletableFuture.completedFuture(null);
 
         Arena selected = arenas1.get(ThreadLocalRandom.current().nextInt(arenas1.size()));
+
+        if (!SettingsLocale.ARENA_DUPLICATES.getBoolean()) {
+            selected.setUsed(true);
+            return CompletableFuture.completedFuture(selected);
+        }
         return selected.createDuplicate().thenApply(arena -> arena);
     }
 
@@ -224,7 +231,6 @@ public class Kit implements IKit {
         player.addPotionEffects(potionEffects);
 
         player.updateInventory();
-        ServerUtils.info(Arrays.toString(player.getActivePotionEffects().toArray()));
     }
 
     public void giveLoadout(Participant participant) {

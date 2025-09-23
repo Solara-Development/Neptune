@@ -13,6 +13,7 @@ import dev.lrxh.neptune.game.match.MatchService;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
 import dev.lrxh.neptune.utils.CC;
+import dev.lrxh.neptune.utils.GithubUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -32,6 +33,15 @@ public class MainCommand {
         player.sendMessage(CC.color("&aSuccessfully set spawn!"));
     }
 
+    @Command(name = "info", desc = "")
+    @Require("neptune.admin")
+    public void info(@Sender Player player) {
+        player.sendMessage(CC.color("&eThis server is running Neptune version: "
+                + Neptune.get().getDescription().getVersion()));
+        player.sendMessage(CC.color("&eCommit: &f" + GithubUtils.getCommitId()));
+        player.sendMessage(CC.color("&eMessage: &f" + GithubUtils.getCommitMessage()));
+    }
+
     @Command(name = "reload", desc = "")
     @Require("neptune.admin")
     public void reload(@Sender CommandSender sender) {
@@ -41,7 +51,8 @@ public class MainCommand {
 
         for (Player p : Bukkit.getOnlinePlayers()) {
             Profile profile = API.getProfile(p);
-            if (profile.getState().equals(ProfileState.IN_GAME) || profile.getState().equals(ProfileState.IN_KIT_EDITOR))
+            if (profile.getState().equals(ProfileState.IN_GAME)
+                    || profile.getState().equals(ProfileState.IN_KIT_EDITOR))
                 return;
             HotbarService.get().giveItems(p);
         }

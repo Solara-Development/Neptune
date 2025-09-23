@@ -9,7 +9,7 @@ import org.bukkit.OfflinePlayer;
 public class EloPlaceholder implements Placeholder {
     @Override
     public boolean match(String string) {
-        return string.equals("division");
+        return string.equals("elo");
     }
 
     @Override

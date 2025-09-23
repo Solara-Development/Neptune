@@ -12,7 +12,7 @@ public class MatchHistoryCommand {
         new MatchHistoryMenu(player).open(player);
     }
 
-    @Command(name = "   ", desc = "", usage = "<player>")
+    @Command(name = "open", desc = "", usage = "<player>")
     public void open(@Sender Player player, Player target) {
         new MatchHistoryMenu(target).open(player);
     }

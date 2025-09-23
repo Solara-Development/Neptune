@@ -23,7 +23,7 @@ public class ItemBrowserMenu extends PaginatedMenu {
     private final String search;
 
     public ItemBrowserMenu(ItemBrowserService service, String section, Consumer<Material> itemConsumer, String search,
-            Runnable returnConsumer) {
+                           Runnable returnConsumer) {
         super("&fItem Browser", 54, Filter.NONE);
         this.service = service;
         this.section = section;

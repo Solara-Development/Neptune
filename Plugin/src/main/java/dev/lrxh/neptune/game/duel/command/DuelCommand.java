@@ -48,7 +48,7 @@ public class DuelCommand {
         if (userProfile.getState().equals(ProfileState.IN_PARTY)
                 && !targetProfile.getState().equals(ProfileState.IN_PARTY)
                 || targetProfile.getState().equals(ProfileState.IN_PARTY)
-                        && !userProfile.getState().equals(ProfileState.IN_PARTY)) {
+                && !userProfile.getState().equals(ProfileState.IN_PARTY)) {
             MessagesLocale.YOU_CANT_SEND_DUEL.send(player.getUniqueId());
             return;
         }
@@ -127,7 +127,7 @@ public class DuelCommand {
         if (userProfile.getState().equals(ProfileState.IN_PARTY)
                 && !targetProfile.getState().equals(ProfileState.IN_PARTY)
                 || targetProfile.getState().equals(ProfileState.IN_PARTY)
-                        && !userProfile.getState().equals(ProfileState.IN_PARTY)) {
+                && !userProfile.getState().equals(ProfileState.IN_PARTY)) {
             MessagesLocale.YOU_CANT_SEND_DUEL.send(player.getUniqueId());
             return;
         }
@@ -164,6 +164,7 @@ public class DuelCommand {
         MessagesLocale.DUEL_DENY_SENDER.send(player.getUniqueId(), new Replacement("<player>", sender.getName()));
         MessagesLocale.DUEL_DENY_RECEIVER.send(uuid, new Replacement("<player>", player.getName()));
 
+        duelRequest.getArena().remove();
         playerGameData.removeRequest(uuid);
     }
 }

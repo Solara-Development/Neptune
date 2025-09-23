@@ -8,9 +8,13 @@ import dev.lrxh.neptune.utils.ServerUtils;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 @Getter
 public class DatabaseService {
     private static DatabaseService instance;
+    private final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
     private IDatabase database = null;
 
     public DatabaseService() {
@@ -29,7 +33,8 @@ public class DatabaseService {
     }
 
     public static DatabaseService get() {
-        if (instance == null) instance = new DatabaseService();
+        if (instance == null)
+            instance = new DatabaseService();
 
         return instance;
     }

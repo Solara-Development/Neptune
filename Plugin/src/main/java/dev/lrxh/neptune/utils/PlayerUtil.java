@@ -10,6 +10,7 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -63,10 +64,18 @@ public class PlayerUtil {
         Player player = Bukkit.getPlayer(playerUUID);
         if (player == null)
             return;
-        if (Neptune.get().getCache().getSpawn() != null) {
-            player.teleport(Neptune.get().getCache().getSpawn());
-        } else {
+        Location spawn = Neptune.get().getCache().getSpawn();
+        if (spawn == null) {
             player.sendMessage(CC.error("Make sure to set spawn location using /neptune setspawn!"));
+            return;
+        }
+        player.teleport(spawn);
+        for (Player spawnPlayer : spawn.getWorld().getPlayers()) {
+            if (spawnPlayer.equals(player)) {
+                continue;
+            }
+            spawnPlayer.showPlayer(Neptune.get(), player);
+            player.showPlayer(Neptune.get(), spawnPlayer);
         }
     }
 

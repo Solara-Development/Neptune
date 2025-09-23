@@ -28,8 +28,7 @@ public class LeaderboardMenu extends Menu {
         super(
                 MenusLocale.valueOf("LEADERBOARD_TYPES_" + leaderboardType.getConfigName() + "_TITLE").getString(),
                 MenusLocale.LEADERBOARD_SIZE.getInt(),
-                Filter.valueOf(MenusLocale.LEADERBOARD_FILTER.getString())
-        );
+                Filter.valueOf(MenusLocale.LEADERBOARD_FILTER.getString()));
         this.leaderboardType = leaderboardType;
         setUpdateEveryTick(true);
     }
@@ -39,7 +38,8 @@ public class LeaderboardMenu extends Menu {
         List<Button> buttons = new ArrayList<>();
 
         for (Kit kit : KitService.get().kits) {
-            if (kit.getRules().get(KitRule.HIDDEN)) continue;
+            if (kit.getRules().get(KitRule.HIDDEN))
+                continue;
             buttons.add(new DisplayButton(kit.getSlot(), buildKitItem(player, kit)));
         }
 
@@ -60,8 +60,7 @@ public class LeaderboardMenu extends Menu {
                 type,
                 MenusLocale.valueOf(baseKey + "_" + state + "_NAME").getString(),
                 MenusLocale.valueOf(baseKey + "_" + state + "_LORE").getStringList(),
-                Material.valueOf(MenusLocale.valueOf(baseKey + "_" + state + "_MATERIAL").getString())
-        );
+                Material.valueOf(MenusLocale.valueOf(baseKey + "_" + state + "_MATERIAL").getString()));
     }
 
     private ItemStack buildKitItem(Player player, Kit kit) {
@@ -90,8 +89,8 @@ public class LeaderboardMenu extends Menu {
         for (int i = 1; i <= 10; i++) {
             PlayerEntry entry = getEntryAtPosition(kit, leaderboard, i);
 
-            String player = entry != null ? entry.getUsername() : "???";
-            String value = entry != null ? String.valueOf(entry.getValue()) : "???";
+            String player = (entry != null && entry.getUsername() != null) ? entry.getUsername() : "???";
+            String value = (entry != null) ? String.valueOf(entry.getValue()) : "???";
 
             result = result
                     .replace("<player_" + i + ">", player)

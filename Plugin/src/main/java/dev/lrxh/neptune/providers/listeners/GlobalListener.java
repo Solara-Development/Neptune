@@ -14,10 +14,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.hanging.HangingBreakEvent;
-import org.bukkit.event.player.PlayerBucketEmptyEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
@@ -38,6 +35,17 @@ public class GlobalListener implements Listener {
             return;
         }
         event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onShiftRightClick(PlayerInteractEntityEvent event) {
+        Player player = event.getPlayer();
+
+        if (event.getRightClicked() instanceof Player clicked) {
+            if (!player.isSneaking()) return;
+
+            player.chat("/duel " + clicked.getName());
+        }
     }
 
     @EventHandler
@@ -78,18 +86,8 @@ public class GlobalListener implements Listener {
         Player player = event.getPlayer();
         if (player.getGameMode().equals(GameMode.CREATIVE)) return;
         Profile profile = API.getProfile(player);
-        if (isPlayerNotInMatch(profile)) {
+        if (isPlayerNotInMatch(profile) && profile.getState() != ProfileState.IN_CUSTOM) {
             event.setCancelled(true);
-            if (profile != null) {
-                ProfileState state = profile.getState();
-                if (state.equals(ProfileState.IN_KIT_EDITOR)) {
-                    player.sendMessage(CC.color("&cYou can't place blocks in the kit editor!"));
-                } else if (state.equals(ProfileState.IN_QUEUE)) {
-                    player.sendMessage(CC.color("&cYou can't place blocks while in queue!"));
-                } else {
-                    player.sendMessage(CC.color("&cYou can't place blocks here!"));
-                }
-            }
         }
     }
 

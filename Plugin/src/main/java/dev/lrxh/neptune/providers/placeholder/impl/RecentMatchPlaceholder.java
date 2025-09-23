@@ -4,6 +4,7 @@ import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.profile.data.MatchHistory;
 import dev.lrxh.neptune.profile.impl.Profile;
 import dev.lrxh.neptune.providers.placeholder.Placeholder;
+import org.bukkit.OfflinePlayer;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -11,8 +12,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.bukkit.OfflinePlayer;
 
 public class RecentMatchPlaceholder implements Placeholder {
     private static final Pattern PATTERN = Pattern.compile("recent_match_(\\d+)_(opponent|kit|arena|date|time|unix_timestamp)");
@@ -38,12 +37,18 @@ public class RecentMatchPlaceholder implements Placeholder {
         Collections.reverse(matchHistories);
         MatchHistory history = matchHistories.get(matchHistoryIndex - 1);
         switch (type) {
-            case "opponent": return history.getOpponentName();
-            case "kit": return history.getKitName();
-            case "arena": return history.getArenaName();
-            case "date": return history.getDate();
-            case "time": return history.getTime();
-            case "unix_timestamp": return String.valueOf(LocalDateTime.parse(history.getTime()).toEpochSecond(ZoneOffset.UTC));
+            case "opponent":
+                return history.getOpponentName();
+            case "kit":
+                return history.getKitName();
+            case "arena":
+                return history.getArenaName();
+            case "date":
+                return history.getDate();
+            case "time":
+                return history.getTime();
+            case "unix_timestamp":
+                return String.valueOf(LocalDateTime.parse(history.getTime()).toEpochSecond(ZoneOffset.UTC));
         }
         return string;
     }

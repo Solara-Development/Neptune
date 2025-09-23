@@ -1,28 +1,25 @@
 package dev.lrxh.neptune.game.arena;
 
 import dev.lrxh.api.arena.IArena;
-import dev.lrxh.blockChanger.snapshot.ChunkPosition;
 import dev.lrxh.blockChanger.snapshot.CuboidSnapshot;
 import dev.lrxh.neptune.configs.impl.SettingsLocale;
+import dev.lrxh.neptune.game.arena.allocator.Allocation;
+import dev.lrxh.neptune.game.arena.allocator.SpatialAllocator;
 import dev.lrxh.neptune.game.kit.KitService;
 import dev.lrxh.neptune.utils.LocationUtil;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
 @Setter
 public class Arena implements IArena {
-    private final Map<ChunkPosition, Chunk> loadedChunks = new HashMap<>();
     private String name;
     private String displayName;
     private Location redSpawn;
@@ -37,6 +34,9 @@ public class Arena implements IArena {
     private AtomicInteger duplicateIndex;
     private Arena owner;
     private boolean doneLoading;
+    private boolean used;
+
+    private Long allocationId;
 
     public Arena(String name, String displayName, Location redSpawn, Location blueSpawn, boolean enabled, int deathY) {
         this.name = name;
@@ -53,8 +53,8 @@ public class Arena implements IArena {
     }
 
     public Arena(String name, String displayName, Location redSpawn, Location blueSpawn,
-            Location min, Location max, double buildLimit, boolean enabled,
-            List<Material> whitelistedBlocks, int deathY) {
+                 Location min, Location max, double buildLimit, boolean enabled,
+                 List<Material> whitelistedBlocks, int deathY) {
 
         this(name, displayName, redSpawn, blueSpawn, enabled, deathY);
         this.min = min;
@@ -72,13 +72,14 @@ public class Arena implements IArena {
     }
 
     public Arena(String name, String displayName, Location redSpawn, Location blueSpawn,
-            Location min, Location max, double buildLimit, boolean enabled,
-            List<Material> whitelistedBlocks, int deathY, CuboidSnapshot snapshot, Arena owner) {
+                 Location min, Location max, double buildLimit, boolean enabled,
+                 List<Material> whitelistedBlocks, int deathY, CuboidSnapshot snapshot, Arena owner, Long allocationId) {
 
         this(name, displayName, redSpawn, blueSpawn, min, max, buildLimit, enabled, whitelistedBlocks, deathY);
         this.snapshot = snapshot;
         this.owner = owner;
         this.doneLoading = (snapshot != null);
+        this.allocationId = allocationId;
     }
 
     public Arena(String name) {
@@ -105,46 +106,61 @@ public class Arena implements IArena {
         AtomicInteger indexCounter = (this.owner != null ? this.owner.duplicateIndex : this.duplicateIndex);
         int currentIndex = indexCounter.getAndIncrement();
 
-        int arenaWidth = Math.abs(max.getBlockX() - min.getBlockX()) + 1;
-        int arenaDepth = Math.abs(max.getBlockZ() - min.getBlockZ()) + 1;
+        int arenaWidthBlocks = Math.abs(max.getBlockX() - min.getBlockX()) + 1;
+        int arenaDepthBlocks = Math.abs(max.getBlockZ() - min.getBlockZ()) + 1;
 
-        int copiesPerRow = 5;
-        int row = currentIndex / copiesPerRow;
-        int column = currentIndex % copiesPerRow;
+        int widthWithOffsetBlocks = arenaWidthBlocks + SettingsLocale.ARENA_COPY_OFFSET_X.getInt();
+        int depthWithOffsetBlocks = arenaDepthBlocks + SettingsLocale.ARENA_COPY_OFFSET_Z.getInt();
 
-        int spacingX = alignToChunks(arenaWidth + SettingsLocale.ARENA_COPY_OFFSET_X.getInt());
-        int spacingZ = alignToChunks(arenaDepth + SettingsLocale.ARENA_COPY_OFFSET_Z.getInt());
+        int widthChunks = (widthWithOffsetBlocks + 15) / 16;
+        int depthChunks = (depthWithOffsetBlocks + 15) / 16;
 
-        int offsetX = column * spacingX;
-        int offsetZ = row * spacingZ;
+        Allocation allocation;
+        try {
+            allocation = SpatialAllocator.get().allocate(widthChunks, depthChunks);
+        } catch (Exception ex) {
+            CompletableFuture<Arena> failed = new CompletableFuture<>();
+            failed.completeExceptionally(new IllegalStateException("Unable to reserve space for arena duplicate", ex));
+            return failed;
+        }
 
-        Location redSpawn = (this.redSpawn != null ? LocationUtil.addOffset(this.redSpawn.clone(), offsetX, offsetZ)
-                : null);
-        Location blueSpawn = (this.blueSpawn != null ? LocationUtil.addOffset(this.blueSpawn.clone(), offsetX, offsetZ)
-                : null);
-        Location min = LocationUtil.addOffset(this.min.clone(), offsetX, offsetZ);
-        Location max = LocationUtil.addOffset(this.max.clone(), offsetX, offsetZ);
+        int offsetBlocksX = allocation.chunkX * 16;
+        int offsetBlocksZ = allocation.chunkZ * 16;
 
-        return snapshot.offset(offsetX, offsetZ, loadedChunks).thenApplyAsync(cuboidSnapshot -> {
-            cuboidSnapshot.restore(true);
-            return new Arena(
-                    this.name + "#" + currentIndex,
-                    this.displayName,
-                    redSpawn,
-                    blueSpawn,
-                    min,
-                    max,
-                    buildLimit,
-                    enabled,
-                    whitelistedBlocks,
-                    deathY,
-                    cuboidSnapshot,
-                    this);
-        });
-    }
+        Location newRedSpawn = (this.redSpawn != null ? LocationUtil.addOffset(this.redSpawn.clone(), offsetBlocksX, offsetBlocksZ) : null);
+        Location newBlueSpawn = (this.blueSpawn != null ? LocationUtil.addOffset(this.blueSpawn.clone(), offsetBlocksX, offsetBlocksZ) : null);
+        Location newMin = LocationUtil.addOffset(this.min.clone(), offsetBlocksX, offsetBlocksZ);
+        Location newMax = LocationUtil.addOffset(this.max.clone(), offsetBlocksX, offsetBlocksZ);
 
-    private int alignToChunks(int value) {
-        return ((value + 15) / 16) * 16;
+        CompletableFuture<Arena> future = new CompletableFuture<>();
+        snapshot.offset(offsetBlocksX, offsetBlocksZ)
+                .thenApplyAsync(cuboidSnapshot -> {
+                    cuboidSnapshot.restore(false);
+                    return new Arena(
+                            this.name + "#" + currentIndex,
+                            this.displayName,
+                            newRedSpawn,
+                            newBlueSpawn,
+                            newMin,
+                            newMax,
+                            buildLimit,
+                            enabled,
+                            whitelistedBlocks,
+                            deathY,
+                            cuboidSnapshot,
+                            this,
+                            allocation.id
+                    );
+                }).whenComplete((arena, throwable) -> {
+                    if (throwable != null) {
+                        SpatialAllocator.get().free(allocation.id);
+                        future.completeExceptionally(throwable);
+                    } else {
+                        future.complete(arena);
+                    }
+                });
+
+        return future;
     }
 
     public List<String> getWhitelistedBlocksAsString() {
@@ -156,6 +172,18 @@ public class Arena implements IArena {
     }
 
     public void remove() {
+        if (SettingsLocale.ARENA_DUPLICATES.getBoolean()) {
+            used = false;
+            return;
+        }
+
+        if (allocationId != null) {
+            try {
+                SpatialAllocator.get().free(allocationId);
+            } catch (Exception ignored) { }
+            allocationId = null;
+        }
+
         if (owner != null) {
             owner.duplicateIndex.getAndDecrement();
         }
@@ -206,6 +234,11 @@ public class Arena implements IArena {
     public void delete(boolean save) {
         KitService.get().removeArenasFromKits(this);
         ArenaService.get().arenas.remove(this);
+
+        if (allocationId != null) {
+            SpatialAllocator.get().free(allocationId);
+            allocationId = null;
+        }
 
         if (save) {
             ArenaService.get().save();

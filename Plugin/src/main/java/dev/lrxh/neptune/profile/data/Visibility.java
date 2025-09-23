@@ -32,44 +32,34 @@ public class Visibility {
         Profile viewerProfile = API.getProfile(uuid);
         Profile otherProfile = API.getProfile(otherUUID);
 
-        if (has(viewerProfile, otherProfile, ProfileState.IN_CUSTOM)
-                && viewerProfile.getCustomState().equals(otherProfile.getCustomState())) {
-            viewerPlayer.showPlayer(Neptune.get(), otherPlayer);
-            otherPlayer.showPlayer(Neptune.get(), viewerPlayer);
-            return;
+        if (viewerProfile.hasState(ProfileState.IN_LOBBY)) {
+            if (!viewerProfile.getSettingData().isPlayerVisibility()) {
+                viewerPlayer.hidePlayer(Neptune.get(), otherPlayer);
+                return;
+            } else {
+                viewerPlayer.showPlayer(Neptune.get(), otherPlayer);
+            }
         }
 
-        if (has(viewerProfile, otherProfile, ProfileState.IN_GAME)
-                && viewerProfile.getMatch().getUuid().equals(otherProfile.getMatch().getUuid())) {
-            viewerPlayer.showPlayer(Neptune.get(), otherPlayer);
-            otherPlayer.showPlayer(Neptune.get(), viewerPlayer);
-            return;
+        if (viewerProfile.hasState(ProfileState.IN_LOBBY)) {
+            if (!otherProfile.getSettingData().isPlayerVisibility()) {
+                otherPlayer.hidePlayer(Neptune.get(), viewerPlayer);
+                return;
+            } else {
+                otherPlayer.showPlayer(Neptune.get(), viewerPlayer);
+            }
         }
 
-//        if (has(viewerProfile, otherProfile, ProfileState.IN_FFA) && viewerProfile.getGameData().getFfaArena().getName().equals(otherProfile.getGameData().getFfaArena().getName())) {
-//            viewerPlayer.showPlayer(Neptune.get(), otherPlayer);
-//            otherPlayer.showPlayer(Neptune.get(), viewerPlayer);
-//            return;
-//        }
-
-        if (!viewerProfile.getSettingData().isPlayerVisibility()) {
+        if (viewerProfile.hasState(ProfileState.IN_KIT_EDITOR)) {
             viewerPlayer.hidePlayer(Neptune.get(), otherPlayer);
-            return;
-        }
-
-        if (!otherProfile.getSettingData().isPlayerVisibility()) {
             otherPlayer.hidePlayer(Neptune.get(), viewerPlayer);
             return;
         }
 
-        if (has(viewerProfile, otherProfile, ProfileState.IN_LOBBY, ProfileState.IN_QUEUE, ProfileState.IN_PARTY)) {
-            viewerPlayer.showPlayer(Neptune.get(), otherPlayer);
-            otherPlayer.showPlayer(Neptune.get(), viewerPlayer);
-            return;
+        if (otherProfile.hasState(ProfileState.IN_KIT_EDITOR)) {
+            otherPlayer.hidePlayer(Neptune.get(), viewerPlayer);
+            viewerPlayer.hidePlayer(Neptune.get(), otherPlayer);
         }
-
-        viewerPlayer.hidePlayer(Neptune.get(), otherPlayer);
-        otherPlayer.hidePlayer(Neptune.get(), viewerPlayer);
     }
 
     public boolean has(Profile viewerProfile, Profile otherProfile, ProfileState... states) {

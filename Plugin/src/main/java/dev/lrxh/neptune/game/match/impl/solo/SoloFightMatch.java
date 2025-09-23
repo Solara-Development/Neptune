@@ -48,7 +48,8 @@ public class SoloFightMatch extends Match implements ISoloFightMatch {
     private final Participant participantA;
     private final Participant participantB;
 
-    public SoloFightMatch(Arena arena, Kit kit, boolean duel, List<Participant> participants, Participant participantA, Participant participantB, int rounds) {
+    public SoloFightMatch(Arena arena, Kit kit, boolean duel, List<Participant> participants, Participant participantA,
+                          Participant participantB, int rounds) {
         super(MatchState.STARTING, arena, kit, participants, rounds, duel, false);
         this.participantA = participantA;
         this.participantB = participantB;
@@ -72,30 +73,34 @@ public class SoloFightMatch extends Match implements ISoloFightMatch {
         Participant winner = getWinner();
 
         winner.sendTitle(CC.color(MessagesLocale.MATCH_WINNER_TITLE_HEADER.getString()),
-                CC.color(MessagesLocale.MATCH_WINNER_TITLE_FOOTER.getString().replace("<player>", MessagesLocale.MATCH_YOU.getString())), 100);
+                CC.color(MessagesLocale.MATCH_WINNER_TITLE_FOOTER.getString().replace("<player>",
+                        MessagesLocale.MATCH_YOU.getString())),
+                100);
 
         if (!loser.isLeft() && !loser.isDisconnected())
             loser.sendTitle(CC.color(MessagesLocale.MATCH_LOSER_TITLE_HEADER.getString()),
-                    CC.color(MessagesLocale.MATCH_LOSER_TITLE_FOOTER.getString().replace("<player>", winner.getNameUnColored())), 100);
-
+                    CC.color(MessagesLocale.MATCH_LOSER_TITLE_FOOTER.getString().replace("<player>",
+                            winner.getNameUnColored())),
+                    100);
 
         if (!isDuel()) {
             addStats();
             for (String command : SettingsLocale.COMMANDS_AFTER_MATCH_LOSER.getStringList()) {
-                if (command.equals("NONE")) continue;
+                if (command.equals("NONE"))
+                    continue;
                 command = command.replace("<player>", loser.getName());
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
             }
 
             for (String command : SettingsLocale.COMMANDS_AFTER_MATCH_WINNER.getStringList()) {
-                if (command.equals("NONE")) continue;
+                if (command.equals("NONE"))
+                    continue;
                 command = command.replace("<player>", winner.getName());
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
             }
 
             forEachPlayer(player -> HotbarService.get().giveItems(player));
         }
-
 
         removePlaying();
 
@@ -141,21 +146,19 @@ public class SoloFightMatch extends Match implements ISoloFightMatch {
             winner.sendTitle(
                     CC.color(MessagesLocale.RANKUP_TITLE_HEADER.getString().replace("<division>", divisionName)),
                     CC.color(MessagesLocale.RANKUP_TITLE_FOOTER.getString().replace("<division>", divisionName)),
-                    40
-            );
+                    40);
 
             winner.sendMessage(MessagesLocale.RANKUP_MESSAGE, new Replacement("<division>", divisionName));
         }
 
-        forEachParticipantForce(participant ->
-                LeaderboardService.get().addChange(
-                        new LeaderboardPlayerEntry(participant.getNameUnColored(), participant.getPlayerUUID(), getKit()))
-        );
+        forEachParticipantForce(participant -> LeaderboardService.get().addChange(
+                new LeaderboardPlayerEntry(participant.getNameUnColored(), participant.getPlayerUUID(), getKit())));
 
-        if(winnerProfile.isFake()) winnerProfile.save();
-        if(loserProfile.isFake()) loserProfile.save();
+        if (winnerProfile.isFake())
+            Profile.save(winnerProfile);
+        if (loserProfile.isFake())
+            Profile.save(loserProfile);
     }
-
 
     public Participant getLoser() {
         return participantA.isLoser() ? participantA : participantB;
@@ -175,8 +178,7 @@ public class SoloFightMatch extends Match implements ISoloFightMatch {
                 new Replacement("<kit>", getKit().getDisplayName()),
                 new Replacement("<winner_points>", String.valueOf(winner.getPoints())),
                 new Replacement("<loser_points>", String.valueOf(loser.getPoints())),
-                new Replacement("<winner>", winner.getNameUnColored())
-        ));
+                new Replacement("<winner>", winner.getNameUnColored())));
 
         if (!isDuel()) {
             replacements.add(new Replacement("<winner-elo>", String.valueOf(winner.getEloChange())));
@@ -212,14 +214,17 @@ public class SoloFightMatch extends Match implements ISoloFightMatch {
 
     @Override
     public void onDeath(Participant participant) {
-        if (isEnded()) return;
+        if (isEnded())
+            return;
         hideParticipant(participant);
 
         participant.setDead(true);
 
         playSound(Sound.ENTITY_PLAYER_ATTACK_STRONG);
 
-        Participant participantKiller = participantA.getNameColored().equals(participant.getNameColored()) ? participantB : participantA;
+        Participant participantKiller = participantA.getNameColored().equals(participant.getNameColored())
+                ? participantB
+                : participantA;
         sendDeathMessage(participant);
 
         if (!participant.isDisconnected() && !participant.isLeft()) {
@@ -264,7 +269,8 @@ public class SoloFightMatch extends Match implements ISoloFightMatch {
 
     @Override
     public void onLeave(Participant participant, boolean quit) {
-        if (isEnded()) return;
+        if (isEnded())
+            return;
 
         participant.setDeathCause(DeathCause.DISCONNECT);
         sendDeathMessage(participant);
@@ -288,7 +294,8 @@ public class SoloFightMatch extends Match implements ISoloFightMatch {
         setState(MatchState.IN_ROUND);
         showPlayerForSpectators();
         playSound(Sound.ENTITY_FIREWORK_ROCKET_BLAST);
-        sendTitle(CC.color(MessagesLocale.MATCH_START_TITLE_HEADER.getString()), CC.color(MessagesLocale.MATCH_START_TITLE_FOOTER.getString()), 20);
+        sendTitle(CC.color(MessagesLocale.MATCH_START_TITLE_HEADER.getString()),
+                CC.color(MessagesLocale.MATCH_START_TITLE_FOOTER.getString()), 20);
     }
 
     @Override

@@ -4,8 +4,6 @@ import dev.lrxh.neptune.utils.CC;
 import fr.mrmicky.fastboard.adventure.FastBoard;
 import lombok.AllArgsConstructor;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 

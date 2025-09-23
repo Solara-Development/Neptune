@@ -9,8 +9,6 @@ import dev.lrxh.neptune.game.kit.menu.KitManagementMenu;
 import dev.lrxh.neptune.game.kit.menu.KitsManagementMenu;
 import dev.lrxh.neptune.profile.ProfileService;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.providers.database.DatabaseService;
-import dev.lrxh.neptune.providers.database.impl.DataDocument;
 import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.PlayerUtil;
 import io.papermc.paper.event.player.AsyncChatEvent;
@@ -91,18 +89,19 @@ public class KitProcedureListener implements Listener {
                     p.getGameData().get(kit).setKitLoadout(kit.getItems());
                 }
 
-                DatabaseService.get().getDatabase().getAll().thenAccept(dataDocuments -> {
-                    for (DataDocument document : dataDocuments) {
-                        DataDocument kitStatistics = document.getDataDocument("kitData");
-                        DataDocument kitDocument = kitStatistics.getDataDocument(profile.getKitProcedure().getKit().getName());
+                //IDatabase#getAll was removed due to performence
+                // DatabaseService.get().getDatabase().getAll().thenAccept(dataDocuments -> {
+                //     for (DataDocument document : dataDocuments) {
+                //         DataDocument kitStatistics = document.getDataDocument("kitData");
+                //         DataDocument kitDocument = kitStatistics.getDataDocument(profile.getKitProcedure().getKit().getName());
 
-                        kitDocument.put("kit", "");
+                //         kitDocument.put("kit", "");
 
-                        kitStatistics.put("kitData", kitDocument);
+                //         kitStatistics.put("kitData", kitDocument);
 
-                        DatabaseService.get().getDatabase().replace(document.getString("uuid"), document);
-                    }
-                });
+                //         DatabaseService.get().getDatabase().replace(document.getString("uuid"), document);
+                //     }
+                // });
 
                 player.sendMessage(CC.success("Set new inv"));
                 new KitManagementMenu(profile.getKitProcedure().getKit()).open(player);

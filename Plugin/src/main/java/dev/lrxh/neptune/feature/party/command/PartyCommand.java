@@ -84,11 +84,6 @@ public class PartyCommand {
             return;
         }
 
-        if (!profile.hasState(ProfileState.IN_LOBBY)) {
-            MessagesLocale.PARTY_CANNOT_CREATE.send(player.getUniqueId());
-            return;
-        }
-
         if (party == null) {
             Party createdParty = profile.createParty();
             party = (createdParty == null) ? profile.getGameData().getParty() : createdParty;

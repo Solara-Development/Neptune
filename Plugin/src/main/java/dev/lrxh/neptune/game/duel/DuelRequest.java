@@ -61,60 +61,58 @@ public class DuelRequest extends Request {
     }
 
     public void partyDuel(UUID receiver) {
-        kit.getRandomArena().thenAccept(arena -> {
-            Profile receiverProfile = API.getProfile(receiver);
-            Profile senderProfile = API.getProfile(getSender());
+        Profile receiverProfile = API.getProfile(receiver);
+        Profile senderProfile = API.getProfile(getSender());
 
-            List<Participant> participants = new ArrayList<>();
+        List<Participant> participants = new ArrayList<>();
 
-            List<Participant> teamAList = new ArrayList<>();
+        List<Participant> teamAList = new ArrayList<>();
 
-            for (UUID userUUID : receiverProfile.getGameData().getParty().getUsers()) {
-                Player player = Bukkit.getPlayer(userUUID);
-                if (player == null)
-                    continue;
+        for (UUID userUUID : receiverProfile.getGameData().getParty().getUsers()) {
+            Player player = Bukkit.getPlayer(userUUID);
+            if (player == null)
+                continue;
 
-                Participant participant = new Participant(player);
-                teamAList.add(participant);
-                participants.add(participant);
+            Participant participant = new Participant(player);
+            teamAList.add(participant);
+            participants.add(participant);
+        }
+
+        List<Participant> teamBList = new ArrayList<>();
+
+        for (UUID userUUID : senderProfile.getGameData().getParty().getUsers()) {
+            Player player = Bukkit.getPlayer(userUUID);
+            if (player == null)
+                continue;
+
+            Participant participant = new Participant(player);
+            teamBList.add(participant);
+            participants.add(participant);
+        }
+
+        MatchTeam teamA = new MatchTeam(teamAList);
+        MatchTeam teamB = new MatchTeam(teamBList);
+
+        if (arena == null) {
+
+            for (Participant participant : participants) {
+                participant.sendMessage(CC.error("No arenas were found!"));
             }
+            return;
+        }
 
-            List<Participant> teamBList = new ArrayList<>();
+        if (!arena.isSetup() || !arena.isDoneLoading()) {
 
-            for (UUID userUUID : senderProfile.getGameData().getParty().getUsers()) {
-                Player player = Bukkit.getPlayer(userUUID);
-                if (player == null)
-                    continue;
-
-                Participant participant = new Participant(player);
-                teamBList.add(participant);
-                participants.add(participant);
+            for (Participant participant : participants) {
+                participant.sendMessage(
+                        CC.error("Arena wasn't setup up properly! Please contact an admin if you see this."));
             }
+            return;
+        }
 
-            MatchTeam teamA = new MatchTeam(teamAList);
-            MatchTeam teamB = new MatchTeam(teamBList);
-
-            if (arena == null) {
-
-                for (Participant participant : participants) {
-                    participant.sendMessage(CC.error("No arenas were found!"));
-                }
-                return;
-            }
-
-            if (!arena.isSetup() || !arena.isDoneLoading()) {
-
-                for (Participant participant : participants) {
-                    participant.sendMessage(
-                            CC.error("Arena wasn't setup up properly! Please contact an admin if you see this."));
-                }
-                return;
-            }
-
-            Bukkit.getScheduler().runTask(Neptune.get(), () -> {
-                MatchService.get().startMatch(participants, kit, arena, false,
-                        kit.is(KitRule.BEST_OF_THREE) ? 3 : 1);
-            });
+        Bukkit.getScheduler().runTask(Neptune.get(), () -> {
+            MatchService.get().startMatch(participants, kit, arena, false,
+                    kit.is(KitRule.BEST_OF_THREE) ? 3 : 1);
         });
     }
 }

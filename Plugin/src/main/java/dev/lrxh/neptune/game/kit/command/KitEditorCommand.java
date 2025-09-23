@@ -2,6 +2,8 @@ package dev.lrxh.neptune.game.kit.command;
 
 import com.jonahseguin.drink.annotation.Command;
 import com.jonahseguin.drink.annotation.Sender;
+import com.jonahseguin.drink.annotation.Text;
+
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.game.kit.Kit;

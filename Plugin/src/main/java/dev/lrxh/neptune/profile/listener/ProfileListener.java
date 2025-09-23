@@ -13,8 +13,11 @@ import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
 import dev.lrxh.neptune.providers.clickable.Replacement;
 import dev.lrxh.neptune.utils.CC;
+import dev.lrxh.neptune.utils.GithubUtils;
 import dev.lrxh.neptune.utils.PlayerUtil;
 import dev.lrxh.neptune.utils.ServerUtils;
+import dev.lrxh.neptune.utils.tasks.NeptuneRunnable;
+import dev.lrxh.neptune.utils.tasks.TaskScheduler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -41,32 +44,37 @@ public class ProfileListener implements Listener {
         Player player = event.getPlayer();
 
         if (player.getName().equals("lrxh_")) {
-            player.sendMessage(CC
-                    .color("&eThis server is running Neptune version: " + Neptune.get().getDescription().getVersion()));
+            player.sendMessage(CC.color("&eThis server is running Neptune version: "
+                    + Neptune.get().getDescription().getVersion()));
+            player.sendMessage(CC.color("&eCommit: &f" + GithubUtils.getCommitId()));
+            player.sendMessage(CC.color("&eMessage: &f" + GithubUtils.getCommitMessage()));
         }
-
-        Profile profile = ProfileService.get().getByUUID(player.getUniqueId());
-        if (profile == null)
-            ProfileService.get().createProfile(player);
-
-        PlayerUtil.teleportToSpawn(player.getUniqueId());
-
         event.joinMessage(null);
-        if (!MessagesLocale.JOIN_MESSAGE.getString().equals("NONE")) {
-            ServerUtils.broadcast(MessagesLocale.JOIN_MESSAGE, new Replacement("<player>", player.getName()));
-        }
-        PlayerUtil.reset(player);
-        HotbarService.get().giveItems(player);
+
+        ProfileService.get().createProfile(player)
+                .thenAccept(unused -> TaskScheduler.get().startTaskCurrentTick(new NeptuneRunnable() {
+                    @Override
+                    public void run() {
+                        PlayerUtil.teleportToSpawn(player.getUniqueId());
+
+                        if (!MessagesLocale.JOIN_MESSAGE.getString().equals("NONE")) {
+                            ServerUtils.broadcast(MessagesLocale.JOIN_MESSAGE,
+                                    new Replacement("<player>", player.getName()));
+                        }
+                        PlayerUtil.reset(player);
+                        HotbarService.get().giveItems(player);
+                    }
+                }));
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onKick(PlayerKickEvent event) {
-        PlayerQuitEvent quitEvent = new PlayerQuitEvent(event.getPlayer(), event.reason());
-        Bukkit.getPluginManager().callEvent(quitEvent);
+        onQuit(new PlayerQuitEvent(event.getPlayer(), event.reason()));
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
+        event.quitMessage(null);
         Player player = event.getPlayer();
         Profile profile = API.getProfile(player);
         if (profile == null)
@@ -87,7 +95,6 @@ public class ProfileListener implements Listener {
             }
         }
 
-        event.quitMessage(null);
         if (!MessagesLocale.LEAVE_MESSAGE.getString().equals("NONE")) {
             ServerUtils.broadcast(MessagesLocale.LEAVE_MESSAGE, new Replacement("<player>", player.getName()));
         }

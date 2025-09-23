@@ -48,9 +48,7 @@ public class KitSelectButton extends Button {
                 }
                 DuelRequest duelRequest = new DuelRequest(player.getUniqueId(), kit, arena, true, 1);
                 profile.sendDuel(duelRequest);
-                Bukkit.getScheduler().runTask(Neptune.get(), () -> {
-                    player.closeInventory();
-                });
+                Bukkit.getScheduler().runTask(Neptune.get(), () -> player.closeInventory());
             });
         } else {
             new RoundsSelectMenu(kit, receiver).open(player);

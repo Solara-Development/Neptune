@@ -9,25 +9,25 @@ import javax.annotation.Nullable;
 @Getter
 @AllArgsConstructor
 public enum LeaderboardType {
-    KILLS("Kills", "KILLS") {
+    KILLS("Kills", "KILLS", "WINS") {
         @Override
         public int get(KitData kitData) {
             return kitData.getKills();
         }
     },
-    BEST_WIN_STREAK("Best Win Streak", "BEST_WIN_STREAK") {
+    BEST_WIN_STREAK("Best Win Streak", "BEST_WIN_STREAK", "WIN_STREAK_BEST") {
         @Override
         public int get(KitData kitData) {
             return kitData.getBestStreak();
         }
     },
-    ELO("Elo", "ELO") {
+    ELO("Elo", "ELO", "ELO") {
         @Override
         public int get(KitData kitData) {
             return kitData.getElo();
         }
     },
-    DEATHS("Deaths", "DEATHS") {
+    DEATHS("Deaths", "DEATHS", "LOSSES") {
         @Override
         public int get(KitData kitData) {
             return kitData.getDeaths();
@@ -36,6 +36,7 @@ public enum LeaderboardType {
 
     private final String name;
     private final String configName;
+    private final String databaseName;
 
     @Nullable
     public static LeaderboardType value(String value) {

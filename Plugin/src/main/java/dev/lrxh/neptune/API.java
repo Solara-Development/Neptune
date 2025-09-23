@@ -10,12 +10,7 @@ import java.util.UUID;
 public class API {
 
     public static Profile getProfile(UUID playerUUID) {
-        Profile profile = ProfileService.get().getByUUID(playerUUID);
-        if (profile == null) {
-            profile = ProfileService.get().createProfile(playerUUID);
-        }
-
-        return profile;
+        return ProfileService.get().getByUUID(playerUUID);
     }
 
     public static Profile getProfile(Player player) {

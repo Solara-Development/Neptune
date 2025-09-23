@@ -93,16 +93,16 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- <dependency>
-            <groupId>dev.lrxh</groupId>
-            <artifactId>BlockChanger</artifactId>
-            <version>2.0-SNAPSHOT</version>
-        </dependency> -->
+<!--        <dependency>-->
+<!--            <groupId>dev.lrxh</groupId>-->
+<!--            <artifactId>BlockChanger</artifactId>-->
+<!--            <version>2.0-SNAPSHOT</version>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>com.github.Devlrxxh</groupId>
             <artifactId>BlockChanger</artifactId>
-            <version>49a1b2f</version>
+            <version>3fd5004f44</version>
         </dependency>
     </dependencies>
 
@@ -135,13 +135,32 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- Maven Compiler Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>16</source>
-                    <target>16</target>
+                    <source>19</source>
+                    <target>19</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+                <version>4.9.10</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>revision</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <generateGitPropertiesFile>true</generateGitPropertiesFile>
+                    <gitPropertiesPath>${project.build.outputDirectory}/git.properties</gitPropertiesPath>
+                    <failOnNoGitDirectory>false</failOnNoGitDirectory>
                 </configuration>
             </plugin>
         </plugins>

@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 
 import java.util.IdentityHashMap;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class ProfileService implements IProfileService {
     private static ProfileService instance;
@@ -20,17 +21,22 @@ public class ProfileService implements IProfileService {
     }
 
     public static ProfileService get() {
-        if (instance == null) instance = new ProfileService();
+        if (instance == null)
+            instance = new ProfileService();
 
         return instance;
     }
 
-    public void createProfile(Player player) {
-        profiles.put(player.getUniqueId(), new Profile(player.getName(), player.getUniqueId(), plugin, false));
+    public CompletableFuture<Void> createProfile(Player player) {
+        return Profile.create(player.getName(), player.getUniqueId(), plugin, false).thenAccept(profile -> {
+            profiles.put(player.getUniqueId(), profile);
+        });
     }
 
-    public Profile createProfile(UUID uuid) {
-        return new Profile("username", uuid, plugin, true);
+    public CompletableFuture<Profile> createProfile(UUID uuid) {
+        return Profile.create("username", uuid, plugin, true).thenApply(profile -> {
+            return profile;
+        });
     }
 
     public void removeProfile(UUID playerUUID) {
@@ -38,30 +44,37 @@ public class ProfileService implements IProfileService {
         Profile profile = profiles.get(playerUUID);
         profile.disband();
 
-        profile.save();
+        Profile.save(profile);
 
         profiles.remove(playerUUID);
     }
 
     public void saveAll() {
         for (Profile profile : profiles.values()) {
-            profile.save();
+            Profile.save(profile);
         }
     }
 
     public Profile getByUUID(UUID playerUUID) {
         Profile profile = profiles.get(playerUUID);
-        if (profile != null) return profile;
+        if (profile != null)
+            return profile;
 
         for (UUID uuid : profiles.keySet()) {
-            if (uuid.toString().equals(playerUUID.toString())) return profiles.get(uuid);
+            if (uuid.toString().equals(playerUUID.toString()))
+                return profiles.get(uuid);
         }
 
         return null;
     }
 
     @Override
-    public IProfile getProfile(UUID uuid) {
-        return getByUUID(uuid) != null ? getByUUID(uuid) : createProfile(uuid);
+    public CompletableFuture<IProfile> getProfile(UUID uuid) {
+        Profile profile = getByUUID(uuid);
+        return (profile != null)
+                ? CompletableFuture.completedFuture(profile)
+                : createProfile(uuid).thenApply(p -> (IProfile) p);
     }
+
+
 }

@@ -14,7 +14,7 @@
 | \<currentStreak> | %neptune_currentStreak%                                                     | The current win streak of the player                                   |
 | \<division>      | %neptune_division%                                                          | The global division name of the player                                 |
 | \<kit_division>  | %neptune\_(kit)\_division%                                                  | The kit-specific division name of the player                           |
-| None             | %neptune*recent_match*(num)\_(opponent/arena/kit/date/time/unix_timestamp)% | Get details about a recent match. Unix timestamp is in seconds, not ms |
+| None             | %neptune_recent_match_(num)\_(opponent/arena/kit/date/time/unix_timestamp)% | Get details about a recent match. Unix timestamp is in seconds, not ms |
 | None             | %neptune_state%                                                             | Get the current state of the player                                    |
 
 ## In Queue

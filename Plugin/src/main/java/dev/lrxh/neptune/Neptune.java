@@ -47,7 +47,6 @@ import dev.lrxh.neptune.game.match.commands.MatchHistoryCommand;
 import dev.lrxh.neptune.game.match.commands.SpectateCommand;
 import dev.lrxh.neptune.game.match.listener.MatchListener;
 import dev.lrxh.neptune.game.match.tasks.ArenaBoundaryCheckTask;
-import dev.lrxh.neptune.game.match.tasks.XPBarRunnable;
 import dev.lrxh.neptune.main.MainCommand;
 import dev.lrxh.neptune.profile.ProfileService;
 import dev.lrxh.neptune.profile.listener.ProfileListener;
@@ -56,6 +55,7 @@ import dev.lrxh.neptune.providers.listeners.GlobalListener;
 import dev.lrxh.neptune.providers.placeholder.PlaceholderImpl;
 import dev.lrxh.neptune.scoreboard.ScoreboardAdapter;
 import dev.lrxh.neptune.scoreboard.ScoreboardService;
+import dev.lrxh.neptune.utils.GithubUtils;
 import dev.lrxh.neptune.utils.ServerUtils;
 import dev.lrxh.neptune.utils.menu.MenuListener;
 import dev.lrxh.neptune.utils.menu.MenuRunnable;
@@ -74,6 +74,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
+import com.jonahseguin.drink.annotation.Text;
 
 @Getter
 public final class Neptune extends JavaPlugin {
@@ -131,7 +132,7 @@ public final class Neptune extends JavaPlugin {
 
         DivisionService.get().load();
 
-        LeaderboardService.get();
+        LeaderboardService.get().load();
 
         registerListeners();
         loadCommandManager();
@@ -141,6 +142,9 @@ public final class Neptune extends JavaPlugin {
         if (ScoreboardLocale.ENABLED_SCOREBOARD.getBoolean()) {
             new FastManager(this, new ScoreboardAdapter());
         }
+
+        GithubUtils.loadGitInfo();
+
         ServerUtils.info("Loaded Successfully");
     }
 
@@ -186,7 +190,6 @@ public final class Neptune extends JavaPlugin {
         new LeaderboardTask().start(SettingsLocale.LEADERBOARD_UPDATE_TIME.getInt());
         new ArenaBoundaryCheckTask().start(20L);
         new MenuRunnable().start(20L);
-        new XPBarRunnable().start(2L);
     }
 
     private void loadCommandManager() {
@@ -195,6 +198,7 @@ public final class Neptune extends JavaPlugin {
         drink.bind(Arena.class).toProvider(new ArenaProvider());
         drink.bind(UUID.class).toProvider(new UUIDProvider());
         drink.bind(Setting.class).toProvider(new SettingProvider());
+        drink.bind(Kit.class).annotatedWith(Text.class).toProvider(new KitProvider());
 
         drink.register(new KitEditorCommand(), "kiteditor").setDefaultCommandIsHelp(true);
         drink.register(new StatsCommand(), "stats").setDefaultCommandIsHelp(true);

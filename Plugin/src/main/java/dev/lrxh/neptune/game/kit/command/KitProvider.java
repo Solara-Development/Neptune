@@ -36,12 +36,12 @@ public class KitProvider extends DrinkProvider<Kit> {
 
     @Nullable
     @Override
-    public Kit provide(@Nonnull CommandArg arg, @Nonnull List<? extends Annotation> annotations) throws CommandExitMessage {
+    public Kit provide(@Nonnull CommandArg arg, @Nonnull List<? extends Annotation> annotations)
+            throws CommandExitMessage {
         String name = arg.get();
         Kit kit = KitService.get().getKitByName(name);
-        if (kit != null) {
+        if (kit != null)
             return kit;
-        }
         throw new CommandExitMessage("[-] No kit with that name exists");
     }
 

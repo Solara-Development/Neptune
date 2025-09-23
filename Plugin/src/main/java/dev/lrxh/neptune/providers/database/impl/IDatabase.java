@@ -18,5 +18,5 @@ public interface IDatabase {
 
     CompletableFuture<Void> replace(String playerUUID, DataDocument newDocument);
 
-    CompletableFuture<List<DataDocument>> getAll();
+    CompletableFuture<List<DataDocument>> getAllByKitType(String kitName, String type);
 }

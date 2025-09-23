@@ -2,11 +2,13 @@ package dev.lrxh.neptune.commands;
 
 import com.jonahseguin.drink.annotation.Command;
 import com.jonahseguin.drink.annotation.Sender;
+import dev.lrxh.api.events.PlayerLeaveEvent;
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
 import dev.lrxh.neptune.utils.PlayerUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public class LeaveCommand {
@@ -15,7 +17,7 @@ public class LeaveCommand {
     public void leave(@Sender Player player) {
         Profile profile = API.getProfile(player.getUniqueId());
         ProfileState state = profile.getState();
-
+        String previousStatus = profile.getProfileState();
         switch (state) {
             case IN_SPECTATOR:
                 profile.getMatch().removeSpectator(player.getUniqueId(), true);
@@ -32,5 +34,7 @@ public class LeaveCommand {
                 break;
         }
         PlayerUtil.teleportToSpawn(player.getUniqueId());
+        PlayerLeaveEvent event = new PlayerLeaveEvent(profile, previousStatus);
+        Bukkit.getPluginManager().callEvent(event);
     }
 }

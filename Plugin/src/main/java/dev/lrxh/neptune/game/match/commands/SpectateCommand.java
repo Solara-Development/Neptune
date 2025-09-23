@@ -1,6 +1,5 @@
 package dev.lrxh.neptune.game.match.commands;
 
-
 import com.jonahseguin.drink.annotation.Command;
 import com.jonahseguin.drink.annotation.Flag;
 import com.jonahseguin.drink.annotation.Sender;
@@ -9,7 +8,6 @@ import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
 import dev.lrxh.neptune.providers.clickable.Replacement;
-import dev.lrxh.neptune.utils.CC;
 import org.bukkit.entity.Player;
 
 public class SpectateCommand {
@@ -17,30 +15,39 @@ public class SpectateCommand {
     @Command(name = "", desc = "", usage = "<player> [-s: silent]")
     public void spectate(@Sender Player player, Player target, @Flag('s') boolean silent) {
         if (silent && !player.hasPermission("neptune.silent-spectate")) {
-            player.sendMessage(CC.error("You don't have permission to use this flag!"));
+            MessagesLocale.SPECTATE_PERMISSION_FLAG.send(player.getUniqueId());
             return;
         }
         if (player.getName().equalsIgnoreCase(target.getName())) {
-            player.sendMessage(CC.error("You can't spectate yourself!"));
+            MessagesLocale.SPECTATE_SELF.send(player.getUniqueId());
             return;
         }
 
         Profile profile = API.getProfile(player);
 
         if (profile.getMatch() != null) {
-            player.sendMessage(CC.error("You can't spectate while in a match!"));
+            MessagesLocale.SPECTATE_IN_MATCH.send(player.getUniqueId());
             return;
         }
 
         Profile targetProfile = API.getProfile(target);
         if (targetProfile.getMatch() == null) {
-            player.sendMessage(CC.error("Player isn't in a match!"));
+            MessagesLocale.SPECTATE_TARGET_NOT_IN_MATCH.send(player.getUniqueId());
             return;
         }
 
         if (!targetProfile.getSettingData().isAllowSpectators()) {
-            MessagesLocale.SPECTATE_NOT_ALLOWED.send(player.getUniqueId(), new Replacement("<player>", target.getName()));
+            MessagesLocale.SPECTATE_NOT_ALLOWED.send(player.getUniqueId(),
+                    new Replacement("<player>", target.getName()));
             return;
+        }
+
+        if (silent) {
+            MessagesLocale.SPECTATE_STARTED_SILENT.send(player.getUniqueId(),
+                    new Replacement("<player>", target.getName()));
+        } else {
+            MessagesLocale.SPECTATE_STARTED.send(player.getUniqueId(),
+                    new Replacement("<player>", target.getName()));
         }
 
         targetProfile.getMatch().addSpectator(player, target, !silent, true);
