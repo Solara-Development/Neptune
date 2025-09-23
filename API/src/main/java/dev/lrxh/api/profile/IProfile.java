@@ -14,6 +14,8 @@ public interface IProfile {
 
     void setState(String customState);
 
+    String getProfileState();
+
     void toLobby();
 
     boolean hasState(String state);

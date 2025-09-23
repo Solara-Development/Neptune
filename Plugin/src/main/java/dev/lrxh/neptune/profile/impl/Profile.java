@@ -97,6 +97,11 @@ public class Profile implements IProfile {
     }
 
     @Override
+    public String getProfileState() {
+        return this.customState;
+    }
+
+    @Override
     public void toLobby() {
         setState(ProfileState.IN_LOBBY);
         PlayerUtil.teleportToSpawn(playerUUID);
