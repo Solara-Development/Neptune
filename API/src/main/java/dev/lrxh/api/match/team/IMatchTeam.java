@@ -11,6 +11,8 @@ public interface IMatchTeam {
 
     List<IParticipant> getDeadParticipants();
 
+    IMatchTeam getOpponentTeam();
+
     int getPoints();
 
     void setPoints(int points);

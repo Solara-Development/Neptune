@@ -92,6 +92,8 @@ public class DuelRequest extends Request {
 
         MatchTeam teamA = new MatchTeam(teamAList);
         MatchTeam teamB = new MatchTeam(teamBList);
+        teamA.setOpponentTeam(teamB);
+        teamB.setOpponentTeam(teamA);
 
         if (arena == null) {
 

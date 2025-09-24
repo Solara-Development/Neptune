@@ -1,6 +1,5 @@
 package dev.lrxh.neptune.game.match.impl.team;
 
-
 import dev.lrxh.api.match.participant.IParticipant;
 import dev.lrxh.api.match.team.IMatchTeam;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
@@ -17,6 +16,8 @@ import java.util.function.Consumer;
 public class MatchTeam implements IMatchTeam {
     private final List<Participant> participants;
     private final List<Participant> deadParticipants;
+
+    private MatchTeam opponentTeam;
 
     private boolean bedBroken;
     private int points;
@@ -78,7 +79,8 @@ public class MatchTeam implements IMatchTeam {
         for (Participant participant : participants) {
             Player player = participant.getPlayer();
             if (player != null) {
-                if (participant.isLeft() || participant.isDisconnected()) continue;
+                if (participant.isLeft() || participant.isDisconnected())
+                    continue;
                 action.accept(participant);
             }
         }
