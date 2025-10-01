@@ -1,3 +1,6 @@
+<img width="2000" height="1000" alt="image(6)" src="https://github.com/user-attachments/assets/76ecdb11-ead6-4598-9d0c-4327503df5ec" />
+
+--- 
 # Placeholders
 > [!NOTE]
 > PLACEHOLDER API is required for placeholders you can download it from [SPIGOTMC](https://www.spigotmc.org/resources/placeholderapi.6245/)
