@@ -502,15 +502,16 @@ public class MatchListener implements Listener {
         if (player.getGameMode().equals(GameMode.CREATIVE))
             return;
 
+        Profile profile = API.getProfile(player);
+
+        if (profile != null && profile.getState() != null && profile.getState().equals(ProfileState.IN_CUSTOM))
+            return;
+
         Optional<Profile> profileOpt = getProfile(player);
         if (!profileOpt.isPresent()) {
             event.setCancelled(true);
             return;
         }
-        Profile profile = profileOpt.get();
-
-        if (profile != null && profile.getState() != null && profile.getState().equals(ProfileState.IN_CUSTOM))
-            return;
 
         Match match = profile.getMatch();
         Location blockLocation = event.getBlock().getLocation();
