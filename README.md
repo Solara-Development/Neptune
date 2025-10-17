@@ -1,5 +1,10 @@
 <img width="2000" height="1000" alt="image(6)" src="https://github.com/user-attachments/assets/76ecdb11-ead6-4598-9d0c-4327503df5ec" />
 
+![Static Badge](https://img.shields.io/badge/Compatible-1?style=flat&logo=spigotmc&label=Spigot&labelColor=yellow&color=white&link=https%3A%2F%2Fwww.spigotmc.org%2F)
+![Static Badge](https://img.shields.io/badge/Compatible-1?style=flat&logo=minutemailer&logoColor=black&label=Papermc&labelColor=white&color=grey&link=https%3A%2F%2Fwww.papermc.io%2F)
+![Static Badge](https://img.shields.io/badge/Server_Side-1?style=flat&logoColor=black&label=Enviorment&labelColor=white&color=purple&link=https%3A%2F%2Fwww.spigotmc.org%2F)
+![Static Badge](https://img.shields.io/badge/100%2B_members-1?style=flat&logo=discord&logoColor=%235865F2&label=discord&labelColor=white&color=yellow&link=https%3A%2F%2Fwww.spigotmc.org%2F)
+
 ---
 
 ## 💿 Installation
