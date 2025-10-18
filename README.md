@@ -10,15 +10,12 @@
 ---
 
 ## 💿 Installation
-> [!IMPORTANT]
-> If this documentation is outdated please join our [Discord server](https://discord.gg/f6rUtpy6y4) to ask a community member for support.
-- Create a `1.21.6` [Paper](https://papermc.io/downloads/paper).
-- Download the latest [Github Actions](https://github.com/Solara-Development/Neptune/actions) build and download the Plugin artifact.
+- Make sure you are using the latest [Paper](https://papermc.io/downloads/paper) version.
+- Download the latest [Github Actions](https://github.com/Solara-Development/Neptune/actions) build.
 > [!NOTE]
-> A github account may be required to download.
-- Once downloaded, place the `.jar` file on the `/plugins` directory on your server.
+> A Github account may be required to download.
+- Once downloaded, place the `.jar` file inside the `/plugins` directory on your server.
 - Restart your server
-- Do `/plugins` to ensure Neptune is correctly installed.
 - Then do `/neptune`
 
 ## ✨ Core Features
