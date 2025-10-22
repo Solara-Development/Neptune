@@ -233,6 +233,10 @@ public class MatchListener implements Listener {
                 explosiveOwnerKey,
                 PersistentDataType.STRING);
 
+        if (uuid == null || uuid.isEmpty()) {
+            return;
+        }
+
         Player player;
         try {
             player = Bukkit.getPlayer(UUID.fromString(uuid));
