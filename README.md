@@ -16,6 +16,10 @@
 
 > [!NOTE]
 > A Github account may be required to download.
+> 
+_OR_
+- Download from [Modrinth](https://modrinth.com/plugin/neptunepractice)
+
 
 - Once downloaded, place the `.jar` file inside the `/plugins` directory on your server.
 - Restart your server
