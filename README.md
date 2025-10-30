@@ -11,19 +11,16 @@
 
 ## 💿 Installation
 
-- Make sure you are using the latest [Paper](https://papermc.io/downloads/paper) version.
-- Download the latest [Github Actions](https://github.com/Solara-Development/Neptune/actions) build.
+1. **Download** the plugin.
 
-> [!NOTE]
-> A Github account may be required to download.
-> 
-_OR_
-- Download from [Modrinth](https://modrinth.com/plugin/neptunepractice)
+> You can download from:
+>
+> - [**Nightly**](https://nightly.link/Solara-Development/Neptune/workflows/maven/master/Plugin.zip) (**latest**; more features, more bugs) <ins>**recommended**</ins>
+> - [**Modrinth**](https://modrinth.com/plugin/neptunepractice#download) (**stable**; less features, less bugs).
 
-
-- Once downloaded, place the `.jar` file inside the `/plugins` directory on your server.
-- Restart your server
-- Then do `/neptune`
+2. Once downloaded, place the `.jar` file inside the **`/plugins`** directory on your server.
+3. **Restart** your server.
+4. Run the **`/neptune`** command to set up arenas & kits.
 
 ## ✨ Core Features
 
@@ -45,13 +42,13 @@ _OR_
 
 Use the `/neptune` command to create and manage arenas and kits through intuitive in-game menus.
 
-[Permissions, Placeholders, and API](./docs/README.md).
+[View the documentation](./docs/README.md).
 
 ---
 
 ## 💬 Support
 
-Join our [Discord server](https://discord.gg/f6rUtpy6y4) for help, updates, and community support.
+Join our [Discord server](https://discord.gg/f6rUtpy6y4) for help, bug reports, and feature requests.
 
 ---
 
