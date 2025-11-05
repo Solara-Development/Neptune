@@ -98,7 +98,7 @@ public class MatchService implements IMatchService {
     }
 
     @Override
-    public void startMatch(IMatch match) {
+    public void startMatch(IMatch match, Player redPlayer, Player bluePlayer) {
         if (!Neptune.get().isAllowMatches()) return;
         MatchReadyEvent event = new MatchReadyEvent(match);
 
@@ -116,9 +116,9 @@ public class MatchService implements IMatchService {
                 Arena.copyFrom(match.getArena()),
                 Kit.copyFrom(match.getKit()),
                 true,
-                participants,
-                participants.getFirst(),
-                participants.getLast(),
+                new ArrayList<>(),
+                new Participant(redPlayer),
+                new Participant(bluePlayer),
                 1
         );
 
