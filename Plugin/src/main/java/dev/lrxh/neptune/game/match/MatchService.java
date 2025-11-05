@@ -3,6 +3,7 @@ package dev.lrxh.neptune.game.match;
 import dev.lrxh.api.events.MatchReadyEvent;
 import dev.lrxh.api.match.IMatch;
 import dev.lrxh.api.match.IMatchService;
+import dev.lrxh.api.match.participant.IParticipant;
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.game.arena.Arena;
@@ -19,6 +20,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class MatchService implements IMatchService {
     private static MatchService instance;
@@ -105,8 +107,23 @@ public class MatchService implements IMatchService {
             return;
         }
 
-        matches.add((Match) match);
-        new MatchStartRunnable((Match) match).start(0L, 20L);
+        List<Participant> participants = new ArrayList<>();
+        for (IParticipant participant : match.getParticipants()) {
+            participants.add((Participant) participant);
+        }
+
+        Match neptuneMatch = new SoloFightMatch(
+                (Arena) match.getArena(),
+                (Kit) match.getKit(),
+                true,
+                participants,
+                participants.getFirst(),
+                participants.getLast(),
+                1
+        );
+
+        matches.add(neptuneMatch);
+        new MatchStartRunnable(neptuneMatch).start(0L, 20L);
     }
 
     public Optional<Match> getMatch(Player player) {
