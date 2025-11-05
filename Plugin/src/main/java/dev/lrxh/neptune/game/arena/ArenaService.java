@@ -109,6 +109,9 @@ public class ArenaService extends IService implements IArenaService {
         return null;
     }
 
+    public Arena copyFrom(IArena arena) {
+        return new Arena(arena.getName(), arena.getDisplayName(), arena.getRedSpawn(), arena.getBlueSpawn(), arena.getMin(), arena.getMax(), arena.getBuildLimit(), arena.isEnabled(), arena.getWhitelistedBlocks(), arena.getDeathY());
+    }
 
     @Override
     public ConfigFile getConfigFile() {

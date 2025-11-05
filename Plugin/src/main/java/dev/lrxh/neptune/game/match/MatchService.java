@@ -7,7 +7,9 @@ import dev.lrxh.api.match.participant.IParticipant;
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.game.arena.Arena;
+import dev.lrxh.neptune.game.arena.ArenaService;
 import dev.lrxh.neptune.game.kit.Kit;
+import dev.lrxh.neptune.game.kit.KitService;
 import dev.lrxh.neptune.game.match.impl.ffa.FfaFightMatch;
 import dev.lrxh.neptune.game.match.impl.participant.Participant;
 import dev.lrxh.neptune.game.match.impl.participant.ParticipantColor;
@@ -113,8 +115,8 @@ public class MatchService implements IMatchService {
         }
 
         Match neptuneMatch = new SoloFightMatch(
-                Arena.copyFrom(match.getArena()),
-                Kit.copyFrom(match.getKit()),
+                ArenaService.get().copyFrom(match.getArena()),
+                KitService.get().copyFrom(match.getKit()),
                 true,
                 new ArrayList<>(),
                 new Participant(redPlayer),

@@ -262,8 +262,4 @@ public class Arena implements IArena {
         }
         return false;
     }
-
-    public static Arena copyFrom(IArena arena) {
-        return new Arena(arena.getName(), arena.getDisplayName(), arena.getRedSpawn(), arena.getBlueSpawn(), arena.getMin(), arena.getMax(), arena.getBuildLimit(), arena.isEnabled(), arena.getWhitelistedBlocks(), arena.getDeathY());
-    }
 }

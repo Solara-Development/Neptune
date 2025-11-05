@@ -6,6 +6,7 @@ import dev.lrxh.api.kit.IKitRule;
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.configs.impl.SettingsLocale;
 import dev.lrxh.neptune.game.arena.Arena;
+import dev.lrxh.neptune.game.arena.ArenaService;
 import dev.lrxh.neptune.game.kit.impl.KitRule;
 import dev.lrxh.neptune.game.match.impl.participant.Participant;
 import dev.lrxh.neptune.profile.ProfileService;
@@ -274,22 +275,5 @@ public class Kit implements IKit {
         }
 
         return false;
-    }
-
-    public static Kit copyFrom(IKit kit) {
-        return new Kit(
-                kit.getName(),
-                kit.getDisplayName(),
-                kit.getItems(),
-                kit.getAllArenas().stream().map(Arena::copyFrom).collect(HashSet::new, HashSet::add, HashSet::addAll),
-                kit.getIcon(),
-                kit.getRule().entrySet().stream().collect(HashMap::new,
-                        (map, entry) -> map.put((KitRule) entry.getKey(), entry.getValue()), HashMap::putAll),
-                kit.getSlot(),
-                kit.getHealth(),
-                kit.getKitEditorSlot(),
-                kit.getPotionEffects(),
-                kit.getDamageMultiplier()
-        );
     }
 }
