@@ -9,6 +9,4 @@
 - [💻API](./api.md)
 
 > [!IMPORTANT]
-> Join our [Discord server](https://discord.gg/f6rUtpy6y4) for help, updates, and community support.
-
-*MORE INFO COMMING SOON!*
+> Join our [Discord server](https://discord.gg/f6rUtpy6y4) for support.

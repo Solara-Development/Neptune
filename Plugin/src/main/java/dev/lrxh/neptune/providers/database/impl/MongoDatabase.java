@@ -106,7 +106,6 @@ public class MongoDatabase implements IDatabase {
                         });
             } catch (MongoException e) {
                 ServerUtils.error("Error fetching data by kit/type from MongoDB: " + e.getMessage());
-                e.printStackTrace();
             }
 
             return results;

@@ -34,8 +34,6 @@ public interface IArena {
 
     List<Material> getWhitelistedBlocks();
 
-    IArena getOwner();
-
     boolean isSetup();
 
     void remove();

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public class DataDocument {
-    public Map<String, Object> data;
+    public final Map<String, Object> data;
 
     public DataDocument() {
         this.data = new HashMap<>();

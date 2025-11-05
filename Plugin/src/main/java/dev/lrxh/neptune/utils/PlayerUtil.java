@@ -12,6 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -50,14 +51,14 @@ public class PlayerUtil {
         player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
         player.updateInventory();
         player.resetTitle();
-        player.setMaxHealth(20.0f);
+        player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(20.0f);
         player.setHealth(20.0D);
         player.setCooldown(Material.ENDER_PEARL, 0);
         resetActionbar(player);
     }
 
     public void resetActionbar(Player player) {
-        player.sendActionBar(" ");
+        player.sendActionBar(CC.color(" "));
     }
 
     public void teleportToSpawn(UUID playerUUID) {

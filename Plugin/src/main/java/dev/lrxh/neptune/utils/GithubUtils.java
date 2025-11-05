@@ -1,5 +1,6 @@
 package dev.lrxh.neptune.utils;
 
+import lombok.Getter;
 import lombok.experimental.UtilityClass;
 
 import java.io.InputStream;
@@ -8,7 +9,9 @@ import java.util.Properties;
 @UtilityClass
 public class GithubUtils {
 
+    @Getter
     private String commitId = "UNKNOWN";
+    @Getter
     private String commitMessage = "UNKNOWN";
 
     public void loadGitInfo() {
@@ -29,11 +32,4 @@ public class GithubUtils {
         }
     }
 
-    public String getCommitId() {
-        return commitId;
-    }
-
-    public String getCommitMessage() {
-        return commitMessage;
-    }
 }

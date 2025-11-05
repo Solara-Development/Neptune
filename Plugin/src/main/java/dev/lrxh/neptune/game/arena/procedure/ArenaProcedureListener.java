@@ -55,8 +55,6 @@ public class ArenaProcedureListener implements Listener {
                 ArenaService.get().arenas.add(arena);
                 player.sendMessage(CC.success("Created arena"));
                 new ArenasManagementMenu().open(player);
-
-                ArenaService.get().save();
             }
             case RENAME -> {
                 event.setCancelled(true);

@@ -19,7 +19,7 @@ public class OpponentMaxPlaceholder implements Placeholder {
         Profile profile = API.getProfile(player.getUniqueId());
         if (profile == null) return string;
         Match match = profile.getMatch();
-        if (match == null || !(match instanceof TeamFightMatch teamMatch)) return "";
+        if (!(match instanceof TeamFightMatch teamMatch)) return "";
         MatchTeam opponentTeam = teamMatch.getParticipantTeam(teamMatch.getParticipant(player.getUniqueId())).equals(teamMatch.getTeamA()) ? teamMatch.getTeamB() : teamMatch.getTeamA();
         return String.valueOf(opponentTeam.getParticipants().size());
     }

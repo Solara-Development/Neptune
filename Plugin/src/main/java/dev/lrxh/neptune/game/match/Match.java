@@ -9,7 +9,7 @@ import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.configs.impl.ScoreboardLocale;
 import dev.lrxh.neptune.feature.hotbar.HotbarService;
-import dev.lrxh.neptune.game.arena.Arena;
+import dev.lrxh.neptune.game.arena.VirtualArena;
 import dev.lrxh.neptune.game.kit.Kit;
 import dev.lrxh.neptune.game.kit.impl.KitRule;
 import dev.lrxh.neptune.game.match.impl.MatchState;
@@ -57,7 +57,7 @@ public abstract class Match implements IMatch {
     private final HashSet<Entity> entities = new HashSet<>();
     private final Time time = new Time();
     private MatchState state;
-    private Arena arena;
+    private VirtualArena arena;
     private Kit kit;
     private List<Participant> participants;
     private int rounds;

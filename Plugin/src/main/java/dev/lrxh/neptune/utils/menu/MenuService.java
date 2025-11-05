@@ -6,9 +6,9 @@ import org.bukkit.entity.Player;
 import java.util.HashMap;
 import java.util.UUID;
 
+@Getter
 public class MenuService {
     private static MenuService instance;
-    @Getter
     private final HashMap<UUID, Menu> openedMenus;
 
     public MenuService() {

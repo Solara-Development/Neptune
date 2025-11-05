@@ -36,20 +36,15 @@ public class RecentMatchPlaceholder implements Placeholder {
         List<MatchHistory> matchHistories = profile.getGameData().getMatchHistories();
         Collections.reverse(matchHistories);
         MatchHistory history = matchHistories.get(matchHistoryIndex - 1);
-        switch (type) {
-            case "opponent":
-                return history.getOpponentName();
-            case "kit":
-                return history.getKitName();
-            case "arena":
-                return history.getArenaName();
-            case "date":
-                return history.getDate();
-            case "time":
-                return history.getTime();
-            case "unix_timestamp":
-                return String.valueOf(LocalDateTime.parse(history.getTime()).toEpochSecond(ZoneOffset.UTC));
-        }
-        return string;
+        return switch (type) {
+            case "opponent" -> history.getOpponentName();
+            case "kit" -> history.getKitName();
+            case "arena" -> history.getArenaName();
+            case "date" -> history.getDate();
+            case "time" -> history.getTime();
+            case "unix_timestamp" ->
+                    String.valueOf(LocalDateTime.parse(history.getTime()).toEpochSecond(ZoneOffset.UTC));
+            default -> string;
+        };
     }
 }

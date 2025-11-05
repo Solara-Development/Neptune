@@ -5,10 +5,10 @@ import lombok.Getter;
 import java.util.HashMap;
 import java.util.UUID;
 
+@Getter
 public class PartyService {
     private static PartyService instance;
-    @Getter
-    private HashMap<UUID, Party> parties = new HashMap<>();
+    private final HashMap<UUID, Party> parties = new HashMap<>();
 
     public static PartyService get() {
         if (instance == null) instance = new PartyService();

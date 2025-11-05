@@ -5,7 +5,7 @@ import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.configs.impl.SettingsLocale;
-import dev.lrxh.neptune.game.arena.Arena;
+import dev.lrxh.neptune.game.arena.VirtualArena;
 import dev.lrxh.neptune.game.kit.Kit;
 import dev.lrxh.neptune.game.kit.impl.KitRule;
 import dev.lrxh.neptune.game.match.Match;
@@ -78,6 +78,17 @@ public class MatchListener implements Listener {
     }
 
     @EventHandler
+    public void onGateOpen(PlayerInteractEvent event) {
+        if (event.getPlayer().getGameMode().equals(GameMode.CREATIVE)) return;
+
+        if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+            Block block = event.getClickedBlock();
+            if (block != null && block.getType().toString().endsWith("_FENCE_GATE")) event.setCancelled(true);
+        }
+    }
+
+
+    @EventHandler
     public void onBlockPlaceEvent(BlockPlaceEvent event) {
         Player player = event.getPlayer();
         if (player.getGameMode().equals(GameMode.CREATIVE))
@@ -106,7 +117,7 @@ public class MatchListener implements Listener {
                 return;
             }
 
-            Arena arena = match.getArena();
+            VirtualArena arena = match.getArena();
 
             // Check height limit
             if (blockLocation.getY() >= arena.getBuildLimit()) {
@@ -173,6 +184,8 @@ public class MatchListener implements Listener {
         if (!profileOpt.get().getMatch().getKit().getRules().get(KitRule.AUTO_IGNITE))
             return;
         Location spawnLocation = event.getInteractionPoint();
+        if (spawnLocation == null)
+            return;
         Creeper creeper = (Creeper) spawnLocation.getWorld().spawnEntity(spawnLocation, EntityType.CREEPER,
                 CreatureSpawnEvent.SpawnReason.SPAWNER_EGG);
         creeper.ignite();
@@ -191,7 +204,7 @@ public class MatchListener implements Listener {
         if (API.getProfile(event.getDamager().getUniqueId()).getState().equals(ProfileState.IN_CUSTOM))
             return;
         if (event.getEntity() instanceof EnderCrystal crystal && event.getDamager() instanceof Player player) {
-            if (!getProfile(player).isPresent()) {
+            if (getProfile(player).isEmpty()) {
                 event.setCancelled(true);
                 return;
             }
@@ -203,7 +216,7 @@ public class MatchListener implements Listener {
         }
 
         if (event.getEntity() instanceof Creeper creeper && event.getDamager() instanceof Player player) {
-            if (!getProfile(player).isPresent()) {
+            if (getProfile(player).isEmpty()) {
                 event.setCancelled(true);
                 return;
             }
@@ -213,7 +226,7 @@ public class MatchListener implements Listener {
                     player.getUniqueId().toString());
         }
         if (event.getEntity() instanceof TNTPrimed tnt && event.getDamager() instanceof Player player) {
-            if (!getProfile(player).isPresent()) {
+            if (getProfile(player).isEmpty()) {
                 event.setCancelled(true);
                 return;
             }
@@ -246,7 +259,7 @@ public class MatchListener implements Listener {
         }
 
         getMatchForPlayer(player).ifPresent(match -> {
-            Arena arena = match.getArena();
+            VirtualArena arena = match.getArena();
             List<Block> originalBlocks = new ArrayList<>(event.blockList());
             List<Block> allowedBlocks = originalBlocks.stream()
                     .filter(block -> arena.getWhitelistedBlocks().contains(block.getType()))
@@ -298,7 +311,7 @@ public class MatchListener implements Listener {
         if (ProfileService.get().getByUUID(player.getUniqueId()).getState().equals(ProfileState.IN_CUSTOM)) {
             return;
         }
-        if (!profileOpt.isPresent()) {
+        if (profileOpt.isEmpty()) {
             event.setCancelled(true);
             return;
         }
@@ -366,7 +379,7 @@ public class MatchListener implements Listener {
         }
 
         // Check if both players are in matches
-        if (!getProfile(shooter).isPresent() || !getProfile(target).isPresent()) {
+        if (getProfile(shooter).isEmpty() || getProfile(target).isEmpty()) {
             event.setCancelled(true);
             return;
         }
@@ -380,7 +393,7 @@ public class MatchListener implements Listener {
             if (item.getType() == Material.MACE) {
                 if (!(event.getEntity() instanceof Player victim))
                     return;
-                if (!getProfile(attacker).isPresent() || !getProfile(victim).isPresent()) {
+                if (getProfile(attacker).isEmpty() || getProfile(victim).isEmpty()) {
                     event.setCancelled(true);
                     return;
                 }
@@ -399,7 +412,7 @@ public class MatchListener implements Listener {
         event.getDrops().clear();
 
         Optional<Profile> profileOpt = getProfile(player);
-        if (!profileOpt.isPresent())
+        if (profileOpt.isEmpty())
             return;
 
         Profile profile = profileOpt.get();
@@ -451,7 +464,7 @@ public class MatchListener implements Listener {
                 return;
 
             Optional<Profile> profileOpt = getProfile(player);
-            if (!profileOpt.isPresent())
+            if (profileOpt.isEmpty())
                 return;
 
             Profile profile = profileOpt.get();
@@ -507,7 +520,7 @@ public class MatchListener implements Listener {
             return;
 
         Optional<Profile> profileOpt = getProfile(player);
-        if (!profileOpt.isPresent()) {
+        if (profileOpt.isEmpty()) {
             event.setCancelled(true);
             return;
         }
@@ -522,7 +535,7 @@ public class MatchListener implements Listener {
                 return;
             }
 
-            Arena arena = match.getArena();
+            VirtualArena arena = match.getArena();
 
             if (blockLocation.getY() >= arena.getBuildLimit()) {
                 event.setCancelled(true);
@@ -618,7 +631,7 @@ public class MatchListener implements Listener {
 
         Optional<Profile> profileOpt = getProfile(player);
 
-        if (!profileOpt.isPresent())
+        if (profileOpt.isEmpty())
             return;
 
         if (!(event.getFinalDamage() >= player.getHealth()))
@@ -643,12 +656,12 @@ public class MatchListener implements Listener {
         Player player = event.getPlayer();
 
         Optional<Profile> profileOpt = getProfile(player);
-        if (!profileOpt.isPresent())
+        if (profileOpt.isEmpty())
             return;
 
         Profile profile = profileOpt.get();
         Match match = profile.getMatch();
-        Arena arena = match.getArena();
+        VirtualArena arena = match.getArena();
 
         Participant participant = match.getParticipant(player.getUniqueId());
         if (participant == null)
@@ -747,7 +760,7 @@ public class MatchListener implements Listener {
             }
 
             Optional<Profile> profileOpt = getProfile(player);
-            if (!profileOpt.isPresent()) {
+            if (profileOpt.isEmpty()) {
                 event.setCancelled(true);
                 return;
             }
@@ -792,7 +805,7 @@ public class MatchListener implements Listener {
             if (API.getProfile(player).getState().equals(ProfileState.IN_CUSTOM))
                 return;
             Optional<Profile> profileOpt = getProfile(player);
-            if (!profileOpt.isPresent()) {
+            if (profileOpt.isEmpty()) {
                 event.setCancelled(true);
                 return;
             }
@@ -810,7 +823,7 @@ public class MatchListener implements Listener {
     public void onPlayerRegainHealth(EntityRegainHealthEvent event) {
         if (event.getEntity() instanceof Player player) {
             Optional<Profile> profileOpt = getProfile(player);
-            if (!profileOpt.isPresent())
+            if (profileOpt.isEmpty())
                 return;
 
             Profile profile = profileOpt.get();
@@ -833,14 +846,14 @@ public class MatchListener implements Listener {
         if (playerProfile != null && playerProfile.getState().equals(ProfileState.IN_CUSTOM)) return;
 
         Optional<Profile> profileOpt = getProfile(player);
-        if (!profileOpt.isPresent()) {
+        if (profileOpt.isEmpty()) {
             event.setCancelled(true);
             return;
         }
 
         Profile profile = profileOpt.get();
         Match match = profile.getMatch();
-        Arena arena = match.getArena();
+        VirtualArena arena = match.getArena();
 
         if (profile.getState().equals(ProfileState.IN_SPECTATOR)) {
             event.setCancelled(true);
@@ -889,7 +902,7 @@ public class MatchListener implements Listener {
         if (playerProfile != null && playerProfile.getState().equals(ProfileState.IN_CUSTOM)) return;
 
         Optional<Profile> profileOpt = getProfile(player);
-        if (!profileOpt.isPresent()) {
+        if (profileOpt.isEmpty()) {
             event.setCancelled(true);
             return;
         }
@@ -970,7 +983,7 @@ public class MatchListener implements Listener {
         }
 
         getMatchForPlayer(player).ifPresent(match -> {
-            Arena arena = match.getArena();
+            VirtualArena arena = match.getArena();
             List<Block> originalBlocks = new ArrayList<>(event.blockList());
             List<Block> allowedBlocks = originalBlocks.stream()
                     .filter(block -> arena.getWhitelistedBlocks().contains(block.getType()))
@@ -1002,7 +1015,7 @@ public class MatchListener implements Listener {
             return;
 
         Optional<Profile> profileOpt = getProfile(player);
-        if (!profileOpt.isPresent()) {
+        if (profileOpt.isEmpty()) {
             event.setCancelled(true);
         } else {
             Profile profile = profileOpt.get();

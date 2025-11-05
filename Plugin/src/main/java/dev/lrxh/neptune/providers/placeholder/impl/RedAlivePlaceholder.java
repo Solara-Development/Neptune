@@ -18,7 +18,7 @@ public class RedAlivePlaceholder implements Placeholder {
         Profile profile = API.getProfile(player.getUniqueId());
         if (profile == null) return string;
         Match match = profile.getMatch();
-        if (match == null || !(match instanceof TeamFightMatch teamMatch)) return "";
+        if (!(match instanceof TeamFightMatch teamMatch)) return "";
         return String.valueOf(teamMatch.getTeamA().getAliveParticipants());
     }
 }

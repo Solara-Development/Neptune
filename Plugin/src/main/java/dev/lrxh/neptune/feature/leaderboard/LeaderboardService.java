@@ -170,11 +170,7 @@ public class LeaderboardService {
             if (kitLeaderboards == null)
                 return;
 
-            List<PlayerEntry> entries = kitLeaderboards.get(leaderboardType);
-            if (entries == null) {
-                entries = new ArrayList<>();
-                kitLeaderboards.put(leaderboardType, entries);
-            }
+            List<PlayerEntry> entries = kitLeaderboards.computeIfAbsent(leaderboardType, k -> new ArrayList<>());
 
             entries.removeIf(e -> e.getUuid().equals(newEntry.getUuid()));
 

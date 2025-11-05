@@ -12,7 +12,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 public class ItemBrowserMenu extends PaginatedMenu {
 
@@ -38,7 +37,7 @@ public class ItemBrowserMenu extends PaginatedMenu {
         if (!search.isEmpty()) {
             items = items.stream()
                     .filter(mat -> mat.name().toLowerCase().contains(search.toLowerCase()))
-                    .collect(Collectors.toList());
+                    .toList();
         }
         List<Button> buttons = new ArrayList<>();
         int i = 0;

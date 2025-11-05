@@ -2,7 +2,7 @@ package dev.lrxh.neptune.game.match.tasks;
 
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
-import dev.lrxh.neptune.game.arena.Arena;
+import dev.lrxh.neptune.game.arena.VirtualArena;
 import dev.lrxh.neptune.game.kit.impl.KitRule;
 import dev.lrxh.neptune.game.match.Match;
 import dev.lrxh.neptune.game.match.MatchService;
@@ -26,7 +26,7 @@ public class ArenaBoundaryCheckTask extends NeptuneRunnable {
                 continue;
 
             for (Participant participant : match.getParticipantsList()) {
-                Arena arena = match.getArena();
+                VirtualArena arena = match.getArena();
 
                 Player player = participant.getPlayer();
                 if (player == null || !player.isOnline() || participant.isDead()

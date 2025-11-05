@@ -25,18 +25,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.Arrays;
 
 public class ProfileListener implements Listener {
-
-    @EventHandler
-    public void onPreJoin(PlayerLoginEvent event) {
-        if (!Neptune.get().isAllowJoin())
-            event.disallow(PlayerLoginEvent.Result.KICK_OTHER, CC.color("&cDatabasing updating..."));
-    }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {

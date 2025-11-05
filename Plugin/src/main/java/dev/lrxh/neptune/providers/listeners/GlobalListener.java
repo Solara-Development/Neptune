@@ -111,19 +111,18 @@ public class GlobalListener implements Listener {
         Player player = event.getPlayer();
         if (player.getGameMode() == GameMode.CREATIVE) return;
         Profile profile = API.getProfile(player);
-        if (profile != null && profile.getState().equals(ProfileState.IN_CUSTOM)) return;
+        if (profile == null) return;
+        if (profile.getState().equals(ProfileState.IN_CUSTOM)) return;
         if (profile.getState().equals(ProfileState.IN_SPECTATOR)) event.setCancelled(true);
         if (isPlayerNotInMatch(profile)) {
             event.setCancelled(true);
-            if (profile != null) {
-                ProfileState state = profile.getState();
-                if (state.equals(ProfileState.IN_KIT_EDITOR)) {
-                    player.sendMessage(CC.color("&cYou can't break blocks in the kit editor!"));
-                } else if (state.equals(ProfileState.IN_QUEUE)) {
-                    player.sendMessage(CC.color("&cYou can't break blocks while in queue!"));
-                } else {
-                    player.sendMessage(CC.color("&cYou can't break blocks here!"));
-                }
+            ProfileState state = profile.getState();
+            if (state.equals(ProfileState.IN_KIT_EDITOR)) {
+                player.sendMessage(CC.color("&cYou can't break blocks in the kit editor!"));
+            } else if (state.equals(ProfileState.IN_QUEUE)) {
+                player.sendMessage(CC.color("&cYou can't break blocks while in queue!"));
+            } else {
+                player.sendMessage(CC.color("&cYou can't break blocks here!"));
             }
         }
     }
@@ -194,21 +193,18 @@ public class GlobalListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onFoodLevelChange(FoodLevelChangeEvent event) {
-        if (event.getEntity() instanceof Player player) {
-            Profile profile = API.getProfile(player);
+        if (!(event.getEntity() instanceof Player player)) return;
+        Profile profile = API.getProfile(player);
 
-            if (profile == null) {
-                return;
-            }
-
-            if (profile.getState().equals(ProfileState.IN_CUSTOM)) {
-                return;
-            }
-
-            if (isPlayerNotInMatch(profile) && profile.getState() != ProfileState.IN_CUSTOM) {
-                event.setCancelled(true);
-            }
+        if (profile == null) {
+            return;
         }
+
+        if (profile.getState().equals(ProfileState.IN_CUSTOM)) {
+            return;
+        }
+
+        if (isPlayerNotInMatch(profile)) event.setCancelled(true);
     }
 
 

@@ -20,7 +20,7 @@ public class HitDifferencePlaceholder implements Placeholder {
         Profile profile = API.getProfile(player.getUniqueId());
         if (profile == null) return string;
         Match match = profile.getMatch();
-        if (profile.getState() != ProfileState.IN_GAME || match == null || !(match instanceof SoloFightMatch))
+        if (profile.getState() != ProfileState.IN_GAME || !(match instanceof SoloFightMatch))
             return "";
         Participant playerParticipant = match.getParticipant(player.getUniqueId());
         return String.valueOf(playerParticipant.getHitsDifference(playerParticipant.getOpponent()));

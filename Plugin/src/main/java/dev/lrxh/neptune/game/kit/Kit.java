@@ -4,9 +4,9 @@ import dev.lrxh.api.arena.IArena;
 import dev.lrxh.api.kit.IKit;
 import dev.lrxh.api.kit.IKitRule;
 import dev.lrxh.neptune.API;
-import dev.lrxh.neptune.configs.impl.SettingsLocale;
 import dev.lrxh.neptune.game.arena.Arena;
 import dev.lrxh.neptune.game.arena.ArenaService;
+import dev.lrxh.neptune.game.arena.VirtualArena;
 import dev.lrxh.neptune.game.kit.impl.KitRule;
 import dev.lrxh.neptune.game.match.impl.participant.Participant;
 import dev.lrxh.neptune.profile.ProfileService;
@@ -190,13 +190,11 @@ public class Kit implements IKit {
                 (map, entry) -> map.put(entry.getKey(), entry.getValue()), HashMap::putAll);
     }
 
-    public CompletableFuture<Arena> getRandomArena() {
+    public CompletableFuture<VirtualArena> getRandomArena() {
         List<Arena> arenas1 = new ArrayList<>();
 
         for (Arena arena : arenas) {
             if (!arena.isEnabled())
-                continue;
-            if (arena.isUsed() && !SettingsLocale.ARENA_DUPLICATES.getBoolean())
                 continue;
             if (!arena.isSetup() || !arena.isDoneLoading())
                 continue;
@@ -208,10 +206,6 @@ public class Kit implements IKit {
 
         Arena selected = arenas1.get(ThreadLocalRandom.current().nextInt(arenas1.size()));
 
-        if (!SettingsLocale.ARENA_DUPLICATES.getBoolean()) {
-            selected.setUsed(true);
-            return CompletableFuture.completedFuture(selected);
-        }
         return selected.createDuplicate().thenApply(arena -> arena);
     }
 

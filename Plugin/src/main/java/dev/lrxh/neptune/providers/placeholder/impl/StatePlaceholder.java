@@ -11,8 +11,6 @@ public class StatePlaceholder implements Placeholder {
         return string.equals("state");
     }
 
-    ;
-
     @Override
     public String parse(OfflinePlayer player, String string) {
         Profile profile = API.getProfile(player.getUniqueId());

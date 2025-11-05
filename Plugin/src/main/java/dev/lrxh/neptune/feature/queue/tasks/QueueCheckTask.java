@@ -1,7 +1,6 @@
 package dev.lrxh.neptune.feature.queue.tasks;
 
 import dev.lrxh.neptune.API;
-import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.feature.queue.QueueEntry;
 import dev.lrxh.neptune.feature.queue.QueueService;
@@ -17,6 +16,7 @@ import dev.lrxh.neptune.providers.placeholder.PlaceholderUtil;
 import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.PlayerUtil;
 import dev.lrxh.neptune.utils.tasks.NeptuneRunnable;
+import dev.lrxh.neptune.utils.tasks.TaskScheduler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -83,7 +83,6 @@ public class QueueCheckTask extends NeptuneRunnable {
             }
 
             kit.getRandomArena().thenAccept(arena -> {
-
                 if (arena == null) {
                     PlayerUtil.sendMessage(uuid1, CC.error("No valid arena was found for this kit!"));
                     PlayerUtil.sendMessage(uuid2, CC.error("No valid arena was found for this kit!"));
@@ -111,9 +110,13 @@ public class QueueCheckTask extends NeptuneRunnable {
                         new Replacement("<elo>", String.valueOf(profile2.getGameData().get(kit).getElo())),
                         new Replacement("<ping>", String.valueOf(ping2)));
 
-                Bukkit.getScheduler().runTask(Neptune.get(), () -> MatchService.get().startMatch(participant1, participant2, kit, arena, false,
-                        kit.is(KitRule.BEST_OF_THREE) ? 3 : 1));
-
+                TaskScheduler.get().startTaskCurrentTick(new NeptuneRunnable() {
+                    @Override
+                    public void run() {
+                        MatchService.get().startMatch(participant1, participant2, kit, arena, false,
+                                kit.is(KitRule.BEST_OF_THREE) ? 3 : 1);
+                    }
+                });
             });
         }
     }

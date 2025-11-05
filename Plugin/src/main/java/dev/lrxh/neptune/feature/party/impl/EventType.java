@@ -29,7 +29,7 @@ public enum EventType {
                     return;
                 }
 
-                if (!arena.isSetup() || !arena.isDoneLoading()) {
+                if (!arena.isSetup()) {
 
                     for (Participant participant : participants) {
                         participant.sendMessage(CC.error("Arena wasn't setup up properly! Please contact an admin if you see this."));
@@ -68,7 +68,7 @@ public enum EventType {
                             p.sendMessage(CC.error("No arenas were found! Please contact an admin.")));
                     return;
                 }
-                if (!arena.isSetup() || !arena.isDoneLoading()) {
+                if (!arena.isSetup()) {
                     participants.forEach(p ->
                             p.sendMessage(CC.error("Arena wasn't set up properly! Please contact an admin.")));
                     return;

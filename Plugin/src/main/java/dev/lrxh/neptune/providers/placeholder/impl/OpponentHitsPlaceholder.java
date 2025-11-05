@@ -19,7 +19,7 @@ public class OpponentHitsPlaceholder implements Placeholder {
         Profile profile = API.getProfile(player.getUniqueId());
         if (profile == null) return string;
         Match match = profile.getMatch();
-        if (profile.getState() != ProfileState.IN_GAME || match == null || !(match instanceof SoloFightMatch))
+        if (profile.getState() != ProfileState.IN_GAME || !(match instanceof SoloFightMatch))
             return "";
         return String.valueOf(match.getParticipant(player.getUniqueId()).getOpponent().getHits());
     }

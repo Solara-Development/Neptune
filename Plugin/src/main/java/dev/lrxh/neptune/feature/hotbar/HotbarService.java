@@ -87,7 +87,7 @@ public class HotbarService extends IService {
                     if (!enabled) continue;
 
                     try {
-                        Item item = new Item(ItemAction.valueOf(itemName), displayName, material, lore, enabled, slot, customModelData);
+                        Item item = new Item(ItemAction.valueOf(itemName), displayName, material, lore, true, slot, customModelData);
                         if (slot >= 0 && slot < inventory.getSlots().length) {
                             inventory.setSlot(slot, item);
                         }
