@@ -115,18 +115,20 @@ public class MatchService implements IMatchService {
             participants.add((Participant) participant);
         }
 
-        Match neptuneMatch = new SoloFightMatch(
-                ArenaService.get().copyFrom(match.getArena()),
-                KitService.get().copyFrom(match.getKit()),
-                true,
-                new ArrayList<>(),
-                new Participant(redPlayer),
-                new Participant(bluePlayer),
-                1
-        );
+        ArenaService.get().copyFrom(match.getArena()).createDuplicate().thenAccept(virtualArena ->{
+            Match neptuneMatch = new SoloFightMatch(
+                    virtualArena,
+                    KitService.get().copyFrom(match.getKit()),
+                    true,
+                    new ArrayList<>(),
+                    new Participant(redPlayer),
+                    new Participant(bluePlayer),
+                    1
+            );
 
-        matches.add(neptuneMatch);
-        new MatchStartRunnable(neptuneMatch).start(0L, 20L);
+            matches.add(neptuneMatch);
+            new MatchStartRunnable(neptuneMatch).start(0L, 20L);
+        });
     }
 
     public Optional<Match> getMatch(Player player) {
