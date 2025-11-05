@@ -113,8 +113,8 @@ public class MatchService implements IMatchService {
         }
 
         Match neptuneMatch = new SoloFightMatch(
-                (Arena) match.getArena(),
-                (Kit) match.getKit(),
+                Arena.copyFrom(match.getArena()),
+                Kit.copyFrom(match.getKit()),
                 true,
                 participants,
                 participants.getFirst(),

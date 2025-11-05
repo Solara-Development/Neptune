@@ -275,4 +275,21 @@ public class Kit implements IKit {
 
         return false;
     }
+
+    public static Kit copyFrom(IKit kit) {
+        return new Kit(
+                kit.getName(),
+                kit.getDisplayName(),
+                kit.getItems(),
+                kit.getAllArenas().stream().map(Arena::copyFrom).collect(HashSet::new, HashSet::add, HashSet::addAll),
+                kit.getIcon(),
+                kit.getRule().entrySet().stream().collect(HashMap::new,
+                        (map, entry) -> map.put((KitRule) entry.getKey(), entry.getValue()), HashMap::putAll),
+                kit.getSlot(),
+                kit.getHealth(),
+                kit.getKitEditorSlot(),
+                kit.getPotionEffects(),
+                kit.getDamageMultiplier()
+        );
+    }
 }
