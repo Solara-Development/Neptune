@@ -343,6 +343,7 @@ public abstract class Match implements IMatch {
             participant.setDead(false);
         });
 
+        resetVisibilityInMatch();
         showPlayerForSpectators();
     }
 
@@ -358,7 +359,9 @@ public abstract class Match implements IMatch {
     public void hideParticipant(Participant participant) {
         forEachParticipant(p -> {
             if (!p.equals(participant)) {
-                p.getPlayer().hidePlayer(Neptune.get(), participant.getPlayer());
+                if (p.getPlayer() != null && participant.getPlayer() != null) {
+                    p.getPlayer().hidePlayer(Neptune.get(), participant.getPlayer());
+                }
             }
         });
     }
@@ -366,9 +369,21 @@ public abstract class Match implements IMatch {
     public void showParticipant(Participant participant) {
         forEachParticipant(p -> {
             if (!p.equals(participant)) {
-                p.getPlayer().showPlayer(Neptune.get(), participant.getPlayer());
+                if (p.getPlayer() != null && participant.getPlayer() != null) {
+                    p.getPlayer().showPlayer(Neptune.get(), participant.getPlayer());
+                }
             }
         });
+    }
+
+    public void resetVisibilityInMatch() {
+        forEachParticipant(a -> forEachParticipant(b -> {
+            if (!a.equals(b)) {
+                if (a.getPlayer() != null && b.getPlayer() != null) {
+                    a.getPlayer().showPlayer(Neptune.get(), b.getPlayer());
+                }
+            }
+        }));
     }
 
     private void showHealth() {
@@ -403,6 +418,7 @@ public abstract class Match implements IMatch {
             par.reset();
             showParticipant(par);
         });
+        resetVisibilityInMatch();
     }
 
     public void sendDeathMessage(Participant deadParticipant) {

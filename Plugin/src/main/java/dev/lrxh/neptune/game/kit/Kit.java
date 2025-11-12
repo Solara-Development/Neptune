@@ -24,6 +24,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -223,7 +224,18 @@ public class Kit implements IKit {
             player.getInventory().setContents(gameData.get(this).getKitLoadout().toArray(new ItemStack[0]));
         }
 
-        player.addPotionEffects(potionEffects);
+        // Ensure no invisibility persists from kit or prior state
+        player.removePotionEffect(PotionEffectType.INVISIBILITY);
+        player.setInvisible(false);
+
+        // Apply kit potion effects excluding invisibility
+        List<PotionEffect> effects = new ArrayList<>();
+        for (PotionEffect effect : potionEffects) {
+            if (effect != null && effect.getType() != PotionEffectType.INVISIBILITY) {
+                effects.add(effect);
+            }
+        }
+        player.addPotionEffects(effects);
 
         player.updateInventory();
     }
@@ -244,7 +256,18 @@ public class Kit implements IKit {
                             participant.getColor().getContentColor()));
         }
 
-        player.addPotionEffects(potionEffects);
+        // Ensure no invisibility persists from kit or prior state
+        player.removePotionEffect(PotionEffectType.INVISIBILITY);
+        player.setInvisible(false);
+
+        // Apply kit potion effects excluding invisibility
+        List<PotionEffect> effects2 = new ArrayList<>();
+        for (PotionEffect effect : potionEffects) {
+            if (effect != null && effect.getType() != PotionEffectType.INVISIBILITY) {
+                effects2.add(effect);
+            }
+        }
+        player.addPotionEffects(effects2);
 
         player.updateInventory();
     }

@@ -12,7 +12,11 @@ import dev.lrxh.neptune.game.kit.impl.KitRule;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
 import dev.lrxh.neptune.providers.clickable.Replacement;
+import dev.lrxh.neptune.utils.CC;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import net.kyori.adventure.title.Title;
+import java.time.Duration;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -51,6 +55,15 @@ public class QueueService implements IQueueService {
             MessagesLocale.QUEUE_JOIN.send(playerUUID,
                     new Replacement("<kit>", kit.getDisplayName()),
                     new Replacement("<maxPing>", String.valueOf(profile.getSettingData().getMaxPing())));
+
+            // One-shot title: Joined Queue
+            Bukkit.getScheduler().runTask(Neptune.get(), () -> {
+                Player p = Bukkit.getPlayer(playerUUID);
+                if (p != null && p.isOnline()) {
+                    Title.Times times = Title.Times.times(Duration.ZERO, Duration.ofMillis(1200), Duration.ZERO);
+                    p.showTitle(Title.title(CC.color("&eJoined Queue"), CC.color("&7Searching for opponent..."), times));
+                }
+            });
         }
     }
 

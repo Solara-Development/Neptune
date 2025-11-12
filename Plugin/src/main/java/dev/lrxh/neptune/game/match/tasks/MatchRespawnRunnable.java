@@ -56,6 +56,7 @@ public class MatchRespawnRunnable extends NeptuneRunnable {
             match.setupPlayer(participant.getPlayerUUID());
             participant.setDead(false);
             match.showParticipant(participant);
+            match.resetVisibilityInMatch();
             participant.sendMessage(MessagesLocale.MATCH_RESPAWNED);
             stop();
             MatchParticipantRespawnEvent event = new MatchParticipantRespawnEvent(match, participant);

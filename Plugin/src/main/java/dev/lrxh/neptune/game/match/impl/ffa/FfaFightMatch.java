@@ -135,6 +135,7 @@ public class FfaFightMatch extends Match implements IFffaFightMatch {
     public void startMatch() {
         setState(MatchState.IN_ROUND);
         showPlayerForSpectators();
+        resetVisibilityInMatch();
         playSound(Sound.ENTITY_FIREWORK_ROCKET_BLAST);
         sendTitle(CC.color(MessagesLocale.MATCH_START_TITLE_HEADER.getString()), CC.color(MessagesLocale.MATCH_START_TITLE_FOOTER.getString()), 20);
     }

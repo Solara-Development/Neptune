@@ -47,6 +47,10 @@ public class MatchStartRunnable extends NeptuneRunnable {
             match.sendMessage(MessagesLocale.MATCH_STARTED);
             match.startMatch();
             match.checkRules();
+            Bukkit.getScheduler().runTaskLater(dev.lrxh.neptune.Neptune.get(), () -> {
+                match.resetVisibilityInMatch();
+                match.showPlayerForSpectators();
+            }, 5L);
             checkFollowings();
             match.getTime().setStop(false);
 

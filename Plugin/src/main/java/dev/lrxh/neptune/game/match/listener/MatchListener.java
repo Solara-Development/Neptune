@@ -37,6 +37,9 @@ import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.vehicle.VehicleEnterEvent;
 import org.bukkit.event.vehicle.VehicleExitEvent;
 import org.bukkit.inventory.ItemStack;
@@ -385,7 +388,18 @@ public class MatchListener implements Listener {
         }
 
         if (!target.canSee(shooter) || !shooter.canSee(target)) {
-            event.setCancelled(true);
+            // Attempt to restore visibility if both are in matches (most likely same match here)
+            Optional<Profile> shooterProfile = getProfile(shooter);
+            Optional<Profile> targetProfile = getProfile(target);
+            if (shooterProfile.isPresent() && targetProfile.isPresent()) {
+                shooter.showPlayer(Neptune.get(), target);
+                target.showPlayer(Neptune.get(), shooter);
+                if (!target.canSee(shooter) || !shooter.canSee(target)) {
+                    event.setCancelled(true);
+                }
+            } else {
+                event.setCancelled(true);
+            }
         }
 
         if (event.getPushedBy() instanceof Player attacker) {
@@ -399,7 +413,11 @@ public class MatchListener implements Listener {
                 }
 
                 if (!victim.canSee(attacker) || !attacker.canSee(victim)) {
-                    event.setCancelled(true);
+                    attacker.showPlayer(Neptune.get(), victim);
+                    victim.showPlayer(Neptune.get(), attacker);
+                    if (!victim.canSee(attacker) || !attacker.canSee(victim)) {
+                        event.setCancelled(true);
+                    }
                 }
             }
         }
@@ -578,6 +596,12 @@ public class MatchListener implements Listener {
             if (!attackerProfile.getMatch().getUuid().equals(match.getUuid())) {
                 event.setCancelled(true);
                 return;
+            }
+
+            // Ensure both players can see each other during combat interactions
+            if (!attacker.canSee(player) || !player.canSee(attacker)) {
+                attacker.showPlayer(Neptune.get(), player);
+                player.showPlayer(Neptune.get(), attacker);
             }
 
             if (match.getParticipant(attacker).isDead()) {
@@ -1059,5 +1083,31 @@ public class MatchListener implements Listener {
         return Optional.ofNullable(profile)
                 .filter(this::isPlayerInMatch)
                 .map(Profile::getMatch);
+    }
+
+    @EventHandler
+    public void onTeleport(PlayerTeleportEvent event) {
+        Player player = event.getPlayer();
+        Optional<Match> matchOpt = getMatchForPlayer(player);
+        if (matchOpt.isEmpty()) return;
+
+        Bukkit.getScheduler().runTaskLater(Neptune.get(), () -> {
+            Match match = matchOpt.get();
+            match.resetVisibilityInMatch();
+            match.showPlayerForSpectators();
+        }, 2L);
+    }
+
+    @EventHandler
+    public void onWorldChange(PlayerChangedWorldEvent event) {
+        Player player = event.getPlayer();
+        Optional<Match> matchOpt = getMatchForPlayer(player);
+        if (matchOpt.isEmpty()) return;
+
+        Bukkit.getScheduler().runTaskLater(Neptune.get(), () -> {
+            Match match = matchOpt.get();
+            match.resetVisibilityInMatch();
+            match.showPlayerForSpectators();
+        }, 2L);
     }
 }

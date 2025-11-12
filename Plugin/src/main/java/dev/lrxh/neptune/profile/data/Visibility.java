@@ -32,6 +32,14 @@ public class Visibility {
         Profile viewerProfile = API.getProfile(uuid);
         Profile otherProfile = API.getProfile(otherUUID);
 
+        // If either player is in a match, force mutual visibility between them.
+        // This prevents lobby visibility preferences from hiding opponents at match start.
+        if (viewerProfile.hasState(ProfileState.IN_GAME) || otherProfile.hasState(ProfileState.IN_GAME)) {
+            viewerPlayer.showPlayer(Neptune.get(), otherPlayer);
+            otherPlayer.showPlayer(Neptune.get(), viewerPlayer);
+            return;
+        }
+
         if (viewerProfile.hasState(ProfileState.IN_LOBBY)) {
             if (!viewerProfile.getSettingData().isPlayerVisibility()) {
                 viewerPlayer.hidePlayer(Neptune.get(), otherPlayer);

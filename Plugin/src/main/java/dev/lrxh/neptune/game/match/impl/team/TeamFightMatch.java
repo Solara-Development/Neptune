@@ -182,6 +182,7 @@ public class TeamFightMatch extends Match implements ITeamFightMatch {
     public void startMatch() {
         setState(MatchState.IN_ROUND);
         showPlayerForSpectators();
+        resetVisibilityInMatch();
         playSound(Sound.ENTITY_FIREWORK_ROCKET_BLAST);
         sendTitle(CC.color(MessagesLocale.MATCH_START_TITLE_FOOTER.getString()), CC.color(MessagesLocale.MATCH_START_TITLE_FOOTER.getString()), 10);
     }

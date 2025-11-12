@@ -77,6 +77,9 @@ public class SoloFightMatch extends Match implements ISoloFightMatch {
                         MessagesLocale.MATCH_YOU.getString())),
                 100);
 
+        // Winner celebratory animation and sound
+        animateWinnerTitles(winner);
+
         if (!loser.isLeft() && !loser.isDisconnected())
             loser.sendTitle(CC.color(MessagesLocale.MATCH_LOSER_TITLE_HEADER.getString()),
                     CC.color(MessagesLocale.MATCH_LOSER_TITLE_FOOTER.getString().replace("<player>",
@@ -293,9 +296,35 @@ public class SoloFightMatch extends Match implements ISoloFightMatch {
     public void startMatch() {
         setState(MatchState.IN_ROUND);
         showPlayerForSpectators();
+        resetVisibilityInMatch();
         playSound(Sound.ENTITY_FIREWORK_ROCKET_BLAST);
         sendTitle(CC.color(MessagesLocale.MATCH_START_TITLE_HEADER.getString()),
                 CC.color(MessagesLocale.MATCH_START_TITLE_FOOTER.getString()), 20);
+    }
+
+    private void animateWinnerTitles(Participant winner) {
+        String[] frames = {
+                "&e&l🏆 &6&lVICTORY &e&l🏆",
+                "&6&l🏆 &e&lVICTORY &6&l🏆",
+                "&e&l🏆 &6&lVICTORY &e&l🏆",
+                "&6&l🏆 &e&lVICTORY &6&l🏆",
+                "&e&l🏆 &6&lVICTORY &e&l🏆",
+                "&6&l🏆 &e&lVICTORY &6&l🏆",
+                "&e&l🏆 &6&lVICTORY &e&l🏆",
+                "&6&l🏆 &e&lVICTORY &6&l🏆"
+        };
+
+        if (winner.getPlayer() == null) return;
+
+        // Play activation sound once at start
+        winner.getPlayer().playSound(winner.getPlayer().getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1.0f, 1.0f);
+
+        for (int i = 0; i < frames.length; i++) {
+            int idx = i;
+            Bukkit.getScheduler().runTaskLater(dev.lrxh.neptune.Neptune.get(), () -> {
+                winner.sendTitle(CC.color(frames[idx]), CC.color(" "), 6);
+            }, 1 + (idx * 5L));
+        }
     }
 
     @Override
