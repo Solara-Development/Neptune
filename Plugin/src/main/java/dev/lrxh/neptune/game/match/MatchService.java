@@ -30,13 +30,16 @@ public class MatchService implements IMatchService {
     public final HashSet<Match> matches = new HashSet<>();
 
     public static MatchService get() {
-        if (instance == null) instance = new MatchService();
+        if (instance == null)
+            instance = new MatchService();
 
         return instance;
     }
 
-    public void startMatch(Participant playerRed, Participant playerBlue, Kit kit, VirtualArena arena, boolean duel, int rounds) {
-        if (!Neptune.get().isAllowMatches()) return;
+    public void startMatch(Participant playerRed, Participant playerBlue, Kit kit, VirtualArena arena, boolean duel,
+            int rounds) {
+        if (!Neptune.get().isAllowMatches())
+            return;
         kit.addPlaying();
         kit.addPlaying();
 
@@ -46,7 +49,8 @@ public class MatchService implements IMatchService {
         playerBlue.setOpponent(playerRed);
         playerBlue.setColor(ParticipantColor.BLUE);
 
-        SoloFightMatch match = new SoloFightMatch(arena, kit, duel, Arrays.asList(playerRed, playerBlue), playerRed, playerBlue, rounds);
+        SoloFightMatch match = new SoloFightMatch(arena, kit, duel, Arrays.asList(playerRed, playerBlue), playerRed,
+                playerBlue, rounds);
         MatchReadyEvent event = new MatchReadyEvent(match);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
@@ -57,7 +61,8 @@ public class MatchService implements IMatchService {
     }
 
     public void startMatch(MatchTeam teamA, MatchTeam teamB, Kit kit, VirtualArena arena) {
-        if (!Neptune.get().isAllowMatches()) return;
+        if (!Neptune.get().isAllowMatches())
+            return;
         for (Participant participant : teamA.participants()) {
             for (Participant opponent : teamB.participants()) {
                 participant.setOpponent(opponent);
@@ -83,7 +88,8 @@ public class MatchService implements IMatchService {
     }
 
     public void startMatch(List<Participant> participants, Kit kit, VirtualArena arena) {
-        if (!Neptune.get().isAllowMatches()) return;
+        if (!Neptune.get().isAllowMatches())
+            return;
         for (Participant participant : participants) {
             participant.setColor(ParticipantColor.RED);
         }
@@ -102,7 +108,8 @@ public class MatchService implements IMatchService {
 
     @Override
     public void startMatch(IMatch match, Player redPlayer, Player bluePlayer) {
-        if (!Neptune.get().isAllowMatches()) return;
+        if (!Neptune.get().isAllowMatches())
+            return;
         MatchReadyEvent event = new MatchReadyEvent(match);
 
         Bukkit.getPluginManager().callEvent(event);
@@ -115,7 +122,7 @@ public class MatchService implements IMatchService {
             participants.add((Participant) participant);
         }
 
-        ArenaService.get().copyFrom(match.getArena()).createDuplicate().thenAccept(virtualArena ->{
+        ArenaService.get().copyFrom(match.getArena()).createDuplicate().thenAccept(virtualArena -> {
             Match neptuneMatch = new SoloFightMatch(
                     virtualArena,
                     KitService.get().copyFrom(match.getKit()),
@@ -123,11 +130,18 @@ public class MatchService implements IMatchService {
                     new ArrayList<>(),
                     new Participant(redPlayer),
                     new Participant(bluePlayer),
-                    1
-            );
+                    1);
 
             matches.add(neptuneMatch);
             new MatchStartRunnable(neptuneMatch).start(0L, 20L);
+        }).exceptionally(ex -> {
+            // Handle exception - virtual world cleanup is handled in
+            // Arena.createDuplicate()
+            ex.printStackTrace();
+            // Notify players that match creation failed
+            redPlayer.sendMessage("§cFailed to create match. Please try again.");
+            bluePlayer.sendMessage("§cFailed to create match. Please try again.");
+            return null;
         });
     }
 

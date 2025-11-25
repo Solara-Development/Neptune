@@ -50,13 +50,13 @@ public class ItemUtils {
     }
 
     public String serialize(List<ItemStack> items) {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         if (items == null) {
             items = new ArrayList<>();
         }
 
-        try {
-            BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(new GZIPOutputStream(outputStream));
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(
+                        new GZIPOutputStream(outputStream))) {
 
             dataOutput.writeInt(items.size());
 
@@ -67,28 +67,25 @@ public class ItemUtils {
                 dataOutput.writeObject(item);
             }
 
-            dataOutput.close();
+            dataOutput.flush();
+            return Base64.getEncoder().encodeToString(outputStream.toByteArray());
         } catch (IOException e) {
             ServerUtils.error("Occurred while saving items " + e.getMessage());
             return null;
         }
-
-        return Base64.getEncoder().encodeToString(outputStream.toByteArray());
     }
 
     public String serialize(ItemStack item) {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        try {
-            BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(new GZIPOutputStream(outputStream));
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(
+                        new GZIPOutputStream(outputStream))) {
             dataOutput.writeObject(item);
-
-            dataOutput.close();
+            dataOutput.flush();
+            return Base64.getEncoder().encodeToString(outputStream.toByteArray());
         } catch (IOException e) {
             ServerUtils.error("Occurred while saving item " + e.getMessage());
             return null;
         }
-
-        return Base64.getEncoder().encodeToString(outputStream.toByteArray());
     }
 
     public List<ItemStack> deserialize(String base64) {
@@ -97,9 +94,8 @@ public class ItemUtils {
             return items;
         byte[] data = Base64.getDecoder().decode(base64);
 
-        try {
-            ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
-            BukkitObjectInputStream dataInput = new BukkitObjectInputStream(new GZIPInputStream(inputStream));
+        try (ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
+                BukkitObjectInputStream dataInput = new BukkitObjectInputStream(new GZIPInputStream(inputStream))) {
 
             int size = dataInput.readInt();
 
@@ -108,12 +104,11 @@ public class ItemUtils {
                 items.add(item);
             }
 
-            dataInput.close();
+            return items;
         } catch (IOException | ClassNotFoundException e) {
             ServerUtils.error("Occurred while loading items " + e.getMessage());
             return null;
         }
-        return items;
     }
 
     public List<String> getLore(List<String> lore, Replacement... replacements) {
@@ -138,15 +133,12 @@ public class ItemUtils {
 
     public ItemStack deserializeItem(String base64) {
         byte[] data = Base64.getDecoder().decode(base64);
-        ItemStack item = null;
-        try {
-            ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
-            BukkitObjectInputStream dataInput = new BukkitObjectInputStream(new GZIPInputStream(inputStream));
-            item = (ItemStack) dataInput.readObject();
-            dataInput.close();
+        try (ByteArrayInputStream inputStream = new ByteArrayInputStream(data);
+                BukkitObjectInputStream dataInput = new BukkitObjectInputStream(new GZIPInputStream(inputStream))) {
+            return (ItemStack) dataInput.readObject();
         } catch (IOException | ClassNotFoundException e) {
             ServerUtils.error("Occurred while loading item!");
+            return null;
         }
-        return item;
     }
 }

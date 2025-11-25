@@ -144,6 +144,18 @@ public abstract class Match implements IMatch {
                 player.setAllowFlight(true);
                 player.setFlying(true);
             }, 5L);
+        }).exceptionally(ex -> {
+            // Handle teleport failure - clean up spectator state
+            ex.printStackTrace();
+            spectators.remove(player.getUniqueId());
+            Profile playerProfile = API.getProfile(player);
+            if (playerProfile != null) {
+                playerProfile.setState(
+                        playerProfile.getGameData().getParty() == null ? ProfileState.IN_LOBBY : ProfileState.IN_PARTY);
+                playerProfile.setMatch(null);
+            }
+            player.sendMessage(CC.error("Failed to join spectator mode. Please try again."));
+            return null;
         });
 
         player.setGameMode(GameMode.SURVIVAL);
@@ -389,12 +401,13 @@ public abstract class Match implements IMatch {
     }
 
     public void removeEntities() {
-        for (Entity entity : new HashSet<>(entities)) {
+        // Use iterator to safely remove during iteration
+        entities.removeIf(entity -> {
             if (entity == null)
-                continue;
+                return true;
             entity.remove();
-            entities.remove(entity);
-        }
+            return true;
+        });
     }
 
     public void setupParticipants() {

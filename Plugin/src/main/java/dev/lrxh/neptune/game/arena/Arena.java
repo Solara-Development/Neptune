@@ -51,8 +51,8 @@ public class Arena implements IArena {
     }
 
     public Arena(String name, String displayName, Location redSpawn, Location blueSpawn,
-                 Location min, Location max, double buildLimit, boolean enabled,
-                 List<Material> whitelistedBlocks, int deathY) {
+            Location min, Location max, double buildLimit, boolean enabled,
+            List<Material> whitelistedBlocks, int deathY) {
 
         this(name, displayName, redSpawn, blueSpawn, enabled, deathY);
         this.min = min;
@@ -71,8 +71,8 @@ public class Arena implements IArena {
     }
 
     public Arena(String name, String displayName, Location redSpawn, Location blueSpawn,
-                 Location min, Location max, double buildLimit, boolean enabled,
-                 List<Material> whitelistedBlocks, int deathY, CuboidSnapshot snapshot, Arena owner) {
+            Location min, Location max, double buildLimit, boolean enabled,
+            List<Material> whitelistedBlocks, int deathY, CuboidSnapshot snapshot, Arena owner) {
 
         this(name, displayName, redSpawn, blueSpawn, min, max, buildLimit, enabled, whitelistedBlocks, deathY);
         this.snapshot = snapshot;
@@ -95,12 +95,23 @@ public class Arena implements IArena {
 
     @Override
     public void remove() {
-
+        // Intentionally empty - only VirtualArena needs cleanup via
+        // virtualWorld.unload()
+        // Regular arenas persist in the main world and don't need removal
     }
 
     public synchronized CompletableFuture<VirtualArena> createDuplicate() {
         CompletableFuture<VirtualArena> future = new CompletableFuture<>();
         UUID uuid = UUID.randomUUID();
+
+        // Create defensive copy of snapshot to prevent race conditions
+        final CuboidSnapshot snapshotCopy = this.snapshot;
+        if (snapshotCopy == null) {
+            future.completeExceptionally(
+                    new IllegalStateException("Arena snapshot is null - arena may not be fully loaded"));
+            return future;
+        }
+
         WorldCreator creator = new WorldCreator(uuid.toString())
                 .type(WorldType.NORMAL)
                 .generator(new ChunkGenerator() {
@@ -114,34 +125,39 @@ public class Arena implements IArena {
                         return new Location(world, 0, 0, 0);
                     }
 
-
                     @Override
-                    public boolean shouldGenerateNoise(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ) {
+                    public boolean shouldGenerateNoise(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX,
+                            int chunkZ) {
                         return false;
                     }
 
                     @Override
-                    public boolean shouldGenerateSurface(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ) {
+                    public boolean shouldGenerateSurface(@NotNull WorldInfo worldInfo, @NotNull Random random,
+                            int chunkX, int chunkZ) {
                         return false;
                     }
 
                     @Override
-                    public boolean shouldGenerateCaves(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ) {
+                    public boolean shouldGenerateCaves(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX,
+                            int chunkZ) {
                         return false;
                     }
 
                     @Override
-                    public boolean shouldGenerateDecorations(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ) {
+                    public boolean shouldGenerateDecorations(@NotNull WorldInfo worldInfo, @NotNull Random random,
+                            int chunkX, int chunkZ) {
                         return false;
                     }
 
                     @Override
-                    public boolean shouldGenerateMobs(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ) {
+                    public boolean shouldGenerateMobs(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX,
+                            int chunkZ) {
                         return false;
                     }
 
                     @Override
-                    public boolean shouldGenerateStructures(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ) {
+                    public boolean shouldGenerateStructures(@NotNull WorldInfo worldInfo, @NotNull Random random,
+                            int chunkX, int chunkZ) {
                         return false;
                     }
                 })
@@ -170,8 +186,7 @@ public class Arena implements IArena {
                 Location blueSpawn = this.blueSpawn.clone();
                 blueSpawn.setWorld(world);
 
-
-                virtualWorld.paste(snapshot);
+                virtualWorld.paste(snapshotCopy);
 
                 String dupName = this.name + "_" + uuid;
 
@@ -187,12 +202,18 @@ public class Arena implements IArena {
                         new ArrayList<>(this.whitelistedBlocks),
                         this.deathY,
                         this,
-                        virtualWorld
-                );
+                        virtualWorld);
 
                 future.complete(duplicate);
 
             } catch (Exception ex) {
+                // CRITICAL FIX: Unload the virtual world to prevent memory leak
+                try {
+                    virtualWorld.unload();
+                } catch (Exception unloadEx) {
+                    // Log but don't throw - we want to propagate the original exception
+                    unloadEx.printStackTrace();
+                }
                 future.completeExceptionally(ex);
             }
         }).exceptionally(ex -> {
@@ -257,7 +278,8 @@ public class Arena implements IArena {
         KitService.get().removeArenasFromKits(this);
         ArenaService.get().arenas.remove(this);
 
-        if (save) ArenaService.get().save();
+        if (save)
+            ArenaService.get().save();
     }
 
     @Override

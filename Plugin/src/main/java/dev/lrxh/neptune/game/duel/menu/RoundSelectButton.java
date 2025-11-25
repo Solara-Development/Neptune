@@ -40,7 +40,8 @@ public class RoundSelectButton extends Button {
     @Override
     public void onClick(ClickType type, Player player) {
         Profile profile = API.getProfile(receiver);
-        if (profile == null) return;
+        if (profile == null)
+            return;
         if (player.hasPermission("neptune.arenaselector")) {
             new ArenaSelectMenu(kit, receiver, round).open(player);
             return;
@@ -54,6 +55,12 @@ public class RoundSelectButton extends Button {
             profile.sendDuel(duelRequest);
 
             Bukkit.getScheduler().runTask(Neptune.get(), () -> player.closeInventory());
+        }).exceptionally(ex -> {
+            // Handle exception - virtual world cleanup is handled in
+            // Arena.createDuplicate()
+            player.sendMessage(CC.error("Failed to create arena duplicate. Please try again or contact an admin."));
+            ex.printStackTrace();
+            return null;
         });
     }
 }

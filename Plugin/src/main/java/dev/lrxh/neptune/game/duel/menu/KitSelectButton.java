@@ -30,7 +30,8 @@ public class KitSelectButton extends Button {
 
     @Override
     public ItemStack getItemStack(Player player) {
-        return new ItemBuilder(kit.getIcon()).name(MenusLocale.DUEL_ITEM_NAME.getString().replace("<kit>", kit.getDisplayName()))
+        return new ItemBuilder(kit.getIcon())
+                .name(MenusLocale.DUEL_ITEM_NAME.getString().replace("<kit>", kit.getDisplayName()))
                 .lore(MenusLocale.DUEL_LORE.getStringList(), player)
 
                 .build();
@@ -40,7 +41,8 @@ public class KitSelectButton extends Button {
     public void onClick(ClickType type, Player player) {
         if (party) {
             Profile profile = API.getProfile(receiver);
-            if (profile == null) return;
+            if (profile == null)
+                return;
             kit.getRandomArena().thenAccept(arena -> {
                 if (arena == null) {
                     player.sendMessage(CC.error("No arena found, please contact and admin"));
@@ -49,6 +51,12 @@ public class KitSelectButton extends Button {
                 DuelRequest duelRequest = new DuelRequest(player.getUniqueId(), kit, arena, true, 1);
                 profile.sendDuel(duelRequest);
                 Bukkit.getScheduler().runTask(Neptune.get(), () -> player.closeInventory());
+            }).exceptionally(ex -> {
+                // Handle exception - virtual world cleanup is handled in
+                // Arena.createDuplicate()
+                player.sendMessage(CC.error("Failed to create arena duplicate. Please try again or contact an admin."));
+                ex.printStackTrace();
+                return null;
             });
         } else {
             new RoundsSelectMenu(kit, receiver).open(player);

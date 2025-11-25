@@ -143,64 +143,71 @@ public class Profile implements IProfile {
 
     public static CompletableFuture<Void> save(Profile profile) {
         return CompletableFuture.runAsync(() -> {
-            GameData gameData = profile.getGameData();
-            SettingData settingData = profile.getSettingData();
+            try {
+                GameData gameData = profile.getGameData();
+                SettingData settingData = profile.getSettingData();
 
-            DataDocument dataDocument = new DataDocument();
-            dataDocument.put("uuid", profile.getPlayerUUID().toString());
-            dataDocument.put("username", profile.getUsername());
+                DataDocument dataDocument = new DataDocument();
+                dataDocument.put("uuid", profile.getPlayerUUID().toString());
+                dataDocument.put("username", profile.getUsername());
 
-            dataDocument.put("history", gameData.serializeHistory());
+                dataDocument.put("history", gameData.serializeHistory());
 
-            DataDocument kitStatsDoc = new DataDocument();
+                DataDocument kitStatsDoc = new DataDocument();
 
-            for (Kit kit : KitService.get().kits) {
-                DataDocument kitStatisticsDocument = new DataDocument();
-                KitData entry = gameData.get(kit);
+                for (Kit kit : KitService.get().kits) {
+                    DataDocument kitStatisticsDocument = new DataDocument();
+                    KitData entry = gameData.get(kit);
 
-                kitStatisticsDocument.put("WIN_STREAK_CURRENT", entry.getCurrentStreak());
-                kitStatisticsDocument.put("WINS", entry.getKills());
-                kitStatisticsDocument.put("ELO", entry.getElo());
-                kitStatisticsDocument.put("LOSSES", entry.getDeaths());
-                kitStatisticsDocument.put("WIN_STREAK_BEST", entry.getBestStreak());
-                kitStatisticsDocument.put(
-                        "kit",
-                        (entry.getKitLoadout() == null || entry.getKitLoadout().isEmpty())
-                                ? ""
-                                : ItemUtils.serialize(entry.getKitLoadout()));
+                    kitStatisticsDocument.put("WIN_STREAK_CURRENT", entry.getCurrentStreak());
+                    kitStatisticsDocument.put("WINS", entry.getKills());
+                    kitStatisticsDocument.put("ELO", entry.getElo());
+                    kitStatisticsDocument.put("LOSSES", entry.getDeaths());
+                    kitStatisticsDocument.put("WIN_STREAK_BEST", entry.getBestStreak());
+                    kitStatisticsDocument.put(
+                            "kit",
+                            (entry.getKitLoadout() == null || entry.getKitLoadout().isEmpty())
+                                    ? ""
+                                    : ItemUtils.serialize(entry.getKitLoadout()));
 
-                entry.updateDivision();
+                    entry.updateDivision();
 
-                DataDocument customPersistentData = new DataDocument();
-                for (String key : entry.getPersistentData().keySet()) {
-                    customPersistentData.put(key, entry.getPersistentData().get(key));
+                    DataDocument customPersistentData = new DataDocument();
+                    for (String key : entry.getPersistentData().keySet()) {
+                        customPersistentData.put(key, entry.getPersistentData().get(key));
+                    }
+                    kitStatisticsDocument.put("customPersistentData", customPersistentData);
+
+                    kitStatsDoc.put(kit.getName(), kitStatisticsDocument);
                 }
-                kitStatisticsDocument.put("customPersistentData", customPersistentData);
 
-                kitStatsDoc.put(kit.getName(), kitStatisticsDocument);
+                kitStatsDoc.put("lastPlayedKit", gameData.getLastPlayedKit());
+                dataDocument.put("kitData", kitStatsDoc);
+
+                DataDocument settingsDoc = new DataDocument();
+                settingsDoc.put("showPlayers", settingData.isPlayerVisibility());
+                settingsDoc.put("allowSpectators", settingData.isAllowSpectators());
+                settingsDoc.put("allowDuels", settingData.isAllowDuels());
+                settingsDoc.put("allowParty", settingData.isAllowParty());
+                settingsDoc.put("maxPing", settingData.getMaxPing());
+                settingsDoc.put("killEffect", settingData.getKillEffect().toString());
+                settingsDoc.put("menuSound", settingData.isMenuSound());
+                settingsDoc.put("deathMessagePackage", settingData.getKillMessagePackage().getName());
+                dataDocument.put("settings", settingsDoc);
+
+                DataDocument globalCustomPersistentData = new DataDocument();
+                for (String key : gameData.getPersistentData().keySet()) {
+                    globalCustomPersistentData.put(key, gameData.getPersistentData().get(key));
+                }
+                dataDocument.put("customPersistentData", globalCustomPersistentData);
+
+                DatabaseService.get().getDatabase().replace(profile.getPlayerUUID(), dataDocument);
+            } catch (Exception e) {
+                // Log error to prevent silent data loss
+                e.printStackTrace();
+                Bukkit.getLogger().severe("Failed to save profile for " + profile.getUsername() +
+                        " (UUID: " + profile.getPlayerUUID() + "): " + e.getMessage());
             }
-
-            kitStatsDoc.put("lastPlayedKit", gameData.getLastPlayedKit());
-            dataDocument.put("kitData", kitStatsDoc);
-
-            DataDocument settingsDoc = new DataDocument();
-            settingsDoc.put("showPlayers", settingData.isPlayerVisibility());
-            settingsDoc.put("allowSpectators", settingData.isAllowSpectators());
-            settingsDoc.put("allowDuels", settingData.isAllowDuels());
-            settingsDoc.put("allowParty", settingData.isAllowParty());
-            settingsDoc.put("maxPing", settingData.getMaxPing());
-            settingsDoc.put("killEffect", settingData.getKillEffect().toString());
-            settingsDoc.put("menuSound", settingData.isMenuSound());
-            settingsDoc.put("deathMessagePackage", settingData.getKillMessagePackage().getName());
-            dataDocument.put("settings", settingsDoc);
-
-            DataDocument globalCustomPersistentData = new DataDocument();
-            for (String key : gameData.getPersistentData().keySet()) {
-                globalCustomPersistentData.put(key, gameData.getPersistentData().get(key));
-            }
-            dataDocument.put("customPersistentData", globalCustomPersistentData);
-
-            DatabaseService.get().getDatabase().replace(profile.getPlayerUUID(), dataDocument);
         });
     }
 
@@ -278,7 +285,6 @@ public class Profile implements IProfile {
         }
         return customState != null && !customState.isEmpty() ? customState : "neptune:unknown";
     }
-
 
     public boolean hasState(ProfileState... profileStates) {
         for (ProfileState profileState : profileStates) {

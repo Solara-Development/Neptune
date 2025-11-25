@@ -13,7 +13,7 @@ import dev.lrxh.neptune.utils.PlayerUtil;
 import dev.lrxh.neptune.utils.tasks.NeptuneRunnable;
 import org.bukkit.Bukkit;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class MatchEndRunnable extends NeptuneRunnable {
@@ -38,7 +38,8 @@ public class MatchEndRunnable extends NeptuneRunnable {
                 match.hideHealth();
             }
 
-            for (UUID spectator : new HashSet<>(match.spectators)) {
+            // Use ArrayList copy to safely iterate while removing
+            for (UUID spectator : new ArrayList<>(match.spectators)) {
                 match.removeSpectator(spectator, false);
             }
 
@@ -47,12 +48,14 @@ public class MatchEndRunnable extends NeptuneRunnable {
             match.forEachParticipant(participant -> {
 
                 Profile profile = API.getProfile(participant.getPlayerUUID());
-                if (profile.getMatch() != match) return;
+                if (profile.getMatch() != match)
+                    return;
 
                 PlayerUtil.reset(participant.getPlayer());
                 profile.setMatch(null);
                 PlayerUtil.teleportToSpawn(participant.getPlayerUUID());
-                profile.setState(profile.getGameData().getParty() == null ? ProfileState.IN_LOBBY : ProfileState.IN_PARTY);
+                profile.setState(
+                        profile.getGameData().getParty() == null ? ProfileState.IN_LOBBY : ProfileState.IN_PARTY);
 
                 match.forEachPlayer(player -> HotbarService.get().giveItems(player));
             });

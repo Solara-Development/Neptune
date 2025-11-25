@@ -29,7 +29,8 @@ public class ArenaSelectMenu extends Menu {
     private final int round;
 
     public ArenaSelectMenu(Kit kit, UUID receiver, int round) {
-        super(MenusLocale.ARENA_TITLE.getString(), MenusLocale.ARENA_SIZE.getInt(), Filter.valueOf(MenusLocale.ARENA_FILTER.getString()));
+        super(MenusLocale.ARENA_TITLE.getString(), MenusLocale.ARENA_SIZE.getInt(),
+                Filter.valueOf(MenusLocale.ARENA_FILTER.getString()));
         this.kit = kit;
         this.receiver = receiver;
         this.round = round;
@@ -53,7 +54,8 @@ public class ArenaSelectMenu extends Menu {
             public void onClick(ClickType type, Player p) {
                 kit.getRandomArena().thenAccept(arena -> {
                     Profile profile = API.getProfile(receiver);
-                    if (profile == null) return;
+                    if (profile == null)
+                        return;
                     if (arena == null) {
                         p.sendMessage(CC.error("No arena found, please contact an admin"));
                         return;
@@ -61,6 +63,12 @@ public class ArenaSelectMenu extends Menu {
                     DuelRequest duelRequest = new DuelRequest(p.getUniqueId(), kit, arena, false, round);
                     profile.sendDuel(duelRequest);
                     Bukkit.getScheduler().runTask(Neptune.get(), () -> p.closeInventory());
+                }).exceptionally(ex -> {
+                    // Handle exception - virtual world cleanup is handled in
+                    // Arena.createDuplicate()
+                    p.sendMessage(CC.error("Failed to create arena duplicate. Please try again or contact an admin."));
+                    ex.printStackTrace();
+                    return null;
                 });
             }
         });
@@ -80,11 +88,19 @@ public class ArenaSelectMenu extends Menu {
                 @Override
                 public void onClick(ClickType type, Player p) {
                     Profile profile = API.getProfile(receiver);
-                    if (profile == null) return;
+                    if (profile == null)
+                        return;
                     player.closeInventory();
                     arena.createDuplicate().thenAccept(duplicate -> {
                         DuelRequest duelRequest = new DuelRequest(p.getUniqueId(), kit, duplicate, false, round);
                         profile.sendDuel(duelRequest);
+                    }).exceptionally(ex -> {
+                        // Handle exception - virtual world cleanup is handled in
+                        // Arena.createDuplicate()
+                        p.sendMessage(
+                                CC.error("Failed to create arena duplicate. Please try again or contact an admin."));
+                        ex.printStackTrace();
+                        return null;
                     });
                 }
             });
