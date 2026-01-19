@@ -11,6 +11,14 @@ public interface IKitData {
 
     void setDeaths(int amount);
 
+    int getWins();
+
+    void setWins(int amount);
+
+    int getLosses();
+
+    void setLosses(int amount);
+
     int getCurrentStreak();
 
     void setCurrentStreak(int amount);

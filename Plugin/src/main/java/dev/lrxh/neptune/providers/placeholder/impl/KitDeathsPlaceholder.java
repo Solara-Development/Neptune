@@ -10,8 +10,8 @@ import org.bukkit.OfflinePlayer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class KitWinsPlaceholder implements Placeholder {
-    private final Pattern PATTERN = Pattern.compile("(.*)_wins");
+public class KitDeathsPlaceholder implements Placeholder {
+    private final Pattern PATTERN = Pattern.compile("(.*)_deaths");
 
     @Override
     public boolean match(String string) {
@@ -28,6 +28,6 @@ public class KitWinsPlaceholder implements Placeholder {
         KitData data = profile.getGameData().get(KitService.get().getKitByName(matcher.group(1)));
         if (data == null) return string;
 
-        return String.valueOf(data.getWins());
+        return String.valueOf(data.getDeaths());
     }
 }

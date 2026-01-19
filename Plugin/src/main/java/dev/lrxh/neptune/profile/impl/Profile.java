@@ -96,10 +96,12 @@ public class Profile implements IProfile {
 
                         KitData profileKitData = gameData.get(kit);
                         profileKitData.setCurrentStreak(kitDocument.getInteger("WIN_STREAK_CURRENT", 0));
-                        profileKitData.setKills(kitDocument.getInteger("WINS", 0));
+                        profileKitData.setKills(kitDocument.getInteger("KILLS", 0));
+                        profileKitData.setDeaths(kitDocument.getInteger("DEATHS", 0));
+                        profileKitData.setWins(kitDocument.getInteger("WINS", 0));
+                        profileKitData.setLosses(kitDocument.getInteger("LOSSES", 0));
                         profileKitData.setElo(kitDocument.getInteger("ELO", 0));
                         profileKitData.setDivision(DivisionService.get().getDivisionByElo(profileKitData.getElo()));
-                        profileKitData.setDeaths(kitDocument.getInteger("LOSSES", 0));
                         profileKitData.setBestStreak(kitDocument.getInteger("WIN_STREAK_BEST", 0));
                         profileKitData.setKitLoadout(
                                 Objects.equals(kitDocument.getString("kit"), "")
@@ -159,9 +161,11 @@ public class Profile implements IProfile {
                 KitData entry = gameData.get(kit);
 
                 kitStatisticsDocument.put("WIN_STREAK_CURRENT", entry.getCurrentStreak());
-                kitStatisticsDocument.put("WINS", entry.getKills());
+                kitStatisticsDocument.put("WINS", entry.getWins());
+                kitStatisticsDocument.put("LOSSES", entry.getLosses());
+                kitStatisticsDocument.put("KILLS", entry.getKills());
+                kitStatisticsDocument.put("DEATHS", entry.getDeaths());
                 kitStatisticsDocument.put("ELO", entry.getElo());
-                kitStatisticsDocument.put("LOSSES", entry.getDeaths());
                 kitStatisticsDocument.put("WIN_STREAK_BEST", entry.getBestStreak());
                 kitStatisticsDocument.put(
                         "kit",

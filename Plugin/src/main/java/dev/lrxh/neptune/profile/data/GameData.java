@@ -96,7 +96,7 @@ public class GameData implements IGameData {
         boolean value = false;
 
         if (won) {
-            value = updateWin(kitData);
+            value = updateWins(kitData);
         } else {
             updateLosses(kitData);
         }
@@ -106,14 +106,14 @@ public class GameData implements IGameData {
         return value;
     }
 
-    private boolean updateWin(KitData kitData) {
-        kitData.setKills(kitData.getKills() + 1);
+    private boolean updateWins(KitData kitData) {
+        kitData.setWins(kitData.getWins() + 1);
         updateWinStreak(kitData, true);
         return kitData.updateElo(true);
     }
 
     private void updateLosses(KitData kitData) {
-        kitData.setDeaths(kitData.getDeaths() + 1);
+        kitData.setLosses(kitData.getLosses() + 1);
         kitData.updateElo(false);
         updateWinStreak(kitData, false);
     }

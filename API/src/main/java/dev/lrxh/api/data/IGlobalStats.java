@@ -1,6 +1,14 @@
 package dev.lrxh.api.data;
 
 public interface IGlobalStats {
+    int getKills();
+
+    void setKills(int amount);
+
+    int getDeaths();
+
+    void setDeaths(int amount);
+
     int getWins();
 
     void setWins(int amount);

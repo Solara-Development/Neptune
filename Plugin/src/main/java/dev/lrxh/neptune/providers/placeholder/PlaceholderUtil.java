@@ -68,6 +68,8 @@ public class PlaceholderUtil {
         line = line.replaceAll("<wins>", String.valueOf(globalStats.getWins()));
         line = line.replaceAll("<losses>", String.valueOf(globalStats.getLosses()));
         line = line.replaceAll("<currentStreak>", String.valueOf(globalStats.getCurrentStreak()));
+        line = line.replaceAll("<kills>", String.valueOf(globalStats.getKills()));
+        line = line.replaceAll("<deaths>", String.valueOf(globalStats.getDeaths()));
 
         if (state.equals(ProfileState.IN_QUEUE)) {
             QueueEntry queueEntry = QueueService.get().get(player.getUniqueId());

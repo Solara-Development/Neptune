@@ -19,6 +19,8 @@ import java.util.concurrent.ThreadLocalRandom;
 public class KitData implements IKitData {
     private int kills = 0;
     private int deaths = 0;
+    private int wins = 0;
+    private int losses = 0;
     private int bestStreak = 0;
     private int currentStreak = 0;
     private List<ItemStack> kitLoadout = new ArrayList<>();

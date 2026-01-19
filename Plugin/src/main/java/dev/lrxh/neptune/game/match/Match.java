@@ -19,6 +19,7 @@ import dev.lrxh.neptune.game.match.impl.participant.Participant;
 import dev.lrxh.neptune.game.match.impl.participant.ParticipantColor;
 import dev.lrxh.neptune.game.match.impl.solo.SoloFightMatch;
 import dev.lrxh.neptune.game.match.impl.team.TeamFightMatch;
+import dev.lrxh.neptune.profile.data.KitData;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
 import dev.lrxh.neptune.providers.clickable.Replacement;
@@ -450,4 +451,14 @@ public abstract class Match implements IMatch {
     public abstract void breakBed(Participant participant, Participant breaker);
 
     public abstract void sendTitle(Participant participant, TextComponent header, TextComponent footer, int duration);
+
+    public void incrementKills(Participant participant) {
+        KitData kitData = participant.getProfile().getGameData().get(getKit());
+        kitData.setKills(kitData.getKills() + 1);
+    }
+    public void incrementDeaths(Participant participant) {
+        KitData kitData = participant.getProfile().getGameData().get(getKit());
+        kitData.setDeaths(kitData.getDeaths() + 1);
+        if (participant.getLastAttacker() != null) incrementKills(participant.getLastAttacker());
+    }
 }

@@ -217,9 +217,11 @@ public class LeaderboardService {
 
         KitData kitData = new KitData();
         kitData.setCurrentStreak(kitDocument.getInteger("WIN_STREAK_CURRENT", 0));
-        kitData.setKills(kitDocument.getInteger("WINS", 0));
-        kitData.setDivision(DivisionService.get().getDivisionByElo(kitData.getKills()));
-        kitData.setDeaths(kitDocument.getInteger("LOSSES", 0));
+        kitData.setWins(kitDocument.getInteger("WINS", 0));
+        kitData.setLosses(kitDocument.getInteger("LOSSES", 0));
+        kitData.setKills(kitDocument.getInteger("KILLS", 0));
+        kitData.setDeaths(kitDocument.getInteger("DEATHS", 0));
+        kitData.setDivision(DivisionService.get().getDivisionByElo(kitData.getWins()));
         kitData.setBestStreak(kitDocument.getInteger("WIN_STREAK_BEST", 0));
 
         return kitData;

@@ -65,9 +65,9 @@ public class FfaFightMatch extends Match implements IFffaFightMatch {
         if (isEnded()) return;
 
         hideParticipant(participant);
+        incrementDeaths(participant);
         participant.setDead(true);
         participant.setLoser(true);
-
         Profile profile = API.getProfile(participant.getPlayerUUID());
 
         if (!participant.isLeft() && !participant.isDisconnected()) {

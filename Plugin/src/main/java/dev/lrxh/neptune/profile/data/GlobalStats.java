@@ -12,6 +12,8 @@ import lombok.Setter;
 @Setter
 public class GlobalStats implements IGlobalStats {
     private final Profile profile;
+    private int kills = 0;
+    private int deaths = 0;
     private int wins = 0;
     private int losses = 0;
     private int currentStreak = 0;
@@ -28,6 +30,8 @@ public class GlobalStats implements IGlobalStats {
     }
 
     public void update() {
+        this.kills = 0;
+        this.deaths = 0;
         this.wins = 0;
         this.losses = 0;
         this.currentStreak = 0;
@@ -35,8 +39,10 @@ public class GlobalStats implements IGlobalStats {
         this.elo = 0;
 
         for (KitData kitData : profile.getGameData().getKitDataInternal().values()) {
-            this.wins += kitData.getKills();
-            this.losses += kitData.getDeaths();
+            this.wins += kitData.getWins();
+            this.losses += kitData.getLosses();
+            this.kills += kitData.getKills();
+            this.deaths += kitData.getDeaths();
             this.currentStreak += kitData.getCurrentStreak();
             this.bestStreak = Math.max(this.bestStreak, kitData.getBestStreak());
             this.elo += kitData.getElo();

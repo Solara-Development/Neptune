@@ -117,12 +117,11 @@ public class TeamFightMatch extends Match implements ITeamFightMatch {
     public void onDeath(Participant participant) {
         if (isEnded()) return;
         hideParticipant(participant);
-
+        incrementDeaths(participant);
         participant.setDead(true);
 
         MatchTeam team = getParticipantTeam(participant);
         team.deadParticipants().add(participant);
-
         if (!participant.isDisconnected() && !participant.isLeft()) {
             if (getKit().is(KitRule.BED_WARS)) {
                 if (!participant.isBedBroken()) {
