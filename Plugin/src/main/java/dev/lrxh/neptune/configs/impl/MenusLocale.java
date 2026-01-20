@@ -306,7 +306,7 @@ public enum MenusLocale implements IDataAccessor {
     DIVISIONS_ITEM_NAME("DIVISIONS.ITEM.NAME", DataType.STRING, "<division>"),
     DIVISIONS_LORE("DIVISIONS.LORE", DataType.STRING_LIST,
             "&7To reach this rank, you", "&7need <elo> elo."),
-    PASSED_DIVISIONS_ITEM_NAME("DIVISIONS.PASSED.ITEM.NAME", DataType.STRING, "&a<division>"),
+    PASSED_DIVISIONS_ITEM_NAME("DIVISIONS.PASSED.ITEM.NAME", DataType.STRING, "&a✅ <division>"),
     PASSED_DIVISIONS_LORE("DIVISIONS.PASSED.LORE", DataType.STRING_LIST,
             "&7You have already reached", "&7this rank."),
     DIVISIONS_ELO_BUTTON_ENABLED("DIVISIONS.ELO_BUTTON.ENABLED", DataType.BOOLEAN, "true"),
