@@ -25,6 +25,8 @@ public enum SettingsLocale implements IDataAccessor {
     PARTICIPANT_COLOR_BLUE("PARTICIPANT.COLOR.BLUE", "", DataType.STRING, "&9"),
     PARTICIPANT_COLOR_RED("PARTICIPANT.COLOR.RED", "", DataType.STRING, "&c"),
     REQUEST_EXPIRY_TIME("REQUEST.EXPIRY_TIME", "How long a request should last in seconds.", DataType.INT, "30"),
+    VOID_Y_LOCATION("VOID_Y_LOCATION", "The Y level at which players are considered to be in the void and will be teleported back to spawn.", DataType.INT,
+            "-64"),
     IN_MATCH_BLOCKED_COMMANDS("IN_MATCH.BLOCK_COMMANDS", "Commands which the player can't run during a match.",
             DataType.STRING_LIST,
             ""),
