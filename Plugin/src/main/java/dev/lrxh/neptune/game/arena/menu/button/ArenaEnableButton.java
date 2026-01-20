@@ -27,7 +27,7 @@ public class ArenaEnableButton extends Button {
 
     @Override
     public ItemStack getItemStack(Player player) {
-        if (arena.isEnabled()) return new ItemBuilder(Material.GREEN_WOOL).name("&cDisable").build();
-        return new ItemBuilder(Material.RED_WOOL).name("&aEnable").build();
+        if (arena.isEnabled()) return new ItemBuilder(Material.GREEN_WOOL).name("&cClick to disable").build();
+        return new ItemBuilder(Material.RED_WOOL).name("&aClick to enable").build();
     }
 }
