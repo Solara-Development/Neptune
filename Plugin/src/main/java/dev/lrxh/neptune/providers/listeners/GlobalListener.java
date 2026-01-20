@@ -246,7 +246,6 @@ public class GlobalListener implements Listener {
         event.setRespawnLocation(player.getLocation());
     }
 
-    // reset hotbar on gamemode change
     @EventHandler
     public void onGamemodeChange(PlayerGameModeChangeEvent event) {
         Player player = event.getPlayer();
