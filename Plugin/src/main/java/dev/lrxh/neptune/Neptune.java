@@ -65,7 +65,7 @@ import fr.mrmicky.fastboard.FastManager;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Difficulty;
-import org.bukkit.GameRule;
+import org.bukkit.GameRules;
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.ServicePriority;
@@ -172,10 +172,10 @@ public final class Neptune extends JavaPlugin {
 
     private void loadWorlds() {
         for (World world : getServer().getWorlds()) {
-            world.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
-            world.setGameRule(GameRule.DO_WEATHER_CYCLE, false);
-            world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
-            world.setGameRule(GameRule.DO_IMMEDIATE_RESPAWN, true);
+            world.setGameRule(GameRules.SHOW_ADVANCEMENT_MESSAGES, false);
+            world.setGameRule(GameRules.ADVANCE_WEATHER, false);
+            world.setGameRule(GameRules.ADVANCE_TIME, false);
+            world.setGameRule(GameRules.IMMEDIATE_RESPAWN, true);
             world.setDifficulty(Difficulty.HARD);
         }
     }

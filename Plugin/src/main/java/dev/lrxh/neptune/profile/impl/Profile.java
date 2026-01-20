@@ -51,6 +51,7 @@ public class Profile implements IProfile {
     private Visibility visibility;
     private ArenaProcedure arenaProcedure;
     private KitProcedure kitProcedure;
+    private Player partyInviteTarget;
     private boolean fake;
 
     public Profile(String name, UUID uuid, Neptune plugin, boolean fake) {

@@ -2,10 +2,16 @@ package dev.lrxh.neptune.providers.listeners;
 
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.Neptune;
+import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.feature.hotbar.HotbarService;
+import dev.lrxh.neptune.feature.party.Party;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
+import dev.lrxh.neptune.providers.clickable.Replacement;
 import dev.lrxh.neptune.utils.CC;
+import dev.lrxh.neptune.utils.tasks.NeptuneRunnable;
+import dev.lrxh.neptune.utils.tasks.TaskScheduler;
+
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -19,6 +25,7 @@ import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.event.weather.WeatherChangeEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
 
@@ -52,14 +59,40 @@ public class GlobalListener implements Listener {
         }
     }
 
+    @EventHandler
+    public void onPlayerInteract(PlayerInteractEntityEvent event) {
+        if (!(event.getRightClicked() instanceof Player) || event.getHand() != EquipmentSlot.HAND)
+            return;
+        Player target = (Player) event.getRightClicked();
+        Player sender = event.getPlayer();
+        Profile senderProfile = API.getProfile(sender);
+        Party party = senderProfile.getGameData().getParty();
+        System.out.println("ran party listener");
+        if (party == null || !party.isLeader(sender.getUniqueId()))
+            return;
+        if (senderProfile.getPartyInviteTarget() == target) {
+            senderProfile.setPartyInviteTarget(null);
+            sender.chat("/party invite " + target.getName());
+        } else {
+            senderProfile.setPartyInviteTarget(target);
+            MessagesLocale.PARTY_INVITE_CONFIRM.send(sender, new Replacement("<player>", target.getName()));
+            TaskScheduler.get().startTaskLater(new NeptuneRunnable() {
+                @Override
+                public void run() {
+                    if (senderProfile.getPartyInviteTarget() == target) {
+                        senderProfile.setPartyInviteTarget(null);
+                    }
+                }
+            }, 200L);
+        }
+    }
 
     @EventHandler
     public void onShiftRightClick(PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
-
-        if (event.getRightClicked() instanceof Player clicked) {
-            if (!player.isSneaking()) return;
-
+        if (API.getProfile(player).getMatch() != null) return;
+        if (!player.isSneaking()) return;
+        if (event.getRightClicked() instanceof Player clicked && event.getHand() == EquipmentSlot.HAND) {
             player.chat("/duel " + clicked.getName());
         }
     }
