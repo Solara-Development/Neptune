@@ -7,6 +7,7 @@ import io.papermc.paper.datacomponent.item.TooltipDisplay;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -134,9 +135,19 @@ public class ItemBuilder {
         item.setAmount(amount <= 0 ? 1 : Math.min(amount, 64));
         return this;
     }
-
+    
+    public ItemBuilder addEnchantedGlow() {
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            meta.addEnchant(Enchantment.UNBREAKING, 1, true);
+            item.setItemMeta(meta);
+        }
+        return this;
+    }
+    
     public ItemStack build() {
         clearFlags();
         return item;
     }
+
 }
