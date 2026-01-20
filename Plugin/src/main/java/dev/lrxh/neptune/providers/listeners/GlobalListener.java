@@ -3,6 +3,7 @@ package dev.lrxh.neptune.providers.listeners;
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
+import dev.lrxh.neptune.configs.impl.SettingsLocale;
 import dev.lrxh.neptune.feature.hotbar.HotbarService;
 import dev.lrxh.neptune.feature.party.Party;
 import dev.lrxh.neptune.profile.data.ProfileState;
@@ -13,6 +14,7 @@ import dev.lrxh.neptune.utils.tasks.NeptuneRunnable;
 import dev.lrxh.neptune.utils.tasks.TaskScheduler;
 
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -93,6 +95,17 @@ public class GlobalListener implements Listener {
         if (!player.isSneaking()) return;
         if (event.getRightClicked() instanceof Player clicked && event.getHand() == EquipmentSlot.HAND) {
             player.chat("/duel " + clicked.getName());
+        }
+    }
+
+    @EventHandler
+    public void onPlayerMove(PlayerMoveEvent event) {
+        Player player = event.getPlayer();
+        if (API.getProfile(player).getState() != ProfileState.IN_LOBBY) return;
+        Location spawn = Neptune.get().getCache().getSpawn();
+        if (spawn == null) return;
+        if (player.getLocation().getY() <= SettingsLocale.VOID_Y_LOCATION.getInt()) {
+            player.teleport(spawn);
         }
     }
 
