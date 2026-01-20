@@ -4,7 +4,9 @@ import com.google.common.collect.Lists;
 import dev.lrxh.api.arena.IArena;
 import dev.lrxh.blockChanger.BlockChanger;
 import dev.lrxh.blockChanger.snapshot.CuboidSnapshot;
+import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.game.kit.KitService;
+import dev.lrxh.neptune.utils.tasks.NeptuneRunnable;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.*;
@@ -160,11 +162,13 @@ public class Arena implements IArena {
         BlockChanger.createVirtualWorld(creator).thenAccept(virtualWorld -> {
             try {
                 World world = virtualWorld.getWorld();
-                world.setGameRule(GameRules.ADVANCE_TIME, false);
-                world.setGameRule(GameRules.ADVANCE_WEATHER, false);
-                world.setGameRule(GameRules.SHOW_ADVANCEMENT_MESSAGES, false);
-                world.setGameRule(GameRules.IMMEDIATE_RESPAWN, true);
-                world.setDifficulty(Difficulty.HARD);
+                Bukkit.getScheduler().runTask(Neptune.get(), () -> {
+                    world.setGameRule(GameRules.ADVANCE_TIME, false);
+                    world.setGameRule(GameRules.ADVANCE_WEATHER, false);
+                    world.setGameRule(GameRules.SHOW_ADVANCEMENT_MESSAGES, false);
+                    world.setGameRule(GameRules.IMMEDIATE_RESPAWN, true);
+                    world.setDifficulty(Difficulty.HARD);
+                });
 
                 Location min = this.min.clone();
                 min.setWorld(world);
