@@ -121,8 +121,8 @@
 
 | PlaceholderAPI                                                                  | Description                                                                            |
 |---------------------------------------------------------------------------------|----------------------------------------------------------------------------------------|
-| %neptune*\<KILLS\|BEST_WIN_STREAK\|DEATHS\|ELO\>*\<kit name\>\_\<1-10\>\_name%  | Returns the player's name with the most kills/win streak/deaths/elo in the select kit. |
-| %neptune*\<KILLS\|BEST_WIN_STREAK\|DEATHS\|ELO\>*\<kit name\>\_\<1-10\>\_value% | Returns the kills/win streak/deaths/elo from the player on the selected kit.           |
+| %neptune*\<KILLS\|BEST_WIN_STREAK\|DEATHS\|ELO\|WINS\|LOSSES\>*\<kit name\>\_\<1-10\>\_name%  | Returns the player's name with the most kills/win streak/deaths/elo in the select kit. |
+| %neptune*\<KILLS\|BEST_WIN_STREAK\|DEATHS\|ELO\|WINS\|LOSSES\>*\<kit name\>\_\<1-10\>\_value% | Returns the kills/win streak/deaths/elo from the player on the selected kit.           |
 
 Example usage:
 
