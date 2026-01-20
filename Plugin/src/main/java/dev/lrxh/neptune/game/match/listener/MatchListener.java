@@ -501,7 +501,7 @@ public class MatchListener implements Listener {
             Profile profile = API.getProfile(player);
             if (profile == null)
                 return;
-
+            if (profile.getState().equals(ProfileState.IN_SPECTATOR)) event.setCancelled(true);
             if (!isPlayerInMatch(profile)) {
                 event.setCancelled(true);
             }
