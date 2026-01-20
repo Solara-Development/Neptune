@@ -719,8 +719,8 @@ public class MatchListener implements Listener {
             return;
 
         Material blockType = clickedBlock.getType();
-
-        if (isStrippable(blockType)) {
+        if (event.getItem() == null) return;
+        if (isStrippable(blockType) && Tag.ITEMS_AXES.isTagged(event.getItem().getType())) {
             // Only cancel if player is in match
             Player player = event.getPlayer();
             Optional<Profile> profileOpt = getProfile(player);
@@ -731,17 +731,15 @@ public class MatchListener implements Listener {
     }
 
     private boolean isStrippable(Material material) {
-        return material == Material.OAK_LOG ||
-                material == Material.SPRUCE_LOG ||
-                material == Material.BIRCH_LOG ||
-                material == Material.JUNGLE_LOG ||
-                material == Material.ACACIA_LOG ||
-                material == Material.DARK_OAK_LOG ||
-                material == Material.MANGROVE_LOG ||
-                material == Material.CHERRY_LOG ||
-                material == Material.CRIMSON_STEM ||
-                material == Material.COPPER_BLOCK ||
-                material == Material.WARPED_STEM;
+        return Tag.LOGS.isTagged(material) ||
+            material == Material.OAK_WOOD ||
+            material == Material.SPRUCE_WOOD ||
+            material == Material.BIRCH_WOOD ||
+            material == Material.JUNGLE_WOOD ||
+            material == Material.ACACIA_WOOD ||
+            material == Material.DARK_OAK_WOOD ||
+            material == Material.MANGROVE_WOOD ||
+            material == Material.BAMBOO_BLOCK;
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

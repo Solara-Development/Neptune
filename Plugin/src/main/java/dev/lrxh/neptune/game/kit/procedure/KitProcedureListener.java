@@ -58,8 +58,8 @@ public class KitProcedureListener implements Listener {
                 player.sendMessage(CC.success("Created kit"));
                 Bukkit.getScheduler().runTask(Neptune.get(), () -> {
                     PlayerUtil.reset(player);
+                    HotbarService.get().giveItems(player);
                 });
-                HotbarService.get().giveItems(player);
                 new KitsManagementMenu().open(player);
             }
             case RENAME -> {
@@ -97,8 +97,8 @@ public class KitProcedureListener implements Listener {
                 new KitManagementMenu(profile.getKitProcedure().getKit()).open(player);
                 Bukkit.getScheduler().runTask(Neptune.get(), () -> {
                     PlayerUtil.reset(player);
+                    HotbarService.get().giveItems(player);
                 });
-                HotbarService.get().giveItems(player);
             }
             case SET_ICON -> {
                 if (!input.equalsIgnoreCase("Done")) return;

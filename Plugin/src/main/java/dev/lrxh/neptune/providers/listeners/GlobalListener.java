@@ -4,7 +4,6 @@ import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.configs.impl.SettingsLocale;
-import dev.lrxh.neptune.feature.hotbar.HotbarService;
 import dev.lrxh.neptune.feature.party.Party;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
@@ -289,14 +288,5 @@ public class GlobalListener implements Listener {
     public void onRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
         event.setRespawnLocation(player.getLocation());
-    }
-
-    @EventHandler
-    public void onGamemodeChange(PlayerGameModeChangeEvent event) {
-        Player player = event.getPlayer();
-        Profile profile = API.getProfile(player);
-        if (profile == null) return;
-        if (isPlayerNotInMatch(profile))
-            HotbarService.get().giveItems(player);
     }
 }
