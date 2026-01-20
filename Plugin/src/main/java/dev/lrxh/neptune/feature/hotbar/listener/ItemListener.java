@@ -15,6 +15,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 
 
@@ -41,7 +42,7 @@ public class ItemListener implements Listener {
     }
 
     @EventHandler
-    public void onInventoryChange(InventoryClickEvent event) {
+    public void onInventoryClick(InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player player)) return;
         Profile profile = API.getProfile(player);
         if (profile.getMatch() != null
@@ -53,7 +54,28 @@ public class ItemListener implements Listener {
         if (player.getGameMode().equals(GameMode.CREATIVE)) return;
         if (event.getClickedInventory() != event.getWhoClicked().getInventory()) return;
         event.setCancelled(true);
+        if (event.getCurrentItem() == null) return;
+        if (event.getCurrentItem().getType().equals(Material.AIR)) return;
+
         handleAction(profile, event.getCurrentItem());
+    }
+
+    @EventHandler
+    public void swapOffhand(PlayerSwapHandItemsEvent event) {
+        Player player = event.getPlayer();
+        Profile profile = API.getProfile(player);
+        if (profile.getMatch() != null
+                && profile.getMatch().getState().equals(MatchState.IN_ROUND)
+                && profile.getState() != ProfileState.IN_SPECTATOR) {
+            return;
+        }
+        if (profile.getState() == ProfileState.IN_CUSTOM) return;
+        if (player.getGameMode().equals(GameMode.CREATIVE)) return;
+        event.setCancelled(true);
+        if (event.getOffHandItem() == null) return;
+        if (event.getOffHandItem().getType().equals(Material.AIR)) return;
+
+        handleAction(profile, event.getOffHandItem());
     }
 
     private void handleAction(Profile profile, ItemStack item) {
