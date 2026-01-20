@@ -11,6 +11,8 @@ import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.providers.manager.IService;
 import dev.lrxh.neptune.utils.ConfigFile;
 import lombok.Getter;
+
+import org.bukkit.GameMode;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -46,6 +48,7 @@ public class HotbarService extends IService {
     public void giveItems(Player player) {
         player.getInventory().clear();
         ProfileState profileState = API.getProfile(player).getState();
+        if (API.getProfile(player).getMatch() == null && player.getGameMode() == GameMode.CREATIVE) return;
         if (profileState.equals(ProfileState.IN_KIT_EDITOR)) return;
 
         Hotbar inventory = items.get(profileState);
