@@ -67,7 +67,6 @@ public class GlobalListener implements Listener {
         Player sender = event.getPlayer();
         Profile senderProfile = API.getProfile(sender);
         Party party = senderProfile.getGameData().getParty();
-        System.out.println("ran party listener");
         if (party == null || !party.isLeader(sender.getUniqueId()))
             return;
         if (senderProfile.getPartyInviteTarget() == target) {
