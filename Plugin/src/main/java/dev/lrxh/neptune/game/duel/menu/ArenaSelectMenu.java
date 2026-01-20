@@ -70,9 +70,9 @@ public class ArenaSelectMenu extends Menu {
                 @Override
                 public ItemStack getItemStack(Player p) {
                     return new ItemBuilder(Material.MAP)
-                            .name(MenusLocale.ARENA_ITEM_NAME.getString().replace("<arena>", arena.getName()))
+                            .name(MenusLocale.ARENA_ITEM_NAME.getString().replace("<arena>", arena.getDisplayName()))
                             .lore(MenusLocale.ARENA_ITEM_LORE.getStringList().stream()
-                                    .map(it -> it.replace("<arena>", arena.getName()))
+                                    .map(it -> it.replace("<arena>", arena.getDisplayName()))
                                     .collect(Collectors.toList()))
                             .build();
                 }
