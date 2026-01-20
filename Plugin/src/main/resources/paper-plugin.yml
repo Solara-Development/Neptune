@@ -1,7 +1,7 @@
 name: Neptune
 version: '2.1.0'
 main: dev.lrxh.neptune.Neptune
-api-version: '1.21.6'
+api-version: '1.21.11'
 
 description: Neptune - Practice Core
 

@@ -11,6 +11,8 @@
 
 ## 💿 Installation
 
+0. You need a PaperMC server (or forks of PaperMC) with version **1.21.11** or above.
+
 1. **Download** the plugin.
 
 > You can download from:
