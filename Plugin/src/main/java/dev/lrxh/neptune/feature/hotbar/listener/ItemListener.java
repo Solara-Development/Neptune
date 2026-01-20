@@ -50,7 +50,7 @@ public class ItemListener implements Listener {
                 && profile.getState() != ProfileState.IN_SPECTATOR) {
             return;
         }
-        if (profile.getState() == ProfileState.IN_CUSTOM) return;
+        if (profile.hasState(ProfileState.IN_CUSTOM, ProfileState.IN_KIT_EDITOR)) return;
         if (player.getGameMode().equals(GameMode.CREATIVE)) return;
         if (event.getClickedInventory() != event.getWhoClicked().getInventory()) return;
         event.setCancelled(true);
@@ -69,7 +69,7 @@ public class ItemListener implements Listener {
                 && profile.getState() != ProfileState.IN_SPECTATOR) {
             return;
         }
-        if (profile.getState() == ProfileState.IN_CUSTOM) return;
+        if (profile.hasState(ProfileState.IN_CUSTOM, ProfileState.IN_KIT_EDITOR)) return;
         if (player.getGameMode().equals(GameMode.CREATIVE)) return;
         event.setCancelled(true);
         if (event.getOffHandItem() == null) return;
