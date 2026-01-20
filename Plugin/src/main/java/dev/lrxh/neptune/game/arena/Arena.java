@@ -160,6 +160,11 @@ public class Arena implements IArena {
         BlockChanger.createVirtualWorld(creator).thenAccept(virtualWorld -> {
             try {
                 World world = virtualWorld.getWorld();
+                world.setGameRule(GameRules.ADVANCE_TIME, false);
+                world.setGameRule(GameRules.ADVANCE_WEATHER, false);
+                world.setGameRule(GameRules.SHOW_ADVANCEMENT_MESSAGES, false);
+                world.setGameRule(GameRules.IMMEDIATE_RESPAWN, true);
+                world.setDifficulty(Difficulty.HARD);
 
                 Location min = this.min.clone();
                 min.setWorld(world);

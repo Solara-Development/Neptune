@@ -6,13 +6,16 @@ import dev.lrxh.neptune.feature.hotbar.impl.Item;
 import dev.lrxh.neptune.game.match.impl.MatchState;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
+
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 
 
 public class ItemListener implements Listener {
@@ -29,15 +32,32 @@ public class ItemListener implements Listener {
         if (player.getGameMode().equals(GameMode.CREATIVE)) return;
 
         if (profile.getState() == ProfileState.IN_CUSTOM) return;
-
         event.setCancelled(true);
-
         if (event.getItem() == null) return;
         if (event.getItem().getType().equals(Material.AIR)) return;
         if (!(event.getAction().equals(Action.RIGHT_CLICK_AIR) || event.getAction().equals(Action.RIGHT_CLICK_BLOCK)))
             return;
+        handleAction(profile, event.getItem());
+    }
 
-        Item clickedItem = Item.getByItemStack(profile.getState(), event.getItem(), player.getUniqueId());
+    @EventHandler
+    public void onInventoryChange(InventoryClickEvent event) {
+        if (!(event.getWhoClicked() instanceof Player player)) return;
+        Profile profile = API.getProfile(player);
+        if (profile.getMatch() != null
+                && profile.getMatch().getState().equals(MatchState.IN_ROUND)
+                && profile.getState() != ProfileState.IN_SPECTATOR) {
+            return;
+        }
+        if (profile.getState() == ProfileState.IN_CUSTOM) return;
+        if (player.getGameMode().equals(GameMode.CREATIVE)) return;
+        if (event.getClickedInventory() != event.getWhoClicked().getInventory()) return;
+        event.setCancelled(true);
+        handleAction(profile, event.getCurrentItem());
+    }
+
+    private void handleAction(Profile profile, ItemStack item) {
+        Item clickedItem = Item.getByItemStack(profile.getState(), item, profile.getPlayerUUID());
         if (clickedItem == null) return;
 
         if (!profile.hasCooldownEnded("hotbar")) return;
@@ -46,10 +66,10 @@ public class ItemListener implements Listener {
         if (clickedItem instanceof CustomItem customItem) {
             String command = customItem.getCommand();
             if (!command.equalsIgnoreCase("none")) {
-                player.performCommand(customItem.getCommand());
+                profile.getPlayer().performCommand(customItem.getCommand());
             }
         } else {
-            clickedItem.getAction().execute(player);
+            clickedItem.getAction().execute(profile.getPlayer());
         }
 
         profile.addCooldown("hotbar", 200);
