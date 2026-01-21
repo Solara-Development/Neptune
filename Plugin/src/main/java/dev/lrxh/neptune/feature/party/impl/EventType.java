@@ -61,6 +61,8 @@ public enum EventType {
 
             MatchTeam teamA = new MatchTeam(teamAList);
             MatchTeam teamB = new MatchTeam(teamBList);
+            teamA.setOpponentTeam(teamB);
+            teamB.setOpponentTeam(teamA);
 
             kit.getRandomArena().thenAccept(arena -> {
                 if (arena == null) {
