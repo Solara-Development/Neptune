@@ -2,6 +2,7 @@ package dev.lrxh.neptune.providers.placeholder;
 
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.Neptune;
+import dev.lrxh.neptune.feature.divisions.impl.Division;
 import dev.lrxh.neptune.feature.party.Party;
 import dev.lrxh.neptune.feature.queue.QueueEntry;
 import dev.lrxh.neptune.feature.queue.QueueService;
@@ -78,8 +79,9 @@ public class PlaceholderUtil {
             line = line.replaceAll("<kit>", queueEntry.getKit().getDisplayName());
             line = line.replaceAll("<maxPing>", String.valueOf(profile.getSettingData().getMaxPing()));
             line = line.replaceAll("<time>", String.valueOf(queueEntry.getTime().formatTime()));
-            line = line.replaceAll("<kit_division>",
-                    profile.getGameData().get(queueEntry.getKit()).getDivision().getDisplayName());
+            Division kitDivision = profile.getGameData().get(queueEntry.getKit()).getDivision();
+            if (kitDivision != null) line = line.replaceAll("<kit_division>",
+                    kitDivision.getDisplayName());
         }
 
         if (state.equals(ProfileState.IN_KIT_EDITOR)) {

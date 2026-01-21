@@ -14,6 +14,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
@@ -52,12 +53,15 @@ public class ItemListener implements Listener {
         }
         if (profile.hasState(ProfileState.IN_CUSTOM, ProfileState.IN_KIT_EDITOR)) return;
         if (player.getGameMode().equals(GameMode.CREATIVE)) return;
-        if (event.getClickedInventory() != event.getWhoClicked().getInventory()) return;
+        if (event.getClickedInventory().getType() != InventoryType.CRAFTING && event.getClickedInventory() != event.getWhoClicked().getInventory()) return;
         event.setCancelled(true);
-        if (event.getCurrentItem() == null) return;
-        if (event.getCurrentItem().getType().equals(Material.AIR)) return;
+        if (event.getCurrentItem() != null && event.getCursor() != null && event.getCurrentItem().getType() == Material.AIR && event.getCursor().getType() == Material.AIR)
+            return;
+        ItemStack item = event.getCurrentItem() == null || event.getCurrentItem().getType() == Material.AIR ? event.getCursor() : event.getCurrentItem();
+        if (item == null) return;
+        if (item.getType().equals(Material.AIR)) return;
 
-        handleAction(profile, event.getCurrentItem());
+        handleAction(profile, item);
     }
 
     @EventHandler
