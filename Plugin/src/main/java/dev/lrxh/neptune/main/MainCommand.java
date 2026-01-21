@@ -8,12 +8,15 @@ import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.configs.ConfigService;
 import dev.lrxh.neptune.feature.cosmetics.CosmeticService;
 import dev.lrxh.neptune.feature.hotbar.HotbarService;
+import dev.lrxh.neptune.game.kit.Kit;
 import dev.lrxh.neptune.game.match.Match;
 import dev.lrxh.neptune.game.match.MatchService;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
+import dev.lrxh.neptune.providers.database.DatabaseService;
 import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.GithubUtils;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -69,5 +72,16 @@ public class MainCommand {
         }
 
         Bukkit.getServer().shutdown();
+    }
+
+    @Command(name = "resetkitloadout", desc = "")
+    public void resetkitloadout(@Sender Player player, Kit kit) {
+        player.sendMessage(CC.info("Resetting everyone's loadouts..."));
+        DatabaseService.get().getDatabase().resetAllKitLoadouts(kit.getName());
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            Profile profile = API.getProfile(p);
+            profile.getGameData().get(kit).setKitLoadout(kit.getItems());
+        }
+        player.sendMessage(CC.color("&aAll users' kit loadouts have been reset."));
     }
 }

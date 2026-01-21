@@ -48,6 +48,25 @@ public class MongoDatabase implements IDatabase {
     }
 
     @Override
+    public CompletableFuture<Void> resetAllKitLoadouts(String kitName) {
+        return CompletableFuture.supplyAsync(() -> {
+            if (collection == null) {
+                ServerUtils.error("MongoDB collection is not initialized!");
+                return null;
+            }
+            try {
+                collection.updateMany(
+                        Filters.exists("data.kitData." + kitName),
+                        new Document("", new Document("data.kitData." + kitName + ".kit", null))
+                );
+            } catch (MongoException e) {
+                ServerUtils.error("Error resetting all kit loadouts in MongoDB: " + e.getMessage());
+            }
+            return null;
+        }, DatabaseService.get().getExecutor());
+    }
+
+    @Override
     public CompletableFuture<Void> replace(UUID playerUUID, DataDocument newDocument) {
         return CompletableFuture.runAsync(() -> {
             if (collection == null) {

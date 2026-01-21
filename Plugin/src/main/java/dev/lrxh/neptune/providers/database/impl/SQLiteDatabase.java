@@ -130,6 +130,14 @@ public class SQLiteDatabase implements IDatabase {
     }
 
     @Override
+    public CompletableFuture<Void> resetAllKitLoadouts(String kitName) {
+        String sql = "UPDATE playerData SET data = json_set(data, '$.kitData.\""
+                + kitName + "\".kit', null) WHERE json_extract(data, '$.kitData.\""
+                + kitName + "\"') IS NOT NULL";
+        return executeUpdate(sql).thenApply(ignored -> null);
+    }
+
+    @Override
     public CompletableFuture<Void> replace(UUID playerUUID, DataDocument newDocument) {
         return executeUpdate(SQL_UPSERT, playerUUID.toString(), newDocument.toDocument().toJson())
                 .thenApply(ignored -> null);

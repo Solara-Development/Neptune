@@ -13,6 +13,7 @@ public interface IDatabase {
     IDatabase load();
 
     CompletableFuture<DataDocument> getUserData(UUID playerUUID);
+    CompletableFuture<Void> resetAllKitLoadouts(String kitName);
 
     CompletableFuture<Void> replace(UUID playerUUID, DataDocument newDocument);
 

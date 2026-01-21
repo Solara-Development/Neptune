@@ -93,7 +93,7 @@ public class KitProcedureListener implements Listener {
                     p.getGameData().get(kit).setKitLoadout(kit.getItems());
                 }
 
-                player.sendMessage(CC.success("Set new inv"));
+                player.sendMessage(CC.success("Set new kit inventory. Use &b/neptune resetkitloadout " + kit.getName() + " &ato reset custom kit loadouts for all players."));
                 new KitManagementMenu(profile.getKitProcedure().getKit()).open(player);
                 Bukkit.getScheduler().runTask(Neptune.get(), () -> {
                     PlayerUtil.reset(player);
