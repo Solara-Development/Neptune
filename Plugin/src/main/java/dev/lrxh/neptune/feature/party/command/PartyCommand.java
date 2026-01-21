@@ -31,36 +31,47 @@ public class PartyCommand {
         profile.createParty();
     }
 
-    @Command(name = "join", desc = "", usage = "<player>")
-    public void join(@Sender Player player, Player target) {
+    @Command(name = "join", desc = "", hidden = true)
+    public void join(@Sender Player player, Player target, String joinMethod) {
+        if (!joinable(player, target)) return;
+        Party party = API.getProfile(target).getGameData().getParty();
+        party.accept(player.getUniqueId(), false);
+    }
+    @Command(name = "joinad", desc = "", hidden = true)
+    public void joinad(@Sender Player player, Player target) {
+        if (!joinable(player, target)) return;
+        Party party = API.getProfile(target).getGameData().getParty();
+        party.accept(player.getUniqueId(), party.isOpen());
+    }
+
+    private boolean joinable(Player player, Player target) {
         Party party = API.getProfile(target).getGameData().getParty();
 
         if (party == null) {
             MessagesLocale.PARTY_NOT_IN_PARTY.send(player.getUniqueId(), new Replacement("<player>", target.getName()));
-            return;
+            return false;
         }
         if (!party.getLeader().equals(target.getUniqueId())) {
             MessagesLocale.PARTY_NOT_LEADER.send(player.getUniqueId(), new Replacement("<player>", target.getName()));
-            return;
+            return false;
         }
         if (!party.isOpen()) {
             MessagesLocale.PARTY_PRIVATE.send(player.getUniqueId(), new Replacement("<player>", target.getName()));
-            return;
+            return false;
         }
 
         Profile profile = API.getProfile(player);
 
         if (profile.getGameData().getParty() != null) {
             MessagesLocale.PARTY_ALREADY_IN.send(player.getUniqueId());
-            return;
+            return false;
         }
 
         if (!profile.hasState(ProfileState.IN_LOBBY)) {
             MessagesLocale.PARTY_CANNOT_CREATE.send(player.getUniqueId());
-            return;
+            return false;
         }
-
-        party.accept(player.getUniqueId());
+        return true;
     }
 
     @Command(name = "disband", desc = "")
@@ -135,7 +146,7 @@ public class PartyCommand {
 
         PartyRequest request = (PartyRequest) profile.getGameData().getRequests().get(uuid);
         if (request != null) {
-            request.getParty().accept(player.getUniqueId());
+            request.getParty().accept(player.getUniqueId(), false);
         }
     }
 

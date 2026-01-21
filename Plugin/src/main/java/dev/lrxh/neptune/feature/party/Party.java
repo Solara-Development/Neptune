@@ -38,7 +38,7 @@ public class Party {
         this.duelRequest = true;
         this.plugin = plugin;
 
-        setupPlayer(leader);
+        setupPlayer(leader, false);
     }
 
     public String getLeaderName() {
@@ -73,13 +73,13 @@ public class Party {
                 ignore -> MessagesLocale.PARTY_EXPIRED.send(leader, new Replacement("<player>", player.getName())));
     }
 
-    public void accept(UUID playerUUID) {
+    public void accept(UUID playerUUID, boolean ad) {
         if (users.size() + 1 > maxUsers)
             return;
-        setupPlayer(playerUUID);
+        setupPlayer(playerUUID, ad);
     }
 
-    private void setupPlayer(UUID playerUUID) {
+    private void setupPlayer(UUID playerUUID, boolean ad) {
         Player invitedPlayer = Bukkit.getPlayer(playerUUID);
         if (invitedPlayer == null)
             return;
@@ -88,7 +88,7 @@ public class Party {
         profile.getGameData().setParty(this);
         profile.setState(ProfileState.IN_PARTY);
         if (playerUUID != leader) {
-            broadcast(MessagesLocale.PARTY_JOINED, new Replacement("<player>", invitedPlayer.getName()));
+            broadcast(ad ? MessagesLocale.PARTY_JOINED_FROM_ADVERTISEMENT : MessagesLocale.PARTY_JOINED, new Replacement("<player>", invitedPlayer.getName()));
         }
         API.getProfile(playerUUID).getGameData().removeRequest(leader);
     }
@@ -170,7 +170,7 @@ public class Party {
             for (Profile profile : ProfileService.get().profiles.values()) {
                 TextComponent join = new ClickableComponent(
                         MessagesLocale.PARTY_ADVERTISE_JOIN.getString(),
-                        "/party join " + getLeaderName(),
+                        "/party joinad " + getLeaderName(),
                         MessagesLocale.PARTY_ADVERTISE_JOIN_HOVER.getString().replaceAll("<leader>", getLeaderName()))
                         .build();
 
