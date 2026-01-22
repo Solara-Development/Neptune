@@ -4,6 +4,7 @@ import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
+import dev.lrxh.neptune.providers.placeholder.PlaceholderUtil;
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
@@ -108,14 +109,14 @@ public class PlayerUtil {
         if (player == null)
             return;
 
-        player.sendMessage(message);
+        player.sendMessage(PlaceholderUtil.format(message, player));
     }
 
     public void sendMessage(UUID playerUUID, String message) {
         Player player = Bukkit.getPlayer(playerUUID);
         if (player == null)
             return;
-        player.sendMessage(CC.color(message));
+        player.sendMessage(PlaceholderUtil.format(CC.color(message), player));
     }
 
     public void sendTitle(Player player, TextComponent header, TextComponent footer, int duration) {
