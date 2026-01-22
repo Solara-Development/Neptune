@@ -100,6 +100,7 @@ public class KitData implements IKitData {
     }
 
     public boolean updateDivision() {
+        if (DivisionService.get().divisions.isEmpty()) return false;
         Division previous = this.division;
         Division updated = DivisionService.get().getDivisionByElo(elo);
         if (updated == null) {

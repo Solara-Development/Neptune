@@ -35,7 +35,7 @@ public class StatButton extends Button {
                         new Replacement("<deaths>", String.valueOf(data.getDeaths())),
                         new Replacement("<win_streak_current>", String.valueOf(data.getCurrentStreak())),
                         new Replacement("<win_streak_best>", String.valueOf(data.getBestStreak())),
-                        new Replacement("<division>", String.valueOf(data.getDivision().getDisplayName())),
+                        new Replacement("<division>", data.getDivision() == null ? "None" : String.valueOf(data.getDivision().getDisplayName())),
                         new Replacement("<played>", String.valueOf(data.getWins() + data.getLosses())),
                         new Replacement("<kill_death_ratio>", String.valueOf(data.getKdr()))), player)
 

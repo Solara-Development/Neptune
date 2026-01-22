@@ -17,6 +17,6 @@ public class DivisionPlaceholder implements Placeholder {
         Profile profile = API.getProfile(player.getUniqueId());
         if (profile == null) return string;
         GlobalStats globalStats = profile.getGameData().getGlobalStats();
-        return String.valueOf(globalStats.getDivision().getDisplayName());
+        return globalStats.getDivision() == null ? "null" : String.valueOf(globalStats.getDivision().getDisplayName());
     }
 }

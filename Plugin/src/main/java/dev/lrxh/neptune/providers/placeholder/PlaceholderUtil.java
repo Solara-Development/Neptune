@@ -57,12 +57,14 @@ public class PlaceholderUtil {
             return line;
         ProfileState state = profile.getState();
 
+        Division division = profile.getGameData().getGlobalStats().getDivision();
+
         line = line.replaceAll("<online>", String.valueOf(Bukkit.getServer().getOnlinePlayers().size()));
         line = line.replaceAll("<queued>", String.valueOf(QueueService.get().getQueueSize()));
         line = line.replaceAll("<in-match>", String.valueOf(MatchService.get().matches.size()));
         line = line.replaceAll("<player>", player.getName());
         line = line.replaceAll("<ping>", String.valueOf((PlayerUtil.getPing(player))));
-        line = line.replaceAll("<division>", profile.getGameData().getGlobalStats().getDivision().getDisplayName());
+        line = line.replaceAll("<division>", division == null ? "None" : division.getDisplayName());
 
         GlobalStats globalStats = profile.getGameData().getGlobalStats();
         line = line.replaceAll("<wins>", String.valueOf(globalStats.getWins()));
@@ -98,8 +100,9 @@ public class PlaceholderUtil {
             Participant participant = match.getParticipant(player.getUniqueId());
 
             line = line.replaceAll("<maxPoints>", String.valueOf(match.getRounds()));
+            Division kitDivision = profile.getGameData().get(match.getKit()).getDivision();
             line = line.replaceAll("<kit_division>",
-                    profile.getGameData().get(profile.getMatch().getKit()).getDivision().getDisplayName());
+                    kitDivision == null ? "None" : kitDivision.getDisplayName());
             if (match instanceof SoloFightMatch soloFightMatch) {
                 Participant red = soloFightMatch.getParticipantA();
                 Participant blue = soloFightMatch.getParticipantB();
