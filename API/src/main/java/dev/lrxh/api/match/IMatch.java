@@ -31,4 +31,8 @@ public interface IMatch {
     IParticipant getParticipant(Player player);
 
     void broadcast(String message);
+
+    String getWinnerName();
+    
+    String getLoserName();
 }

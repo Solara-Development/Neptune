@@ -311,4 +311,11 @@ public class SoloFightMatch extends Match implements ISoloFightMatch {
     public Participant getBlueParticipant() {
         return participantA.getColor().equals(ParticipantColor.BLUE) ? participantA : participantB;
     }
+
+    public String getWinnerName() {
+        return getWinner().getName();
+    }
+    public String getLoserName() {
+        return getLoser().getName();
+    }
 }

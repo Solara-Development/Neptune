@@ -239,7 +239,12 @@ public abstract class Match implements IMatch {
                     }
                     return PlaceholderUtil.format(new ArrayList<>(ScoreboardLocale.IN_GAME.getStringList()), player);
                 case ENDING:
-                    return PlaceholderUtil.format(new ArrayList<>(ScoreboardLocale.IN_GAME_ENDED.getStringList()),
+                    return PlaceholderUtil.format(ScoreboardLocale.IN_GAME_ENDED.getStringList()
+                            .stream()
+                            .map(str -> str
+                                    .replaceAll("<winner>", getWinnerName())
+                                    .replaceAll("<loser>", getLoserName()))
+                            .toList(),
                             player);
                 default:
                     break;
@@ -436,6 +441,10 @@ public abstract class Match implements IMatch {
         player.teleport(location);
     }
 
+    public abstract String getWinnerName();
+
+    public abstract String getLoserName();
+
     public abstract void win(Participant winner);
 
     public abstract void end(Participant loser);
@@ -456,9 +465,11 @@ public abstract class Match implements IMatch {
         KitData kitData = participant.getProfile().getGameData().get(getKit());
         kitData.setKills(kitData.getKills() + 1);
     }
+
     public void incrementDeaths(Participant participant) {
         KitData kitData = participant.getProfile().getGameData().get(getKit());
         kitData.setDeaths(kitData.getDeaths() + 1);
-        if (participant.getLastAttacker() != null) incrementKills(participant.getLastAttacker());
+        if (participant.getLastAttacker() != null)
+            incrementKills(participant.getLastAttacker());
     }
 }

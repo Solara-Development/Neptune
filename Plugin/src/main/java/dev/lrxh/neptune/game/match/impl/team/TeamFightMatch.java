@@ -184,4 +184,12 @@ public class TeamFightMatch extends Match implements ITeamFightMatch {
         playSound(Sound.ENTITY_FIREWORK_ROCKET_BLAST);
         sendTitle(CC.color(MessagesLocale.MATCH_START_TITLE_FOOTER.getString()), CC.color(MessagesLocale.MATCH_START_TITLE_FOOTER.getString()), 10);
     }
+
+    public String getWinnerName() {
+        return getWinner().getTeamNames();
+    }
+
+    public String getLoserName() {
+        return getLoser().getTeamNames();
+    }
 }

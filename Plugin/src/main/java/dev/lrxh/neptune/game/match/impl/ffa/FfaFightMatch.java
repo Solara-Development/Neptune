@@ -98,6 +98,14 @@ public class FfaFightMatch extends Match implements IFffaFightMatch {
         end(participant);
     }
 
+    public String getWinnerName() {
+        return winner.getName();
+    }
+
+    public String getLoserName() {
+        return participants.stream().filter(p -> (p != winner)).map(p -> p.getNameColored()).toList().toString();
+    }
+
     private boolean isLastPlayerStanding() {
         return getParticipants().size() - deadParticipants.size() == 1;
     }
