@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.intellij.lang.annotations.Subst;
 
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 @UtilityClass
 public class CC {
@@ -43,7 +44,8 @@ public class CC {
 
         return Component.text()
                 .append(fixed)
-                .decorationIfAbsent(TextDecoration.ITALIC, hasItalic ? TextDecoration.State.TRUE : TextDecoration.State.FALSE)
+                .decorationIfAbsent(TextDecoration.ITALIC,
+                        hasItalic ? TextDecoration.State.TRUE : TextDecoration.State.FALSE)
                 .build();
     }
 
@@ -71,7 +73,10 @@ public class CC {
                 .replace("&m", "<strikethrough>")
                 .replace("&k", "<obfuscated>")
                 .replace("&r", "<reset>");
-
+        Pattern LEGACY_HEX = Pattern.compile(
+                "[§&]x[§&]([0-9a-f])[§&]([0-9a-f])[§&]([0-9a-f])[§&]([0-9a-f])[§&]([0-9a-f])[§&]([0-9a-f])", Pattern.CASE_INSENSITIVE);
+        text = LEGACY_HEX.matcher(text)
+            .replaceAll("<#$1$2$3$4$5$6>");
         return text.replaceAll("(?i)&#([a-f0-9]{6})", "<#$1>");
     }
 
@@ -81,14 +86,13 @@ public class CC {
         TagResolver resolver = TagResolver.resolver(
                 Arrays.stream(replacements)
                         .map(replacement -> {
-                            @Subst("") String key = replacement.getPlaceholder().replaceAll("^<|>$", "").toLowerCase();
+                            @Subst("")
+                            String key = replacement.getPlaceholder().replaceAll("^<|>$", "").toLowerCase();
                             return TagResolver.resolver(
                                     key,
-                                    Placeholder.component(key, replacement.getReplacement()).tag()
-                            );
+                                    Placeholder.component(key, replacement.getReplacement()).tag());
                         })
-                        .toArray(TagResolver[]::new)
-        );
+                        .toArray(TagResolver[]::new));
         return PlaceholderUtil.format(MiniMessage.miniMessage().deserialize(miniMessageInput, resolver), player);
     }
 }
