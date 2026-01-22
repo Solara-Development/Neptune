@@ -17,6 +17,8 @@
 | \<ping>          | %neptune_ping%                                                              | The ping of the player in milliseconds                                 |
 | \<wins>          | %neptune_wins%                                                              | The number of wins a player has accumulated                            |
 | \<losses>        | %neptune_losses%                                                            | The number of losses a player has accumulated                          |
+| \<kills>          | %neptune_kills%                                                              | The number of kills a player has accumulated                            |
+| \<deaths>        | %neptune_deaths%                                                            | The number of deaths a player has accumulated                          |
 | \<currentStreak> | %neptune_currentStreak%                                                     | The current win streak of the player                                   |
 | \<division>      | %neptune_division%                                                          | The global division name of the player                                 |
 | None             | %neptune*recent_match*(num)\_(opponent/arena/kit/date/time/unix_timestamp)% | Get details about a recent match. Unix timestamp is in seconds, not ms |
