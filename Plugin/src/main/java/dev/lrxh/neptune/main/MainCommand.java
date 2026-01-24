@@ -75,6 +75,7 @@ public class MainCommand {
     }
 
     @Command(name = "resetkitloadout", desc = "")
+    @Require("neptune.admin")
     public void resetkitloadout(@Sender Player player, Kit kit) {
         player.sendMessage(CC.info("Resetting everyone's loadouts..."));
         DatabaseService.get().getDatabase().resetAllKitLoadouts(kit.getName());
