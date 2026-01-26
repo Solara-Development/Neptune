@@ -49,8 +49,7 @@ public class ArenaProcedureListener implements Listener {
                     return;
                 }
 
-
-                Arena arena = new Arena(input);
+                Arena arena = new Arena(input, player.getWorld().getTime());
 
                 ArenaService.get().arenas.add(arena);
                 player.sendMessage(CC.success("Created arena"));
@@ -184,6 +183,32 @@ public class ArenaProcedureListener implements Listener {
                 new WhitelistedBlocksMenu(arena).open(player);
                 profile.getArenaProcedure().setArena(null);
             }
+            case SET_TIME -> {
+                event.setCancelled(true);
+
+                profile.getArenaProcedure().setType(ArenaProcedureType.NONE);
+                Arena arena = profile.getArenaProcedure().getArena();
+                if (input.equalsIgnoreCase("day")) arena.setTime(1000);
+                if (input.equalsIgnoreCase("night")) arena.setTime(13000);
+                else if (input.equalsIgnoreCase("noon")) arena.setTime(6000);
+                else if (input.equalsIgnoreCase("midnight")) arena.setTime(18000);
+                else if (input.equalsIgnoreCase("sunrise")) arena.setTime(23000);
+                else if (input.equalsIgnoreCase("sunset")) arena.setTime(12000);
+                else if (input.equalsIgnoreCase("current")) arena.setTime(player.getWorld().getTime());
+                else {
+                    try {
+                        long time = Long.parseLong(input);
+                        arena.setTime(time);
+                    } catch (NumberFormatException e) {
+                        player.sendMessage(CC.error("Invalid time input"));
+                        return;
+                    }
+                }
+                player.sendMessage(CC.success("Set arena time"));
+                new ArenaManagementMenu(arena).open(player);
+                profile.getArenaProcedure().setArena(null);
+            }
+            default -> {}
         }
 
         ArenaService.get().save();

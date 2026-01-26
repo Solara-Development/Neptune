@@ -16,6 +16,7 @@ public class VirtualArena implements IArena {
     private final String displayName;
     private final boolean enabled;
     private final int deathY;
+    private final long time;
     private final double buildLimit;
     private final List<Material> whitelistedBlocks;
     private final IArena owner;
@@ -39,6 +40,7 @@ public class VirtualArena implements IArena {
                         boolean enabled,
                         List<Material> whitelistedBlocks,
                         int deathY,
+                        long time,
                         IArena owner,
                         VirtualWorld virtualWorld) {
         this.name = name;
@@ -51,6 +53,7 @@ public class VirtualArena implements IArena {
         this.enabled = enabled;
         this.whitelistedBlocks = whitelistedBlocks;
         this.deathY = deathY;
+        this.time = time;
         this.owner = owner;
         this.virtualWorld = virtualWorld;
     }

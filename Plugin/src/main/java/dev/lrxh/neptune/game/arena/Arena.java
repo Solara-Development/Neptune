@@ -6,7 +6,6 @@ import dev.lrxh.blockChanger.BlockChanger;
 import dev.lrxh.blockChanger.snapshot.CuboidSnapshot;
 import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.game.kit.KitService;
-import dev.lrxh.neptune.utils.tasks.NeptuneRunnable;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.*;
@@ -34,18 +33,20 @@ public class Arena implements IArena {
     private Location min;
     private Location max;
     private double buildLimit;
+    private long time;
     private List<Material> whitelistedBlocks;
     private CuboidSnapshot snapshot;
     private Arena owner;
     private boolean doneLoading;
 
-    public Arena(String name, String displayName, Location redSpawn, Location blueSpawn, boolean enabled, int deathY) {
+    public Arena(String name, String displayName, Location redSpawn, Location blueSpawn, boolean enabled, int deathY, long time) {
         this.name = name;
         this.displayName = displayName;
         this.redSpawn = redSpawn;
         this.blueSpawn = blueSpawn;
         this.enabled = enabled;
         this.deathY = deathY;
+        this.time = time;
 
         this.buildLimit = 0;
         this.whitelistedBlocks = new ArrayList<>();
@@ -54,9 +55,9 @@ public class Arena implements IArena {
 
     public Arena(String name, String displayName, Location redSpawn, Location blueSpawn,
                  Location min, Location max, double buildLimit, boolean enabled,
-                 List<Material> whitelistedBlocks, int deathY) {
+                 List<Material> whitelistedBlocks, int deathY, long time) {
 
-        this(name, displayName, redSpawn, blueSpawn, enabled, deathY);
+        this(name, displayName, redSpawn, blueSpawn, enabled, deathY, time);
         this.min = min;
         this.max = max;
         this.buildLimit = buildLimit;
@@ -74,16 +75,16 @@ public class Arena implements IArena {
 
     public Arena(String name, String displayName, Location redSpawn, Location blueSpawn,
                  Location min, Location max, double buildLimit, boolean enabled,
-                 List<Material> whitelistedBlocks, int deathY, CuboidSnapshot snapshot, Arena owner) {
+                 List<Material> whitelistedBlocks, int deathY, long time, CuboidSnapshot snapshot, Arena owner) {
 
-        this(name, displayName, redSpawn, blueSpawn, min, max, buildLimit, enabled, whitelistedBlocks, deathY);
+        this(name, displayName, redSpawn, blueSpawn, min, max, buildLimit, enabled, whitelistedBlocks, deathY, time);
         this.snapshot = snapshot;
         this.owner = owner;
         this.doneLoading = (snapshot != null);
     }
 
-    public Arena(String name) {
-        this(name, name, null, null, false, -68321);
+    public Arena(String name, long time) {
+        this(name, name, null, null, false, -68321, time);
         this.min = null;
         this.max = null;
         this.buildLimit = 68321;
@@ -168,6 +169,7 @@ public class Arena implements IArena {
                     world.setGameRule(GameRules.SHOW_ADVANCEMENT_MESSAGES, false);
                     world.setGameRule(GameRules.IMMEDIATE_RESPAWN, true);
                     world.setDifficulty(Difficulty.HARD);
+                    world.setTime(time);
                 });
 
                 Location min = this.min.clone();
@@ -195,6 +197,7 @@ public class Arena implements IArena {
                         this.enabled,
                         new ArrayList<>(this.whitelistedBlocks),
                         this.deathY,
+                        this.time,
                         this,
                         virtualWorld
                 );

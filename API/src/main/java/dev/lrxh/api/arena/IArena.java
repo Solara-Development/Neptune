@@ -43,4 +43,6 @@ public interface IArena {
     void delete(boolean save);
 
     boolean equals(Object o);
+
+    long getTime();
 }

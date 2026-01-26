@@ -54,7 +54,7 @@ public class ArenaService extends IService implements IArenaService {
         Location blueSpawn = LocationUtil.deserialize(config.getString(path + "blueSpawn"));
         boolean enabled = config.getBoolean(path + "enabled");
         int deathY = config.getInt(path + "deathY", -68321);
-
+        long time = config.contains(path + "time") ? config.getLong(path + "time") : 0;
 
         Location edge1 = LocationUtil.deserialize(config.getString(path + "min"));
         Location edge2 = LocationUtil.deserialize(config.getString(path + "max"));
@@ -66,7 +66,7 @@ public class ArenaService extends IService implements IArenaService {
             whitelistedBlocks.add(Material.getMaterial(name));
         }
 
-        return new Arena(arenaName, displayName, redSpawn, blueSpawn, edge1, edge2, limit, enabled, whitelistedBlocks, deathY);
+        return new Arena(arenaName, displayName, redSpawn, blueSpawn, edge1, edge2, limit, enabled, whitelistedBlocks, deathY, time);
     }
 
 
@@ -84,6 +84,7 @@ public class ArenaService extends IService implements IArenaService {
                     new Value("blueSpawn", LocationUtil.serialize(arena.getBlueSpawn())),
                     new Value("enabled", arena.isEnabled()),
                     new Value("deathY", arena.getDeathY()),
+                    new Value("time", arena.getTime()),
                     new Value("limit", arena.getBuildLimit()),
                     new Value("whitelistedBlocks", arena.getWhitelistedBlocksAsString())
             ));
@@ -110,7 +111,7 @@ public class ArenaService extends IService implements IArenaService {
     }
 
     public Arena copyFrom(IArena arena) {
-        return new Arena(arena.getName(), arena.getDisplayName(), arena.getRedSpawn(), arena.getBlueSpawn(), arena.getMin(), arena.getMax(), arena.getBuildLimit(), arena.isEnabled(), arena.getWhitelistedBlocks(), arena.getDeathY());
+        return new Arena(arena.getName(), arena.getDisplayName(), arena.getRedSpawn(), arena.getBlueSpawn(), arena.getMin(), arena.getMax(), arena.getBuildLimit(), arena.isEnabled(), arena.getWhitelistedBlocks(), arena.getDeathY(), arena.getTime());
     }
 
     @Override
