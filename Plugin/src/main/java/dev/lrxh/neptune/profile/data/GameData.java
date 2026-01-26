@@ -125,6 +125,9 @@ public class GameData implements IGameData {
             if (kitData.getCurrentStreak() > kitData.getBestStreak()) {
                 kitData.setBestStreak(kitData.getCurrentStreak());
             }
+            if (globalStats.getBestStreak() < kitData.getCurrentStreak()) {
+                globalStats.setBestStreak(kitData.getCurrentStreak());
+            }
         } else {
             kitData.setCurrentStreak(kitData.getCurrentStreak() + 1);
             kitData.setCurrentStreak(0);
