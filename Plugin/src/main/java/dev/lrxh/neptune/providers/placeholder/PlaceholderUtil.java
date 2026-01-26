@@ -77,10 +77,9 @@ public class PlaceholderUtil {
         line = line.replaceAll("<elo>", String.valueOf(globalStats.getElo()));
         line = line.replaceAll("<played>", String.valueOf(globalStats.getWins() + globalStats.getLosses()));
         line = line.replaceAll("<kdr>", String.valueOf(globalStats.getKdr()));
-        // to be removed
-        line = line.replaceAll("<win_streak_current>", String.valueOf(globalStats.getCurrentStreak()));
-        line = line.replaceAll("<kill_death_ratio>", String.valueOf(globalStats.getKdr()));
-        line = line.replaceAll("<win_streak_best>", String.valueOf(globalStats.getBestStreak()));
+        line = line.replaceAll("<win_streak_current>", String.valueOf(globalStats.getCurrentStreak())); // to be removed
+        line = line.replaceAll("<kill_death_ratio>", String.valueOf(globalStats.getKdr())); // to be removed
+        line = line.replaceAll("<win_streak_best>", String.valueOf(globalStats.getBestStreak())); // to be removed
 
         if (state.equals(ProfileState.IN_QUEUE)) {
             QueueEntry queueEntry = QueueService.get().get(player.getUniqueId());
@@ -89,9 +88,11 @@ public class PlaceholderUtil {
             line = line.replaceAll("<kit>", queueEntry.getKit().getDisplayName());
             line = line.replaceAll("<maxPing>", String.valueOf(profile.getSettingData().getMaxPing()));
             line = line.replaceAll("<time>", String.valueOf(queueEntry.getTime().formatTime()));
+            line = line.replaceAll("<rounds>", String.valueOf(queueEntry.getKit().is(KitRule.BEST_OF_THREE) ? 3 : 1));
             Division kitDivision = profile.getGameData().get(queueEntry.getKit()).getDivision();
-            if (kitDivision != null) line = line.replaceAll("<kit_division>",
-                    kitDivision.getDisplayName());
+            if (kitDivision != null)
+                line = line.replaceAll("<kit_division>",
+                        kitDivision.getDisplayName());
         }
 
         if (state.equals(ProfileState.IN_KIT_EDITOR)) {
@@ -109,7 +110,8 @@ public class PlaceholderUtil {
             Match match = profile.getMatch();
             Participant participant = match.getParticipant(player.getUniqueId());
 
-            line = line.replaceAll("<maxPoints>", String.valueOf(match.getRounds()));
+            line = line.replaceAll("<maxPoints>", String.valueOf(match.getRounds())); // to be removed
+            line = line.replaceAll("<rounds>", String.valueOf(match.getRounds()));
             Division kitDivision = profile.getGameData().get(match.getKit()).getDivision();
             line = line.replaceAll("<kit_division>",
                     kitDivision == null ? "None" : kitDivision.getDisplayName());
@@ -150,8 +152,7 @@ public class PlaceholderUtil {
                     line = line.replaceAll("<opponent-combo>",
                             opponent.getCombo() > 1 ? "&e(" + opponent.getCombo() + " Combo)" : "");
                     line = line.replaceAll("<opponent-hits>", String.valueOf(opponent.getHits()));
-                    line = line.replaceAll("<diffrence>", participant.getHitsDifference(opponent));
-                    // fixes the typo
+                    line = line.replaceAll("<diffrence>", participant.getHitsDifference(opponent)); // to be removed
                     line = line.replaceAll("<difference>", participant.getHitsDifference(opponent));
                     line = line.replaceAll("<points>", String.valueOf(participant.getPoints()));
                     line = line.replaceAll("<opponent-points>", String.valueOf(opponent.getPoints()));
