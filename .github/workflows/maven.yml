@@ -33,5 +33,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Plugin
-          path: ${{ github.workspace }}/Plugin/target/Neptune.jar
+          path: ${{ github.workspace }}/Plugin/target/Neptune*.jar
           if-no-files-found: error
