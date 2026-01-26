@@ -10,7 +10,6 @@ import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.ItemBuilder;
 import dev.lrxh.neptune.utils.menu.Button;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -31,7 +30,7 @@ public class RoundSelectButton extends Button {
 
     @Override
     public ItemStack getItemStack(Player player) {
-        return new ItemBuilder(Material.MAP)
+        return new ItemBuilder(MenusLocale.ROUNDS_ITEM_MATERIAL.getString())
                 .name(MenusLocale.ROUNDS_ITEM_NAME.getString().replace("<rounds>", String.valueOf(round)))
                 .lore(MenusLocale.ROUNDS_LORE.getStringList(), player)
                 .build();

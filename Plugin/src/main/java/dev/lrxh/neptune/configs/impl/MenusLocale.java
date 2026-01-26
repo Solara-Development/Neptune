@@ -94,6 +94,7 @@ public enum MenusLocale implements IDataAccessor {
     ROUNDS_STARTING_SLOT("DUEL.STARTING-SLOT", DataType.INT, "10"),
     ROUNDS_FILTER("ROUNDS.FILTER-TYPE", "FILL, BORDER, NONE", DataType.STRING, "FILL"),
     ROUNDS_ITEM_NAME("ROUNDS.ITEM.NAME", DataType.STRING, "&bFirst to &b&l<rounds>"),
+    ROUNDS_ITEM_MATERIAL("ROUNDS.ITEM.MATERIAL", DataType.STRING, "MAP"),
     ROUNDS_LORE("ROUNDS.LORE", DataType.STRING_LIST,
             "",
             "&a&lClick to select rounds amount!"),
