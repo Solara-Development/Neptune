@@ -32,7 +32,6 @@ public class MatchSecondRoundRunnable extends NeptuneRunnable {
     public void run() {
         if (!MatchService.get().matches.contains(match) || participant.isLeft()) {
             stop();
-
             return;
         }
 
@@ -60,6 +59,7 @@ public class MatchSecondRoundRunnable extends NeptuneRunnable {
         }
 
         if (respawnTimer == 3) {
+            match.setCurrentRound(match.getCurrentRound() + 1);
             match.setupParticipants();
             match.teleportToPositions();
 

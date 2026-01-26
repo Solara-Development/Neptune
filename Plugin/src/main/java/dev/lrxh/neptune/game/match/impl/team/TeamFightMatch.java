@@ -38,7 +38,7 @@ public class TeamFightMatch extends Match implements ITeamFightMatch {
 
     public TeamFightMatch(VirtualArena arena, Kit kit, List<Participant> participants,
                           MatchTeam teamA, MatchTeam teamB) {
-        super(MatchState.STARTING, arena, kit, participants, 1, true, false);
+        super(MatchState.STARTING, arena, kit, participants, 1, 1, true, false);
         this.teamA = teamA;
         this.teamB = teamB;
     }

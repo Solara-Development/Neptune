@@ -50,7 +50,7 @@ public class SoloFightMatch extends Match implements ISoloFightMatch {
 
     public SoloFightMatch(VirtualArena arena, Kit kit, boolean duel, List<Participant> participants, Participant participantA,
                           Participant participantB, int rounds) {
-        super(MatchState.STARTING, arena, kit, participants, rounds, duel, false);
+        super(MatchState.STARTING, arena, kit, participants, rounds, 1, duel, false);
         this.participantA = participantA;
         this.participantB = participantB;
     }

@@ -62,6 +62,7 @@ public abstract class Match implements IMatch {
     private Kit kit;
     private List<Participant> participants;
     private int rounds;
+    private int currentRound;
     private boolean duel;
     private boolean ended;
 

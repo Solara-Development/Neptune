@@ -30,7 +30,7 @@ public class FfaFightMatch extends Match implements IFffaFightMatch {
     private Participant winner;
 
     public FfaFightMatch(VirtualArena arena, Kit kit, List<Participant> participants) {
-        super(MatchState.STARTING, arena, kit, participants, 1, true, false);
+        super(MatchState.STARTING, arena, kit, participants, 1, 1, true, false);
         this.winner = null;
         this.deadParticipants = new ArrayList<>();
         this.participants = participants;

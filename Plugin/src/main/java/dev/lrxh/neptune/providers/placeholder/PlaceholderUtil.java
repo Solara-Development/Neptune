@@ -112,6 +112,7 @@ public class PlaceholderUtil {
 
             line = line.replaceAll("<maxPoints>", String.valueOf(match.getRounds())); // to be removed
             line = line.replaceAll("<rounds>", String.valueOf(match.getRounds()));
+            line = line.replaceAll("<round>", String.valueOf(match.getCurrentRound()));
             Division kitDivision = profile.getGameData().get(match.getKit()).getDivision();
             line = line.replaceAll("<kit_division>",
                     kitDivision == null ? "None" : kitDivision.getDisplayName());
