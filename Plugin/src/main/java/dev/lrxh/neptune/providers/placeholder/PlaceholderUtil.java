@@ -74,6 +74,13 @@ public class PlaceholderUtil {
         line = line.replaceAll("<bestStreak>", String.valueOf(globalStats.getBestStreak()));
         line = line.replaceAll("<kills>", String.valueOf(globalStats.getKills()));
         line = line.replaceAll("<deaths>", String.valueOf(globalStats.getDeaths()));
+        line = line.replaceAll("<elo>", String.valueOf(globalStats.getElo()));
+        line = line.replaceAll("<played>", String.valueOf(globalStats.getWins() + globalStats.getLosses()));
+        line = line.replaceAll("<kdr>", String.valueOf(globalStats.getKdr()));
+        // to be removed
+        line = line.replaceAll("<win_streak_current>", String.valueOf(globalStats.getCurrentStreak()));
+        line = line.replaceAll("<kill_death_ratio>", String.valueOf(globalStats.getKdr()));
+        line = line.replaceAll("<win_streak_best>", String.valueOf(globalStats.getBestStreak()));
 
         if (state.equals(ProfileState.IN_QUEUE)) {
             QueueEntry queueEntry = QueueService.get().get(player.getUniqueId());

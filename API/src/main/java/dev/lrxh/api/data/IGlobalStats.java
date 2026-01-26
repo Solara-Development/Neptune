@@ -34,4 +34,6 @@ public interface IGlobalStats {
     void setDivision(IDivision division);
 
     double getWinRatio();
+
+    double getKdr();
 }

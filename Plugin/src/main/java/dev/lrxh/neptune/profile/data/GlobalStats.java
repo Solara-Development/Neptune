@@ -1,5 +1,8 @@
 package dev.lrxh.neptune.profile.data;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 import dev.lrxh.api.data.IDivision;
 import dev.lrxh.api.data.IGlobalStats;
 import dev.lrxh.neptune.feature.divisions.DivisionService;
@@ -48,15 +51,24 @@ public class GlobalStats implements IGlobalStats {
             this.elo += kitData.getElo();
         }
         int kitData = profile.getGameData().getKitDataInternal().size();
-        if (kitData != 0) this.elo = this.elo / kitData;
+        if (kitData != 0)
+            this.elo = this.elo / kitData;
 
         this.division = DivisionService.get().getDivisionByElo(elo);
     }
 
     @Override
     public double getWinRatio() {
-        int totalGames = wins + losses;
-        if (totalGames == 0) return 0.0;
-        return Math.round(((double) wins / totalGames) * 100);
+        return getRatio(wins, wins + losses);
+    }
+
+    public double getKdr() {
+        return getRatio(kills, deaths);
+    }
+    private double getRatio(int num1, int num2) {
+        if (num1 == 0 || num2 == 0) return 0.0;
+        return BigDecimal.valueOf(num1)
+                .divide(BigDecimal.valueOf(num2), 1, RoundingMode.HALF_UP)
+                .doubleValue();
     }
 }
