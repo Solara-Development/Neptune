@@ -8,7 +8,6 @@ import dev.lrxh.neptune.feature.party.Party;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
 import dev.lrxh.neptune.providers.clickable.Replacement;
-import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.tasks.NeptuneRunnable;
 import dev.lrxh.neptune.utils.tasks.TaskScheduler;
 
@@ -161,14 +160,7 @@ public class GlobalListener implements Listener {
         if (profile.getState().equals(ProfileState.IN_SPECTATOR)) event.setCancelled(true);
         if (isPlayerNotInMatch(profile)) {
             event.setCancelled(true);
-            ProfileState state = profile.getState();
-            if (state.equals(ProfileState.IN_KIT_EDITOR)) {
-                player.sendMessage(CC.color("&cYou can't break blocks in the kit editor!"));
-            } else if (state.equals(ProfileState.IN_QUEUE)) {
-                player.sendMessage(CC.color("&cYou can't break blocks while in queue!"));
-            } else {
-                player.sendMessage(CC.color("&cYou can't break blocks here!"));
-            }
+            MessagesLocale.CANT_DO_THIS_NOW.send(player);
         }
     }
 
@@ -180,7 +172,7 @@ public class GlobalListener implements Listener {
         if (profile != null && profile.getState().equals(ProfileState.IN_CUSTOM)) return;
         if (isPlayerNotInMatch(profile)) {
             event.setCancelled(true);
-            player.sendMessage(CC.color("&cYou can't place liquids here!"));
+            MessagesLocale.CANT_DO_THIS_NOW.send(player);
         }
     }
 

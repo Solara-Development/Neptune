@@ -113,7 +113,7 @@ public class MatchListener implements Listener {
         if (match != null && match.getKit().is(KitRule.BUILD)) {
             if (match.getState().equals(MatchState.STARTING)) {
                 event.setCancelled(true);
-                player.sendMessage(CC.color("&cYou can't place blocks yet!"));
+                MessagesLocale.CANT_DO_THIS_NOW.send(player);
                 return;
             }
 
@@ -129,7 +129,7 @@ public class MatchListener implements Listener {
             // Check arena boundaries
             if (!LocationUtil.isInside(blockLocation, arena.getMin(), arena.getMax())) {
                 event.setCancelled(true);
-                player.sendMessage(CC.color("&cYou can't build outside the arena!"));
+                MessagesLocale.CANT_DO_THIS_HERE.send(player);
                 return;
             }
 
@@ -531,7 +531,7 @@ public class MatchListener implements Listener {
         if (match != null && match.getKit().is(KitRule.BUILD)) {
             if (match.getState().equals(MatchState.STARTING)) {
                 event.setCancelled(true);
-                player.sendMessage(CC.color("&cYou can't place blocks yet!"));
+                MessagesLocale.CANT_DO_THIS_NOW.send(player);
                 return;
             }
 
@@ -545,7 +545,7 @@ public class MatchListener implements Listener {
 
             if (!LocationUtil.isInside(blockLocation, arena.getMin(), arena.getMax())) {
                 event.setCancelled(true);
-                player.sendMessage(CC.color("&cYou can't place water outside the arena!"));
+                MessagesLocale.CANT_DO_THIS_HERE.send(player);
                 return;
             }
 
