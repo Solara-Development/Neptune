@@ -2,6 +2,7 @@ package dev.lrxh.neptune.providers.placeholder;
 
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.Neptune;
+import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.feature.divisions.impl.Division;
 import dev.lrxh.neptune.feature.party.Party;
 import dev.lrxh.neptune.feature.queue.QueueEntry;
@@ -121,8 +122,8 @@ public class PlaceholderUtil {
                 Participant blue = soloFightMatch.getParticipantB();
                 line = line.replaceAll("<red-hits>", String.valueOf(red.getHits()));
                 line = line.replaceAll("<blue-hits>", String.valueOf(blue.getHits()));
-                line = line.replaceAll("<red-combo>", red.getCombo() > 1 ? "&e(" + red.getCombo() + " Combo)" : "");
-                line = line.replaceAll("<blue-combo>", blue.getCombo() > 1 ? "&e(" + blue.getCombo() + " Combo)" : "");
+                line = line.replaceAll("<red-combo>", red.getCombo() > 1 ? MessagesLocale.MATCH_BOXING_COMBO_PLACEHOLDER.toString().replaceAll("<combo>", String.valueOf(red.getCombo())) : MessagesLocale.MATCH_BOXING_COMBO_NO_COMBO_PLACEHOLDER.toString());
+                line = line.replaceAll("<blue-combo>", blue.getCombo() > 1 ? MessagesLocale.MATCH_BOXING_COMBO_PLACEHOLDER.toString().replaceAll("<combo>", String.valueOf(blue.getCombo())) : MessagesLocale.MATCH_BOXING_COMBO_NO_COMBO_PLACEHOLDER.toString());
                 line = line.replaceAll("<red-points>", String.valueOf(red.getPoints()));
                 line = line.replaceAll("<blue-points>", String.valueOf(blue.getPoints()));
                 line = line.replaceAll("<red-difference>", String.valueOf(red.getHitsDifference(blue)));
@@ -136,8 +137,16 @@ public class PlaceholderUtil {
                         String.valueOf(PlayerUtil.getPing(blue.getPlayer())));
 
                 if (match.getKit().is(KitRule.BED_WARS)) {
-                    line = line.replaceAll("<red-bed-status>", !red.isBedBroken() ? "&a✔" : "&c1");
-                    line = line.replaceAll("<blue-bed-status>", !blue.isBedBroken() ? "&a✔" : "&c1");
+                    line = line.replaceAll("<red-bed-status>",
+                            !red.isBedBroken()
+                                    ? MessagesLocale.MATCH_BED_STATUS_NOT_BROKEN.toString().replaceAll("<members-left>",
+                                            "1")
+                                    : "&c1");
+                    line = line.replaceAll("<blue-bed-status>",
+                            !blue.isBedBroken()
+                                    ? MessagesLocale.MATCH_BED_STATUS_NOT_BROKEN.toString().replaceAll("<members-left>",
+                                            "1")
+                                    : "&c1");
                 }
 
                 if (participant != null) {
@@ -146,12 +155,12 @@ public class PlaceholderUtil {
 
                     line = line.replaceAll("<hits>", String.valueOf(participant.getHits()));
                     line = line.replaceAll("<combo>",
-                            participant.getCombo() > 1 ? "&e(" + participant.getCombo() + " Combo)" : "");
+                            participant.getCombo() > 1 ? MessagesLocale.MATCH_BOXING_COMBO_PLACEHOLDER.toString().replaceAll("<combo>", String.valueOf(participant.getCombo())) : MessagesLocale.MATCH_BOXING_COMBO_NO_COMBO_PLACEHOLDER.toString());
                     line = line.replaceAll("<opponent>", participant.getOpponent().getNameUnColored());
                     line = line.replaceAll("<opponent-ping>",
                             String.valueOf(opponentPlayer == null ? 0 : opponentPlayer.getPing()));
                     line = line.replaceAll("<opponent-combo>",
-                            opponent.getCombo() > 1 ? "&e(" + opponent.getCombo() + " Combo)" : "");
+                            opponent.getCombo() > 1 ? MessagesLocale.MATCH_BOXING_COMBO_PLACEHOLDER.toString().replaceAll("<combo>", String.valueOf(opponent.getCombo())) : MessagesLocale.MATCH_BOXING_COMBO_NO_COMBO_PLACEHOLDER.toString());
                     line = line.replaceAll("<opponent-hits>", String.valueOf(opponent.getHits()));
                     line = line.replaceAll("<diffrence>", participant.getHitsDifference(opponent)); // to be removed
                     line = line.replaceAll("<difference>", participant.getHitsDifference(opponent));
@@ -159,8 +168,16 @@ public class PlaceholderUtil {
                     line = line.replaceAll("<opponent-points>", String.valueOf(opponent.getPoints()));
 
                     if (match.getKit().is(KitRule.BED_WARS)) {
-                        line = line.replaceAll("<bed-status>", !participant.isBedBroken() ? "&a✔" : "&c1");
-                        line = line.replaceAll("<opponent-bed-status>", !opponent.isBedBroken() ? "&a✔" : "&c1");
+                        line = line.replaceAll("<bed-status>", !participant.isBedBroken()
+                                ? MessagesLocale.MATCH_BED_STATUS_NOT_BROKEN.toString().replaceAll("<members-left>",
+                                        "1")
+                                : MessagesLocale.MATCH_BED_STATUS_BROKEN.toString().replaceAll("<members-left>",
+                                        "1"));
+                        line = line.replaceAll("<opponent-bed-status>", !opponent.isBedBroken()
+                                ? MessagesLocale.MATCH_BED_STATUS_NOT_BROKEN.toString().replaceAll("<members-left>",
+                                        "1")
+                                : MessagesLocale.MATCH_BED_STATUS_BROKEN.toString().replaceAll("<members-left>",
+                                        "1"));
                     }
                 }
             } else if (match instanceof TeamFightMatch teamFightMatch) {
@@ -173,9 +190,17 @@ public class PlaceholderUtil {
 
                 if (match.getKit().is(KitRule.BED_WARS)) {
                     line = line.replaceAll("<red-bed-status>",
-                            !redTeam.isBedBroken() ? "&a✔" : "&c" + redTeam.getAliveParticipants());
+                            !redTeam.isBedBroken()
+                                    ? MessagesLocale.MATCH_BED_STATUS_NOT_BROKEN.toString().replaceAll("<members-left>",
+                                            String.valueOf(redTeam.getAliveParticipants()))
+                                    : MessagesLocale.MATCH_BED_STATUS_BROKEN.toString().replaceAll("<members-left>",
+                                            String.valueOf(redTeam.getAliveParticipants())));
                     line = line.replaceAll("<blue-bed-status>",
-                            !blueTeam.isBedBroken() ? "&a✔" : "&c" + blueTeam.getAliveParticipants());
+                            !blueTeam.isBedBroken()
+                                    ? MessagesLocale.MATCH_BED_STATUS_NOT_BROKEN.toString().replaceAll("<members-left>",
+                                            String.valueOf(blueTeam.getAliveParticipants()))
+                                    : MessagesLocale.MATCH_BED_STATUS_BROKEN.toString().replaceAll("<members-left>",
+                                            String.valueOf(blueTeam.getAliveParticipants())));
                 }
                 if (participant != null) {
                     MatchTeam matchTeam = teamFightMatch.getParticipantTeam(participant);
@@ -191,9 +216,17 @@ public class PlaceholderUtil {
                     }
                     if (match.getKit().is(KitRule.BED_WARS)) {
                         line = line.replaceAll("<team-bed-status>",
-                                !matchTeam.isBedBroken() ? "&a✔" : "&c" + matchTeam.getAliveParticipants());
+                                !matchTeam.isBedBroken()
+                                        ? MessagesLocale.MATCH_BED_STATUS_NOT_BROKEN.toString().replaceAll(
+                                                "<members-left>", String.valueOf(matchTeam.getAliveParticipants()))
+                                        : MessagesLocale.MATCH_BED_STATUS_BROKEN.toString().replaceAll("<members-left>",
+                                                String.valueOf(matchTeam.getAliveParticipants())));
                         line = line.replaceAll("<opponent-team-bed-status>",
-                                !opponentTeam.isBedBroken() ? "&a✔" : "&c" + opponentTeam.getAliveParticipants());
+                                !opponentTeam.isBedBroken()
+                                        ? MessagesLocale.MATCH_BED_STATUS_NOT_BROKEN.toString().replaceAll(
+                                                "<members-left>", String.valueOf(opponentTeam.getAliveParticipants()))
+                                        : MessagesLocale.MATCH_BED_STATUS_BROKEN.toString().replaceAll("<members-left>",
+                                                String.valueOf(opponentTeam.getAliveParticipants())));
                     }
                 }
             } else if (match instanceof FfaFightMatch ffaFightMatch) {

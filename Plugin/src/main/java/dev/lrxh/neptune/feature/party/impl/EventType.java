@@ -2,6 +2,7 @@ package dev.lrxh.neptune.feature.party.impl;
 
 import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.configs.impl.MenusLocale;
+import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.game.kit.Kit;
 import dev.lrxh.neptune.game.match.MatchService;
 import dev.lrxh.neptune.game.match.impl.participant.Participant;
@@ -24,7 +25,7 @@ public enum EventType {
                 if (arena == null) {
 
                     for (Participant participant : participants) {
-                        participant.sendMessage(CC.error("No arenas were found!"));
+                        MessagesLocale.QUEUE_NO_ARENAS.send(participant.getPlayer());
                     }
                     return;
                 }
@@ -67,7 +68,7 @@ public enum EventType {
             kit.getRandomArena().thenAccept(arena -> {
                 if (arena == null) {
                     participants.forEach(p ->
-                            p.sendMessage(CC.error("No arenas were found! Please contact an admin.")));
+                            MessagesLocale.QUEUE_NO_ARENAS.send(p.getPlayer()));
                     return;
                 }
                 if (!arena.isSetup()) {

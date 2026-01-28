@@ -2,6 +2,7 @@ package dev.lrxh.neptune.game.duel;
 
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.Neptune;
+import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.game.arena.VirtualArena;
 import dev.lrxh.neptune.game.kit.Kit;
 import dev.lrxh.neptune.game.match.MatchService;
@@ -94,7 +95,7 @@ public class DuelRequest extends Request {
         if (arena == null) {
 
             for (Participant participant : participants) {
-                participant.sendMessage(CC.error("No arenas were found!"));
+                MessagesLocale.QUEUE_NO_ARENAS.send(participant.getPlayer());
             }
             return;
         }

@@ -37,7 +37,7 @@ public enum ItemAction {
             Profile profile = API.getProfile(player);
 
             if (profile.getState().equals(ProfileState.IN_PARTY)) {
-                player.sendMessage(CC.color("&cYou can't queue while in a party."));
+                MessagesLocale.CANT_DO_THIS_NOW.send(player.getUniqueId());
                 return;
             }
             new QueueMenu().open(player);
@@ -178,7 +178,7 @@ public enum ItemAction {
                 return;
             match.getKit().getRandomArena().thenAccept(arena -> {
                 if (arena == null) {
-                    player.sendMessage(CC.error("No arenas were found!"));
+                    MessagesLocale.QUEUE_NO_ARENAS.send(player);
                     return;
                 }
                 DuelRequest duelRequest = new DuelRequest(profile.getPlayerUUID(), match.getKit(), arena, false,
