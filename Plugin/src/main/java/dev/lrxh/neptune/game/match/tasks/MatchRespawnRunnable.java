@@ -2,6 +2,7 @@ package dev.lrxh.neptune.game.match.tasks;
 
 import dev.lrxh.api.events.MatchParticipantRespawnEvent;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
+import dev.lrxh.neptune.configs.impl.SoundsLocale;
 import dev.lrxh.neptune.game.match.Match;
 import dev.lrxh.neptune.game.match.MatchService;
 import dev.lrxh.neptune.game.match.impl.participant.Participant;
@@ -13,7 +14,6 @@ import dev.lrxh.neptune.utils.tasks.NeptuneRunnable;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.Sound;
 
 public class MatchRespawnRunnable extends NeptuneRunnable {
 
@@ -63,7 +63,7 @@ public class MatchRespawnRunnable extends NeptuneRunnable {
             return;
         }
 
-        participant.playSound(Sound.UI_BUTTON_CLICK);
+        participant.playSound(SoundsLocale.getSound(SoundsLocale.PLAYER_RESPAWN));
 
         participant.sendTitle(CC.color(MessagesLocale.MATCH_RESPAWN_TITLE_HEADER.getString().replace("<timer>", String.valueOf(respawnTimer))),
                 CC.color(MessagesLocale.MATCH_RESPAWN_TITLE_FOOTER.getString().replace("<timer>", String.valueOf(respawnTimer))),

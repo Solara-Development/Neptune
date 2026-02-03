@@ -6,6 +6,7 @@ import dev.lrxh.api.match.participant.IParticipant;
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.configs.impl.SettingsLocale;
+import dev.lrxh.neptune.configs.impl.SoundsLocale;
 import dev.lrxh.neptune.feature.hotbar.HotbarService;
 import dev.lrxh.neptune.feature.leaderboard.LeaderboardService;
 import dev.lrxh.neptune.feature.leaderboard.impl.LeaderboardPlayerEntry;
@@ -33,7 +34,6 @@ import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.TextComponent;
 import org.bukkit.Bukkit;
-import org.bukkit.Sound;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -202,7 +202,7 @@ public class SoloFightMatch extends Match implements ISoloFightMatch {
     @Override
     public void breakBed(Participant participant, Participant breaker) {
         participant.setBedBroken(true);
-        playSound(Sound.ENTITY_ENDER_DRAGON_GROWL);
+        playSound(SoundsLocale.getSound(SoundsLocale.BED_BROKEN));
         SoloMatchBedDestroyEvent event = new SoloMatchBedDestroyEvent(this, participant, breaker);
         Bukkit.getPluginManager().callEvent(event);
     }
@@ -221,7 +221,7 @@ public class SoloFightMatch extends Match implements ISoloFightMatch {
 
         participant.setDead(true);
 
-        playSound(Sound.ENTITY_PLAYER_ATTACK_STRONG);
+        playSound(SoundsLocale.getSound(SoundsLocale.MATCH_PARTICIPANT_DIED));
 
         Participant participantKiller = participantA.getNameColored().equals(participant.getNameColored())
                 ? participantB
@@ -250,7 +250,7 @@ public class SoloFightMatch extends Match implements ISoloFightMatch {
         }
 
         if (participant.getLastAttacker() != null) {
-            participant.getLastAttacker().playSound(Sound.UI_BUTTON_CLICK);
+            participant.getLastAttacker().playSound(SoundsLocale.getSound(SoundsLocale.PLAYER_KILL));
         }
 
         this.setEnded(true);
@@ -294,7 +294,7 @@ public class SoloFightMatch extends Match implements ISoloFightMatch {
     public void startMatch() {
         setState(MatchState.IN_ROUND);
         showPlayerForSpectators();
-        playSound(Sound.ENTITY_FIREWORK_ROCKET_BLAST);
+        playSound(SoundsLocale.getSound(SoundsLocale.MATCH_START));
         sendTitle(CC.color(MessagesLocale.MATCH_START_TITLE_HEADER.getString()),
                 CC.color(MessagesLocale.MATCH_START_TITLE_FOOTER.getString()), 20);
     }

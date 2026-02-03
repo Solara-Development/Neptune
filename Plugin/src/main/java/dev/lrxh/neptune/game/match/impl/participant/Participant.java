@@ -4,6 +4,7 @@ import dev.lrxh.api.match.IMatch;
 import dev.lrxh.api.match.participant.IParticipant;
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
+import dev.lrxh.neptune.configs.impl.SoundsLocale;
 import dev.lrxh.neptune.game.kit.impl.KitRule;
 import dev.lrxh.neptune.game.match.Match;
 import dev.lrxh.neptune.game.match.impl.team.TeamFightMatch;
@@ -64,7 +65,7 @@ public class Participant implements IParticipant {
 
     public void setDead(boolean dead) {
         this.dead = dead;
-        playSound(Sound.BLOCK_NOTE_BLOCK_PLING);
+        playSound(SoundsLocale.getSound(SoundsLocale.PLAYER_DEATH));
     }
 
     public boolean setCurrentCheckPoint(Location location) {
