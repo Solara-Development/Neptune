@@ -51,7 +51,7 @@ public enum SoundsLocale implements IDataAccessor {
 
     @Override
     public ConfigFile getConfigFile() {
-        return ConfigService.get().getMainConfig();
+        return ConfigService.get().getSoundsConfig();
     }
 
     public static Sound getSound(SoundsLocale sound) {
