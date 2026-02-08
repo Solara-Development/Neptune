@@ -338,6 +338,7 @@ public class Profile implements IProfile {
                 Placeholder.parsed("kit", duelRequest.getKit().getDisplayName()),
                 Placeholder.parsed("arena", duelRequest.getArena().getDisplayName()),
                 Placeholder.unparsed("receiver", username),
+                Placeholder.unparsed("sender", sender.getName()),
                 Placeholder.unparsed("rounds", String.valueOf(duelRequest.getRounds()))
             )
         );
@@ -352,6 +353,7 @@ public class Profile implements IProfile {
                 Placeholder.parsed("kit", duelRequest.getKit().getDisplayName()),
                 Placeholder.parsed("arena", duelRequest.getArena().getDisplayName()),
                 Placeholder.unparsed("receiver", username),
+                Placeholder.unparsed("sender", sender.getName()),
                 Placeholder.unparsed("rounds", String.valueOf(duelRequest.getRounds())),
                 Placeholder.unparsed("uuid", duelRequest.getSender().toString())
             )

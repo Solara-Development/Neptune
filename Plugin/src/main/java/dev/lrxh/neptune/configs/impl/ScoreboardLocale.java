@@ -234,20 +234,20 @@ public enum ScoreboardLocale implements IDataAccessor {
                         .replaceAll("<playerRed_ping>", "<red-ping>")
                         .replaceAll("<playerBlue_name>", "<blue-name>")
                         .replaceAll("<playerBlue_ping>", "<blue-ping>")
-        ));
+        ).toList());
         IN_SPECTATOR_TEAM.set(IN_SPECTATOR_TEAM.getStringList().stream().map(str ->
                 str.replaceAll("<alive-red>", "<red-alive>")
                         .replaceAll("<alive-blue>", "<blue-alive>")
                         .replaceAll("<max-red>", "<red-total>")
                         .replaceAll("<max-blue>", "<blue-total>")
-        ));
+        ).toList());
         IN_GAME_TEAM.set(IN_GAME_TEAM.getStringList().stream().map(str ->
                 str.replaceAll("<alive>", "<team-alive>")
                         .replaceAll("<max>", "<team-total>")
                         .replaceAll("<alive-opponent>", "<opponent-alive>")
                         .replaceAll("<max-opponent>", "<opponent-total>")
                         .replaceAll("<points>", "<team-points>")
-        ));
+        ).toList());
         IN_GAME_TEAM.set(IN_GAME_TEAM.getStringList().stream().map(str ->
                 str.replaceAll("<alive>", "<team-alive>")
                         .replaceAll("<max>", "<team-total>")
@@ -255,7 +255,7 @@ public enum ScoreboardLocale implements IDataAccessor {
                         .replaceAll("<max-opponent>", "<opponent-total>")
                         .replaceAll("<points>", "<team-points>")
                         .replaceAll("<opponent-team-bed-status>", "<opponent-bed-status>")
-        ));
+        ).toList());
         getConfigFile().save();
     }
 }
