@@ -13,18 +13,19 @@ import dev.lrxh.neptune.configs.ConfigService;
 import dev.lrxh.neptune.configs.impl.handler.DataType;
 import dev.lrxh.neptune.configs.impl.handler.IDataAccessor;
 import dev.lrxh.neptune.utils.ConfigFile;
+import dev.lrxh.neptune.utils.ServerUtils;
 import lombok.Getter;
 
 @Getter
 public enum SoundsLocale implements IDataAccessor {
-    MATCH_START("match-start", "Plays for all players when the match starts", DataType.STRING, "ENTITY_FIREWORK_ROCKET_BLAST"),
-    MATCH_START_COUNTDOWN("match-start-countdown", "Plays for all players after each second in the match start countdown and new round start countdown", DataType.STRING, "UI_BUTTON_CLICK"),
-    PLAYER_KILL("player-kill", "Plays for the player who killed another player", DataType.STRING, "UI_BUTTON_CLICK"),
-    PLAYER_DEATH("player-death", "Plays for the player who died", DataType.STRING, "BLOCK_NOTE_BLOCK_PLING"),
-    PLAYER_RESPAWN("player-respawn", "Plays for the player who respawned", DataType.STRING, "UI_BUTTON_CLICK"),
-    BED_BROKEN("bed-broken", "Plays for all players when a bed is broken", DataType.STRING, "ENTITY_ENDER_DRAGON_GROWL"),
-    MATCH_PARTICIPANT_DIED("match-participant-died", "Plays for all players when someone in the match dies", DataType.STRING, "ENTITY_PLAYER_ATTACK_STRONG"),
-    MENU_BUTTON_CLICK("menu-button-click", "Plays when a player clicks a button in a menu", DataType.STRING, "UI_BUTTON_CLICK");
+    MATCH_START("match-start", "Plays for all players when the match starts", DataType.STRING, "entity.firework_rocket.blast"),
+    MATCH_START_COUNTDOWN("match-start-countdown", "Plays for all players after each second in the match start countdown and new round start countdown", DataType.STRING, "ui.button.click"),
+    PLAYER_KILL("player-kill", "Plays for the player who killed another player", DataType.STRING, "ui.button.click"),
+    PLAYER_DEATH("player-death", "Plays for the player who died", DataType.STRING, "block.note_block.ping"),
+    PLAYER_RESPAWN("player-respawn", "Plays for the player who respawned", DataType.STRING, "ui.button.click"),
+    BED_BROKEN("bed-broken", "Plays for all players when a bed is broken", DataType.STRING, "entity.ender_dragon.growl"),
+    MATCH_PARTICIPANT_DIED("match-participant-died", "Plays for all players when someone in the match dies", DataType.STRING, "entity.player.attack.strong"),
+    MENU_BUTTON_CLICK("menu-button-click", "Plays when a player clicks a button in a menu", DataType.STRING, "ui.button.click");
 
     private final String path;
     private final String comment;
@@ -55,6 +56,11 @@ public enum SoundsLocale implements IDataAccessor {
     }
 
     public static Sound getSound(SoundsLocale sound) {
-        return Registry.SOUNDS.get(NamespacedKey.fromString(sound.getString()));
+        try {
+            return Registry.SOUNDS.get(NamespacedKey.fromString(sound.getString()));
+        } catch (NullPointerException e) {
+            ServerUtils.error("Sound does not exist! path: " + sound.getPath() + ", value: " + sound.getString());
+            return null;
+        }
     }
 }
