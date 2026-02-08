@@ -66,8 +66,8 @@ public enum MessagesLocale implements IDataAccessor {
     MATCH_WINNER_TITLE_HEADER("MATCH.WINNER.TITLE-HEADER", DataType.STRING, "&aVICTORY!"),
     MATCH_WINNER_TITLE_FOOTER("MATCH.WINNER.TITLE-FOOTER", DataType.STRING, "&a<player> &fwon the match!"),
 
-    MATCH_LOSER_TITLE_HEADER("MATCH.LOSER.TITLE-HEADER", DataType.STRING, "&cDEFEAT!"),
-    MATCH_LOSER_TITLE_FOOTER("MATCH.LOSER.TITLE-FOOTER", DataType.STRING, "&a<player> &fwon the match!"),
+        MATCH_LOSER_TITLE_HEADER("MATCH.LOSER.TITLE-HEADER", DataType.STRING, "&cDEFEAT!"),
+        MATCH_LOSER_TITLE_FOOTER("MATCH.LOSER.TITLE-FOOTER", DataType.STRING, "&a<player> &fwon the match!"),
 
     MATCH_COMMA("MATCH.COMMA", DataType.STRING, "&7, "),
     MATCH_END_DETAILS_SOLO("MATCH.END_DETAILS_MESSAGE.SOLO", DataType.STRING_LIST,
@@ -259,29 +259,29 @@ public enum MessagesLocale implements IDataAccessor {
     FFA_KILLSTREAK_ANNOUNCE_MESSAGE("FFA.KILLSTREAK_ANNOUNCE.MESSAGE", DataType.STRING_LIST,
             " ", "&b<player> &fis now on a &b&l<killstreak> KILLSTREAK!", " ");
 
-    private final String path;
-    private final String comment;
-    private final List<String> defaultValue = new ArrayList<>();
-    private final DataType dataType;
+        private final String path;
+        private final String comment;
+        private final List<String> defaultValue = new ArrayList<>();
+        private final DataType dataType;
 
-    MessagesLocale(String path, @Nullable String comment, DataType dataType, String... defaultValue) {
-        this.path = path;
-        this.comment = comment;
-        this.defaultValue.addAll(Arrays.asList(defaultValue));
-        this.dataType = dataType;
-    }
+        MessagesLocale(String path, @Nullable String comment, DataType dataType, String... defaultValue) {
+                this.path = path;
+                this.comment = comment;
+                this.defaultValue.addAll(Arrays.asList(defaultValue));
+                this.dataType = dataType;
+        }
 
-    MessagesLocale(String path, DataType dataType, String... defaultValue) {
-        this.path = path;
-        this.comment = null;
-        this.defaultValue.addAll(Arrays.asList(defaultValue));
-        this.dataType = dataType;
-    }
+        MessagesLocale(String path, DataType dataType, String... defaultValue) {
+                this.path = path;
+                this.comment = null;
+                this.defaultValue.addAll(Arrays.asList(defaultValue));
+                this.dataType = dataType;
+        }
 
-    @Override
-    public ConfigFile getConfigFile() {
-        return ConfigService.get().getMessagesConfig();
-    }
+        @Override
+        public ConfigFile getConfigFile() {
+                return ConfigService.get().getMessagesConfig();
+        }
 
     @Override
     public String getHeader() {
