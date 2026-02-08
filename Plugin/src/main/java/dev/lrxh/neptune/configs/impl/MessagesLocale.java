@@ -19,55 +19,55 @@ import java.util.UUID;
 
 @Getter
 public enum MessagesLocale implements IDataAccessor {
-        CANT_DO_THIS_NOW("CANT_DO_THIS_NOW", DataType.STRING_LIST,
+    CANT_DO_THIS_NOW("CANT_DO_THIS_NOW", DataType.STRING_LIST,
                         "&cYou can't do this right now!"),
-        CANT_DO_THIS_HERE("CANT_DO_THIS_HERE", DataType.STRING_LIST,
+    CANT_DO_THIS_HERE("CANT_DO_THIS_HERE", DataType.STRING_LIST,
                         "&cYou can't do this here!"),
-        NO_PERMISSION("NO_PERMISSION", DataType.STRING,
+    NO_PERMISSION("NO_PERMISSION", DataType.STRING,
                         "&cYou do not have permission to do this."),
-        MISSING_ARGUMENT("MISSING_ARGUMENT", DataType.STRING,
+    MISSING_ARGUMENT("MISSING_ARGUMENT", DataType.STRING,
                         "Missing argument for: <command>"),
-        MATCH_YOU("MATCH.YOU", DataType.STRING, "You"),
-        MATCH_OPPONENT_TEAM("MATCH.OPPONENT_TEAM", DataType.STRING, "Opponent Team"),
-        MATCH_DEATH_DISCONNECT("MATCH.DEATH.DISCONNECT", DataType.STRING_LIST, "<player> &7disconnected"),
-        MATCH_DEATH_KILLED("MATCH.DEATH.KILLED", DataType.STRING_LIST, "<player> &7was killed by <killer>"),
-        MATCH_DEATH_DIED("MATCH.DEATH.DIED", DataType.STRING_LIST, "<player> &7died"),
-        MATCH_DEATH_VOID("MATCH.DEATH.VOID", DataType.STRING_LIST,
+    MATCH_YOU("MATCH.YOU", DataType.STRING, "You"),
+    MATCH_OPPONENT_TEAM("MATCH.OPPONENT_TEAM", DataType.STRING, "Opponent Team"),
+    MATCH_DEATH_DISCONNECT("MATCH.DEATH.DISCONNECT", DataType.STRING_LIST, "<player> &7disconnected"),
+    MATCH_DEATH_KILLED("MATCH.DEATH.KILLED", DataType.STRING_LIST, "<player> &7was killed by <killer>"),
+    MATCH_DEATH_DIED("MATCH.DEATH.DIED", DataType.STRING_LIST, "<player> &7died"),
+    MATCH_DEATH_VOID("MATCH.DEATH.VOID", DataType.STRING_LIST,
                         "<player> &7fell into the void while fighting <killer>"),
-        QUEUE_JOIN("QUEUE.JOIN", DataType.STRING_LIST, "&7(&bDuels&7) Joined Queue"),
-        QUEUE_LEAVE("QUEUE.LEAVE", DataType.STRING_LIST, "&7(&bDuels&7) Left queue"),
-        QUEUE_ACTION_BAR("QUEUE.ACTION_BAR", DataType.STRING, "&7<kit> 1v1 &8| &a<time>"),
-        QUEUE_REPEAT("QUEUE.REPEAT.MESSAGE", DataType.STRING_LIST, "&aSearching for other players in queue..."),
-        QUEUE_REPEAT_TOGGLE("QUEUE.REPEAT.TOGGLE", DataType.BOOLEAN, "true"),
-        QUEUE_NO_ARENAS("QUEUE.NO_ARENAS", DataType.STRING_LIST,
+    QUEUE_JOIN("QUEUE.JOIN", DataType.STRING_LIST, "&7(&bDuels&7) Joined Queue"),
+    QUEUE_LEAVE("QUEUE.LEAVE", DataType.STRING_LIST, "&7(&bDuels&7) Left queue"),
+    QUEUE_ACTION_BAR("QUEUE.ACTION_BAR", DataType.STRING, "&7<kit> 1v1 &8| &a<time>"),
+    QUEUE_REPEAT("QUEUE.REPEAT.MESSAGE", DataType.STRING_LIST, "&aSearching for other players in queue..."),
+    QUEUE_REPEAT_TOGGLE("QUEUE.REPEAT.TOGGLE", DataType.BOOLEAN, "true"),
+    QUEUE_NO_ARENAS("QUEUE.NO_ARENAS", DataType.STRING_LIST,
                         "&cNo arenas were found!"),
-        MATCH_STARTED("MATCH.STARTED", DataType.STRING_LIST, "&aMatch Started!"),
-        ROUND_STARTED("MATCH.ROUND.STARTED", DataType.STRING_LIST, "&aRound Started!"),
-        MATCH_FOUND("MATCH.FOUND", DataType.STRING_LIST, " ", "&a&lMatch Found!", " ", "&fKit: &a<kit>",
+    MATCH_STARTED("MATCH.STARTED", DataType.STRING_LIST, "&aMatch Started!"),
+    ROUND_STARTED("MATCH.ROUND.STARTED", DataType.STRING_LIST, "&aRound Started!"),
+    MATCH_FOUND("MATCH.FOUND", DataType.STRING_LIST, " ", "&a&lMatch Found!", " ", "&fKit: &a<kit>",
                         "&fOpponent: &a<opponent>", "&fPing: &b<opponent-ping>", "&fOpponent Elo: &a<opponent-elo>", "",
                         " "),
-        MATCH_STARTING("MATCH.START.TIMER", DataType.STRING_LIST, "&fMatch starting in &b<timer>&f..."),
-        MATCH_STARTING_TITLE_HEADER("MATCH.STARTING.TITLE-HEADER", DataType.STRING, "&e<countdown-time>"),
-        MATCH_OUT_OF_BOUNDS_TITLE_HEADER("MATCH.OUT_OF_BOUNDS.TITLE-HEADER", DataType.STRING,
+    MATCH_STARTING("MATCH.START.TIMER", DataType.STRING_LIST, "&fMatch starting in &b<timer>&f..."),
+    MATCH_STARTING_TITLE_HEADER("MATCH.STARTING.TITLE-HEADER", DataType.STRING, "&e<countdown-time>"),
+    MATCH_OUT_OF_BOUNDS_TITLE_HEADER("MATCH.OUT_OF_BOUNDS.TITLE-HEADER", DataType.STRING,
                         "&cYOU ARE OUT OF BOUNDS!"),
-        MATCH_OUT_OF_BOUNDS_TITLE_FOOTER("MATCH.OUT_OF_BOUNDS.TITLE-FOOTER", DataType.STRING,
+    MATCH_OUT_OF_BOUNDS_TITLE_FOOTER("MATCH.OUT_OF_BOUNDS.TITLE-FOOTER", DataType.STRING,
                         "&cYou will start taking damage!"),
-        RANKUP_TITLE_HEADER("RANKUP.TITLE-HEADER", DataType.STRING, "&b&lPROMOTED!"),
-        RANKUP_TITLE_FOOTER("RANKUP.TITLE-FOOTER", DataType.STRING, "&7You are now in &f<division>&7!"),
-        RANKUP_MESSAGE("RANKUP.MESSAGE", DataType.STRING_LIST,
+    RANKUP_TITLE_HEADER("RANKUP.TITLE-HEADER", DataType.STRING, "&b&lPROMOTED!"),
+    RANKUP_TITLE_FOOTER("RANKUP.TITLE-FOOTER", DataType.STRING, "&7You are now in &f<division>&7!"),
+    RANKUP_MESSAGE("RANKUP.MESSAGE", DataType.STRING_LIST,
                         "&aCongratulations! &7You've been promoted to &f<division>&7."),
-        MATCH_STARTING_TITLE_FOOTER("MATCH.STARTING.TITLE-FOOTER", DataType.STRING, ""),
-        PARKOUR_CHECKPOINT("MATCH.PARKOUR.CHECKPOINT", DataType.STRING_LIST,
+    MATCH_STARTING_TITLE_FOOTER("MATCH.STARTING.TITLE-FOOTER", DataType.STRING, ""),
+    PARKOUR_CHECKPOINT("MATCH.PARKOUR.CHECKPOINT", DataType.STRING_LIST,
                         "&a<player> finished checkpoint <checkpoint> in <time>!"),
-        PARKOUR_END("MATCH.PARKOUR.END", DataType.STRING_LIST, "&a<player> finished the parkour in <time>!"),
-        ROUND_STARTING("MATCH.ROUND.START.TIMER", DataType.STRING_LIST, "&fRound starting in &b<timer>&f..."),
-        MATCH_START_TITLE_HEADER("MATCH.START.TITLE-HEADER", DataType.STRING, "&aFight!"),
-        MATCH_START_TITLE_FOOTER("MATCH.START.TITLE-FOOTER", DataType.STRING, ""),
-        MATCH_WINNER_TITLE_HEADER("MATCH.WINNER.TITLE-HEADER", DataType.STRING, "&aVICTORY!"),
-        MATCH_WINNER_TITLE_FOOTER("MATCH.WINNER.TITLE-FOOTER", DataType.STRING, "&a<player> &fwon the match!"),
+    PARKOUR_END("MATCH.PARKOUR.END", DataType.STRING_LIST, "&a<player> finished the parkour in <time>!"),
+    ROUND_STARTING("MATCH.ROUND.START.TIMER", DataType.STRING_LIST, "&fRound starting in &b<timer>&f..."),
+    MATCH_START_TITLE_HEADER("MATCH.START.TITLE-HEADER", DataType.STRING, "&aFight!"),
+    MATCH_START_TITLE_FOOTER("MATCH.START.TITLE-FOOTER", DataType.STRING, ""),
+    MATCH_WINNER_TITLE_HEADER("MATCH.WINNER.TITLE-HEADER", DataType.STRING, "&aVICTORY!"),
+    MATCH_WINNER_TITLE_FOOTER("MATCH.WINNER.TITLE-FOOTER", DataType.STRING, "&a<player> &fwon the match!"),
 
-        MATCH_LOSER_TITLE_HEADER("MATCH.LOSER.TITLE-HEADER", DataType.STRING, "&cDEFEAT!"),
-        MATCH_LOSER_TITLE_FOOTER("MATCH.LOSER.TITLE-FOOTER", DataType.STRING, "&a<player> &fwon the match!"),
+    MATCH_LOSER_TITLE_HEADER("MATCH.LOSER.TITLE-HEADER", DataType.STRING, "&cDEFEAT!"),
+    MATCH_LOSER_TITLE_FOOTER("MATCH.LOSER.TITLE-FOOTER", DataType.STRING, "&a<player> &fwon the match!"),
 
     MATCH_COMMA("MATCH.COMMA", DataType.STRING, "&7, "),
     MATCH_END_DETAILS_SOLO("MATCH.END_DETAILS_MESSAGE.SOLO", DataType.STRING_LIST,
@@ -100,6 +100,16 @@ public enum MessagesLocale implements IDataAccessor {
     MATCH_COMBO_MESSAGE_5("MATCH.COMBO_MESSAGE.5COMBO", DataType.STRING_LIST, "&a5 COMBO!"),
     MATCH_COMBO_MESSAGE_10("MATCH.COMBO_MESSAGE.10COMBO", DataType.STRING_LIST, "&e10 COMBO!"),
     MATCH_COMBO_MESSAGE_20("MATCH.COMBO_MESSAGE.20COMBO", DataType.STRING_LIST, "&c!!!20 COMBO!!!"),
+    MATCH_BED_STATUS_NOT_BROKEN("MATCH.BED_STATUS.NOT_BROKEN", DataType.STRING, "&a✔"),
+    MATCH_BED_STATUS_BROKEN("MATCH.BED_STATUS.BROKEN", DataType.STRING, "&c<members-left>"),
+    MATCH_BOXING_COMBO_PLACEHOLDER("MATCH.COMBO_PLACEHOLDER", DataType.STRING, "&e(<combo> Combo)"),
+    MATCH_BOXING_COMBO_NO_COMBO_PLACEHOLDER("MATCH.COMBO_NO_COMBO_PLACEHOLDER", DataType.STRING, ""),
+    MATCH_BOXING_HIT_DIFFERENCE_HIGHER("MATCH.HIT_DIFFERENCE_PLACEHOLDER", DataType.STRING,
+                        "&a(<hit-difference> Hits)"),
+    MATCH_BOXING_HIT_DIFFERENCE_EQUAL("MATCH.HIT_DIFFERENCE_PLACEHOLDER", DataType.STRING,
+                        "&e(<hit-difference> Hits)"),
+    MATCH_BOXING_HIT_DIFFERENCE_LOWER("MATCH.HIT_DIFFERENCE_PLACEHOLDER", DataType.STRING,
+                        "&c(<hit-difference> Hits)"),
     MATCH_BUILD_LIMIT("MATCH.BUILD_LIMIT", DataType.STRING_LIST, "&cYou have reached the build limit!"),
     KIT_EDITOR_START("KIT_EDITOR.START", "This is sent when the player starts editing a kit.", DataType.STRING_LIST,
             "&bOpen your Inventory to edit layout!",
@@ -200,6 +210,8 @@ public enum MessagesLocale implements IDataAccessor {
     PARTY_KICK("PARTY.KICK", DataType.STRING_LIST, "&f<player> &bhas been kicked from the party."),
     PARTY_CANNOT_CREATE("PARTY.CANNOT_CREATE", DataType.STRING_LIST, "&cYou can only create a party while in lobby!"),
     PARTY_LEFT("PARTY.LEFT", DataType.STRING_LIST, "&f<player> &bhas left the party."),
+    PARTY_PRIVACY_OPEN("PARTY.PRIVACY.OPEN", DataType.STRING, "Open"),
+    PARTY_PRIVACY_CLOSED("PARTY.PRIVACY.OPEN", DataType.STRING, "Closed"),
     PARTY_INFO("PARTY.INFO", DataType.STRING_LIST,
             " ",
             "&7&m------------------------------------------------",
@@ -247,29 +259,29 @@ public enum MessagesLocale implements IDataAccessor {
     FFA_KILLSTREAK_ANNOUNCE_MESSAGE("FFA.KILLSTREAK_ANNOUNCE.MESSAGE", DataType.STRING_LIST,
             " ", "&b<player> &fis now on a &b&l<killstreak> KILLSTREAK!", " ");
 
-        private final String path;
-        private final String comment;
-        private final List<String> defaultValue = new ArrayList<>();
-        private final DataType dataType;
+    private final String path;
+    private final String comment;
+    private final List<String> defaultValue = new ArrayList<>();
+    private final DataType dataType;
 
-        MessagesLocale(String path, @Nullable String comment, DataType dataType, String... defaultValue) {
-                this.path = path;
-                this.comment = comment;
-                this.defaultValue.addAll(Arrays.asList(defaultValue));
-                this.dataType = dataType;
-        }
+    MessagesLocale(String path, @Nullable String comment, DataType dataType, String... defaultValue) {
+        this.path = path;
+        this.comment = comment;
+        this.defaultValue.addAll(Arrays.asList(defaultValue));
+        this.dataType = dataType;
+    }
 
-        MessagesLocale(String path, DataType dataType, String... defaultValue) {
-                this.path = path;
-                this.comment = null;
-                this.defaultValue.addAll(Arrays.asList(defaultValue));
-                this.dataType = dataType;
-        }
+    MessagesLocale(String path, DataType dataType, String... defaultValue) {
+        this.path = path;
+        this.comment = null;
+        this.defaultValue.addAll(Arrays.asList(defaultValue));
+        this.dataType = dataType;
+    }
 
-        @Override
-        public ConfigFile getConfigFile() {
-                return ConfigService.get().getMessagesConfig();
-        }
+    @Override
+    public ConfigFile getConfigFile() {
+        return ConfigService.get().getMessagesConfig();
+    }
 
     @Override
     public String getHeader() {
@@ -282,11 +294,11 @@ public enum MessagesLocale implements IDataAccessor {
             for (String message : getStringList()) {
                 if (message.equals("NONE"))
                     continue;
-                PlayerUtil.sendMessage(playerUUID, message, resolver);
+            PlayerUtil.sendMessage(playerUUID, message, resolver);
             }
         } else if (dataType.equals(DataType.STRING)) {
             if (getString().equals("NONE"))
-                return;
+            return;
             PlayerUtil.sendMessage(playerUUID, getString(), resolver);
         }
     }
@@ -295,7 +307,7 @@ public enum MessagesLocale implements IDataAccessor {
     }
     public void send(UUID playerUUID) {
         Player player = Bukkit.getPlayer(playerUUID);
-       send(player, TagResolver.empty());
+        send(player, TagResolver.empty());
     }
     public void send(UUID playerUUID, TagResolver resolver) {
         Player player = Bukkit.getPlayer(playerUUID);

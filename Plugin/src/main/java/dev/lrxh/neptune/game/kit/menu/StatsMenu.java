@@ -5,10 +5,12 @@ import dev.lrxh.neptune.game.kit.Kit;
 import dev.lrxh.neptune.game.kit.KitService;
 import dev.lrxh.neptune.game.kit.impl.KitRule;
 import dev.lrxh.neptune.game.kit.menu.button.StatButton;
-import dev.lrxh.neptune.providers.placeholder.PlaceholderUtil;
+import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.menu.Button;
 import dev.lrxh.neptune.utils.menu.Filter;
 import dev.lrxh.neptune.utils.menu.Menu;
+import net.kyori.adventure.text.Component;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -29,8 +31,8 @@ public class StatsMenu extends Menu {
     }
 
     @Override
-    public String getTitle(Player player) {
-        return PlaceholderUtil.format(MenusLocale.STAT_TITLE.getString(), player);
+    public Component getTitle(Player player) {
+        return CC.returnMessage(player, MenusLocale.STAT_TITLE.getString());
     }
 
     @Override

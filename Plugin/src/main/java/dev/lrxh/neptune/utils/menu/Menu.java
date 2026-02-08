@@ -7,6 +7,8 @@ import dev.lrxh.neptune.utils.ServerUtils;
 import dev.lrxh.neptune.utils.menu.impl.DisplayButton;
 import lombok.Getter;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -20,7 +22,7 @@ public abstract class Menu {
     private final int size;
     @Getter
     private final boolean updateOnClick;
-    private final String title;
+    private final Component title;
     private final Filter filter;
     private List<Button> buttons;
 
@@ -31,6 +33,13 @@ public abstract class Menu {
     private Inventory inventory;
 
     public Menu(String title, int size, Filter filter) {
+        this.title = CC.color(title);
+        this.size = size;
+        this.filter = filter;
+        this.updateOnClick = false;
+        this.updateEveryTick = false;
+    }
+    public Menu(Component title, int size, Filter filter) {
         this.title = title;
         this.size = size;
         this.filter = filter;
@@ -39,14 +48,20 @@ public abstract class Menu {
     }
 
     public Menu(int size, Filter filter) {
-        this.title = "";
+        this.title = Component.empty();
         this.size = size;
         this.filter = filter;
         this.updateOnClick = false;
         this.updateEveryTick = false;
     }
-
     public Menu(String title, int size, Filter filter, boolean updateOnClick) {
+        this.title = CC.color(title);
+        this.size = size;
+        this.filter = filter;
+        this.updateOnClick = updateOnClick;
+        this.updateEveryTick = false;
+    }
+    public Menu(Component title, int size, Filter filter, boolean updateOnClick) {
         this.title = title;
         this.size = size;
         this.filter = filter;
@@ -56,8 +71,8 @@ public abstract class Menu {
 
     public abstract List<Button> getButtons(Player player);
 
-    public String getTitle(Player player) {
-        return "";
+    public Component getTitle(Player player) {
+        return Component.empty();
     }
 
     private void set(Inventory inventory, int slot, ItemStack itemStack) {
@@ -74,14 +89,14 @@ public abstract class Menu {
                 MenuService.get().remove(player);
             }
 
-            String title;
-            if (this.title.isEmpty()) {
+            Component title;
+            if (this.title.equals(Component.empty())) {
                 title = getTitle(player);
             } else {
                 title = this.title;
             }
 
-            Inventory inventory = Bukkit.createInventory(player, size, CC.color(title));
+            Inventory inventory = Bukkit.createInventory(player, size, title);
             this.inventory = inventory;
             player.openInventory(inventory);
 

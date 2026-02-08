@@ -1,6 +1,7 @@
 package dev.lrxh.neptune.providers.placeholder;
 
 import dev.lrxh.neptune.API;
+import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.feature.party.Party;
 import dev.lrxh.neptune.feature.queue.QueueEntry;
 import dev.lrxh.neptune.feature.queue.QueueService;
@@ -88,7 +89,8 @@ public class PlaceholderUtil {
             placeholders = TagResolver.resolver(placeholders,
                 Placeholder.unparsed("party-leader", party.getLeaderName()),
                 Placeholder.unparsed("party-size", String.valueOf(party.getUsers().size())),
-                Placeholder.unparsed("party-max", String.valueOf(party.getMaxUsers()))
+                Placeholder.unparsed("party-max", String.valueOf(party.getMaxUsers())),
+                Placeholder.unparsed("party-privacy", party.isOpen() ? MessagesLocale.PARTY_PRIVACY_OPEN.getString() : MessagesLocale.PARTY_PRIVACY_CLOSED.getString())
             );
         }
         if (match != null) {

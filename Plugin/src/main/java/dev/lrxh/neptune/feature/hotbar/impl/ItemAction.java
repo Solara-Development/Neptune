@@ -96,7 +96,7 @@ public enum ItemAction {
             Party party = profile.getGameData().getParty();
             MessagesLocale.PARTY_INFO.send(player.getUniqueId(), TagResolver.resolver(
                     Placeholder.unparsed("leader", party.getLeaderName()),
-                    Placeholder.unparsed("privacy", party.isOpen() ? "Open" : "Closed"),
+                    Placeholder.unparsed("privacy", party.isOpen() ? MessagesLocale.PARTY_PRIVACY_OPEN.getString() : MessagesLocale.PARTY_PRIVACY_CLOSED.getString()),
                     Placeholder.unparsed("max", String.valueOf(party.getMaxUsers())),
                     Placeholder.unparsed("members", party.getUserNames()),
                     Placeholder.unparsed("size", String.valueOf(party.getUsers().size()))));

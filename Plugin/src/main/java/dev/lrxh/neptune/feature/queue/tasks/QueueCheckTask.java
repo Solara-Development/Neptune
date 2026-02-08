@@ -11,7 +11,6 @@ import dev.lrxh.neptune.game.match.impl.participant.Participant;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.data.SettingData;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.providers.placeholder.PlaceholderUtil;
 import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.PlayerUtil;
 import dev.lrxh.neptune.utils.tasks.NeptuneRunnable;
@@ -34,7 +33,7 @@ public class QueueCheckTask extends NeptuneRunnable {
             for (QueueEntry entry : queue) {
                 Player player = Bukkit.getPlayer(entry.getUuid());
                 if (player != null) {
-                    player.sendActionBar(CC.color(PlaceholderUtil.format(MessagesLocale.QUEUE_ACTION_BAR.getString(), player)));
+                    player.sendActionBar(CC.returnMessage(player, MessagesLocale.QUEUE_ACTION_BAR.getString()));
                 }
             }
         }
