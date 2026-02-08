@@ -32,7 +32,8 @@ public enum SettingsLocale implements IDataAccessor {
             ""),
     PARTY_ADVERTISE_TIME("PARTY.ADVERTISE_TIME",
             "The time it should take for sending each message for party advertisements, in ticks (20 ticks = 1 second).",
-            DataType.INT, "6000");
+            DataType.INT, "6000"),
+    VERSION("VERSION", "Do not change this!", DataType.INT, "1");
 
     private final String path;
     private final String comment;
@@ -62,5 +63,5 @@ public enum SettingsLocale implements IDataAccessor {
     public ConfigFile getConfigFile() {
         return ConfigService.get().getMainConfig();
     }
-
+    public void update() {}
 }

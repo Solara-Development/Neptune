@@ -27,5 +27,6 @@ public class Cache {
 
     public void save() {
         SettingsLocale.SPAWN_LOCATION.set(LocationUtil.serialize(spawn));
+        SettingsLocale.SPAWN_LOCATION.getConfigFile().save();
     }
 }

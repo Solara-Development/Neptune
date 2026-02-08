@@ -19,8 +19,8 @@
 | \<losses>        | %neptune_losses%                                                            | The number of losses a player has accumulated                          |
 | \<kills>         | %neptune_kills%                                                             | The number of kills a player has accumulated                           |
 | \<deaths>        | %neptune_deaths%                                                            | The number of deaths a player has accumulated                          |
-| \<current-streak> | %neptune_currentStreak%                                                     | The current win streak of the player                                   |
-| \<best-streak> | %neptune_bestStreak%                                                     | The best win streak the player has achieved                            |
+| \<current-win-streak> | %neptune_currentStreak%                                                     | The current win streak of the player                                   |
+| \<best-win-streak> | %neptune_bestStreak%                                                     | The best win streak the player has achieved                            |
 | \<division>      | %neptune_division%                                                          | The global division name of the player                                 |
 | None             | %neptune_recent_match_(num)\_(opponent/arena/kit/date/time/unix_timestamp)% | Get details about a recent match. Unix timestamp is in seconds, not ms |
 | None             | %neptune_state%                                                             | Get the current state of the player                                    |
@@ -32,7 +32,7 @@
 | \<kit>          | %neptune_kit%              | The display name of the kit the player is playing on                  |
 | \<max-ping>      | %neptune_maxPing%          | The maximum ping allowed by the player in their settings              |
 | \<time>         | %neptune_time%             | The time in minutes and seconds that the player has been queueing for |
-| \<kit_division> | %neptune\_(kit)\_division% | The kit-specific division name of the player                          |
+| \<kit-division> | %neptune\_(kit)\_division% | The kit-specific division name of the player                          |
 
 ## Kit Editor
 
@@ -78,10 +78,10 @@
 | \<hits>                                                  | %neptune_hits%                                               | The amount of times the player has hit the opponent                  |
 | \<opponent-hits>                                         | %neptune_opponent-hits%                                      | The amount of times the opponent has hit the player                  |
 | \<difference>                                            | %neptune_difference%                                         | The difference in amount of hits between the player and the opponent |
-| \<playerRed_name>                                        | %neptune_player-red-name%                                    | The name of the player in the red team                               |
-| \<playerBlue_name>                                       | %neptune_player-blue-name%                                   | The name of the player in the blue team                              |
-| \<playerRed_ping>                                        | %neptune_player-red-ping%                                    | The ping of the player in the red team                               |
-| \<playerBlue_ping>                                       | %neptune_player-blue-ping%                                   | The ping of the player in the blue team                              |
+| \<red-name>                                        | %neptune_player-red-name%                                    | The name of the player in the red team                               |
+| \<blue-name>                                       | %neptune_player-blue-name%                                   | The name of the player in the blue team                              |
+| \<red-ping>                                        | %neptune_player-red-ping%                                    | The ping of the player in the red team                               |
+| \<blue-ping>                                       | %neptune_player-blue-ping%                                   | The ping of the player in the blue team                              |
 | \<bed-status><sup style="color: red">\*\*</sup>          | %neptune_bed-broken%<sup style="color: red">$</sup>          | Whether the player's bed is broken                                   |
 | \<opponent-bed-status><sup style="color: red">\*\*</sup> | %neptune_opponent-bed-broken%<sup style="color: red">$</sup> | Whether the opponent's bed is broken                                 |
 | \<points>                                                | %neptune_points%                                             | The number of rounds won by the player's team                        |

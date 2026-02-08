@@ -137,4 +137,5 @@ public enum HotbarLocale implements IDataAccessor {
     public boolean resetUnknown() {
         return false;
     }
+    public void update() {}
 }

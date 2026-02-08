@@ -47,5 +47,12 @@ public class ConfigService {
         MenusLocale.FILTER_NAME.load();
         ScoreboardLocale.TITLE.load();
         CosmeticsLocale.LIGHTNING_DISPLAY_NAME.load();
+
+        HotbarLocale.LOBBY_PARTY_CREATE_NAME.update();
+        MessagesLocale.MATCH_FOUND.update();
+        SettingsLocale.SPAWN_LOCATION.update();
+        MenusLocale.FILTER_NAME.update();
+        ScoreboardLocale.TITLE.update();
+        CosmeticsLocale.LIGHTNING_DISPLAY_NAME.update();
     }
 }

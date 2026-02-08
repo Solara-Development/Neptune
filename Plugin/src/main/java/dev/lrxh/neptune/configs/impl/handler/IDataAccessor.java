@@ -63,7 +63,6 @@ public interface IDataAccessor {
 
     default void set(Object value) {
         getConfigFile().getConfiguration().set(getPath(), value);
-        getConfigFile().save();
     }
 
     default void comment(String path, String comment) {
@@ -122,4 +121,6 @@ public interface IDataAccessor {
             }
         }
     }
+
+    public void update();
 }

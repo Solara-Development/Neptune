@@ -67,8 +67,8 @@ public enum ScoreboardLocale implements IDataAccessor {
             "&7&m--------------------"),
     IN_GAME_TEAM("SCOREBOARDS.IN_GAME.IN-MATCH-TEAM", DataType.STRING_LIST,
             "&7&m--------------------",
-            "&bYour Team: &a<alive>&f/&a<max>",
-            "&bOpponents: &c<alive-opponent>&f/&c<max-opponent>",
+            "&bYour Team: &a<team-alive>&f/&a<team-max>",
+            "&bOpponents: &c<opponent-alive>&f/&c<opponent-total>",
             " ",
             "&bserver.net",
             "&7&m--------------------"),
@@ -94,7 +94,7 @@ public enum ScoreboardLocale implements IDataAccessor {
             "&7&m--------------------",
             "&bFighting: &f<opponent>",
             " ",
-            "&bHits: <diffrence>",
+            "&bHits: <difference>",
             " &aYou: &f<hits> <combo>",
             " &cTheir: &f<opponent-hits> <opponent-combo>",
             " ",
@@ -120,12 +120,12 @@ public enum ScoreboardLocale implements IDataAccessor {
     IN_GAME_BEDWARS_TEAM("SCOREBOARDS.IN_GAME.BEDWARS-TEAM", DataType.STRING_LIST,
             "&7&m--------------------",
             "&bTeams:",
-            "&a Your Team: <alive>&f/&a<max>",
-            "&c Enemy Team: <alive-opponent>&f/&c<max-opponent>",
+            "&a Your Team: <team-alive>&f/&a<team-total>",
+            "&c Enemy Team: <opponent-alive>&f/&c<opponent-total>",
             " ",
             "&bBeds:",
             "&a Your Bed: <team-bed-status>",
-            "&c Enemy Bed: <opponent-team-bed-status>",
+            "&c Enemy Bed: <opponent-bed-status>",
             " ",
             "&bserver.net",
             "&7&m--------------------"),
@@ -162,14 +162,14 @@ public enum ScoreboardLocale implements IDataAccessor {
             "&bKit: &f<kit>",
             "&bArena: &f<arena>",
             "",
-            "&c<playerRed_name> &7(<playerRed_ping>) vs &9<playerBlue_name> &7(<playerBlue_ping>)",
+            "&c<red-name> &7(<red-ping>) vs &9<blue-name> &7(<blue-ping>)",
             " ",
             "&bserver.net",
             "&7&m--------------------"),
     IN_SPECTATOR_TEAM("SCOREBOARDS.IN_GAME.SPECTATOR-TEAM", DataType.STRING_LIST,
             "&7&m--------------------",
-            "&fRed: &a<alive-red>&f/&a<max-red>",
-            "&fBlue: &c<alive-blue>&f/&c<max-blue>",
+            "&fRed: &a<red-alive>&f/&a<red-max>",
+            "&fBlue: &c<blue-alive>&f/&c<blue-max>",
             " ",
             "&bserver.net",
             "&7&m--------------------"),
@@ -195,8 +195,8 @@ public enum ScoreboardLocale implements IDataAccessor {
             "&fIn Fights: &b<in-match>",
             " ",
             "&bParty:",
-            " &fLeader: &b<leader>",
-            " &fSize: &b<size>/<party-max>",
+            " &fLeader: &b<party-leader>",
+            " &fSize: &b<party-size>/<party-max>",
             " ",
             "&bserver.net",
             "&7&m--------------------");
@@ -221,5 +221,41 @@ public enum ScoreboardLocale implements IDataAccessor {
     public ConfigFile getConfigFile() {
         return ConfigService.get().getScoreboardConfig();
     }
-
+    public void update() {
+        IN_GAME_BOXING.set(IN_GAME_BOXING.getStringList().stream().map(str -> 
+                str.replaceAll("<diffrence>", "<difference>")
+        ).toList());
+        PARTY_LOBBY.set(PARTY_LOBBY.getStringList().stream().map(str ->
+                str.replaceAll("<leader>", "<party-leader>")
+                        .replaceAll("<size>", "<party-size>")
+        ).toList());
+        IN_SPECTATOR.set(IN_SPECTATOR.getStringList().stream().map(str ->
+                str.replaceAll("<playerRed_name>", "<red-name>")
+                        .replaceAll("<playerRed_ping>", "<red-ping>")
+                        .replaceAll("<playerBlue_name>", "<blue-name>")
+                        .replaceAll("<playerBlue_ping>", "<blue-ping>")
+        ));
+        IN_SPECTATOR_TEAM.set(IN_SPECTATOR_TEAM.getStringList().stream().map(str ->
+                str.replaceAll("<alive-red>", "<red-alive>")
+                        .replaceAll("<alive-blue>", "<blue-alive>")
+                        .replaceAll("<max-red>", "<red-total>")
+                        .replaceAll("<max-blue>", "<blue-total>")
+        ));
+        IN_GAME_TEAM.set(IN_GAME_TEAM.getStringList().stream().map(str ->
+                str.replaceAll("<alive>", "<team-alive>")
+                        .replaceAll("<max>", "<team-total>")
+                        .replaceAll("<alive-opponent>", "<opponent-alive>")
+                        .replaceAll("<max-opponent>", "<opponent-total>")
+                        .replaceAll("<points>", "<team-points>")
+        ));
+        IN_GAME_TEAM.set(IN_GAME_TEAM.getStringList().stream().map(str ->
+                str.replaceAll("<alive>", "<team-alive>")
+                        .replaceAll("<max>", "<team-total>")
+                        .replaceAll("<alive-opponent>", "<opponent-alive>")
+                        .replaceAll("<max-opponent>", "<opponent-total>")
+                        .replaceAll("<points>", "<team-points>")
+                        .replaceAll("<opponent-team-bed-status>", "<opponent-bed-status>")
+        ));
+        getConfigFile().save();
+    }
 }

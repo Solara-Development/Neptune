@@ -67,8 +67,8 @@ public enum MenusLocale implements IDataAccessor {
             " &f&7* &fWins: &b<wins>",
             " &f&7* &fElo: &b<elo>",
             " &f&7* &fLosses: &b<losses>",
-            " &f&7* &fCurrent Streak: &b<currentStreak>",
-            " &f&7* &fBest Streak: &b<bestStreak>",
+            " &f&7* &fCurrent Streak: &b<current-win-streak>",
+            " &f&7* &fBest Streak: &b<best-win-streak>",
             " &f&7* &fDivision: &b<division>",
             " &f&7* &fK/D &b<kdr>"),
     MATCH_LIST_TITLE("MATCH.LIST.TITLE", DataType.STRING, "&7Select Match"),
@@ -76,7 +76,7 @@ public enum MenusLocale implements IDataAccessor {
     MATCH_LIST_STARTING_SLOT("MATCH_LIST.STARTING-SLOT", DataType.INT, "10"),
     MATCH_LIST_FILTER("MATCH_LIST.FILTER-TYPE", "FILL, BORDER, NONE", DataType.STRING, "FILL"),
     MATCH_LIST_ITEM_NAME("MATCH_LIST.ITEM.NAME", DataType.STRING,
-            "&c<playerRed_name> &7vs &9<playerBlue_name>"),
+            "&c<red-name> &7vs &9<blue-name>"),
     MATCH_LIST_ITEM_LORE("MATCH_LIST.ITEM.LORE", DataType.STRING_LIST,
             "&fArena: &b<arena>",
             "&fKit: &b<kit>",
@@ -550,5 +550,19 @@ public enum MenusLocale implements IDataAccessor {
     @Override
     public ConfigFile getConfigFile() {
         return ConfigService.get().getMenusConfig();
+    }
+    public void update() {
+        getConfigFile().getConfiguration().set(MATCH_LIST_ITEM_NAME.getPath(), 
+                MATCH_LIST_ITEM_NAME.getString()
+                        .replaceAll("<playerRed_name>", "<red-name>")
+                        .replaceAll("<playerBlue_name>", "<blue-name>")
+        );
+        getConfigFile().getConfiguration().set(STAT_LORE.getPath(),
+                STAT_LORE.getStringList().stream().map(str ->
+                        str.replaceAll("<currentStreak>", "<current-win-streak>")
+                           .replaceAll("<bestStreak>", "<best-win-streak>")
+                ).toList()
+        );
+        getConfigFile().save();
     }
 }

@@ -288,4 +288,6 @@ public enum MessagesLocale implements IDataAccessor {
         Player player = Bukkit.getPlayer(playerUUID);
         send(player, resolver);
     }
+
+    public void update() {};
 }
