@@ -7,9 +7,10 @@ import dev.lrxh.neptune.game.match.Match;
 import dev.lrxh.neptune.game.match.MatchService;
 import dev.lrxh.neptune.game.match.impl.MatchState;
 import dev.lrxh.neptune.game.match.impl.participant.Participant;
-import dev.lrxh.neptune.providers.clickable.Replacement;
 import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.tasks.NeptuneRunnable;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 
@@ -55,7 +56,7 @@ public class MatchSecondRoundRunnable extends NeptuneRunnable {
             match.sendTitle(CC.color(MessagesLocale.MATCH_STARTING_TITLE_HEADER.getString().replace("<countdown-time>", String.valueOf(respawnTimer))),
                     CC.color(MessagesLocale.MATCH_STARTING_TITLE_FOOTER.getString().replace("<countdown-time>", String.valueOf(respawnTimer))),
                     19);
-            match.sendMessage(MessagesLocale.ROUND_STARTING, new Replacement("<timer>", String.valueOf(respawnTimer)));
+            match.sendMessage(MessagesLocale.ROUND_STARTING, Placeholder.unparsed("timer", String.valueOf(respawnTimer)));
         }
 
         if (respawnTimer == 3) {

@@ -1,8 +1,10 @@
 package dev.lrxh.neptune.utils;
 
-import dev.lrxh.neptune.providers.clickable.Replacement;
 import lombok.experimental.UtilityClass;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -14,7 +16,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
@@ -115,22 +116,15 @@ public class ItemUtils {
         }
         return items;
     }
-
-    public List<String> getLore(List<String> lore, Replacement... replacements) {
-        List<String> newLore = new ArrayList<>();
+    public List<Component> getLore(List<String> lore) {
+        return getLore(lore, TagResolver.empty());
+    }
+    public List<Component> getLore(List<String> lore, TagResolver resolver) {
+        List<Component> newLore = new ArrayList<>();
 
         for (String line : lore) {
-            String modifiedLine = line;
-            for (Replacement replacement : replacements) {
-                if (modifiedLine.contains(replacement.getPlaceholder())) {
-                    modifiedLine = modifiedLine.replace(
-                            replacement.getPlaceholder(),
-                            MiniMessage.miniMessage().serialize(replacement.getReplacement()));
-                }
-            }
-
-            List<String> splitLines = Arrays.asList(modifiedLine.split("<br>"));
-            newLore.addAll(splitLines);
+            Component modifiedLine = MiniMessage.miniMessage().deserialize(line, resolver);
+            newLore.add(modifiedLine);
         }
 
         return newLore;

@@ -11,12 +11,14 @@ import dev.lrxh.neptune.game.match.impl.participant.Participant;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.data.SettingData;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.providers.clickable.Replacement;
 import dev.lrxh.neptune.providers.placeholder.PlaceholderUtil;
 import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.PlayerUtil;
 import dev.lrxh.neptune.utils.tasks.NeptuneRunnable;
 import dev.lrxh.neptune.utils.tasks.TaskScheduler;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -92,23 +94,23 @@ public class QueueCheckTask extends NeptuneRunnable {
                 Participant participant1 = new Participant(player1);
                 Participant participant2 = new Participant(player2);
 
-                MessagesLocale.MATCH_FOUND.send(uuid1,
-                        new Replacement("<opponent>", participant2.getNameUnColored()),
-                        new Replacement("<kit>", kit.getDisplayName()),
-                        new Replacement("<arena>", arena.getDisplayName()),
-                        new Replacement("<opponent-ping>", String.valueOf(ping2)),
-                        new Replacement("<opponent-elo>", String.valueOf(profile2.getGameData().get(kit).getElo())),
-                        new Replacement("<elo>", String.valueOf(profile1.getGameData().get(kit).getElo())),
-                        new Replacement("<ping>", String.valueOf(ping1)));
+                MessagesLocale.MATCH_FOUND.send(uuid1, TagResolver.resolver(
+                        Placeholder.parsed("kit", kit.getDisplayName()),
+                        Placeholder.parsed("arena", arena.getDisplayName()),
+                        Placeholder.unparsed("opponent", participant2.getNameUnColored()),
+                        Placeholder.unparsed("opponent-ping", String.valueOf(ping2)),
+                        Placeholder.unparsed("opponent-elo", String.valueOf(profile2.getGameData().get(kit).getElo())),
+                        Placeholder.unparsed("elo", String.valueOf(profile1.getGameData().get(kit).getElo())),
+                        Placeholder.unparsed("ping", String.valueOf(ping1))));
 
-                MessagesLocale.MATCH_FOUND.send(uuid2,
-                        new Replacement("<opponent>", participant1.getNameUnColored()),
-                        new Replacement("<kit>", kit.getDisplayName()),
-                        new Replacement("<arena>", arena.getDisplayName()),
-                        new Replacement("<opponent-ping>", String.valueOf(ping1)),
-                        new Replacement("<opponent-elo>", String.valueOf(profile1.getGameData().get(kit).getElo())),
-                        new Replacement("<elo>", String.valueOf(profile2.getGameData().get(kit).getElo())),
-                        new Replacement("<ping>", String.valueOf(ping2)));
+                MessagesLocale.MATCH_FOUND.send(uuid2, TagResolver.resolver(
+                        Placeholder.parsed("kit", kit.getDisplayName()),
+                        Placeholder.parsed("arena", arena.getDisplayName()),
+                        Placeholder.unparsed("opponent", participant1.getNameUnColored()),
+                        Placeholder.unparsed("opponent-ping", String.valueOf(ping1)),
+                        Placeholder.unparsed("opponent-elo", String.valueOf(profile1.getGameData().get(kit).getElo())),
+                        Placeholder.unparsed("elo", String.valueOf(profile2.getGameData().get(kit).getElo())),
+                        Placeholder.unparsed("ping", String.valueOf(ping2))));
 
                 TaskScheduler.get().startTaskCurrentTick(new NeptuneRunnable() {
                     @Override

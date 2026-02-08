@@ -17,7 +17,6 @@ import dev.lrxh.neptune.game.match.impl.team.TeamFightMatch;
 import dev.lrxh.neptune.profile.ProfileService;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.providers.clickable.Replacement;
 import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.EntityUtils;
 import dev.lrxh.neptune.utils.LocationUtil;
@@ -25,6 +24,9 @@ import dev.lrxh.neptune.utils.WorldUtils;
 import dev.lrxh.neptune.utils.tasks.NeptuneRunnable;
 import io.papermc.paper.event.block.BlockBreakBlockEvent;
 import io.papermc.paper.event.entity.EntityPushedByEntityAttackEvent;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
@@ -331,8 +333,7 @@ public class MatchListener implements Listener {
             int ticksLeft = player.getCooldown(Material.ENDER_PEARL);
             if (ticksLeft > 0) {
                 double secondsLeft = ticksLeft / 20.0;
-                participant.sendMessage(MessagesLocale.MATCH_ENDERPEARL_COOLDOWN_ON_GOING,
-                        new Replacement("<time>", String.valueOf(secondsLeft)));
+                participant.sendMessage(MessagesLocale.MATCH_ENDERPEARL_COOLDOWN_ON_GOING, Placeholder.unparsed("time", String.valueOf(secondsLeft)));
             }
         } else {
             new NeptuneRunnable() {
@@ -479,16 +480,18 @@ public class MatchListener implements Listener {
 
             if (blockType.equals(Material.HEAVY_WEIGHTED_PRESSURE_PLATE)) {
                 if (participant.setCurrentCheckPoint(event.getClickedBlock().getLocation().clone().add(0, 1, 0))) {
-                    match.broadcast(MessagesLocale.PARKOUR_CHECKPOINT,
-                            new Replacement("<player>", participant.getNameColored()),
-                            new Replacement("<checkpoint>", String.valueOf(participant.getCheckPoint())),
-                            new Replacement("<time>", participant.getTime().formatSecondsMillis()));
+                    match.broadcast(MessagesLocale.PARKOUR_CHECKPOINT, TagResolver.resolver(
+                            Placeholder.unparsed("player", participant.getNameColored()),
+                            Placeholder.unparsed("checkpoint", String.valueOf(participant.getCheckPoint())),
+                            Placeholder.unparsed("time", participant.getTime().formatSecondsMillis())
+                    ));
                 }
             } else if (blockType.equals(Material.LIGHT_WEIGHTED_PRESSURE_PLATE)) {
                 match.win(participant);
-                match.broadcast(MessagesLocale.PARKOUR_END,
-                        new Replacement("<player>", participant.getNameColored()),
-                        new Replacement("<time>", participant.getTime().formatSecondsMillis()));
+                match.broadcast(MessagesLocale.PARKOUR_END, TagResolver.resolver(
+                        Placeholder.unparsed("player", participant.getNameColored()),
+                        Placeholder.unparsed("time", participant.getTime().formatSecondsMillis())
+                ));
             }
         }
     }
@@ -935,8 +938,7 @@ public class MatchListener implements Listener {
                             CC.color(MessagesLocale.BED_BREAK_FOOTER.getString()), 20);
                     match.broadcast(
                             opponent.getColor().equals(ParticipantColor.RED) ? MessagesLocale.RED_BED_BROKEN_MESSAGE
-                                    : MessagesLocale.BLUE_BED_BROKEN_MESSAGE,
-                            new Replacement("<player>", participant.getNameColored()));
+                                    : MessagesLocale.BLUE_BED_BROKEN_MESSAGE, Placeholder.parsed("player", participant.getNameColored()));
                 } else {
                     event.setCancelled(true);
                     participant.sendMessage(MessagesLocale.CANT_BREAK_OWN_BED);

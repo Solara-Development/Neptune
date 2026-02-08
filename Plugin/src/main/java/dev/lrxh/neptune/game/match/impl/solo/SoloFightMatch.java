@@ -24,21 +24,21 @@ import dev.lrxh.neptune.profile.data.GameData;
 import dev.lrxh.neptune.profile.data.MatchHistory;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.providers.clickable.ClickableComponent;
-import dev.lrxh.neptune.providers.clickable.Replacement;
 import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.DateUtils;
 import dev.lrxh.neptune.utils.PlayerUtil;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -148,7 +148,7 @@ public class SoloFightMatch extends Match implements ISoloFightMatch {
                     CC.color(MessagesLocale.RANKUP_TITLE_FOOTER.getString().replace("<division>", divisionName)),
                     40);
 
-            winner.sendMessage(MessagesLocale.RANKUP_MESSAGE, new Replacement("<division>", divisionName));
+            winner.sendMessage(MessagesLocale.RANKUP_MESSAGE, Placeholder.parsed("division", divisionName));
         }
 
         forEachParticipantForce(participant -> LeaderboardService.get().addChange(
@@ -173,28 +173,27 @@ public class SoloFightMatch extends Match implements ISoloFightMatch {
         Participant winner = getWinner();
         Participant loser = getLoser();
 
-        List<Replacement> replacements = new ArrayList<>(List.of(
-                new Replacement("<loser>", loser.getNameUnColored()),
-                new Replacement("<kit>", getKit().getDisplayName()),
-                new Replacement("<winner_points>", String.valueOf(winner.getPoints())),
-                new Replacement("<loser_points>", String.valueOf(loser.getPoints())),
-                new Replacement("<winner>", winner.getNameUnColored())));
+        TagResolver resolver = TagResolver.resolver(
+                Placeholder.parsed("kit", getKit().getDisplayName()),
+                Placeholder.unparsed("loser", loser.getNameUnColored()),
+                Placeholder.unparsed("winner-points", String.valueOf(winner.getPoints())),
+                Placeholder.unparsed("loser-points", String.valueOf(loser.getPoints())),
+                Placeholder.unparsed("winner", winner.getNameUnColored())
+        );
 
         if (!isDuel()) {
-            replacements.add(new Replacement("<winner-elo>", String.valueOf(winner.getEloChange())));
-            replacements.add(new Replacement("<loser-elo>", String.valueOf(loser.getEloChange())));
-            broadcast(MessagesLocale.MATCH_END_DETAILS_SOLO, replacements.toArray(new Replacement[0]));
+            resolver = TagResolver.resolver(resolver,
+                Placeholder.unparsed("winner-elo", String.valueOf(winner.getEloChange())),
+                Placeholder.unparsed("loser-elo", String.valueOf(loser.getEloChange())
+            ));
+            broadcast(MessagesLocale.MATCH_END_DETAILS_SOLO, resolver);
         } else {
-            broadcast(MessagesLocale.MATCH_END_DETAILS_DUEL, replacements.toArray(new Replacement[0]));
+            broadcast(MessagesLocale.MATCH_END_DETAILS_DUEL, resolver);
         }
 
         forEachParticipant(participant -> {
             if (MessagesLocale.MATCH_PLAY_AGAIN_ENABLED.getBoolean()) {
-                TextComponent playMessage = new ClickableComponent(MessagesLocale.MATCH_PLAY_AGAIN.getString(),
-                        "/queue " + getKit().getName(),
-                        MessagesLocale.MATCH_PLAY_AGAIN_HOVER.getString()).build();
-
-                PlayerUtil.sendMessage(participant.getPlayerUUID(), playMessage);
+                PlayerUtil.sendMessage(participant.getPlayerUUID(), MessagesLocale.MATCH_PLAY_AGAIN.getString());
             }
         });
     }
@@ -313,9 +312,9 @@ public class SoloFightMatch extends Match implements ISoloFightMatch {
     }
 
     public String getWinnerName() {
-        return getWinner().getName();
+        return getWinner() != null ? getWinner().getName() : "";
     }
     public String getLoserName() {
-        return getLoser().getName();
+        return getLoser() != null ? getLoser().getName() : "";
     }
 }

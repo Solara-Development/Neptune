@@ -17,12 +17,14 @@ import dev.lrxh.neptune.game.match.tasks.MatchEndRunnable;
 import dev.lrxh.neptune.game.match.tasks.MatchRespawnRunnable;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.providers.clickable.Replacement;
 import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.PlayerUtil;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 
@@ -90,12 +92,15 @@ public class TeamFightMatch extends Match implements ITeamFightMatch {
         MatchTeam winnerTeam = teamA.isLoser() ? teamB : teamA;
         MatchTeam loserTeam = teamA.isLoser() ? teamA : teamB;
 
-        forEachParticipant(participant -> MessagesLocale.MATCH_END_DETAILS_TEAM.send(participant.getPlayerUUID(),
-                new Replacement("<losers>", loserTeam.getTeamNames()),
-                new Replacement("<kit>", getKit().getDisplayName()),
-                new Replacement("<winners_points>", String.valueOf(winnerTeam.getPoints())),
-                new Replacement("<losers_points>", String.valueOf(loserTeam.getPoints())),
-                new Replacement("<winners>", winnerTeam.getTeamNames())));
+        forEachParticipant(participant -> 
+            MessagesLocale.MATCH_END_DETAILS_TEAM.send(participant.getPlayerUUID(), TagResolver.resolver(
+                Placeholder.parsed("kit", getKit().getDisplayName()),
+                Placeholder.unparsed("losers", loserTeam.getTeamNames()),
+                Placeholder.unparsed("winners-points", String.valueOf(winnerTeam.getPoints())),
+                Placeholder.unparsed("losers-points", String.valueOf(loserTeam.getPoints())),
+                Placeholder.unparsed("winners", winnerTeam.getTeamNames()),
+                Placeholder.unparsed("losers", loserTeam.getTeamNames())
+            )));
     }
 
 
@@ -186,10 +191,10 @@ public class TeamFightMatch extends Match implements ITeamFightMatch {
     }
 
     public String getWinnerName() {
-        return getWinner().getTeamNames();
+        return getWinner() != null ? getWinner().getTeamNames() : "";
     }
 
     public String getLoserName() {
-        return getLoser().getTeamNames();
+        return getLoser() != null ? getLoser().getTeamNames() : "";
     }
 }

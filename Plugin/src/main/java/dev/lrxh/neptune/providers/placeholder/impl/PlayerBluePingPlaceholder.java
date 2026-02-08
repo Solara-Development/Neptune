@@ -4,10 +4,10 @@ import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.game.match.Match;
 import dev.lrxh.neptune.game.match.impl.solo.SoloFightMatch;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.providers.placeholder.Placeholder;
+import dev.lrxh.neptune.providers.placeholder.PAPIPlaceholder;
 import org.bukkit.OfflinePlayer;
 
-public class PlayerBluePingPlaceholder implements Placeholder {
+public class PlayerBluePingPlaceholder implements PAPIPlaceholder {
     @Override
     public boolean match(String string) {
         return string.equals("player-blue-ping");

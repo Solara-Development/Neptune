@@ -2,10 +2,10 @@ package dev.lrxh.neptune.providers.placeholder.impl;
 
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.providers.placeholder.Placeholder;
+import dev.lrxh.neptune.providers.placeholder.PAPIPlaceholder;
 import org.bukkit.OfflinePlayer;
 
-public class LastKitPlaceholder implements Placeholder {
+public class LastKitPlaceholder implements PAPIPlaceholder {
     @Override
     public boolean match(String string) {
         return string.equals("lastKit");

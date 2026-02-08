@@ -11,7 +11,9 @@ import dev.lrxh.neptune.game.kit.Kit;
 import dev.lrxh.neptune.game.kit.impl.KitRule;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.providers.clickable.Replacement;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+
 import org.bukkit.Bukkit;
 
 import java.util.*;
@@ -48,9 +50,9 @@ public class QueueService implements IQueueService {
             if (event.isCancelled()) return;
             profile.setState(ProfileState.IN_QUEUE);
             kit.addQueue();
-            MessagesLocale.QUEUE_JOIN.send(playerUUID,
-                    new Replacement("<kit>", kit.getDisplayName()),
-                    new Replacement("<maxPing>", String.valueOf(profile.getSettingData().getMaxPing())));
+            MessagesLocale.QUEUE_JOIN.send(playerUUID, TagResolver.resolver(
+                    Placeholder.parsed("kit", kit.getDisplayName()),
+                    Placeholder.unparsed("max-ping", String.valueOf(profile.getSettingData().getMaxPing()))));
         }
     }
 

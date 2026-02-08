@@ -9,10 +9,11 @@ import dev.lrxh.neptune.game.match.impl.ffa.FfaFightMatch;
 import dev.lrxh.neptune.game.match.impl.participant.Participant;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.data.SettingData;
-import dev.lrxh.neptune.providers.clickable.Replacement;
 import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.Time;
 import dev.lrxh.neptune.utils.tasks.NeptuneRunnable;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -67,7 +68,7 @@ public class MatchStartRunnable extends NeptuneRunnable {
                     CC.color(MessagesLocale.MATCH_STARTING_TITLE_FOOTER.getString().replace("<countdown-time>",
                             String.valueOf(startTimer))),
                     19);
-            match.sendMessage(MessagesLocale.MATCH_STARTING, new Replacement("<timer>", String.valueOf(startTimer)));
+            match.sendMessage(MessagesLocale.MATCH_STARTING, Placeholder.unparsed("timer", String.valueOf(startTimer)));
         }
         startTimer--;
 

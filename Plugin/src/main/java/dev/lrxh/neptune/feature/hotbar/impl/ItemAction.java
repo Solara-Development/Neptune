@@ -23,9 +23,11 @@ import dev.lrxh.neptune.game.match.menu.MatchListMenu;
 import dev.lrxh.neptune.game.match.menu.MatchSpectateTeleportMenu;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.providers.clickable.Replacement;
 import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.PlayerUtil;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+
 import org.bukkit.entity.Player;
 
 @SuppressWarnings("unused")
@@ -49,7 +51,7 @@ public enum ItemAction {
             API.getProfile(player.getUniqueId()).setState(ProfileState.IN_LOBBY);
             QueueEntry queueEntry = QueueService.get().remove(player.getUniqueId());
             MessagesLocale.QUEUE_LEAVE.send(player.getUniqueId(),
-                    new Replacement("<kit>", queueEntry.getKit().getDisplayName()));
+                    Placeholder.parsed("kit", queueEntry.getKit().getDisplayName()));
         }
     },
     KIT_EDITOR() {
@@ -92,12 +94,12 @@ public enum ItemAction {
                 return;
             }
             Party party = profile.getGameData().getParty();
-            MessagesLocale.PARTY_INFO.send(player.getUniqueId(),
-                    new Replacement("<leader>", party.getLeaderName()),
-                    new Replacement("<privacy>", party.isOpen() ? "Open" : "Closed"),
-                    new Replacement("<max>", String.valueOf(party.getMaxUsers())),
-                    new Replacement("<members>", party.getUserNames()),
-                    new Replacement("<size>", String.valueOf(party.getUsers().size())));
+            MessagesLocale.PARTY_INFO.send(player.getUniqueId(), TagResolver.resolver(
+                    Placeholder.unparsed("leader", party.getLeaderName()),
+                    Placeholder.unparsed("privacy", party.isOpen() ? "Open" : "Closed"),
+                    Placeholder.unparsed("max", String.valueOf(party.getMaxUsers())),
+                    Placeholder.unparsed("members", party.getUserNames()),
+                    Placeholder.unparsed("size", String.valueOf(party.getUsers().size()))));
         }
     },
     PARTY_DISBAND() {

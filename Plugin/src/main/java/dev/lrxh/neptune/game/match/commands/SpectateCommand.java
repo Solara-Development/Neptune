@@ -7,7 +7,8 @@ import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.providers.clickable.Replacement;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+
 import org.bukkit.entity.Player;
 
 public class SpectateCommand {
@@ -37,17 +38,14 @@ public class SpectateCommand {
         }
 
         if (!targetProfile.getSettingData().isAllowSpectators()) {
-            MessagesLocale.SPECTATE_NOT_ALLOWED.send(player.getUniqueId(),
-                    new Replacement("<player>", target.getName()));
+            MessagesLocale.SPECTATE_NOT_ALLOWED.send(player.getUniqueId(), Placeholder.unparsed("player", target.getName()));
             return;
         }
 
         if (silent) {
-            MessagesLocale.SPECTATE_STARTED_SILENT.send(player.getUniqueId(),
-                    new Replacement("<player>", target.getName()));
+            MessagesLocale.SPECTATE_STARTED_SILENT.send(player.getUniqueId(), Placeholder.unparsed("player", target.getName()));
         } else {
-            MessagesLocale.SPECTATE_STARTED.send(player.getUniqueId(),
-                    new Replacement("<player>", target.getName()));
+            MessagesLocale.SPECTATE_STARTED.send(player.getUniqueId(), Placeholder.unparsed("player", target.getName()));
         }
 
         targetProfile.getMatch().addSpectator(player, target, !silent, true);

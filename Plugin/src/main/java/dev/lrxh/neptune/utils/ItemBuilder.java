@@ -1,10 +1,12 @@
 package dev.lrxh.neptune.utils;
 
 import dev.lrxh.neptune.providers.material.NMaterial;
-import dev.lrxh.neptune.providers.placeholder.PlaceholderUtil;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.TooltipDisplay;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -99,22 +101,42 @@ public class ItemBuilder {
     public void resetAmount() {
         item.setAmount(1);
     }
-
-    public ItemBuilder lore(List<String> lore) {
-        return lore(lore.toArray(new String[0]));
+    public ItemBuilder componentLore(Component lore, Player player) {
+        return componentLore(new ArrayList<>(List.of(lore)), TagResolver.empty(), player);
     }
-
-    public ItemBuilder lore(List<String> lore, Player player) {
+    public ItemBuilder componentLore(List<Component> lore, Player player) {
+        return componentLore(lore, TagResolver.empty(), player);
+    }
+    public ItemBuilder componentLore(List<Component> lore, TagResolver resolver, Player player) {
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
-            List<TextComponent> toSet = new ArrayList<>();
-            for (String string : PlaceholderUtil.format(lore, player)) {
-                toSet.add(CC.color(string));
+            List<Component> toSet = new ArrayList<>();
+            for (Component component : lore) {
+                toSet.add(CC.returnMessage(player, component, resolver));
             }
             meta.lore(toSet);
             item.setItemMeta(meta);
         }
         return this;
+    }
+
+    public ItemBuilder lore(List<String> lore) {
+        return lore(lore.toArray(new String[0]));
+    }
+    public ItemBuilder lore(List<String> lore, TagResolver resolver, Player player) {
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            List<Component> toSet = new ArrayList<>();
+            for (String string : lore) {
+                toSet.add(CC.returnMessage(player, string, resolver));
+            }
+            meta.lore(toSet);
+            item.setItemMeta(meta);
+        }
+        return this;
+    }
+    public ItemBuilder lore(List<String> lore, Player player) {
+        return lore(lore, TagResolver.empty(), player);
     }
 
     public ItemBuilder lore(String... lore) {

@@ -9,10 +9,10 @@ import dev.lrxh.neptune.game.match.impl.team.MatchTeam;
 import dev.lrxh.neptune.game.match.impl.team.TeamFightMatch;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.providers.placeholder.Placeholder;
+import dev.lrxh.neptune.providers.placeholder.PAPIPlaceholder;
 import org.bukkit.OfflinePlayer;
 
-public class OpponentBedBrokenPlaceholder implements Placeholder {
+public class OpponentBedBrokenPlaceholder implements PAPIPlaceholder {
     @Override
     public boolean match(String string) {
         return string.equals("opponent-bed-broken");

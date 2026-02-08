@@ -4,50 +4,48 @@ import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.configs.impl.MenusLocale;
 import dev.lrxh.neptune.game.kit.Kit;
 import dev.lrxh.neptune.profile.data.KitData;
-import dev.lrxh.neptune.providers.placeholder.PlaceholderUtil;
+import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.ItemBuilder;
 import dev.lrxh.neptune.utils.menu.Button;
-
-import java.util.List;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class StatButton extends Button {
-    private final Kit kit;
-    private final Player target;
+        private final Kit kit;
+        private final Player target;
 
-    public StatButton(int slot, Kit kit, Player target) {
-        super(slot);
-        this.kit = kit;
-        this.target = target;
-    }
+        public StatButton(int slot, Kit kit, Player target) {
+                super(slot);
+                this.kit = kit;
+                this.target = target;
+        }
 
     @Override
     public ItemStack getItemStack(Player player) {
         KitData kitData = API.getProfile(target).getGameData().get(kit);
-        List<String> lore = PlaceholderUtil.format(MenusLocale.STAT_LORE.getStringList()
-                .stream()
-                .map(
-                        line -> line
-                                .replaceAll("<kit>", String.valueOf(kit.getDisplayName()))
-                                .replaceAll("<division>",
-                                        kitData.getDivision() != null
-                                                ? String.valueOf(kitData.getDivision().getDisplayName())
-                                                : "None")
-                                .replaceAll("<wins>", String.valueOf(kitData.getWins()))
-                                .replaceAll("<losses>", String.valueOf(kitData.getLosses()))
-                                .replaceAll("<elo>", String.valueOf(kitData.getElo()))
-                                .replaceAll("<played>", String.valueOf(kitData.getWins() + kitData.getLosses()))
-                                .replaceAll("<currentStreak>", String.valueOf(kitData.getCurrentStreak()))
-                                .replaceAll("<bestStreak>", String.valueOf(kitData.getBestStreak()))
-                                .replaceAll("<kills>", String.valueOf(kitData.getKills()))
-                                .replaceAll("<deaths>", String.valueOf(kitData.getDeaths()))
-                                .replaceAll("<kdr>", String.valueOf(kitData.getKdr())))
-                .toList(), player);
+        Component lore = CC.returnMessage(player, String.join("\n", MenusLocale.STAT_LORE.getStringList()), TagResolver.resolver(
+                Placeholder.parsed("kit", String.valueOf(kit.getDisplayName())),
+                Placeholder.parsed("division",
+                        kitData.getDivision() != null
+                                ? String.valueOf(kitData.getDivision().getDisplayName())
+                                : "None"),
+                Placeholder.unparsed("wins", String.valueOf(kitData.getWins())),
+                Placeholder.unparsed("losses", String.valueOf(kitData.getLosses())),
+                Placeholder.unparsed("elo", String.valueOf(kitData.getElo())),
+                Placeholder.unparsed("played", String.valueOf(kitData.getWins() + kitData.getLosses())),
+                Placeholder.unparsed("current-streak", String.valueOf(kitData.getCurrentStreak())),
+                Placeholder.unparsed("best-streak", String.valueOf(kitData.getBestStreak())),
+                Placeholder.unparsed("kills", String.valueOf(kitData.getKills())),
+                Placeholder.unparsed("deaths", String.valueOf(kitData.getDeaths())),
+                Placeholder.unparsed("kdr", String.valueOf(kitData.getKdr()))
+        ));
         return new ItemBuilder(kit.getIcon())
                 .name(MenusLocale.STAT_KIT_NAME.getString().replace("<kit>", kit.getDisplayName()))
-                .lore(lore)
+                .componentLore(lore, player)
                 .build();
     }
 }

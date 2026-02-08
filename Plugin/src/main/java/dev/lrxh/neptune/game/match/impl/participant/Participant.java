@@ -8,12 +8,14 @@ import dev.lrxh.neptune.game.kit.impl.KitRule;
 import dev.lrxh.neptune.game.match.Match;
 import dev.lrxh.neptune.game.match.impl.team.TeamFightMatch;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.providers.clickable.Replacement;
 import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.PlayerUtil;
 import dev.lrxh.neptune.utils.Time;
 import lombok.Data;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -155,15 +157,20 @@ public class Participant implements IParticipant {
         PlayerUtil.sendTitle(player, CC.color(header.getString()), CC.color(footer.getString()), duration);
     }
 
-    public void sendMessage(TextComponent message) {
-        PlayerUtil.sendMessage(playerUUID, message);
+    public void sendMessage(Component component) {
+        PlayerUtil.sendMessage(getPlayerUUID(), component);
     }
-
-    public void sendMessage(MessagesLocale message, Replacement... replacements) {
+    public void sendMessage(MessagesLocale message) {
         Player player = getPlayer();
         if (player == null)
             return;
-        message.send(player, replacements);
+        message.send(player);
+    }
+    public void sendMessage(MessagesLocale message, TagResolver resolver) {
+        Player player = getPlayer();
+        if (player == null)
+            return;
+        message.send(player, resolver);
     }
 
     public void resetCombo() {

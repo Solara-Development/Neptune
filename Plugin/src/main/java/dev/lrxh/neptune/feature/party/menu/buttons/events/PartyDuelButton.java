@@ -3,11 +3,11 @@ package dev.lrxh.neptune.feature.party.menu.buttons.events;
 import dev.lrxh.neptune.configs.impl.MenusLocale;
 import dev.lrxh.neptune.feature.party.Party;
 import dev.lrxh.neptune.game.duel.menu.KitSelectMenu;
-import dev.lrxh.neptune.providers.clickable.Replacement;
 import dev.lrxh.neptune.utils.ItemBuilder;
 import dev.lrxh.neptune.utils.ItemUtils;
 import dev.lrxh.neptune.utils.PlayerUtil;
 import dev.lrxh.neptune.utils.menu.Button;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -40,10 +40,19 @@ public class PartyDuelButton extends Button {
                 names.add("&f" + playerInParty.getName());
             }
         }
-
+        List<String> lines = MenusLocale.PARTY_DUEL_PARTY_LORE.getStringList();
+        List<String> lore = new ArrayList<>();
+        for (String line : lines) {
+            if (line.contains("<members>")) {
+                for (String name : names) {
+                    lore.add(line.replaceAll("members", name));
+                }
+            }
+            else lore.add(line);
+        }
         return new ItemBuilder(itemStack)
                 .name(MenusLocale.PARTY_DUEL_PARTY_TITLE.getString().replaceAll("<leader>", targetParty.getLeaderName()))
-                .lore(ItemUtils.getLore(MenusLocale.PARTY_DUEL_PARTY_LORE.getStringList(), new Replacement("<members>", names)), player)
+                .componentLore(ItemUtils.getLore(lore), player)
                 .build();
     }
 }

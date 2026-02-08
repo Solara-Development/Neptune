@@ -6,7 +6,8 @@ import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.profile.data.SettingData;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.providers.clickable.Replacement;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+
 import org.bukkit.entity.Player;
 
 public class FollowCommand {
@@ -27,11 +28,11 @@ public class FollowCommand {
 
         if (followingSettingData.getFollowings().contains(player.getUniqueId())) {
             followingSettingData.removeFollower(player.getUniqueId());
-            MessagesLocale.STOP_FOLLOWING.send(player.getUniqueId(), new Replacement("<player>", target.getName()));
+            MessagesLocale.STOP_FOLLOWING.send(player.getUniqueId(), Placeholder.unparsed("player", target.getName()));
             return;
         }
 
         API.getProfile(target.getUniqueId()).getSettingData().addFollower(player.getUniqueId());
-        MessagesLocale.START_FOLLOW.send(player.getUniqueId(), new Replacement("<player>", target.getName()));
+        MessagesLocale.START_FOLLOW.send(player.getUniqueId(), Placeholder.unparsed("player", target.getName()));
     }
 }

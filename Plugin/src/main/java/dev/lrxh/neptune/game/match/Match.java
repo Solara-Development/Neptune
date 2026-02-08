@@ -22,15 +22,17 @@ import dev.lrxh.neptune.game.match.impl.team.TeamFightMatch;
 import dev.lrxh.neptune.profile.data.KitData;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.providers.clickable.Replacement;
-import dev.lrxh.neptune.providers.placeholder.PlaceholderUtil;
 import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.PlayerUtil;
 import dev.lrxh.neptune.utils.Time;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -108,10 +110,13 @@ public abstract class Match implements IMatch {
     public void sendTitle(TextComponent header, TextComponent footer, int duration) {
         forEachParticipant(participant -> PlayerUtil.sendTitle(participant.getPlayer(), header, footer, duration));
     }
-
-    public void sendMessage(MessagesLocale message, Replacement... replacements) {
-        forEachParticipant(participant -> message.send(participant.getPlayerUUID(), replacements));
-        forEachSpectator(player -> message.send(player.getUniqueId(), replacements));
+    public void sendMessage(MessagesLocale message) {
+        forEachParticipant(participant -> message.send(participant.getPlayerUUID(), TagResolver.empty()));
+        forEachSpectator(player -> message.send(player.getUniqueId(), TagResolver.empty()));
+    }
+    public void sendMessage(MessagesLocale message, TagResolver resolver) {
+        forEachParticipant(participant -> message.send(participant.getPlayerUUID(), resolver));
+        forEachSpectator(player -> message.send(player.getUniqueId(), resolver));
     }
 
     public void addSpectator(Player player, Player target, boolean sendMessage, boolean add) {
@@ -126,7 +131,7 @@ public abstract class Match implements IMatch {
         showPlayerForSpectators();
 
         if (sendMessage)
-            broadcast(MessagesLocale.SPECTATE_START, new Replacement("<player>", player.getName()));
+            broadcast(MessagesLocale.SPECTATE_START, Placeholder.unparsed("player", player.getName()));
 
         player.setHealth(20);
         player.setFoodLevel(20);
@@ -208,7 +213,7 @@ public abstract class Match implements IMatch {
         arena.restore();
     }
 
-    public List<String> getScoreboard(UUID playerUUID) {
+    public List<Component> getScoreboard(UUID playerUUID) {
         Player player = Bukkit.getPlayer(playerUUID);
         if (player == null)
             return new ArrayList<>();
@@ -217,54 +222,45 @@ public abstract class Match implements IMatch {
             MatchState matchState = this.getState();
 
             if (kit.is(KitRule.BEST_OF_THREE) && matchState.equals(MatchState.STARTING)) {
-                return PlaceholderUtil.format(new ArrayList<>(ScoreboardLocale.IN_GAME_BEST_OF.getStringList()),
-                        player);
+                return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME_BEST_OF.getStringList());
             }
 
             switch (matchState) {
                 case STARTING:
-                    return PlaceholderUtil.format(new ArrayList<>(ScoreboardLocale.IN_GAME_STARTING.getStringList()),
-                            player);
+                    return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME_STARTING.getStringList());
                 case IN_ROUND:
                     if (this.getRounds() > 1) {
-                        return PlaceholderUtil.format(new ArrayList<>(ScoreboardLocale.IN_GAME_BEST_OF.getStringList()),
-                                player);
+                        return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME_BEST_OF.getStringList());
                     }
                     if (this.getKit().is(KitRule.BOXING)) {
-                        return PlaceholderUtil.format(new ArrayList<>(ScoreboardLocale.IN_GAME_BOXING.getStringList()),
-                                player);
+                        return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME_BOXING.getStringList());
                     }
                     if (this.getKit().is(KitRule.BED_WARS)) {
-                        return PlaceholderUtil.format(new ArrayList<>(ScoreboardLocale.IN_GAME_BEDWARS.getStringList()),
-                                player);
+                        return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME_BEDWARS.getStringList());
                     }
-                    return PlaceholderUtil.format(new ArrayList<>(ScoreboardLocale.IN_GAME.getStringList()), player);
+                    return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME.getStringList());
                 case ENDING:
-                    return PlaceholderUtil.format(ScoreboardLocale.IN_GAME_ENDED.getStringList()
+                    return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME_ENDED.getStringList()
                             .stream()
                             .map(str -> str
                                     .replaceAll("<winner>", getWinnerName())
                                     .replaceAll("<loser>", getLoserName()))
-                            .toList(),
-                            player);
+                            .toList());
                 default:
                     break;
             }
         } else if (this instanceof TeamFightMatch) {
             if (this.getKit().is(KitRule.BED_WARS)) {
-                return PlaceholderUtil.format(new ArrayList<>(ScoreboardLocale.IN_GAME_BEDWARS_TEAM.getStringList()),
-                        player);
+                return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME_BEDWARS_TEAM.getStringList());
             } else if (this.getKit().is(KitRule.BOXING)) {
-                return PlaceholderUtil.format(new ArrayList<>(ScoreboardLocale.IN_GAME_BOXING_TEAM.getStringList()),
-                        player);
+                return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME_BOXING_TEAM.getStringList());
             }
-            return PlaceholderUtil.format(new ArrayList<>(ScoreboardLocale.IN_GAME_TEAM.getStringList()), player);
+            return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME_TEAM.getStringList());
         } else if (this instanceof FfaFightMatch) {
             if (this.getKit().is(KitRule.BOXING)) {
-                return PlaceholderUtil.format(new ArrayList<>(ScoreboardLocale.IN_GAME_BOXING_FFA.getStringList()),
-                        player);
+                return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME_BOXING_FFA.getStringList());
             }
-            return PlaceholderUtil.format(new ArrayList<>(ScoreboardLocale.IN_GAME_FFA.getStringList()), player);
+            return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME_FFA.getStringList());
         }
 
         return null;
@@ -287,7 +283,7 @@ public abstract class Match implements IMatch {
         profile.setState(profile.getGameData().getParty() == null ? ProfileState.IN_LOBBY : ProfileState.IN_PARTY);
 
         if (sendMessage) {
-            broadcast(MessagesLocale.SPECTATE_STOP, new Replacement("<player>", player.getName()));
+            broadcast(MessagesLocale.SPECTATE_STOP, Placeholder.unparsed("player", player.getName()));
         }
         MatchSpectatorRemoveEvent event = new MatchSpectatorRemoveEvent(this, player);
         Bukkit.getPluginManager().callEvent(event);
@@ -308,18 +304,17 @@ public abstract class Match implements IMatch {
         player.setHealth(kit.getHealth());
         player.sendHealthUpdate();
     }
+    public void broadcast(MessagesLocale messagesLocale, TagResolver resolver) {
+        forEachParticipant(participant -> messagesLocale.send(participant.getPlayerUUID(), resolver));
 
-    public void broadcast(MessagesLocale messagesLocale, Replacement... replacements) {
-        forEachParticipant(participant -> messagesLocale.send(participant.getPlayerUUID(), replacements));
-
-        forEachSpectator(player -> messagesLocale.send(player.getUniqueId(), replacements));
+        forEachSpectator(player -> messagesLocale.send(player.getUniqueId(), resolver));
     }
 
     @Override
     public void broadcast(String message) {
-        forEachParticipant(participant -> participant.sendMessage(CC.color(message)));
+        forEachParticipant(participant -> PlayerUtil.sendMessage(participant.getPlayerUUID(), message));
 
-        forEachSpectator(player -> player.sendMessage(CC.color(message)));
+        forEachSpectator(player -> PlayerUtil.sendMessage(player.getUniqueId(), message));
     }
 
     public void checkRules() {
@@ -419,8 +414,10 @@ public abstract class Match implements IMatch {
         if (deathMessage.isEmpty() && deathCause != null) {
             broadcast(
                     deadParticipant.getDeathCause().getMessage(),
-                    new Replacement("<player>", deadParticipant.getNameColored()),
-                    new Replacement("<killer>", deadParticipant.getLastAttackerName()));
+                    TagResolver.resolver(
+                        Placeholder.unparsed("player", deadParticipant.getNameColored()),
+                        Placeholder.unparsed("killer", deadParticipant.getLastAttackerName())
+                    ));
         } else {
             broadcast(deathMessage);
         }

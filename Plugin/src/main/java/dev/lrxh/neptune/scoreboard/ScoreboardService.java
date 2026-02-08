@@ -2,7 +2,6 @@ package dev.lrxh.neptune.scoreboard;
 
 import dev.lrxh.api.profile.IProfile;
 import dev.lrxh.api.scoreboard.IScoreboardService;
-import dev.lrxh.neptune.providers.placeholder.PlaceholderUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,8 +28,7 @@ public class ScoreboardService implements IScoreboardService {
         Function<IProfile, List<String>> scoreboardFunction = scoreboards.get(state);
         if (scoreboardFunction != null) {
             List<String> lines = scoreboardFunction.apply(profile);
-
-            return PlaceholderUtil.format(new ArrayList<>(lines), profile.getPlayer());
+            return new ArrayList<>(lines);
         }
         return new ArrayList<>();
     }

@@ -13,11 +13,13 @@ import dev.lrxh.neptune.game.match.impl.participant.Participant;
 import dev.lrxh.neptune.game.match.tasks.MatchEndRunnable;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.providers.clickable.Replacement;
 import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.PlayerUtil;
 import lombok.Getter;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+
 import org.bukkit.Sound;
 
 import java.util.ArrayList;
@@ -99,11 +101,11 @@ public class FfaFightMatch extends Match implements IFffaFightMatch {
     }
 
     public String getWinnerName() {
-        return winner.getName();
+        return winner != null ? winner.getName() : "";
     }
 
     public String getLoserName() {
-        return participants.stream().filter(p -> (p != winner)).map(p -> p.getNameColored()).toList().toString();
+        return deadParticipants.stream().map(p -> p.getNameColored()).toList().toString();
     }
 
     private boolean isLastPlayerStanding() {
@@ -150,9 +152,11 @@ public class FfaFightMatch extends Match implements IFffaFightMatch {
     @Override
     public void sendEndMessage() {
         if (winner == null) return;
-        forEachParticipant(participant -> MessagesLocale.MATCH_END_DETAILS_FFA.send(participant.getPlayerUUID(),
-                new Replacement("<winner>", winner.getNameUnColored()),
-                new Replacement("<kit>", getKit().getDisplayName())));
+        forEachParticipant(participant -> 
+            MessagesLocale.MATCH_END_DETAILS_FFA.send(participant.getPlayerUUID(), TagResolver.resolver(
+                Placeholder.unparsed("winner", winner.getNameUnColored()),
+                Placeholder.parsed("kit", getKit().getDisplayName())
+            )));
     }
 
     @Override

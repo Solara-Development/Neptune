@@ -1,10 +1,10 @@
 package dev.lrxh.neptune.providers.placeholder.impl;
 
 import dev.lrxh.neptune.feature.queue.QueueService;
-import dev.lrxh.neptune.providers.placeholder.Placeholder;
+import dev.lrxh.neptune.providers.placeholder.PAPIPlaceholder;
 import org.bukkit.OfflinePlayer;
 
-public class QueuedPlaceholder implements Placeholder {
+public class QueuedPlaceholder implements PAPIPlaceholder {
     @Override
     public boolean match(String string) {
         return string.equals("queued");

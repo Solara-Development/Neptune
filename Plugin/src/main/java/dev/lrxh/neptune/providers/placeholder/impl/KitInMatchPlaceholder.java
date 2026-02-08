@@ -4,13 +4,13 @@ import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.game.kit.Kit;
 import dev.lrxh.neptune.game.kit.KitService;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.providers.placeholder.Placeholder;
+import dev.lrxh.neptune.providers.placeholder.PAPIPlaceholder;
 import org.bukkit.OfflinePlayer;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class KitInMatchPlaceholder implements Placeholder {
+public class KitInMatchPlaceholder implements PAPIPlaceholder {
     private final Pattern PATTERN = Pattern.compile("in-match_(.*)");
 
     @Override

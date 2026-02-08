@@ -7,11 +7,11 @@ import dev.lrxh.neptune.feature.party.impl.PartyRequest;
 import dev.lrxh.neptune.profile.ProfileService;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.providers.clickable.ClickableComponent;
-import dev.lrxh.neptune.providers.clickable.Replacement;
 import lombok.Getter;
 import lombok.Setter;
-import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -60,17 +60,11 @@ public class Party {
         if (player == null)
             return;
 
-        TextComponent accept = new ClickableComponent(
-                MessagesLocale.PARTY_ACCEPT.getString().replace("<leader>", getLeaderName()),
-                "/party accept " + leader, MessagesLocale.PARTY_ACCEPT_HOVER.getString()).build();
-
-        MessagesLocale.PARTY_INVITATION.send(playerUUID,
-                new Replacement("<accept>", accept),
-                new Replacement("<leader>", getLeaderName()));
+        MessagesLocale.PARTY_INVITATION.send(playerUUID, Placeholder.unparsed("leader", getLeaderName()));
 
         Profile profile = API.getProfile(playerUUID);
         profile.getGameData().addRequest(new PartyRequest(leader, this), leader,
-                ignore -> MessagesLocale.PARTY_EXPIRED.send(leader, new Replacement("<player>", player.getName())));
+                ignore -> MessagesLocale.PARTY_EXPIRED.send(leader, Placeholder.unparsed("player", player.getName())));
     }
 
     public void accept(UUID playerUUID, boolean ad) {
@@ -88,13 +82,13 @@ public class Party {
         profile.getGameData().setParty(this);
         profile.setState(ProfileState.IN_PARTY);
         if (playerUUID != leader) {
-            broadcast(ad ? MessagesLocale.PARTY_JOINED_FROM_ADVERTISEMENT : MessagesLocale.PARTY_JOINED, new Replacement("<player>", invitedPlayer.getName()));
+            broadcast(ad ? MessagesLocale.PARTY_JOINED_FROM_ADVERTISEMENT : MessagesLocale.PARTY_JOINED, Placeholder.unparsed("player", invitedPlayer.getName()));
         }
         API.getProfile(playerUUID).getGameData().removeRequest(leader);
     }
 
     public void kick(UUID playerUUID) {
-        broadcast(MessagesLocale.PARTY_KICK, new Replacement("<player>", getLeaderName()));
+        broadcast(MessagesLocale.PARTY_KICK, Placeholder.unparsed("player", getLeaderName()));
         remove(playerUUID);
     }
 
@@ -123,8 +117,11 @@ public class Party {
         PartyService.get().removeParty(this);
     }
 
-    public void broadcast(MessagesLocale messagesLocale, Replacement... replacements) {
-        forEachMemberAsUUID(uuid -> messagesLocale.send(uuid, replacements));
+    public void broadcast(MessagesLocale messagesLocale) {
+        forEachMemberAsUUID(uuid -> messagesLocale.send(uuid));
+    }
+    public void broadcast(MessagesLocale messagesLocale, TagResolver resolver) {
+        forEachMemberAsUUID(uuid -> messagesLocale.send(uuid, resolver));
     }
 
     public String getUserNames() {
@@ -156,8 +153,10 @@ public class Party {
 
     public void transfer(Player player, Player target) {
         this.setLeader(target.getUniqueId());
-        this.broadcast(MessagesLocale.PARTY_TRANSFER, new Replacement("<leader>", player.getName()),
-                new Replacement("<target>", target.getName()));
+        this.broadcast(MessagesLocale.PARTY_TRANSFER, TagResolver.resolver(
+            Placeholder.unparsed("leader", player.getName()),
+            Placeholder.unparsed("target", target.getName())
+        ));
     }
 
     public boolean advertise() {
@@ -168,16 +167,7 @@ public class Party {
 
             setOpen(true);
             for (Profile profile : ProfileService.get().profiles.values()) {
-                TextComponent join = new ClickableComponent(
-                        MessagesLocale.PARTY_ADVERTISE_JOIN.getString(),
-                        "/party joinad " + getLeaderName(),
-                        MessagesLocale.PARTY_ADVERTISE_JOIN_HOVER.getString().replaceAll("<leader>", getLeaderName()))
-                        .build();
-
-                MessagesLocale.PARTY_ADVERTISE_MESSAGE.send(
-                        profile.getPlayerUUID(),
-                        new Replacement("<join>", join),
-                        new Replacement("<leader>", getLeaderName()));
+                MessagesLocale.PARTY_ADVERTISE_MESSAGE.send(profile.getPlayerUUID(), Placeholder.unparsed("leader", getLeaderName()));
             }
 
             return true;

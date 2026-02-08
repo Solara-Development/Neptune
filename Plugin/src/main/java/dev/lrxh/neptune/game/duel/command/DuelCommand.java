@@ -10,7 +10,8 @@ import dev.lrxh.neptune.game.kit.Kit;
 import dev.lrxh.neptune.profile.data.GameData;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.providers.clickable.Replacement;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -41,7 +42,7 @@ public class DuelCommand {
 
         if (targetProfile.getGameData().getRequests().contains(player.getUniqueId())) {
             MessagesLocale.DUEL_ALREADY_SENT.send(player.getUniqueId(),
-                    new Replacement("<player>", target.getName()));
+                    Placeholder.unparsed("player", target.getName()));
             return;
         }
 
@@ -120,7 +121,7 @@ public class DuelCommand {
 
         if (targetProfile.getGameData().getRequests().contains(player.getUniqueId())) {
             MessagesLocale.DUEL_ALREADY_SENT.send(player.getUniqueId(),
-                    new Replacement("<player>", target.getName()));
+                    Placeholder.unparsed("player", target.getName()));
             return;
         }
 
@@ -161,8 +162,8 @@ public class DuelCommand {
         Player sender = Bukkit.getPlayer(uuid);
         if (sender == null) return;
 
-        MessagesLocale.DUEL_DENY_SENDER.send(player.getUniqueId(), new Replacement("<player>", sender.getName()));
-        MessagesLocale.DUEL_DENY_RECEIVER.send(uuid, new Replacement("<player>", player.getName()));
+        MessagesLocale.DUEL_DENY_SENDER.send(player.getUniqueId(), Placeholder.unparsed("player", sender.getName()));
+        MessagesLocale.DUEL_DENY_RECEIVER.send(uuid, Placeholder.unparsed("player", player.getName()));
 
         duelRequest.getArena().remove();
         playerGameData.removeRequest(uuid);

@@ -6,13 +6,15 @@ import dev.lrxh.neptune.game.kit.Kit;
 import dev.lrxh.neptune.game.kit.KitService;
 import dev.lrxh.neptune.profile.data.MatchHistory;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.providers.clickable.Replacement;
 import dev.lrxh.neptune.utils.ItemBuilder;
 import dev.lrxh.neptune.utils.ItemUtils;
 import dev.lrxh.neptune.utils.menu.Button;
 import dev.lrxh.neptune.utils.menu.Filter;
 import dev.lrxh.neptune.utils.menu.Menu;
 import dev.lrxh.neptune.utils.menu.impl.DisplayButton;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -65,17 +67,16 @@ public class MatchHistoryMenu extends Menu {
                             .replace("<loser>",
                                     !matchHistory.isWon() ? player.getName()
                                             : matchHistory.getOpponentName()))
-                    .lore(ItemUtils.getLore(MenusLocale.MATCH_HISTORY_LORE.getStringList(),
-                            new Replacement("<arena>", matchHistory.getArenaName()),
-                            new Replacement("<kit>", matchHistory.getKitName()),
-                            new Replacement("<winner>",
+                    .componentLore(ItemUtils.getLore(MenusLocale.MATCH_HISTORY_LORE.getStringList()), TagResolver.resolver(
+                            Placeholder.parsed("arena", matchHistory.getArenaName()),
+                            Placeholder.parsed("kit", matchHistory.getKitName()),
+                            Placeholder.unparsed("winner",
                                     matchHistory.isWon() ? player.getName()
                                             : matchHistory.getOpponentName()),
-                            new Replacement("<loser>",
+                            Placeholder.unparsed("loser",
                                     !matchHistory.isWon() ? player.getName()
                                             : matchHistory.getOpponentName()),
-                            new Replacement("<date>", matchHistory.getDate())), player)
-
+                            Placeholder.unparsed("date", matchHistory.getDate())), player)
                     .build();
         } else {
             return new ItemBuilder(kit.getIcon())
@@ -93,17 +94,16 @@ public class MatchHistoryMenu extends Menu {
                             .replace("<loser>",
                                     !matchHistory.isWon() ? player.getName()
                                             : matchHistory.getOpponentName()))
-                    .lore(ItemUtils.getLore(MenusLocale.MATCH_HISTORY_LORE.getStringList(),
-                            new Replacement("<arena>", matchHistory.getArenaName()),
-                            new Replacement("<kit>", matchHistory.getKitName()),
-                            new Replacement("<winner>",
+                    .componentLore(ItemUtils.getLore(MenusLocale.MATCH_HISTORY_LORE.getStringList()), TagResolver.resolver(
+                            Placeholder.parsed("arena", matchHistory.getArenaName()),
+                            Placeholder.parsed("kit", matchHistory.getKitName()),
+                            Placeholder.unparsed("winner",
                                     matchHistory.isWon() ? player.getName()
                                             : matchHistory.getOpponentName()),
-                            new Replacement("<loser>",
+                            Placeholder.unparsed("loser",
                                     !matchHistory.isWon() ? player.getName()
                                             : matchHistory.getOpponentName()),
-                            new Replacement("<date>", matchHistory.getDate())), player)
-
+                            Placeholder.unparsed("date", matchHistory.getDate())), player)
                     .build();
         }
 

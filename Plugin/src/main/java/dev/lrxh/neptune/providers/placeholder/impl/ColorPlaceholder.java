@@ -4,10 +4,10 @@ import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.game.match.Match;
 import dev.lrxh.neptune.game.match.impl.participant.Participant;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.providers.placeholder.Placeholder;
+import dev.lrxh.neptune.providers.placeholder.PAPIPlaceholder;
 import org.bukkit.OfflinePlayer;
 
-public class ColorPlaceholder implements Placeholder {
+public class ColorPlaceholder implements PAPIPlaceholder {
     @Override
     public boolean match(String string) {
         return string.equals("color");

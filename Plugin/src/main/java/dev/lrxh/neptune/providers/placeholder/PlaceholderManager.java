@@ -9,7 +9,7 @@ import java.util.List;
 
 public class PlaceholderManager {
     private static PlaceholderManager instance;
-    private final List<Placeholder> placeholders;
+    private final List<PAPIPlaceholder> placeholders;
 
     public PlaceholderManager() {
         this.placeholders = new ArrayList<>();
@@ -88,7 +88,7 @@ public class PlaceholderManager {
     }
 
     public String parse(OfflinePlayer player, String text) {
-        for (Placeholder placeholder : placeholders) {
+        for (PAPIPlaceholder placeholder : placeholders) {
             if (placeholder.match(text)) {
                 text = placeholder.parse(player, text);
             }

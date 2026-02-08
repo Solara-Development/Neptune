@@ -3,11 +3,11 @@ package dev.lrxh.neptune.configs.impl;
 import dev.lrxh.neptune.configs.ConfigService;
 import dev.lrxh.neptune.configs.impl.handler.DataType;
 import dev.lrxh.neptune.configs.impl.handler.IDataAccessor;
-import dev.lrxh.neptune.providers.clickable.Replacement;
-import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.ConfigFile;
 import dev.lrxh.neptune.utils.PlayerUtil;
 import lombok.Getter;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
@@ -82,8 +82,7 @@ public enum MessagesLocale implements IDataAccessor {
     MATCH_RESPAWN_TITLE_HEADER("MATCH.RESPAWN_TITLE.HEADER", DataType.STRING, "&fRespawning in &b<timer>&f..."),
     MATCH_RESPAWN_TITLE_FOOTER("MATCH.RESPAWNED_TITLE_FOOTER", DataType.STRING, ""),
     MATCH_PLAY_AGAIN_ENABLED("MATCH.PLAY_AGAIN.ENABLED", DataType.BOOLEAN, "true"),
-    MATCH_PLAY_AGAIN("MATCH.PLAY_AGAIN.MESSAGE", DataType.STRING, "&bDo you want to play again? &a(Click here)"),
-    MATCH_PLAY_AGAIN_HOVER("MATCH.PLAY_AGAIN.HOVER", DataType.STRING, "&aClick to play again!"),
+    MATCH_PLAY_AGAIN("MATCH.PLAY_AGAIN.MESSAGE", DataType.STRING, "&bDo you want to play again? <hover:show_text:'&aClick to play again!'><click:run_command:'/queue <kit>'>&a(Click here)</click></hover>"),
     MATCH_COMBO_MESSAGE_ENABLE("MATCH.COMBO_MESSAGE.ENABLE", DataType.BOOLEAN, "true"),
     MATCH_COMBO_MESSAGE_5("MATCH.COMBO_MESSAGE.5COMBO", DataType.STRING_LIST, "&a5 COMBO!"),
     MATCH_COMBO_MESSAGE_10("MATCH.COMBO_MESSAGE.10COMBO", DataType.STRING_LIST, "&e10 COMBO!"),
@@ -104,7 +103,7 @@ public enum MessagesLocale implements IDataAccessor {
             "&fArena: &a<arena>",
             "&fRounds: &b<rounds>",
             " ",
-            "<accept> <deny>"),
+            "<hover:show_text:'&aClick to accept duel request'><click:run_command:'duel accept-uuid <uuid>'>&a&l(ACCEPT)</click></hover> <hover:show_text:'&cClick to deny duel request'><click:run_command:'/duel deny-uuid <uuid>'>(&a&lDENY)</click></hover>"),
     DUEL_REQUEST_SENDER("DUEL.SENDER", DataType.STRING_LIST, " ",
             "&bDuel Request Sent",
             " ",
@@ -115,10 +114,6 @@ public enum MessagesLocale implements IDataAccessor {
             " "),
     DUEL_DENY_SENDER("DUEL.SENDER_DENY", DataType.STRING_LIST, "&cDuel Denied."),
     DUEL_DENY_RECEIVER("DUEL.RECEIVER_DENY", DataType.STRING_LIST, "&cYour duel to &c<player> &cwas denied."),
-    DUEL_ACCEPT("DUEL.ACCEPT", DataType.STRING, "&a&l(ACCEPT)"),
-    DUEL_ACCEPT_HOVER("DUEL.ACCEPT_HOVER", DataType.STRING, "&aClick to accept duel request"),
-    DUEL_DENY("DUEL.DENY", DataType.STRING, "&c&l(DENY)"),
-    DUEL_DENY_HOVER("DUEL.DENY_HOVER", DataType.STRING, "&cClick to deny duel request"),
     DUEL_ALREADY_SENT("DUEL.ALREADY_SENT", DataType.STRING, "&cYou have already sent <player> a duel request."),
     DUEL_EXPIRED("DUEL.EXPIRED", DataType.STRING_LIST, "&cYour duel request to <player> has expired."),
     DUEL_NOT_ONLINE("DUEL.NOT_ONLINE", DataType.STRING_LIST, "&cPlayer isn't online!"),
@@ -135,15 +130,11 @@ public enum MessagesLocale implements IDataAccessor {
             "&e&lRematch Request",
             "&eYou have received a rematch request from &a<sender>&e.",
             " ",
-            "<accept> <deny>"),
+            "<hover:show_text:'&aClick to accept rematch request'><click:run_command:'duel accept-uuid <uuid>'>&a&l(ACCEPT)</click></hover> <hover:show_text:'&cClick to deny rematch request'><click:run_command:'/duel deny-uuid <uuid>'>(&a&lDENY)</click></hover>"),
     REMATCH_REQUEST_SENDER("REMATCH.SENDER", DataType.STRING_LIST, " ",
             "&e&lRematch Request Sent",
             "&eYou have sent a rematch request to &a<receiver>&e.",
             " "),
-    REMATCH_ACCEPT("REMATCH.ACCEPT", DataType.STRING, "&a&l(ACCEPT)"),
-    REMATCH_ACCEPT_HOVER("REMATCH.ACCEPT_HOVER", DataType.STRING, "&aClick to accept rematch request"),
-    REMATCH_DENY("REMATCH.DENY", DataType.STRING, "&c&l(DENY)"),
-    REMATCH_DENY_HOVER("REMATCH.DENY_HOVER", DataType.STRING, "&cClick to deny rematch request"),
     REMATCH_EXPIRED("REMATCH.EXPIRED", DataType.STRING_LIST, "&cYour rematch request to <player> has expired."),
     SPECTATE_START("MATCH.SPECTATE.START", DataType.STRING_LIST, "&b<player> &fstarted spectating match."),
     MATCH_FORFEIT("MATCH.FORFEIT", DataType.STRING_LIST, "&cSomeone rage quit"),
@@ -181,11 +172,9 @@ public enum MessagesLocale implements IDataAccessor {
     PARTY_JOINED_FROM_ADVERTISEMENT("PARTY.JOINED_FROM_ADVERTISEMENT", DataType.STRING_LIST,
             "&f<player> &bjoined the party from the advertisement!"),
     PARTY_INVITATION("PARTY.INVITATION", DataType.STRING_LIST,
-            "&bYou have been invited to &f<leader>'s &bparty <accept>"),
+            "&bYou have been invited to &f<leader>'s &bparty <hover:show_text:'Click to join party'><click:run_command:'/party join <leader>'>(ACCEPT)</click></hover>"),
     PARTY_INVITE_OWN("PARTY.INVITE_OWN", DataType.STRING_LIST, "&cYou can't invite yourself to the party."),
     PARTY_TRANSFER_OWN("PARTY.TRANSFER", DataType.STRING_LIST, "&cYou can't transfer a party to yourself."),
-    PARTY_ACCEPT("PARTY.ACCEPT", DataType.STRING, "&a&l(ACCEPT)"),
-    PARTY_ACCEPT_HOVER("PARTY.ACCEPT_HOVER", DataType.STRING, "&aClick to accept party request"),
     PARTY_NO_PERMISSION("PARTY.NO_PERMISSION", DataType.STRING_LIST, "&cYou do not have permission to do this."),
     PARTY_DISABLED("PARTY.DISABLED", DataType.STRING_LIST, "&c<player> has party requests disabled!"),
     PARTY_ALREADY_IN("PARTY.ALREADY_IN", DataType.STRING_LIST, "&cYou are already in a party."),
@@ -194,9 +183,7 @@ public enum MessagesLocale implements IDataAccessor {
     PARTY_TRANSFER("PARTY.TRANSFER.MEMBERS", DataType.STRING_LIST,
             "&f<leader> &btransferred the party to &f<target>&b."),
     PARTY_ADVERTISE_MESSAGE("PARTY.ADVERTISE.MESSAGE", DataType.STRING_LIST,
-            "&f<leader> &6wants you in their party! <join>"),
-    PARTY_ADVERTISE_JOIN("PARTY.ADVERTISE.JOIN", DataType.STRING, "&a(Join)"),
-    PARTY_ADVERTISE_JOIN_HOVER("PARTY.ADVERTISE.JOIN_HOVER", DataType.STRING, "&aClick to join &f<leader>&a's party."),
+            "&f<leader> &6wants you in their party! <hover:show_text:'&aClick to join their party'><click:run_command:'/party joinad <leader>'>&a(Join)</click></hover>"),
     PARTY_KICK("PARTY.KICK", DataType.STRING_LIST, "&f<player> &bhas been kicked from the party."),
     PARTY_CANNOT_CREATE("PARTY.CANNOT_CREATE", DataType.STRING_LIST, "&cYou can only create a party while in lobby!"),
     PARTY_LEFT("PARTY.LEFT", DataType.STRING_LIST, "&f<player> &bhas left the party."),
@@ -275,36 +262,30 @@ public enum MessagesLocale implements IDataAccessor {
     public String getHeader() {
         return "Replace with NONE to disable";
     }
-
-    public void send(Player player, Replacement... replacements) {
+    public void send(Player player, TagResolver resolver) {
+        if (player == null) return;
         final UUID playerUUID = player.getUniqueId();
         if (dataType.equals(DataType.STRING_LIST)) {
             for (String message : getStringList()) {
                 if (message.equals("NONE"))
                     continue;
-                PlayerUtil.sendMessage(playerUUID, CC.returnMessage(player, message, replacements));
+                PlayerUtil.sendMessage(playerUUID, message, resolver);
             }
         } else if (dataType.equals(DataType.STRING)) {
             if (getString().equals("NONE"))
                 return;
-            PlayerUtil.sendMessage(playerUUID, CC.returnMessage(player, getString(), replacements));
+            PlayerUtil.sendMessage(playerUUID, getString(), resolver);
         }
     }
-
-    public void send(UUID playerUUID, Replacement... replacements) {
+    public void send(Player player) {
+        send(player, TagResolver.empty());
+    }
+    public void send(UUID playerUUID) {
         Player player = Bukkit.getPlayer(playerUUID);
-        if (player == null)
-            return;
-        if (dataType.equals(DataType.STRING_LIST)) {
-            for (String message : getStringList()) {
-                if (message.equals("NONE"))
-                    continue;
-                PlayerUtil.sendMessage(playerUUID, CC.returnMessage(player, message, replacements));
-            }
-        } else if (dataType.equals(DataType.STRING)) {
-            if (getString().equals("NONE"))
-                return;
-            PlayerUtil.sendMessage(playerUUID, CC.returnMessage(player, getString(), replacements));
-        }
+       send(player, TagResolver.empty());
+    }
+    public void send(UUID playerUUID, TagResolver resolver) {
+        Player player = Bukkit.getPlayer(playerUUID);
+        send(player, resolver);
     }
 }

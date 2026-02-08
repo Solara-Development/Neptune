@@ -7,10 +7,10 @@ import dev.lrxh.neptune.configs.impl.SettingsLocale;
 import dev.lrxh.neptune.feature.party.Party;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.providers.clickable.Replacement;
 import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.tasks.NeptuneRunnable;
 import dev.lrxh.neptune.utils.tasks.TaskScheduler;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -75,7 +75,7 @@ public class GlobalListener implements Listener {
             sender.chat("/party invite " + target.getName());
         } else {
             senderProfile.setPartyInviteTarget(target);
-            MessagesLocale.PARTY_INVITE_CONFIRM.send(sender, new Replacement("<player>", target.getName()));
+            MessagesLocale.PARTY_INVITE_CONFIRM.send(sender, Placeholder.unparsed("player", target.getName()));
             TaskScheduler.get().startTaskLater(new NeptuneRunnable() {
                 @Override
                 public void run() {

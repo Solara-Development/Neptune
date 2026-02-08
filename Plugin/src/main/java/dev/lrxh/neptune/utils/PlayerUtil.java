@@ -4,10 +4,10 @@ import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.providers.placeholder.PlaceholderUtil;
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -104,19 +104,23 @@ public class PlayerUtil {
         return itemStack;
     }
 
-    public void sendMessage(UUID playerUUID, Component message) {
-        Player player = Bukkit.getPlayer(playerUUID);
-        if (player == null)
-            return;
-
-        player.sendMessage(PlaceholderUtil.format(message, player));
-    }
-
     public void sendMessage(UUID playerUUID, String message) {
         Player player = Bukkit.getPlayer(playerUUID);
         if (player == null)
             return;
-        player.sendMessage(PlaceholderUtil.format(CC.color(message), player));
+        player.sendMessage(CC.returnMessage(player, message));
+    }
+    public void sendMessage(UUID playerUUID, Component message) {
+        Player player = Bukkit.getPlayer(playerUUID);
+        if (player == null)
+            return;
+        player.sendMessage(CC.returnMessage(player, message));
+    }
+    public void sendMessage(UUID playerUUID, String message, TagResolver resolver) {
+        Player player = Bukkit.getPlayer(playerUUID);
+        if (player == null)
+            return;
+        player.sendMessage(CC.returnMessage(player, message, resolver));
     }
 
     public void sendTitle(Player player, TextComponent header, TextComponent footer, int duration) {

@@ -7,10 +7,11 @@ import dev.lrxh.neptune.feature.leaderboard.impl.PlayerEntry;
 import dev.lrxh.neptune.feature.queue.QueueEntry;
 import dev.lrxh.neptune.feature.queue.QueueService;
 import dev.lrxh.neptune.game.kit.Kit;
-import dev.lrxh.neptune.providers.clickable.Replacement;
 import dev.lrxh.neptune.utils.ItemBuilder;
-import dev.lrxh.neptune.utils.ItemUtils;
 import dev.lrxh.neptune.utils.menu.Button;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -65,11 +66,11 @@ public class QueueSelectButton extends Button {
 
 
         return new ItemBuilder(kit.getIcon()).name(MenusLocale.QUEUE_SELECT_KIT_NAME.getString().replace("<kit>", kit.getDisplayName()))
-                .lore(ItemUtils.getLore(lore,
-                        new Replacement("<kit>", kit.getDisplayName()),
-                        new Replacement("<kitName>", kit.getName()),
-                        new Replacement("<playing>", String.valueOf(kit.getPlaying())),
-                        new Replacement("<queue>", String.valueOf(kit.getQueue()))), player)
+                .lore(lore, TagResolver.resolver(
+                        Placeholder.parsed("kit", kit.getDisplayName()),
+                        Placeholder.unparsed("kit-name", kit.getName()),
+                        Placeholder.unparsed("playing", String.valueOf(kit.getPlaying())),
+                        Placeholder.unparsed("queue", String.valueOf(kit.getQueue()))), player)
                 .amount(kit.getQueue())
                 .build();
     }

@@ -3,10 +3,10 @@ package dev.lrxh.neptune.providers.placeholder.impl;
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.profile.data.GlobalStats;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.providers.placeholder.Placeholder;
+import dev.lrxh.neptune.providers.placeholder.PAPIPlaceholder;
 import org.bukkit.OfflinePlayer;
 
-public class CurrentStreakPlaceholder implements Placeholder {
+public class CurrentStreakPlaceholder implements PAPIPlaceholder {
     @Override
     public boolean match(String string) {
         return string.equals("currentStreak");

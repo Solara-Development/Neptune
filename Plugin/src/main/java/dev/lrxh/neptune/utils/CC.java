@@ -1,19 +1,20 @@
 package dev.lrxh.neptune.utils;
 
+import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
-import dev.lrxh.neptune.providers.clickable.Replacement;
 import dev.lrxh.neptune.providers.placeholder.PlaceholderUtil;
 import lombok.experimental.UtilityClass;
+import me.clip.placeholderapi.PAPIComponents;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import org.bukkit.entity.Player;
-import org.intellij.lang.annotations.Subst;
 
-import java.util.Arrays;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 @UtilityClass
@@ -79,20 +80,42 @@ public class CC {
             .replaceAll("<#$1$2$3$4$5$6>");
         return text.replaceAll("(?i)&#([a-f0-9]{6})", "<#$1>");
     }
-
-    public Component returnMessage(Player player, String message, Replacement... replacements) {
+    public Component returnMessage(Player player, String message) {
+        return returnMessage(player, message, TagResolver.empty());
+    }
+    public Component returnMessage(Player player, String message, TagResolver resolver) {
         String miniMessageInput = convertLegacyToMiniMessage(message);
+        Component component = MiniMessage.miniMessage().deserialize(miniMessageInput, TagResolver.resolver(resolver, PlaceholderUtil.getPlaceholders(player)));
+        if (Neptune.get().isPlaceholder()) {
+            try {
+                return PAPIComponents.setPlaceholders(player, component);
+            } catch (NoClassDefFoundError e) {
+                ServerUtils.error("Please update your PlaceholderAPI version to at least 2.12.1: https://modrinth.com/plugin/placeholderapi");
+            }
+        }
+        return component;
+    }
+    public Component returnMessage(Player player, Component message) {
+        return returnMessage(player, message, TagResolver.empty());
+    }
+    public Component returnMessage(Player player, Component message, TagResolver resolver) {
+        String serialized = convertLegacyToMiniMessage(MiniMessage.miniMessage().serialize(message));
+        Component component = MiniMessage.miniMessage().deserialize(serialized, TagResolver.resolver(resolver, PlaceholderUtil.getPlaceholders(player)));
+        if (Neptune.get().isPlaceholder()) {
+            try {
+                return PAPIComponents.setPlaceholders(player, component);
+            } catch (NoClassDefFoundError e) {
+                ServerUtils.error("Please update your PlaceholderAPI version to at least 2.12.1: https://modrinth.com/plugin/placeholderapi");
+            }
+        }
+        return component;
+    }
 
-        TagResolver resolver = TagResolver.resolver(
-                Arrays.stream(replacements)
-                        .map(replacement -> {
-                            @Subst("")
-                            String key = replacement.getPlaceholder().replaceAll("^<|>$", "").toLowerCase();
-                            return TagResolver.resolver(
-                                    key,
-                                    Placeholder.component(key, replacement.getReplacement()).tag());
-                        })
-                        .toArray(TagResolver[]::new));
-        return PlaceholderUtil.format(MiniMessage.miniMessage().deserialize(miniMessageInput, resolver), player);
+    public List<Component> getComponentsArray(Player player, List<String> lines)  {
+        List<Component> components = new ArrayList<>();
+        for (String string : lines) {
+            components.add(CC.returnMessage(player, string));
+        }
+        return components;
     }
 }

@@ -12,13 +12,14 @@ import dev.lrxh.neptune.game.match.impl.participant.Participant;
 import dev.lrxh.neptune.profile.ProfileService;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.providers.clickable.Replacement;
 import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.GithubUtils;
 import dev.lrxh.neptune.utils.PlayerUtil;
 import dev.lrxh.neptune.utils.ServerUtils;
 import dev.lrxh.neptune.utils.tasks.NeptuneRunnable;
 import dev.lrxh.neptune.utils.tasks.TaskScheduler;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -51,7 +52,7 @@ public class ProfileListener implements Listener {
 
                         if (!MessagesLocale.JOIN_MESSAGE.getString().equals("NONE")) {
                             ServerUtils.broadcast(MessagesLocale.JOIN_MESSAGE,
-                                    new Replacement("<player>", player.getName()));
+                                    Placeholder.unparsed("player", player.getName()));
                         }
                         PlayerUtil.reset(player);
                         HotbarService.get().giveItems(player);
@@ -82,7 +83,7 @@ public class ProfileListener implements Listener {
         }
 
         if (!MessagesLocale.LEAVE_MESSAGE.getString().equals("NONE")) {
-            ServerUtils.broadcast(MessagesLocale.LEAVE_MESSAGE, new Replacement("<player>", player.getName()));
+            ServerUtils.broadcast(MessagesLocale.LEAVE_MESSAGE, Placeholder.unparsed("player", player.getName()));
         }
 
         ProfileService.get().removeProfile(player.getUniqueId());
@@ -100,7 +101,7 @@ public class ProfileListener implements Listener {
             profile.getGameData().get(kit)
                     .setKitLoadout(Arrays.asList(player.getInventory().getContents()));
 
-            MessagesLocale.KIT_EDITOR_STOP.send(player.getUniqueId(), new Replacement("<kit>", kit.getDisplayName()));
+            MessagesLocale.KIT_EDITOR_STOP.send(player.getUniqueId(), Placeholder.parsed("kit", kit.getDisplayName()));
 
             if (profile.getGameData().getParty() == null) {
                 profile.setState(ProfileState.IN_LOBBY);

@@ -9,7 +9,8 @@ import dev.lrxh.neptune.feature.party.Party;
 import dev.lrxh.neptune.feature.party.impl.PartyRequest;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.providers.clickable.Replacement;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
@@ -48,15 +49,15 @@ public class PartyCommand {
         Party party = API.getProfile(target).getGameData().getParty();
 
         if (party == null) {
-            MessagesLocale.PARTY_NOT_IN_PARTY.send(player.getUniqueId(), new Replacement("<player>", target.getName()));
+            MessagesLocale.PARTY_NOT_IN_PARTY.send(player.getUniqueId(), Placeholder.unparsed("player", target.getName()));
             return false;
         }
         if (!party.getLeader().equals(target.getUniqueId())) {
-            MessagesLocale.PARTY_NOT_LEADER.send(player.getUniqueId(), new Replacement("<player>", target.getName()));
+            MessagesLocale.PARTY_NOT_LEADER.send(player.getUniqueId(), Placeholder.unparsed("player", target.getName()));
             return false;
         }
         if (!party.isOpen()) {
-            MessagesLocale.PARTY_PRIVATE.send(player.getUniqueId(), new Replacement("<player>", target.getName()));
+            MessagesLocale.PARTY_PRIVATE.send(player.getUniqueId(), Placeholder.unparsed("player", target.getName()));
             return false;
         }
 
@@ -112,14 +113,14 @@ public class PartyCommand {
 
         if (targetProfile.getGameData().getParty() != null) {
             MessagesLocale.PARTY_ALREADY_PARTY.send(player.getUniqueId(),
-                    new Replacement("<player>", target.getName()));
+                    Placeholder.unparsed("player", target.getName()));
             return;
         }
 
         if (profile.getGameData().getRequests().contains(player.getUniqueId()) ||
                 targetProfile.getGameData().getRequests().contains(player.getUniqueId())) {
             MessagesLocale.PARTY_ALREADY_SENT.send(player.getUniqueId(),
-                    new Replacement("<player>", target.getName()));
+                    Placeholder.unparsed("player", target.getName()));
             return;
         }
 
@@ -130,7 +131,7 @@ public class PartyCommand {
 
         party.invite(target.getUniqueId());
         MessagesLocale.PARTY_INVITED.send(player.getUniqueId(),
-                new Replacement("<player>", target.getName()));
+                Placeholder.unparsed("player", target.getName()));
     }
 
     @Command(name = "accept", desc = "", usage = "<uuid>")
@@ -155,7 +156,7 @@ public class PartyCommand {
         Party party = API.getProfile(target).getGameData().getParty();
         if (party == null || !party.getLeader().equals(player.getUniqueId())) {
             MessagesLocale.PARTY_NOT_IN_SAME_PARTY.send(player.getUniqueId(),
-                    new Replacement("<player>", player.getName()));
+                    Placeholder.unparsed("player", player.getName()));
             return;
         }
 
@@ -178,7 +179,7 @@ public class PartyCommand {
         }
         if (!party.equals(targetParty)) {
             MessagesLocale.PARTY_NOT_IN_SAME_PARTY.send(player.getUniqueId(),
-                    new Replacement("<player>", target.getName()));
+                    Placeholder.unparsed("player", target.getName()));
             return;
         }
         if (!party.getLeader().equals(player.getUniqueId())) {

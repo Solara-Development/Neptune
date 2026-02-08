@@ -18,8 +18,6 @@ import dev.lrxh.neptune.game.kit.KitService;
 import dev.lrxh.neptune.game.kit.procedure.KitProcedure;
 import dev.lrxh.neptune.game.match.Match;
 import dev.lrxh.neptune.profile.data.*;
-import dev.lrxh.neptune.providers.clickable.ClickableComponent;
-import dev.lrxh.neptune.providers.clickable.Replacement;
 import dev.lrxh.neptune.providers.database.DatabaseService;
 import dev.lrxh.neptune.providers.database.impl.DataDocument;
 import dev.lrxh.neptune.utils.Cooldown;
@@ -28,7 +26,9 @@ import dev.lrxh.neptune.utils.PlayerUtil;
 import dev.lrxh.neptune.utils.tasks.NeptuneRunnable;
 import lombok.Getter;
 import lombok.Setter;
-import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
@@ -334,33 +334,28 @@ public class Profile implements IProfile {
         if (player == null)
             return;
 
-        MessagesLocale.DUEL_REQUEST_SENDER.send(sender.getUniqueId(),
-                new Replacement("<receiver>", username),
-                new Replacement("<kit>", duelRequest.getKit().getDisplayName()),
-                new Replacement("<rounds>", String.valueOf(duelRequest.getRounds())),
-                new Replacement("<arena>", duelRequest.getArena().getDisplayName()));
+        MessagesLocale.DUEL_REQUEST_SENDER.send(sender.getUniqueId(), TagResolver.resolver(
+                Placeholder.parsed("kit", duelRequest.getKit().getDisplayName()),
+                Placeholder.parsed("arena", duelRequest.getArena().getDisplayName()),
+                Placeholder.unparsed("receiver", username),
+                Placeholder.unparsed("rounds", String.valueOf(duelRequest.getRounds()))
+            )
+        );
 
         gameData.addRequest(duelRequest, senderUUID,
                 ignore -> {
-                    MessagesLocale.DUEL_EXPIRED.send(senderUUID, new Replacement("<player>", player.getName()));
+                    MessagesLocale.DUEL_EXPIRED.send(senderUUID, Placeholder.unparsed("player", player.getName()));
                     duelRequest.getArena().remove();
                 });
 
-        TextComponent accept = new ClickableComponent(MessagesLocale.DUEL_ACCEPT.getString(),
-                "/duel accept-uuid " + duelRequest.getSender().toString(), MessagesLocale.DUEL_ACCEPT_HOVER.getString())
-                .build();
-
-        TextComponent deny = new ClickableComponent(MessagesLocale.DUEL_DENY.getString(),
-                "/duel deny-uuid " + duelRequest.getSender().toString(), MessagesLocale.DUEL_DENY_HOVER.getString())
-                .build();
-
-        MessagesLocale.DUEL_REQUEST_RECEIVER.send(playerUUID,
-                new Replacement("<accept>", accept),
-                new Replacement("<deny>", deny),
-                new Replacement("<kit>", duelRequest.getKit().getDisplayName()),
-                new Replacement("<arena>", duelRequest.getArena().getDisplayName()),
-                new Replacement("<rounds>", String.valueOf(duelRequest.getRounds())),
-                new Replacement("<sender>", sender.getName()));
+        MessagesLocale.DUEL_REQUEST_RECEIVER.send(playerUUID, TagResolver.resolver(
+                Placeholder.parsed("kit", duelRequest.getKit().getDisplayName()),
+                Placeholder.parsed("arena", duelRequest.getArena().getDisplayName()),
+                Placeholder.unparsed("receiver", username),
+                Placeholder.unparsed("rounds", String.valueOf(duelRequest.getRounds())),
+                Placeholder.unparsed("uuid", duelRequest.getSender().toString())
+            )
+        );
     }
 
     public void sendRematch(DuelRequest duelRequest) {
@@ -373,29 +368,25 @@ public class Profile implements IProfile {
         Player player = Bukkit.getPlayer(playerUUID);
         if (player == null)
             return;
-
-        MessagesLocale.REMATCH_REQUEST_SENDER.send(sender.getUniqueId(),
-                new Replacement("<receiver>", username),
-                new Replacement("<arena>", duelRequest.getArena().getDisplayName()));
-
-        gameData.addRequest(duelRequest, senderUUID, ignore -> MessagesLocale.REMATCH_EXPIRED.send(senderUUID,
-                new Replacement("<player>", player.getName())));
-
-        TextComponent accept = new ClickableComponent(MessagesLocale.REMATCH_ACCEPT.getString(),
-                "/duel accept-uuid " + duelRequest.getSender().toString(),
-                MessagesLocale.REMATCH_ACCEPT_HOVER.getString()).build();
-
-        TextComponent deny = new ClickableComponent(MessagesLocale.REMATCH_DENY.getString(),
-                "/duel accept-uuid " + duelRequest.getSender().toString(),
-                MessagesLocale.REMATCH_DENY_HOVER.getString()).build();
+        MessagesLocale.REMATCH_REQUEST_SENDER.send(sender.getUniqueId(), TagResolver.resolver(
+            Placeholder.unparsed("receiver", username),
+            Placeholder.parsed("arena", duelRequest.getArena().getDisplayName()),
+            Placeholder.parsed("kit", duelRequest.getKit().getDisplayName()),
+            Placeholder.unparsed("rounds", String.valueOf(duelRequest.getRounds()))
+        ));
+        gameData.addRequest(duelRequest, senderUUID, ignore -> 
+            MessagesLocale.REMATCH_EXPIRED.send(senderUUID, Placeholder.unparsed("player", player.getName()))
+        );
 
         MessagesLocale.REMATCH_REQUEST_RECEIVER.send(playerUUID,
-                new Replacement("<accept>", accept),
-                new Replacement("<deny>", deny),
-                new Replacement("<kit>", duelRequest.getKit().getDisplayName()),
-                new Replacement("<arena>", duelRequest.getArena().getDisplayName()),
-                new Replacement("<rounds>", String.valueOf(duelRequest.getRounds())),
-                new Replacement("<sender>", sender.getName()));
+            TagResolver.resolver(
+                Placeholder.parsed("kit", duelRequest.getKit().getDisplayName()),
+                Placeholder.parsed("arena", duelRequest.getArena().getDisplayName()),
+                Placeholder.unparsed("rounds", String.valueOf(duelRequest.getRounds())),
+                Placeholder.unparsed("sender", sender.getName()),
+                Placeholder.unparsed("uuid", duelRequest.getSender().toString())
+            )
+        );
     }
 
     public Party createParty() {
@@ -417,8 +408,7 @@ public class Profile implements IProfile {
             return;
         }
 
-        party.broadcast(MessagesLocale.PARTY_LEFT,
-                new Replacement("<player>", username));
+        party.broadcast(MessagesLocale.PARTY_LEFT, Placeholder.unparsed("player", username));
         party.remove(playerUUID);
     }
 

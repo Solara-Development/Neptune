@@ -3,7 +3,7 @@ package dev.lrxh.neptune.providers.placeholder.impl;
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.profile.data.MatchHistory;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.providers.placeholder.Placeholder;
+import dev.lrxh.neptune.providers.placeholder.PAPIPlaceholder;
 import org.bukkit.OfflinePlayer;
 
 import java.time.LocalDateTime;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class RecentMatchPlaceholder implements Placeholder {
+public class RecentMatchPlaceholder implements PAPIPlaceholder {
     private static final Pattern PATTERN = Pattern.compile("recent_match_(\\d+)_(opponent|kit|arena|date|time|unix_timestamp)");
 
     @Override
