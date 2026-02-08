@@ -4,6 +4,7 @@ import dev.lrxh.api.match.IMatch;
 import dev.lrxh.api.match.participant.IParticipant;
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
+import dev.lrxh.neptune.configs.impl.SoundsLocale;
 import dev.lrxh.neptune.game.kit.impl.KitRule;
 import dev.lrxh.neptune.game.match.Match;
 import dev.lrxh.neptune.game.match.impl.team.TeamFightMatch;
@@ -66,7 +67,7 @@ public class Participant implements IParticipant {
 
     public void setDead(boolean dead) {
         this.dead = dead;
-        playSound(Sound.BLOCK_NOTE_BLOCK_PLING);
+        playSound(SoundsLocale.getSound(SoundsLocale.PLAYER_DEATH));
     }
 
     public boolean setCurrentCheckPoint(Location location) {
@@ -213,23 +214,17 @@ public class Participant implements IParticipant {
         }
     }
 
-    public String getHitsDifference(Participant otherParticipant) {
-        if (hits - otherParticipant.getHits() > 0) {
-            return "&a(+" + (hits - otherParticipant.getHits()) + ")";
-        } else if (hits - otherParticipant.getHits() < 0) {
-            return "&c(" + (hits - otherParticipant.getHits()) + ")";
-        } else {
-            return "&e(" + (hits - otherParticipant.getHits()) + ")";
-        }
-    }
-
     public String getHitsDifference(IParticipant otherParticipant) {
+        String hitDiff = String.valueOf(hits - otherParticipant.getHits());
         if (hits - otherParticipant.getHits() > 0) {
-            return "&a(+" + (hits - otherParticipant.getHits()) + ")";
+            return MessagesLocale.MATCH_BOXING_HIT_DIFFERENCE_HIGHER.getString().replace("<hit-difference>",
+                    hitDiff);
         } else if (hits - otherParticipant.getHits() < 0) {
-            return "&c(" + (hits - otherParticipant.getHits()) + ")";
+            return MessagesLocale.MATCH_BOXING_HIT_DIFFERENCE_LOWER.getString().replace("<hit-difference>",
+                    hitDiff);
         } else {
-            return "&e(" + (hits - otherParticipant.getHits()) + ")";
+            return MessagesLocale.MATCH_BOXING_HIT_DIFFERENCE_EQUAL.getString().replace("<hit-difference>",
+                    hitDiff);
         }
     }
 

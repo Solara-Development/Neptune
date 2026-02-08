@@ -2,8 +2,10 @@ package com.jonahseguin.drink.command;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+
+import dev.lrxh.neptune.configs.impl.MessagesLocale;
+import dev.lrxh.neptune.utils.CC;
 
 import javax.annotation.Nonnull;
 
@@ -11,12 +13,10 @@ import javax.annotation.Nonnull;
 @Setter
 public class DrinkAuthorizer {
 
-    private String noPermissionMessage = ChatColor.RED + "You do not have permission to perform this command.";
-
     public boolean isAuthorized(@Nonnull CommandSender sender, @Nonnull DrinkCommand command) {
         if (command.getPermission() != null && command.getPermission().length() > 0) {
             if (!sender.hasPermission(command.getPermission())) {
-                sender.sendMessage(noPermissionMessage);
+                sender.sendMessage(CC.color(MessagesLocale.NO_PERMISSION.getString()));
                 return false;
             }
         }

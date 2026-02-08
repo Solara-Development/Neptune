@@ -1,7 +1,6 @@
 package dev.lrxh.neptune.providers.placeholder;
 
 import dev.lrxh.neptune.API;
-import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.feature.party.Party;
 import dev.lrxh.neptune.feature.queue.QueueEntry;
 import dev.lrxh.neptune.feature.queue.QueueService;
@@ -20,8 +19,6 @@ import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
 import dev.lrxh.neptune.utils.PlayerUtil;
 import lombok.experimental.UtilityClass;
-import me.clip.placeholderapi.PlaceholderAPI;
-import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
@@ -184,15 +181,5 @@ public class PlaceholderUtil {
             }
         }
         return placeholders;
-    }
-    public String format(String line, Player player) {
-        Profile profile = API.getProfile(player);
-        if (profile == null)
-            return line;
-        if (Neptune.get().isPlaceholder() && PlaceholderAPIPlugin.getInstance().isEnabled()) {
-            return PlaceholderAPI.setPlaceholders(player, line);
-        }
-
-        return line;
     }
 }
