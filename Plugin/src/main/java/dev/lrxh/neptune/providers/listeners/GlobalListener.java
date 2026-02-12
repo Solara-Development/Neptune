@@ -61,10 +61,10 @@ public class GlobalListener implements Listener {
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEntityEvent event) {
-        if (!(event.getRightClicked() instanceof Player) || event.getHand() != EquipmentSlot.HAND)
+        if (!(event.getRightClicked() instanceof Player target) || event.getHand() != EquipmentSlot.HAND)
             return;
-        Player target = (Player) event.getRightClicked();
         Player sender = event.getPlayer();
+        if (sender.isSneaking()) return;
         Profile senderProfile = API.getProfile(sender);
         Party party = senderProfile.getGameData().getParty();
         if (party == null || !party.isLeader(sender.getUniqueId()))

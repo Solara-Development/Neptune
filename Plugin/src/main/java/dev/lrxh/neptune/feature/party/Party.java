@@ -9,6 +9,8 @@ import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
 import lombok.Getter;
 import lombok.Setter;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
@@ -60,7 +62,12 @@ public class Party {
         if (player == null)
             return;
 
-        MessagesLocale.PARTY_INVITATION.send(playerUUID, Placeholder.unparsed("leader", getLeaderName()));
+        MessagesLocale.PARTY_INVITATION.send(playerUUID, TagResolver.resolver(
+                TagResolver.resolver("accept", Tag.styling(ClickEvent.runCommand("/party accept " + getLeader()))),
+                Placeholder.unparsed("leader", getLeaderName()),
+                Placeholder.unparsed("party-max", String.valueOf(getMaxUsers())),
+                Placeholder.unparsed("party-size", String.valueOf(getUsers().size()))
+        ));
 
         Profile profile = API.getProfile(playerUUID);
         profile.getGameData().addRequest(new PartyRequest(leader, this), leader,
@@ -118,7 +125,7 @@ public class Party {
     }
 
     public void broadcast(MessagesLocale messagesLocale) {
-        forEachMemberAsUUID(uuid -> messagesLocale.send(uuid));
+        forEachMemberAsUUID(messagesLocale::send);
     }
     public void broadcast(MessagesLocale messagesLocale, TagResolver resolver) {
         forEachMemberAsUUID(uuid -> messagesLocale.send(uuid, resolver));
@@ -167,7 +174,10 @@ public class Party {
 
             setOpen(true);
             for (Profile profile : ProfileService.get().profiles.values()) {
-                MessagesLocale.PARTY_ADVERTISE_MESSAGE.send(profile.getPlayerUUID(), Placeholder.unparsed("leader", getLeaderName()));
+                MessagesLocale.PARTY_ADVERTISE_MESSAGE.send(profile.getPlayerUUID(), TagResolver.resolver(
+                        Placeholder.parsed("leader", getLeaderName()),
+                        TagResolver.resolver("join", Tag.styling(ClickEvent.runCommand("/party joinad " + getLeaderName())))
+                ));
             }
 
             return true;

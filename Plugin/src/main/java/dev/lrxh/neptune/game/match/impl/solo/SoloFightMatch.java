@@ -31,6 +31,8 @@ import dev.lrxh.neptune.utils.PlayerUtil;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
@@ -193,7 +195,11 @@ public class SoloFightMatch extends Match implements ISoloFightMatch {
 
         forEachParticipant(participant -> {
             if (MessagesLocale.MATCH_PLAY_AGAIN_ENABLED.getBoolean()) {
-                PlayerUtil.sendMessage(participant.getPlayerUUID(), MessagesLocale.MATCH_PLAY_AGAIN.getString());
+                PlayerUtil.sendMessage(participant.getPlayerUUID(), MessagesLocale.MATCH_PLAY_AGAIN.getString(), TagResolver.resolver(
+                        Placeholder.parsed("kit", getKit().getDisplayName()),
+                        Placeholder.unparsed("kit-name", getKit().getName()),
+                        TagResolver.resolver("play-again", Tag.styling(ClickEvent.runCommand("/queue " + getKit().getName())))
+                ));
             }
         });
     }

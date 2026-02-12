@@ -27,7 +27,6 @@ import dev.lrxh.neptune.utils.tasks.NeptuneRunnable;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -334,14 +333,7 @@ public class Profile implements IProfile {
         if (player == null)
             return;
 
-        MessagesLocale.DUEL_REQUEST_SENDER.send(sender.getUniqueId(), TagResolver.resolver(
-                Placeholder.parsed("kit", duelRequest.getKit().getDisplayName()),
-                Placeholder.parsed("arena", duelRequest.getArena().getDisplayName()),
-                Placeholder.unparsed("receiver", username),
-                Placeholder.unparsed("sender", sender.getName()),
-                Placeholder.unparsed("rounds", String.valueOf(duelRequest.getRounds()))
-            )
-        );
+        duelRequest.sendSenderMessage(playerUUID, false);
 
         gameData.addRequest(duelRequest, senderUUID,
                 ignore -> {
@@ -349,15 +341,7 @@ public class Profile implements IProfile {
                     duelRequest.getArena().remove();
                 });
 
-        MessagesLocale.DUEL_REQUEST_RECEIVER.send(playerUUID, TagResolver.resolver(
-                Placeholder.parsed("kit", duelRequest.getKit().getDisplayName()),
-                Placeholder.parsed("arena", duelRequest.getArena().getDisplayName()),
-                Placeholder.unparsed("receiver", username),
-                Placeholder.unparsed("sender", sender.getName()),
-                Placeholder.unparsed("rounds", String.valueOf(duelRequest.getRounds())),
-                Placeholder.unparsed("uuid", duelRequest.getSender().toString())
-            )
-        );
+        duelRequest.sendReceiverMessage(playerUUID, false);
     }
 
     public void sendRematch(DuelRequest duelRequest) {
@@ -370,25 +354,12 @@ public class Profile implements IProfile {
         Player player = Bukkit.getPlayer(playerUUID);
         if (player == null)
             return;
-        MessagesLocale.REMATCH_REQUEST_SENDER.send(sender.getUniqueId(), TagResolver.resolver(
-            Placeholder.unparsed("receiver", username),
-            Placeholder.parsed("arena", duelRequest.getArena().getDisplayName()),
-            Placeholder.parsed("kit", duelRequest.getKit().getDisplayName()),
-            Placeholder.unparsed("rounds", String.valueOf(duelRequest.getRounds()))
-        ));
+        duelRequest.sendSenderMessage(playerUUID, true);
         gameData.addRequest(duelRequest, senderUUID, ignore -> 
             MessagesLocale.REMATCH_EXPIRED.send(senderUUID, Placeholder.unparsed("player", player.getName()))
         );
 
-        MessagesLocale.REMATCH_REQUEST_RECEIVER.send(playerUUID,
-            TagResolver.resolver(
-                Placeholder.parsed("kit", duelRequest.getKit().getDisplayName()),
-                Placeholder.parsed("arena", duelRequest.getArena().getDisplayName()),
-                Placeholder.unparsed("rounds", String.valueOf(duelRequest.getRounds())),
-                Placeholder.unparsed("sender", sender.getName()),
-                Placeholder.unparsed("uuid", duelRequest.getSender().toString())
-            )
-        );
+        duelRequest.sendReceiverMessage(playerUUID, true);
     }
 
     public Party createParty() {

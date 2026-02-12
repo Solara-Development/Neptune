@@ -95,7 +95,7 @@ public enum MessagesLocale implements IDataAccessor {
     MATCH_RESPAWN_TITLE_HEADER("MATCH.RESPAWN_TITLE.HEADER", DataType.STRING, "&fRespawning in &b<timer>&f..."),
     MATCH_RESPAWN_TITLE_FOOTER("MATCH.RESPAWNED_TITLE_FOOTER", DataType.STRING, ""),
     MATCH_PLAY_AGAIN_ENABLED("MATCH.PLAY_AGAIN.ENABLED", DataType.BOOLEAN, "true"),
-    MATCH_PLAY_AGAIN("MATCH.PLAY_AGAIN.MESSAGE", DataType.STRING, "&bDo you want to play again? <hover:show_text:'&aClick to play again!'><click:run_command:'/queue <kit>'>&a(Click here)</click></hover>"),
+    MATCH_PLAY_AGAIN("MATCH.PLAY_AGAIN.MESSAGE", DataType.STRING, "&bDo you want to play again? <play-again><hover:show_text:'&aClick to play again!'><green>(Click here)</hover></play-again>"),
     MATCH_COMBO_MESSAGE_ENABLE("MATCH.COMBO_MESSAGE.ENABLE", DataType.BOOLEAN, "true"),
     MATCH_COMBO_MESSAGE_5("MATCH.COMBO_MESSAGE.5COMBO", DataType.STRING_LIST, "&a5 COMBO!"),
     MATCH_COMBO_MESSAGE_10("MATCH.COMBO_MESSAGE.10COMBO", DataType.STRING_LIST, "&e10 COMBO!"),
@@ -126,7 +126,7 @@ public enum MessagesLocale implements IDataAccessor {
             "&fArena: &a<arena>",
             "&fRounds: &b<rounds>",
             " ",
-            "<hover:show_text:'&aClick to accept duel request'><click:run_command:'/duel accept-uuid <uuid>'>&a&l(ACCEPT)</click></hover> <hover:show_text:'&cClick to deny duel request'><click:run_command:'/duel deny-uuid <uuid>'>&a&l(DENY)</click></hover>"),
+            "<accept><hover:show_text:'&aClick to accept duel request'>&a&l(ACCEPT)</hover></accept> <deny><hover:show_text:'&cClick to deny duel request'>&a&l(DENY)</hover></deny>"),
     DUEL_REQUEST_SENDER("DUEL.SENDER", DataType.STRING_LIST, " ",
             "&bDuel Request Sent",
             " ",
@@ -153,7 +153,7 @@ public enum MessagesLocale implements IDataAccessor {
             "&e&lRematch Request",
             "&eYou have received a rematch request from &a<sender>&e.",
             " ",
-            "<hover:show_text:'&aClick to accept rematch request'><click:run_command:'/duel accept-uuid <uuid>'>&a&l(ACCEPT)</click></hover> <hover:show_text:'&cClick to deny rematch request'><click:run_command:'/duel deny-uuid <uuid>'>&a&l(DENY)</click></hover>"),
+            "<accept><hover:show_text:'&aClick to accept rematch request'>&a&l(ACCEPT)</hover></accept> <deny><hover:show_text:'&cClick to deny rematch request'>&a&l(DENY)</hover></deny>"),
     REMATCH_REQUEST_SENDER("REMATCH.SENDER", DataType.STRING_LIST, " ",
             "&e&lRematch Request Sent",
             "&eYou have sent a rematch request to &a<receiver>&e.",
@@ -195,7 +195,7 @@ public enum MessagesLocale implements IDataAccessor {
     PARTY_JOINED_FROM_ADVERTISEMENT("PARTY.JOINED_FROM_ADVERTISEMENT", DataType.STRING_LIST,
             "&f<player> &bjoined the party from the advertisement!"),
     PARTY_INVITATION("PARTY.INVITATION", DataType.STRING_LIST,
-            "&bYou have been invited to &f<leader>'s &bparty <hover:show_text:'Click to join party'><click:run_command:'/party join <leader>'>(ACCEPT)</click></hover>"),
+            "&bYou have been invited to &f<leader>&b's party <accept><hover:show_text:'Click to join party'><green>(ACCEPT)</hover></accept>"),
     PARTY_INVITE_OWN("PARTY.INVITE_OWN", DataType.STRING_LIST, "&cYou can't invite yourself to the party."),
     PARTY_TRANSFER_OWN("PARTY.TRANSFER", DataType.STRING_LIST, "&cYou can't transfer a party to yourself."),
     PARTY_NO_PERMISSION("PARTY.NO_PERMISSION", DataType.STRING_LIST, "&cYou do not have permission to do this."),
@@ -206,9 +206,10 @@ public enum MessagesLocale implements IDataAccessor {
     PARTY_TRANSFER("PARTY.TRANSFER.MEMBERS", DataType.STRING_LIST,
             "&f<leader> &btransferred the party to &f<target>&b."),
     PARTY_ADVERTISE_MESSAGE("PARTY.ADVERTISE.MESSAGE", DataType.STRING_LIST,
-            "&f<leader> &6wants you in their party! <hover:show_text:'&aClick to join their party'><click:run_command:'/party joinad <leader>'>&a(Join)</click></hover>"),
+            "&d&l[AD] &f<leader> &6wants you in their party! <join><hover:show_text:'&aClick to join their party'>&a(JOIN)</hover></join>"),
     PARTY_KICK("PARTY.KICK", DataType.STRING_LIST, "&f<player> &bhas been kicked from the party."),
     PARTY_CANNOT_CREATE("PARTY.CANNOT_CREATE", DataType.STRING_LIST, "&cYou can only create a party while in lobby!"),
+    PARTY_CANNOT_JOIN("PARTY.CANNOT_JOIN", DataType.STRING_LIST, "&cYou can only join a party while in lobby!"),
     PARTY_LEFT("PARTY.LEFT", DataType.STRING_LIST, "&f<player> &bhas left the party."),
     PARTY_PRIVACY_OPEN("PARTY.PRIVACY.OPEN", DataType.STRING, "Open"),
     PARTY_PRIVACY_CLOSED("PARTY.PRIVACY.OPEN", DataType.STRING, "Closed"),
@@ -298,7 +299,7 @@ public enum MessagesLocale implements IDataAccessor {
             }
         } else if (dataType.equals(DataType.STRING)) {
             if (getString().equals("NONE"))
-            return;
+                return;
             PlayerUtil.sendMessage(playerUUID, getString(), resolver);
         }
     }
@@ -314,5 +315,5 @@ public enum MessagesLocale implements IDataAccessor {
         send(player, resolver);
     }
 
-    public void update() {};
+    public void update() {}
 }
