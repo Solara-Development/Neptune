@@ -102,6 +102,7 @@ public class GlobalListener implements Listener {
         if (API.getProfile(player).getState() != ProfileState.IN_LOBBY) return;
         Location spawn = Neptune.get().getCache().getSpawn();
         if (spawn == null) return;
+        if (spawn.getWorld() != player.getWorld()) return;
         if (player.getLocation().getY() <= SettingsLocale.VOID_Y_LOCATION.getInt()) {
             player.teleport(spawn);
         }
