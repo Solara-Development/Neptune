@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 
 @UtilityClass
 public class CC {
-    private MiniMessage mm = MiniMessage.miniMessage();
+    private final MiniMessage mm = MiniMessage.miniMessage();
     public TextComponent error(String message) {
         return color(MessagesLocale.ERROR_MESSAGE.getString().replace("<error>", message));
     }
@@ -33,7 +33,7 @@ public class CC {
     }
 
     public TextComponent color(String message) {
-        String converted = convertLegacyToMiniMessage(message);
+        String converted = replaceLegacy(message);
         Component parsed = mm.deserialize(converted);
 
         boolean hasItalic = message.contains("&o") || converted.contains("<italic>");
@@ -51,7 +51,7 @@ public class CC {
                 .build();
     }
 
-    private String convertLegacyToMiniMessage(String text) {
+    public String replaceLegacy(String text) {
         text = text
                 .replace("&a", "<green>")
                 .replace("&b", "<aqua>")
@@ -82,18 +82,13 @@ public class CC {
         return text.replaceAll("(?i)&#([a-f0-9]{6})", "<#$1>");
     }
     public static Component replaceLegacy(Component input) {
-        return input.replaceText(builder ->
-            builder.match(Pattern.compile("([&][a-fk-or0-9])|([§&]x[§&][0-9a-f][§&][0-9a-f][§&][0-9a-f][§&][0-9a-f][§&][0-9a-f][§&][0-9a-f])|((?i)&#([a-f0-9]{6}))"))
-                .replacement((match, builder1) -> {
-                    return mm.deserialize(convertLegacyToMiniMessage(match.group()));
-                })
-        );
+        return mm.deserialize(replaceLegacy(mm.serialize(input)));
     }
     public Component returnMessage(Player player, String message) {
         return returnMessage(player, message, TagResolver.empty());
     }
     public Component returnMessage(Player player, String message, TagResolver resolver) {
-        String minimessageInput = convertLegacyToMiniMessage(message);
+        String minimessageInput = replaceLegacy(message);
         Component component = mm.deserialize(minimessageInput, TagResolver.resolver(resolver, PlaceholderUtil.getPlaceholders(player)));
         if (Neptune.get().isPlaceholder()) {
             try {

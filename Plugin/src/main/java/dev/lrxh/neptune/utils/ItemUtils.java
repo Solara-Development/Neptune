@@ -116,6 +116,20 @@ public class ItemUtils {
         }
         return items;
     }
+    public List<Component> getComponentLore(List<Component> lore) {
+        return getComponentLore(lore, TagResolver.empty());
+    }
+    public List<Component> getComponentLore(List<Component> lore, TagResolver resolver) {
+        if (resolver == TagResolver.empty()) return lore;
+
+        List<Component> newLore = new ArrayList<>();
+        for (Component component : lore) {
+            String serialized = MiniMessage.miniMessage().serialize(component);
+            Component deserialized = MiniMessage.miniMessage().deserialize(serialized, resolver);
+            newLore.add(deserialized);
+        }
+        return newLore;
+    }
     public List<Component> getLore(List<String> lore) {
         return getLore(lore, TagResolver.empty());
     }

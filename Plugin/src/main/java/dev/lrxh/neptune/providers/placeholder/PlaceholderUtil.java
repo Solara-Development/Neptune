@@ -132,6 +132,7 @@ public class PlaceholderUtil {
                     Placeholder.unparsed("opponent-hits", String.valueOf(opponent.getHits())),
                     Placeholder.unparsed("opponent-hit-difference", String.valueOf(opponent.getHitsDifference(participant))),
                     Placeholder.unparsed("opponent-points", String.valueOf(opponent.getPoints())),
+                    Placeholder.unparsed("opponent-ping", String.valueOf(opponent.getPlayer().getPing())),
                     Placeholder.unparsed("red-name", red.getName()),
                     Placeholder.unparsed("red-longest-combo", String.valueOf(red.getLongestCombo())),
                     Placeholder.unparsed("red-hits", String.valueOf(red.getHits())),

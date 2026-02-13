@@ -45,7 +45,7 @@ public class PartyDuelButton extends Button {
         for (String line : lines) {
             if (line.contains("<members>")) {
                 for (String name : names) {
-                    lore.add(line.replaceAll("members", name));
+                    lore.add(line.replaceAll("<members>", name));
                 }
             }
             else lore.add(line);

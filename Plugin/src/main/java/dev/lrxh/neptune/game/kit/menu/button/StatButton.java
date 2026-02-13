@@ -39,8 +39,8 @@ public class StatButton extends Button {
                 Placeholder.unparsed("losses", String.valueOf(kitData.getLosses())),
                 Placeholder.unparsed("elo", String.valueOf(kitData.getElo())),
                 Placeholder.unparsed("played", String.valueOf(kitData.getWins() + kitData.getLosses())),
-                Placeholder.unparsed("current-streak", String.valueOf(kitData.getCurrentStreak())),
-                Placeholder.unparsed("best-streak", String.valueOf(kitData.getBestStreak())),
+                Placeholder.unparsed("current-win-streak", String.valueOf(kitData.getCurrentStreak())),
+                Placeholder.unparsed("best-win-streak", String.valueOf(kitData.getBestStreak())),
                 Placeholder.unparsed("kills", String.valueOf(kitData.getKills())),
                 Placeholder.unparsed("deaths", String.valueOf(kitData.getDeaths())),
                 Placeholder.unparsed("kdr", String.valueOf(kitData.getKdr()))

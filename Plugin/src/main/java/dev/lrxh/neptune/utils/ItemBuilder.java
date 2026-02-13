@@ -5,6 +5,7 @@ import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.TooltipDisplay;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
@@ -113,7 +114,9 @@ public class ItemBuilder {
         if (meta != null) {
             List<Component> toSet = new ArrayList<>();
             for (Component component : lore) {
-                toSet.add(CC.returnMessage(player, component, resolver).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE));
+                toSet.add(CC.returnMessage(player, component, resolver)
+                        .decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE)
+                        .colorIfAbsent(NamedTextColor.WHITE));
             }
             meta.lore(toSet);
             item.setItemMeta(meta);
@@ -129,7 +132,9 @@ public class ItemBuilder {
         if (meta != null) {
             List<Component> toSet = new ArrayList<>();
             for (String string : lore) {
-                toSet.add(CC.returnMessage(player, string, resolver).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE));
+                toSet.add(CC.returnMessage(player, string, resolver)
+                        .decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE)
+                        .colorIfAbsent(NamedTextColor.WHITE));
             }
             meta.lore(toSet);
             item.setItemMeta(meta);
