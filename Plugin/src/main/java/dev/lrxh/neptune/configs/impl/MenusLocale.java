@@ -563,7 +563,7 @@ public enum MenusLocale implements IDataAccessor {
                                 .replaceAll("<currentStreak>", "<current-win-streak>")
                                 .replaceAll("<win_streak_current>", "<current-win-streak>")
                                 .replaceAll("<bestStreak>", "<best-win-streak>")
-                                .replaceAll("<win_streak_best>", "<best-win-streak")
+                                .replaceAll("<win_streak_best>", "<best-win-streak>")
                                 .replaceAll("<kill_death_ratio>", "<kdr>")
                 ).toList()
         );
