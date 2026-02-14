@@ -320,13 +320,13 @@ public enum MessagesLocale implements IDataAccessor {
                     DUEL_REQUEST_RECEIVER.getStringList().stream().map(
                             str -> str.replaceAll("<hover:show_text:'&aClick to accept duel request'><click:run_command:'/duel accept-uuid <uuid>'>&a&l(ACCEPT)</click></hover>", "<accept><hover:show_text:'&aClick to accept duel request'>&a&l(ACCEPT)</hover></accept>")
                                     .replaceAll("<hover:show_text:'&cClick to deny duel request'><click:run_command:'/duel deny-uuid <uuid>'>&a&l(DENY)</click></hover>", "<deny><hover:show_text:'&cClick to deny duel request'>&a&l(DENY)</hover></deny>")
-                    )
+                    ).toList()
             );
             REMATCH_REQUEST_RECEIVER.set(
                     DUEL_REQUEST_RECEIVER.getStringList().stream().map(
                             str -> str.replaceAll("<hover:show_text:'&aClick to accept rematch request'><click:run_command:'/duel accept-uuid <uuid>'>&a&l(ACCEPT)</click></hover>", "<accept><hover:show_text:'&aClick to accept rematch request'>&a&l(ACCEPT)</hover></accept>")
                                     .replaceAll("<hover:show_text:'&cClick to deny rematch request'><click:run_command:'/duel deny-uuid <uuid>'>&a&l(DENY)</click></hover>", "<deny><hover:show_text:'&cClick to deny rematch request'>&a&l(DENY)</hover></deny>")
-                    )
+                    ).toList()
             );
             getConfigFile().save();
     }
