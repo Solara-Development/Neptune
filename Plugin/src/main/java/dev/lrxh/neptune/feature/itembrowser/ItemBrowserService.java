@@ -3,6 +3,7 @@ package dev.lrxh.neptune.feature.itembrowser;
 import dev.lrxh.api.features.IItemBrowserService;
 import org.bukkit.Material;
 import org.bukkit.Registry;
+import org.bukkit.block.BlockType;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -31,7 +32,7 @@ public class ItemBrowserService implements IItemBrowserService {
     public List<Material> getBlocks() {
         List<Material> list = new ArrayList<>();
 
-        for (var block : Registry.BLOCK) {
+        for (BlockType block : Registry.BLOCK) {
             Material m = block.asMaterial();
             if (m != null && !m.isAir()) {
                 list.add(m);
