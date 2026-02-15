@@ -99,7 +99,9 @@ public class GlobalListener implements Listener {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
-        if (API.getProfile(player).getState() != ProfileState.IN_LOBBY) return;
+        Profile profile = API.getProfile(player);
+        if (profile == null) return;
+        if (profile.getState() != ProfileState.IN_LOBBY) return;
         Location spawn = Neptune.get().getCache().getSpawn();
         if (spawn == null) return;
         if (spawn.getWorld() != player.getWorld()) return;

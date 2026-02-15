@@ -40,7 +40,8 @@ public class CosmeticsManagementButton extends Button {
         Profile profile = API.getProfile(player);
         return new ItemBuilder(material).name(title).componentLore(ItemUtils.getLore(lore, TagResolver.resolver(
             Placeholder.parsed("kill-effect", profile.getSettingData().getKillEffect().getDisplayName()),
-            Placeholder.parsed("kill-message", profile.getSettingData().getKillMessagePackage().getDisplayName()
-        ))), player).build();
+            Placeholder.parsed("kill-message", profile.getSettingData().getKillMessagePackage().getDisplayName()),
+            Placeholder.parsed("armor-trim", profile.getSettingData().getArmorTrimPackage().getDisplayName())
+        )), player).build();
     }
 }

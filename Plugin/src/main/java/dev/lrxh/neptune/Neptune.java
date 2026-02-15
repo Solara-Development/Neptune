@@ -124,11 +124,8 @@ public final class Neptune extends JavaPlugin {
         KitService.get().load();
         this.cache = new Cache();
         HotbarService.get().load();
-
         CosmeticService.get().load();
-
         DivisionService.get().load();
-
         LeaderboardService.get().load();
 
         registerListeners();

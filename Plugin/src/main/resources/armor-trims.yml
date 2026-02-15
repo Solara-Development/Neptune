@@ -1,0 +1,62 @@
+# trim pattern names here: https://github.com/misode/mcmeta/tree/data-json/data/minecraft/trim_pattern
+# trim material names here: https://github.com/misode/mcmeta/tree/data-json/data/minecraft/trim_material
+# names in above links apply only for MATERIAL inside HELMET, CHESTPLATE, LEGGINGS, BOOTS. use normal minecraft names for material outside those
+ARMOR_TRIMS:
+  DEFAULT:
+    DISPLAY_NAME: "<gray>None"
+    DESCRIPTION:
+      - "<gray>No armor trims"
+    SLOT: 0
+    MATERIAL: "barrier"
+    HELMET:
+      DISPLAY_NAME: "<gray>Default Helmet"
+    CHESTPLATE:
+      DISPLAY_NAME: "<gray>Default Chestplate"
+    LEGGINGS:
+      DISPLAY_NAME: "<gray>Default Leggings"
+    BOOTS:
+      DISPLAY_NAME: "<gray>Default Boots"
+  SENTRY:
+    DISPLAY_NAME: "<#627a74>Sentry"
+    DESCRIPTION:
+      - "<gray>The default <white>Sentry</white> armor trim"
+    SLOT: 1
+    MATERIAL: "sentry_armor_trim_smithing_template"
+    HELMET:
+      DISPLAY_NAME: "<#627a74>Sentry Helmet"
+      MATERIAL: "amethyst"
+      PATTERN: "sentry"
+    CHESTPLATE:
+      DISPLAY_NAME: "<#627a74>Sentry Chestplate"
+      MATERIAL: "amethyst"
+      PATTERN: "sentry"
+    LEGGINGS:
+      DISPLAY_NAME: "<#627a74>Sentry Leggings"
+      MATERIAL: "amethyst"
+      PATTERN: "sentry"
+    BOOTS:
+      DISPLAY_NAME: "<#627a74>Sentry Boots"
+      MATERIAL: "amethyst"
+      PATTERN: "sentry"
+  VEX:
+    DISPLAY_NAME: "<#2e282c>Vex"
+    DESCRIPTION:
+      - "<gray>The default <white>Vex</white> armor trim"
+    SLOT: 2
+    MATERIAL: "vex_armor_trim_smithing_template"
+    HELMET:
+      DISPLAY_NAME: "<#2e282c>Vex Helmet"
+      MATERIAL: "gold"
+      PATTERN: "vex"
+    CHESTPLATE:
+      DISPLAY_NAME: "<#2e282c>Vex Chestplate"
+      MATERIAL: "gold"
+      PATTERN: "vex"
+    LEGGINGS:
+      DISPLAY_NAME: "<#2e282c>Vex Leggings"
+      MATERIAL: "gold"
+      PATTERN: "vex"
+    BOOTS:
+      DISPLAY_NAME: "<#2e282c>Vex Boots"
+      MATERIAL: "gold"
+      PATTERN: "vex"

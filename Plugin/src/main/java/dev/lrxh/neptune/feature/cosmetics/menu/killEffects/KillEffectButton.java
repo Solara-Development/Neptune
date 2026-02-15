@@ -2,7 +2,7 @@ package dev.lrxh.neptune.feature.cosmetics.menu.killEffects;
 
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.configs.impl.MenusLocale;
-import dev.lrxh.neptune.feature.cosmetics.impl.KillEffect;
+import dev.lrxh.neptune.feature.cosmetics.KillEffect;
 import dev.lrxh.neptune.profile.impl.Profile;
 import dev.lrxh.neptune.utils.ItemBuilder;
 import dev.lrxh.neptune.utils.menu.Button;

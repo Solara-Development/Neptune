@@ -219,15 +219,14 @@ public class Kit implements IKit {
             return;
         Profile profile = API.getProfile(playerUUID);
         GameData gameData = profile.getGameData();
-        if (gameData.getKitData() == null || gameData.get(this) == null ||
-                gameData.get(this).getKitLoadout().isEmpty()) {
+        List<ItemStack> loadout = gameData.get(this).getKitLoadout();
+        if (gameData.getKitData() == null || gameData.get(this) == null || loadout.isEmpty()) {
             player.getInventory().setContents(items.toArray(new ItemStack[0]));
         } else {
-            player.getInventory().setContents(gameData.get(this).getKitLoadout().toArray(new ItemStack[0]));
+            player.getInventory().setContents(loadout.toArray(new ItemStack[0]));
         }
-
-        player.addPotionEffects(potionEffects);
-
+        if (giveEffects) player.addPotionEffects(potionEffects);
+        ItemUtils.applyArmorTrim(profile);
         player.updateInventory();
     }
 
@@ -246,9 +245,8 @@ public class Kit implements IKit {
                     .setContents(ItemUtils.color(gameData.get(this).getKitLoadout().toArray(new ItemStack[0]),
                             participant.getColor().getContentColor()));
         }
-
         player.addPotionEffects(potionEffects);
-
+        ItemUtils.applyArmorTrim(profile);
         player.updateInventory();
     }
 

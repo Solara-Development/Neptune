@@ -1,23 +1,14 @@
-package dev.lrxh.api.features;
+package dev.lrxh.api.features.cosmetics;
 
 import org.bukkit.Material;
 
 import java.util.List;
 
-public interface IKillMessagePackage {
+public interface ICosmeticPackage {
     String getName();
-
     String getDisplayName();
-
     Material getMaterial();
-
     List<String> getDescription();
-
     int getSlot();
-
-    List<String> getMessages();
-
-    String getRandomMessage();
-
     String permission();
 }

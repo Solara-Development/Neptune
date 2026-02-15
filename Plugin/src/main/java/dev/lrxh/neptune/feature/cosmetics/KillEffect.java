@@ -1,4 +1,4 @@
-package dev.lrxh.neptune.feature.cosmetics.impl;
+package dev.lrxh.neptune.feature.cosmetics;
 
 import dev.lrxh.neptune.configs.impl.CosmeticsLocale;
 import dev.lrxh.neptune.utils.RandomUtils;

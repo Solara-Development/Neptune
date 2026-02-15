@@ -1,9 +1,11 @@
 package dev.lrxh.neptune.profile.data;
 
 import dev.lrxh.neptune.Neptune;
-import dev.lrxh.neptune.feature.cosmetics.CosmeticService;
-import dev.lrxh.neptune.feature.cosmetics.impl.KillEffect;
-import dev.lrxh.neptune.feature.cosmetics.impl.KillMessagePackage;
+import dev.lrxh.neptune.feature.cosmetics.KillEffect;
+import dev.lrxh.neptune.feature.cosmetics.impl.armortrims.ArmorTrimCosmetic;
+import dev.lrxh.neptune.feature.cosmetics.impl.armortrims.ArmorTrimPackage;
+import dev.lrxh.neptune.feature.cosmetics.impl.killmessage.KillMessageCosmetic;
+import dev.lrxh.neptune.feature.cosmetics.impl.killmessage.KillMessagePackage;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,11 +25,13 @@ public class SettingData {
     private KillEffect killEffect = KillEffect.NONE;
     private boolean menuSound = true;
     private KillMessagePackage killMessagePackage;
+    private ArmorTrimPackage armorTrimPackage;
     private List<UUID> followings = new ArrayList<>();
 
     public SettingData(Neptune plugin) {
         this.plugin = plugin;
-        this.killMessagePackage = CosmeticService.get().getDefault();
+        this.killMessagePackage = KillMessageCosmetic.get().getDefault();
+        this.armorTrimPackage = ArmorTrimCosmetic.get().getDefault();
     }
 
     public void increasePing() {

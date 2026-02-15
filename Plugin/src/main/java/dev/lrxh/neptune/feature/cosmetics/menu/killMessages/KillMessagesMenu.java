@@ -2,7 +2,7 @@ package dev.lrxh.neptune.feature.cosmetics.menu.killMessages;
 
 import dev.lrxh.neptune.configs.impl.MenusLocale;
 import dev.lrxh.neptune.feature.cosmetics.CosmeticService;
-import dev.lrxh.neptune.feature.cosmetics.impl.KillMessagePackage;
+import dev.lrxh.neptune.feature.cosmetics.impl.killmessage.KillMessagePackage;
 import dev.lrxh.neptune.utils.menu.Button;
 import dev.lrxh.neptune.utils.menu.Filter;
 import dev.lrxh.neptune.utils.menu.Menu;
@@ -20,7 +20,7 @@ public class KillMessagesMenu extends Menu {
     public List<Button> getButtons(Player player) {
         List<Button> buttons = new ArrayList<>();
 
-        for (KillMessagePackage killMessagePackage : CosmeticService.get().deathMessages.values()) {
+        for (KillMessagePackage killMessagePackage : CosmeticService.get().getKillMessagePackages().values()) {
             buttons.add(new KillMessageButton(killMessagePackage.getSlot(), killMessagePackage));
         }
 

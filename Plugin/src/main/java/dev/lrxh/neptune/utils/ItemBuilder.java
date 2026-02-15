@@ -1,8 +1,6 @@
 package dev.lrxh.neptune.utils;
 
 import dev.lrxh.neptune.providers.material.NMaterial;
-import io.papermc.paper.datacomponent.DataComponentTypes;
-import io.papermc.paper.datacomponent.item.TooltipDisplay;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -65,21 +63,6 @@ public class ItemBuilder {
             item.setItemMeta(meta);
         }
         return this;
-    }
-
-    private void clearFlags() {
-        TooltipDisplay hideAttributes = TooltipDisplay.tooltipDisplay()
-                .addHiddenComponents(
-                        DataComponentTypes.POTION_CONTENTS,
-                        DataComponentTypes.ENCHANTMENTS,
-                        DataComponentTypes.ATTRIBUTE_MODIFIERS,
-                        DataComponentTypes.DYED_COLOR,
-                        DataComponentTypes.TRIM,
-                        DataComponentTypes.BANNER_PATTERNS,
-                        DataComponentTypes.FIREWORKS,
-                        DataComponentTypes.JUKEBOX_PLAYABLE
-                ).build();
-        item.setData(DataComponentTypes.TOOLTIP_DISPLAY, hideAttributes);
     }
 
     public ItemBuilder makeUnbreakable() {
@@ -174,8 +157,7 @@ public class ItemBuilder {
     }
     
     public ItemStack build() {
-        clearFlags();
+        ItemUtils.clearFlags(item);
         return item;
     }
-
 }

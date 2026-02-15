@@ -5,8 +5,9 @@ import dev.lrxh.api.profile.IProfileState;
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
-import dev.lrxh.neptune.feature.cosmetics.CosmeticService;
-import dev.lrxh.neptune.feature.cosmetics.impl.KillEffect;
+import dev.lrxh.neptune.feature.cosmetics.KillEffect;
+import dev.lrxh.neptune.feature.cosmetics.impl.armortrims.ArmorTrimCosmetic;
+import dev.lrxh.neptune.feature.cosmetics.impl.killmessage.KillMessageCosmetic;
 import dev.lrxh.neptune.feature.divisions.DivisionService;
 import dev.lrxh.neptune.feature.hotbar.HotbarService;
 import dev.lrxh.neptune.feature.party.Party;
@@ -88,7 +89,6 @@ public class Profile implements IProfile {
 
                     DataDocument kitStatistics = dataDocument.getDataDocument("kitData");
                     DataDocument settings = dataDocument.getDataDocument("settings");
-
                     for (Kit kit : KitService.get().kits) {
                         DataDocument kitDocument = kitStatistics.getDataDocument(kit.getName());
                         if (kitDocument == null)
@@ -119,7 +119,6 @@ public class Profile implements IProfile {
                     }
 
                     gameData.setLastPlayedKit(kitStatistics.getString("lastPlayedKit", ""));
-
                     settingData.setPlayerVisibility(settings.getBoolean("showPlayers", true));
                     settingData.setAllowSpectators(settings.getBoolean("allowSpectators", true));
                     settingData.setAllowDuels(settings.getBoolean("allowDuels", true));
@@ -127,8 +126,8 @@ public class Profile implements IProfile {
                     settingData.setMaxPing(settings.getInteger("maxPing", 350));
                     settingData.setKillEffect(KillEffect.valueOf(settings.getString("killEffect", "NONE")));
                     settingData.setMenuSound(settings.getBoolean("menuSound", false));
-                    settingData.setKillMessagePackage(
-                            CosmeticService.get().getDeathMessagePackage(settings.getString("deathMessagePackage")));
+                    settingData.setKillMessagePackage(KillMessageCosmetic.get().getOrDefault(settings.getString("deathMessagePackage")));
+                    settingData.setArmorTrimPackage(ArmorTrimCosmetic.get().getOrDefault(settings.getString("armorTrimPackage")));
 
                     DataDocument globalCustomPersistentData = dataDocument.getDataDocument("customPersistentData");
                     if (globalCustomPersistentData != null) {
@@ -196,6 +195,7 @@ public class Profile implements IProfile {
             settingsDoc.put("killEffect", settingData.getKillEffect().toString());
             settingsDoc.put("menuSound", settingData.isMenuSound());
             settingsDoc.put("deathMessagePackage", settingData.getKillMessagePackage().getName());
+            settingsDoc.put("armorTrimPackage", settingData.getArmorTrimPackage().getName());
             dataDocument.put("settings", settingsDoc);
 
             DataDocument globalCustomPersistentData = new DataDocument();

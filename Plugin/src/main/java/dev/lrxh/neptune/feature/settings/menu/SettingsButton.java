@@ -27,11 +27,11 @@ public class SettingsButton extends Button {
 
         return new ItemBuilder(setting.getMaterial(), player.getUniqueId())
                 .name(setting.getDisplayName())
-                .componentLore(ItemUtils.getLore(setting.toggled(player) ? setting.getEnabledLore() : setting.getDisabledLore()), TagResolver.resolver(
+                .componentLore(ItemUtils.getLore(setting.toggled(player) ? setting.getEnabledLore() : setting.getDisabledLore(), TagResolver.resolver(
                         Placeholder.unparsed("ping", String.valueOf(profile.getSettingData().getMaxPing())),
-                        Placeholder.unparsed("kill-effect", profile.getSettingData().getKillEffect().getDisplayName()),
-                        Placeholder.unparsed("kill-message", profile.getSettingData().getKillMessagePackage().getDisplayName())), player)
-
+                        Placeholder.parsed("kill-effect", profile.getSettingData().getKillEffect().getDisplayName()),
+                        Placeholder.parsed("kill-message", profile.getSettingData().getKillMessagePackage().getDisplayName()),
+                        Placeholder.parsed("armor-trim", profile.getSettingData().getArmorTrimPackage().getDisplayName()))), player)
                 .build();
     }
 

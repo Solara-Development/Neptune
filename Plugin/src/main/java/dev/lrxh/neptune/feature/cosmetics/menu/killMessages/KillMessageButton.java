@@ -1,9 +1,8 @@
 package dev.lrxh.neptune.feature.cosmetics.menu.killMessages;
 
 import dev.lrxh.neptune.API;
-import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.configs.impl.MenusLocale;
-import dev.lrxh.neptune.feature.cosmetics.impl.KillMessagePackage;
+import dev.lrxh.neptune.feature.cosmetics.impl.killmessage.KillMessagePackage;
 import dev.lrxh.neptune.profile.impl.Profile;
 import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.ItemBuilder;
@@ -51,7 +50,6 @@ public class KillMessageButton extends Button {
         for (String line : lore) {
             if (line.contains("<description>")) {
                 for (String descLine : killMessagePackage.getDescription()) {
-                    Neptune.get().getLogger().info(descLine);
                     loreToUse.add(CC.returnMessage(player, line, Placeholder.parsed("description", descLine)));
                 }
             }

@@ -1,14 +1,23 @@
 package dev.lrxh.neptune.utils;
 
+import dev.lrxh.neptune.feature.cosmetics.impl.armortrims.ArmorTrimPackage;
+import dev.lrxh.neptune.profile.impl.Profile;
+import io.papermc.paper.datacomponent.DataComponentTypes;
+import io.papermc.paper.datacomponent.item.TooltipDisplay;
+import io.papermc.paper.registry.RegistryAccess;
+import io.papermc.paper.registry.RegistryKey;
 import lombok.experimental.UtilityClass;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
-import org.bukkit.Color;
-import org.bukkit.Material;
+import org.bukkit.*;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ArmorMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.trim.ArmorTrim;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 
@@ -18,6 +27,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Objects;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -156,5 +166,69 @@ public class ItemUtils {
             ServerUtils.error("Occurred while loading item!");
         }
         return item;
+    }
+
+    public Material getMaterial(String key) {
+        return Registry.MATERIAL.get(Key.key(key));
+    }
+    public ArmorTrim getArmorTrim(String materialKey, String patternKey) {
+        if (materialKey == null || patternKey == null || materialKey.isEmpty() || patternKey.isEmpty()) return null;
+        RegistryAccess registry = RegistryAccess.registryAccess();
+        return new ArmorTrim(
+                Objects.requireNonNull(registry.getRegistry(RegistryKey.TRIM_MATERIAL).get(
+                        Objects.requireNonNull(NamespacedKey.fromString(materialKey))
+                )),
+                Objects.requireNonNull(registry.getRegistry(RegistryKey.TRIM_PATTERN).get(
+                        Objects.requireNonNull(NamespacedKey.fromString(patternKey))
+                ))
+        );
+    }
+    public void clearFlags(ItemStack item) {
+        TooltipDisplay hideAttributes = TooltipDisplay.tooltipDisplay()
+                .addHiddenComponents(
+                        DataComponentTypes.POTION_CONTENTS,
+                        DataComponentTypes.ENCHANTMENTS,
+                        DataComponentTypes.ATTRIBUTE_MODIFIERS,
+                        DataComponentTypes.DYED_COLOR,
+                        DataComponentTypes.TRIM,
+                        DataComponentTypes.BANNER_PATTERNS,
+                        DataComponentTypes.FIREWORKS,
+                        DataComponentTypes.JUKEBOX_PLAYABLE,
+                        DataComponentTypes.PROVIDES_TRIM_MATERIAL
+                ).build();
+        item.setData(DataComponentTypes.TOOLTIP_DISPLAY, hideAttributes);
+    }
+
+    public void applyArmorTrim(Profile profile) {
+        Player player = profile.getPlayer();
+        ArmorTrimPackage trimPackage = profile.getSettingData().getArmorTrimPackage();
+        ItemStack helmet = player.getInventory().getHelmet();
+        ItemStack chestplate = player.getInventory().getChestplate();
+        ItemStack leggings = player.getInventory().getLeggings();
+        ItemStack boots = player.getInventory().getBoots();
+        if (helmet != null) {
+            ArmorMeta helmetMeta = (ArmorMeta) helmet.getItemMeta();
+            if (trimPackage.getHelmetTrim() != null) helmetMeta.setTrim(trimPackage.getHelmetTrim());
+            helmet.setItemMeta(helmetMeta);
+            player.getInventory().setHelmet(helmet);
+        }
+        if (chestplate != null) {
+            ArmorMeta chestplateMeta = (ArmorMeta) chestplate.getItemMeta();
+            if (trimPackage.getHelmetTrim() != null) chestplateMeta.setTrim(trimPackage.getChestplateTrim());
+            chestplate.setItemMeta(chestplateMeta);
+            player.getInventory().setChestplate(chestplate);
+        }
+        if (leggings != null) {
+            ArmorMeta leggingsMeta = (ArmorMeta) leggings.getItemMeta();
+            if (trimPackage.getHelmetTrim() != null) leggingsMeta.setTrim(trimPackage.getLeggingsTrim());
+            leggings.setItemMeta(leggingsMeta);
+            player.getInventory().setLeggings(leggings);
+        }
+        if (boots != null) {
+            ArmorMeta bootsMeta = (ArmorMeta) boots.getItemMeta();
+            if (trimPackage.getHelmetTrim() != null) bootsMeta.setTrim(trimPackage.getBootsTrim());
+            boots.setItemMeta(bootsMeta);
+            player.getInventory().setBoots(boots);
+        }
     }
 }
