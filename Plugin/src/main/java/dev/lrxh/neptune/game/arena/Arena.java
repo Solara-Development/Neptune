@@ -1,25 +1,17 @@
 package dev.lrxh.neptune.game.arena;
 
-import com.google.common.collect.Lists;
 import dev.lrxh.api.arena.IArena;
-import dev.lrxh.blockChanger.BlockChanger;
 import dev.lrxh.blockChanger.snapshot.CuboidSnapshot;
-import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.game.kit.KitService;
 import lombok.Getter;
 import lombok.Setter;
-import org.bukkit.*;
-import org.bukkit.block.Biome;
-import org.bukkit.generator.BiomeProvider;
-import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.generator.WorldInfo;
-import org.jetbrains.annotations.NotNull;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -36,7 +28,10 @@ public class Arena implements IArena {
     private long time;
     private List<Material> whitelistedBlocks;
     private CuboidSnapshot snapshot;
-    private Arena owner;
+
+    private final List<Arena> instances = new ArrayList<>();
+
+    private volatile boolean playing = false;
     private boolean doneLoading;
 
     public Arena(String name, String displayName, Location redSpawn, Location blueSpawn, boolean enabled, int deathY, long time) {
@@ -63,24 +58,7 @@ public class Arena implements IArena {
         this.buildLimit = buildLimit;
         this.whitelistedBlocks = (whitelistedBlocks != null ? whitelistedBlocks : new ArrayList<>());
 
-        if (min != null && max != null) {
-            this.doneLoading = false;
-            CuboidSnapshot.create(min, max).thenAccept(cuboidSnapshot -> {
-                this.snapshot = cuboidSnapshot;
-                this.doneLoading = true;
-            });
-        }
-
-    }
-
-    public Arena(String name, String displayName, Location redSpawn, Location blueSpawn,
-                 Location min, Location max, double buildLimit, boolean enabled,
-                 List<Material> whitelistedBlocks, int deathY, long time, CuboidSnapshot snapshot, Arena owner) {
-
-        this(name, displayName, redSpawn, blueSpawn, min, max, buildLimit, enabled, whitelistedBlocks, deathY, time);
-        this.snapshot = snapshot;
-        this.owner = owner;
-        this.doneLoading = (snapshot != null);
+        this.doneLoading = true;
     }
 
     public Arena(String name, long time) {
@@ -98,121 +76,6 @@ public class Arena implements IArena {
 
     @Override
     public void remove() {
-
-    }
-
-    public synchronized CompletableFuture<VirtualArena> createDuplicate() {
-        CompletableFuture<VirtualArena> future = new CompletableFuture<>();
-        UUID uuid = UUID.randomUUID();
-        WorldCreator creator = new WorldCreator(uuid.toString())
-                .type(WorldType.NORMAL)
-                .generator(new ChunkGenerator() {
-                    @Override
-                    public boolean canSpawn(@NotNull World world, int x, int z) {
-                        return true;
-                    }
-
-                    @Override
-                    public @NotNull Location getFixedSpawnLocation(@NotNull World world, @NotNull Random random) {
-                        return new Location(world, 0, 0, 0);
-                    }
-
-
-                    @Override
-                    public boolean shouldGenerateNoise(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean shouldGenerateSurface(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean shouldGenerateCaves(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean shouldGenerateDecorations(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean shouldGenerateMobs(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean shouldGenerateStructures(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ) {
-                        return false;
-                    }
-                })
-                .biomeProvider(new BiomeProvider() {
-                    @Override
-                    public org.bukkit.block.@NotNull Biome getBiome(@NotNull WorldInfo worldInfo, int x, int y, int z) {
-                        return org.bukkit.block.Biome.PLAINS;
-                    }
-
-                    @Override
-                    public @NotNull List<Biome> getBiomes(@NotNull WorldInfo worldInfo) {
-                        return Lists.newArrayList(org.bukkit.block.Biome.PLAINS);
-                    }
-                });
-
-        BlockChanger.createVirtualWorld(creator).thenAccept(virtualWorld -> {
-            try {
-                World world = virtualWorld.getWorld();
-                Bukkit.getScheduler().runTask(Neptune.get(), () -> {
-                    world.setGameRule(GameRules.ADVANCE_TIME, false);
-                    world.setGameRule(GameRules.ADVANCE_WEATHER, false);
-                    world.setGameRule(GameRules.SHOW_ADVANCEMENT_MESSAGES, false);
-                    world.setGameRule(GameRules.IMMEDIATE_RESPAWN, true);
-                    world.setDifficulty(Difficulty.HARD);
-                    world.setTime(time);
-                });
-
-                Location min = this.min.clone();
-                min.setWorld(world);
-                Location max = this.max.clone();
-                max.setWorld(world);
-                Location redSpawn = this.redSpawn.clone();
-                redSpawn.setWorld(world);
-                Location blueSpawn = this.blueSpawn.clone();
-                blueSpawn.setWorld(world);
-
-
-                virtualWorld.paste(snapshot);
-
-                String dupName = this.name + "_" + uuid;
-
-                VirtualArena duplicate = new VirtualArena(
-                        dupName,
-                        this.displayName,
-                        redSpawn,
-                        blueSpawn,
-                        min,
-                        max,
-                        this.buildLimit,
-                        this.enabled,
-                        new ArrayList<>(this.whitelistedBlocks),
-                        this.deathY,
-                        this.time,
-                        this,
-                        virtualWorld
-                );
-
-                future.complete(duplicate);
-
-            } catch (Exception ex) {
-                future.completeExceptionally(ex);
-            }
-        }).exceptionally(ex -> {
-            future.completeExceptionally(ex);
-            return null;
-        });
-
-        return future;
     }
 
     public List<String> getWhitelistedBlocksAsString() {
@@ -227,27 +90,20 @@ public class Arena implements IArena {
         if (snapshot != null) {
             snapshot.restore(true);
         }
+        this.playing = false;
     }
 
     public void setMin(Location min) {
         this.min = min;
-        if (min != null && max != null) {
-            this.doneLoading = false;
-            CuboidSnapshot.create(min, max).thenAccept(cuboidSnapshot -> {
-                this.snapshot = cuboidSnapshot;
-                this.doneLoading = true;
-            });
-        }
     }
 
     public void setMax(Location max) {
         this.max = max;
+    }
+
+    public void captureSnapshot() {
         if (min != null && max != null) {
-            this.doneLoading = false;
-            CuboidSnapshot.create(min, max).thenAccept(cuboidSnapshot -> {
-                this.snapshot = cuboidSnapshot;
-                this.doneLoading = true;
-            });
+            CuboidSnapshot.create(min, max).thenAccept(cuboidSnapshot -> this.snapshot = cuboidSnapshot);
         }
     }
 
@@ -265,11 +121,76 @@ public class Arena implements IArena {
         }
     }
 
+    public void clearStructure() {
+        if (min == null || max == null || min.getWorld() == null) return;
+
+        World world = min.getWorld();
+        int minX = Math.min(min.getBlockX(), max.getBlockX());
+        int minY = Math.min(min.getBlockY(), max.getBlockY());
+        int minZ = Math.min(min.getBlockZ(), max.getBlockZ());
+
+        int maxX = Math.max(min.getBlockX(), max.getBlockX());
+        int maxY = Math.max(min.getBlockY(), max.getBlockY());
+        int maxZ = Math.max(min.getBlockZ(), max.getBlockZ());
+
+        for (int x = minX; x <= maxX; x++) {
+            for (int y = minY; y <= maxY; y++) {
+                for (int z = minZ; z <= maxZ; z++) {
+                    if (!world.getBlockAt(x, y, z).getType().isAir()) {
+                        world.getBlockAt(x, y, z).setType(Material.AIR);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
     public void delete(boolean save) {
+        delete(save, false);
+    }
+
+    public void delete(boolean save, boolean removeStructure) {
+        for (Arena instance : new ArrayList<>(instances)) {
+            instance.delete(false, removeStructure);
+        }
+        instances.clear();
+
+        if (removeStructure) {
+            clearStructure();
+        }
+
         KitService.get().removeArenasFromKits(this);
-        ArenaService.get().arenas.remove(this);
+
+        if (ArenaService.get().arenas.contains(this)) {
+            ArenaService.get().arenas.remove(this);
+        } else {
+            for (Arena parent : ArenaService.get().arenas) {
+                if (parent.getInstances().contains(this)) {
+                    parent.getInstances().remove(this);
+                    break;
+                }
+            }
+        }
 
         if (save) ArenaService.get().save();
+    }
+
+    /**
+     * Returns an available instance. Only copied instances are used; the original (parent) arena is never returned.
+     */
+    public Arena getAvailableArena() {
+        if (instances.isEmpty()) {
+            return null;
+        }
+        for (Arena instance : instances) {
+            if (instance.isEnabled() && instance.isSetup() && instance.isDoneLoading() && !instance.isPlaying()) {
+                if (instance.getSnapshot() == null) {
+                    instance.captureSnapshot();
+                }
+                return instance;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -278,5 +199,10 @@ public class Arena implements IArena {
             return arena.getName().equals(name);
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
     }
 }

@@ -34,6 +34,7 @@ import dev.lrxh.neptune.feature.settings.command.SettingProvider;
 import dev.lrxh.neptune.feature.settings.command.SettingsCommand;
 import dev.lrxh.neptune.game.arena.Arena;
 import dev.lrxh.neptune.game.arena.ArenaService;
+import dev.lrxh.neptune.game.arena.command.ArenaCopyCommand;
 import dev.lrxh.neptune.game.arena.command.ArenaProvider;
 import dev.lrxh.neptune.game.arena.listener.ArenaEditorChatListener;
 import dev.lrxh.neptune.game.duel.command.DuelCommand;
@@ -76,6 +77,7 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
+import com.jonahseguin.drink.command.DrinkCommandContainer;
 
 @Getter
 public final class Neptune extends JavaPlugin {
@@ -206,7 +208,8 @@ public final class Neptune extends JavaPlugin {
                 .setDefaultCommandIsHelp(true);
         drink.register(new SettingsCommand(), "settings").setDefaultCommandIsHelp(true);
         drink.register(new SpectateCommand(), "spec", "spectate");
-        drink.register(new MainCommand(), "neptune");
+        DrinkCommandContainer neptuneCommand = drink.register(new MainCommand(), "neptune");
+        drink.registerSub(neptuneCommand, new ArenaCopyCommand());
         drink.register(new CosmeticsCommand(), "cosmetics");
         drink.register(new MatchHistoryCommand(), "matchhistory").setDefaultCommandIsHelp(true);
         drink.register(new QuickQueueCommand(), "quickqueue");
@@ -217,6 +220,9 @@ public final class Neptune extends JavaPlugin {
     public void onDisable() {
         stopService(KitService.get(), KitService::save);
         stopService(ArenaService.get(), ArenaService::save);
+        if (ArenaService.get() != null) {
+            ArenaService.get().resetAllArenas();
+        }
         stopService(MatchService.get(), MatchService::stopAllGames);
         stopService(TaskScheduler.get(), TaskScheduler::stopAllTasks);
         stopService(ProfileService.get(), ProfileService::saveAll);

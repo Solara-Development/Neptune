@@ -338,7 +338,6 @@ public class Profile implements IProfile {
         gameData.addRequest(duelRequest, senderUUID,
                 ignore -> {
                     MessagesLocale.DUEL_EXPIRED.send(senderUUID, Placeholder.unparsed("player", player.getName()));
-                    duelRequest.getArena().remove();
                 });
 
         duelRequest.sendReceiverMessage(playerUUID, false);

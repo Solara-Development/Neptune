@@ -33,6 +33,8 @@ public enum SettingsLocale implements IDataAccessor {
     PARTY_ADVERTISE_TIME("PARTY.ADVERTISE_TIME",
             "The time it should take for sending each message for party advertisements, in ticks (20 ticks = 1 second).",
             DataType.INT, "6000"),
+    ARENA_COPY_WORLD("ARENA.COPY_WORLD", "The world where arena copies will be pasted.", DataType.STRING,
+            "arenas_copy"),
     VERSION("VERSION", "Do not change this!", DataType.INT, "1");
 
     private final String path;

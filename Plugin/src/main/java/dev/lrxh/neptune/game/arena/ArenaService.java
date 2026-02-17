@@ -10,6 +10,7 @@ import dev.lrxh.neptune.utils.LocationUtil;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.ArrayList;
@@ -22,10 +23,22 @@ public class ArenaService extends IService implements IArenaService {
     private static ArenaService instance;
     public final LinkedHashSet<Arena> arenas = new LinkedHashSet<>();
 
+    /** Used to synchronize arena selection when multiple matches are created concurrently. */
+    public static final Object ARENA_SELECTION_LOCK = new Object();
+
     public static ArenaService get() {
         if (instance == null) instance = new ArenaService();
 
         return instance;
+    }
+
+    public void resetAllArenas() {
+        for (Arena arena : arenas) {
+            arena.setPlaying(false);
+            for (Arena arenaInstance : arena.getInstances()) {
+                arenaInstance.setPlaying(false);
+            }
+        }
     }
 
     public LinkedHashSet<IArena> getAllArenas() {
@@ -38,7 +51,9 @@ public class ArenaService extends IService implements IArenaService {
         if (config.contains("arenas")) {
             for (String arenaName : getKeys("arenas")) {
                 Arena arena = loadArena(arenaName);
-                arenas.add(arena);
+                if (arena != null) {
+                    arenas.add(arena);
+                }
             }
         }
     }
@@ -66,7 +81,33 @@ public class ArenaService extends IService implements IArenaService {
             whitelistedBlocks.add(Material.getMaterial(name));
         }
 
-        return new Arena(arenaName, displayName, redSpawn, blueSpawn, edge1, edge2, limit, enabled, whitelistedBlocks, deathY, time);
+        Arena arena = new Arena(arenaName, displayName, redSpawn, blueSpawn, edge1, edge2, limit, enabled,
+                whitelistedBlocks, deathY, time);
+
+        if (config.contains(path + "instances")) {
+            ConfigurationSection instanceSection = config.getConfigurationSection(path + "instances");
+            if (instanceSection != null) {
+                for (String key : instanceSection.getKeys(false)) {
+                    String instPath = path + "instances." + key + ".";
+
+                    Location instRed = LocationUtil.deserialize(config.getString(instPath + "redSpawn"));
+                    Location instBlue = LocationUtil.deserialize(config.getString(instPath + "blueSpawn"));
+                    Location instMin = LocationUtil.deserialize(config.getString(instPath + "min"));
+                    Location instMax = LocationUtil.deserialize(config.getString(instPath + "max"));
+
+                    Arena copy = new Arena(
+                            arenaName + "#" + key,
+                            displayName + " #" + key,
+                            instRed, instBlue, instMin, instMax,
+                            limit, enabled, new ArrayList<>(whitelistedBlocks), deathY, time
+                    );
+
+                    arena.getInstances().add(copy);
+                }
+            }
+        }
+
+        return arena;
     }
 
 
@@ -98,7 +139,23 @@ public class ArenaService extends IService implements IArenaService {
             }
 
             save(values, path);
+
+            if (!arena.getInstances().isEmpty()) {
+                int i = 0;
+                for (Arena instance : arena.getInstances()) {
+                    String instPath = path + "instances." + i + ".";
+                    FileConfiguration cfg = getConfigFile().getConfiguration();
+
+                    cfg.set(instPath + "redSpawn", LocationUtil.serialize(instance.getRedSpawn()));
+                    cfg.set(instPath + "blueSpawn", LocationUtil.serialize(instance.getBlueSpawn()));
+                    cfg.set(instPath + "min", LocationUtil.serialize(instance.getMin()));
+                    cfg.set(instPath + "max", LocationUtil.serialize(instance.getMax()));
+                    i++;
+                }
+            }
         });
+
+        getConfigFile().save();
     }
 
     public Arena getArenaByName(String arenaName) {
@@ -111,7 +168,9 @@ public class ArenaService extends IService implements IArenaService {
     }
 
     public Arena copyFrom(IArena arena) {
-        return new Arena(arena.getName(), arena.getDisplayName(), arena.getRedSpawn(), arena.getBlueSpawn(), arena.getMin(), arena.getMax(), arena.getBuildLimit(), arena.isEnabled(), arena.getWhitelistedBlocks(), arena.getDeathY(), arena.getTime());
+        return new Arena(arena.getName(), arena.getDisplayName(), arena.getRedSpawn(), arena.getBlueSpawn(),
+                arena.getMin(), arena.getMax(), arena.getBuildLimit(), arena.isEnabled(), arena.getWhitelistedBlocks(),
+                arena.getDeathY(), arena.getTime());
     }
 
     @Override

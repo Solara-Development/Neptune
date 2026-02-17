@@ -3,7 +3,7 @@ package dev.lrxh.neptune.game.duel;
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
-import dev.lrxh.neptune.game.arena.VirtualArena;
+import dev.lrxh.neptune.game.arena.Arena;
 import dev.lrxh.neptune.game.kit.Kit;
 import dev.lrxh.neptune.game.match.MatchService;
 import dev.lrxh.neptune.game.match.impl.participant.Participant;
@@ -26,11 +26,11 @@ import java.util.UUID;
 @Getter
 public class DuelRequest extends Request {
     private final Kit kit;
-    private final VirtualArena arena;
+    private final Arena arena;
     private final boolean party;
     private final int rounds;
 
-    public DuelRequest(UUID sender, Kit kit, VirtualArena arena, boolean party, int rounds) {
+    public DuelRequest(UUID sender, Kit kit, Arena arena, boolean party, int rounds) {
         super(sender);
         this.kit = kit;
         this.arena = arena;

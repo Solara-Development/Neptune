@@ -5,7 +5,7 @@ import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.configs.impl.SettingsLocale;
-import dev.lrxh.neptune.game.arena.VirtualArena;
+import dev.lrxh.neptune.game.arena.Arena;
 import dev.lrxh.neptune.game.kit.Kit;
 import dev.lrxh.neptune.game.kit.impl.KitRule;
 import dev.lrxh.neptune.game.match.Match;
@@ -120,7 +120,7 @@ public class MatchListener implements Listener {
                 return;
             }
 
-            VirtualArena arena = match.getArena();
+            Arena arena = match.getArena();
 
             // Check height limit
             if (blockLocation.getY() >= arena.getBuildLimit()) {
@@ -262,7 +262,7 @@ public class MatchListener implements Listener {
         }
 
         getMatchForPlayer(player).ifPresent(match -> {
-            VirtualArena arena = match.getArena();
+            Arena arena = match.getArena();
             List<Block> originalBlocks = new ArrayList<>(event.blockList());
             List<Block> allowedBlocks = originalBlocks.stream()
                     .filter(block -> arena.getWhitelistedBlocks().contains(block.getType()))
@@ -541,7 +541,7 @@ public class MatchListener implements Listener {
                 return;
             }
 
-            VirtualArena arena = match.getArena();
+            Arena arena = match.getArena();
 
             if (blockLocation.getY() >= arena.getBuildLimit()) {
                 event.setCancelled(true);
@@ -667,7 +667,7 @@ public class MatchListener implements Listener {
 
         Profile profile = profileOpt.get();
         Match match = profile.getMatch();
-        VirtualArena arena = match.getArena();
+        Arena arena = match.getArena();
 
         Participant participant = match.getParticipant(player.getUniqueId());
         if (participant == null)
@@ -857,7 +857,7 @@ public class MatchListener implements Listener {
 
         Profile profile = profileOpt.get();
         Match match = profile.getMatch();
-        VirtualArena arena = match.getArena();
+        Arena arena = match.getArena();
 
         if (profile.getState().equals(ProfileState.IN_SPECTATOR)) {
             event.setCancelled(true);
@@ -986,7 +986,7 @@ public class MatchListener implements Listener {
         }
 
         getMatchForPlayer(player).ifPresent(match -> {
-            VirtualArena arena = match.getArena();
+            Arena arena = match.getArena();
             List<Block> originalBlocks = new ArrayList<>(event.blockList());
             List<Block> allowedBlocks = originalBlocks.stream()
                     .filter(block -> arena.getWhitelistedBlocks().contains(block.getType()))

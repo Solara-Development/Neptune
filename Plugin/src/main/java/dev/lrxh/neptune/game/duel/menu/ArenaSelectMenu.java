@@ -81,11 +81,19 @@ public class ArenaSelectMenu extends Menu {
                 public void onClick(ClickType type, Player p) {
                     Profile profile = API.getProfile(receiver);
                     if (profile == null) return;
+
+                    if (arena.getInstances().isEmpty()) {
+                        p.sendMessage(CC.error("This arena has no copies. Add copies to use it."));
+                        return;
+                    }
+                    if (arena.getAvailableArena() == null) {
+                        p.sendMessage(CC.error("This arena is currently in use."));
+                        return;
+                    }
+
                     player.closeInventory();
-                    arena.createDuplicate().thenAccept(duplicate -> {
-                        DuelRequest duelRequest = new DuelRequest(p.getUniqueId(), kit, duplicate, false, round);
-                        profile.sendDuel(duelRequest);
-                    });
+                    DuelRequest duelRequest = new DuelRequest(p.getUniqueId(), kit, arena, false, round);
+                    profile.sendDuel(duelRequest);
                 }
             });
         }

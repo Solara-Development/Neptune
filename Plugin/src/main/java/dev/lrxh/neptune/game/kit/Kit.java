@@ -5,7 +5,7 @@ import dev.lrxh.api.kit.IKit;
 import dev.lrxh.api.kit.IKitRule;
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.game.arena.Arena;
-import dev.lrxh.neptune.game.arena.VirtualArena;
+import dev.lrxh.neptune.game.arena.Arena;
 import dev.lrxh.neptune.game.kit.impl.KitRule;
 import dev.lrxh.neptune.game.match.impl.participant.Participant;
 import dev.lrxh.neptune.profile.ProfileService;
@@ -189,23 +189,45 @@ public class Kit implements IKit {
                 (map, entry) -> map.put(entry.getKey(), entry.getValue()), HashMap::putAll);
     }
 
-    public CompletableFuture<VirtualArena> getRandomArena() {
-        List<Arena> arenas1 = new ArrayList<>();
-
+    /**
+     * Counts only copied instances; original (parent) arenas are never used for matches.
+     */
+    public int getFreeArenaCount() {
+        int count = 0;
         for (Arena arena : arenas) {
-            if (!arena.isEnabled())
-                continue;
-            if (!arena.isSetup() || !arena.isDoneLoading())
-                continue;
-            arenas1.add(arena);
+            for (Arena instance : arena.getInstances()) {
+                if (instance.isEnabled() && instance.isSetup() && instance.isDoneLoading() && !instance.isPlaying()) {
+                    count++;
+                }
+            }
         }
+        return count;
+    }
 
-        if (arenas1.isEmpty())
+    /**
+     * Returns parent arenas that have at least one available instance.
+     */
+    public List<Arena> getAvailableArenas() {
+        List<Arena> result = new ArrayList<>();
+        for (Arena arena : arenas) {
+            if (!arena.isEnabled()) continue;
+            if (arena.getAvailableArena() != null) {
+                result.add(arena);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Returns a random parent arena that has availability.
+     * The actual instance is resolved and reserved when the match is created.
+     */
+    public CompletableFuture<Arena> getRandomArena() {
+        List<Arena> availableArenas = getAvailableArenas();
+        if (availableArenas.isEmpty())
             return CompletableFuture.completedFuture(null);
-
-        Arena selected = arenas1.get(ThreadLocalRandom.current().nextInt(arenas1.size()));
-
-        return selected.createDuplicate().thenApply(arena -> arena);
+        Arena selected = availableArenas.get(ThreadLocalRandom.current().nextInt(availableArenas.size()));
+        return CompletableFuture.completedFuture(selected);
     }
 
     @Override

@@ -165,7 +165,6 @@ public class DuelCommand {
         MessagesLocale.DUEL_DENY_SENDER.send(player.getUniqueId(), Placeholder.unparsed("player", sender.getName()));
         MessagesLocale.DUEL_DENY_RECEIVER.send(uuid, Placeholder.unparsed("player", player.getName()));
 
-        duelRequest.getArena().remove();
         playerGameData.removeRequest(uuid);
     }
 }

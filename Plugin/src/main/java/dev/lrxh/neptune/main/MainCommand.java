@@ -6,6 +6,7 @@ import com.jonahseguin.drink.annotation.Sender;
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.configs.ConfigService;
+import dev.lrxh.neptune.configs.impl.SettingsLocale;
 import dev.lrxh.neptune.feature.cosmetics.CosmeticService;
 import dev.lrxh.neptune.feature.hotbar.HotbarService;
 import dev.lrxh.neptune.game.kit.Kit;
@@ -18,6 +19,7 @@ import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.GithubUtils;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -34,6 +36,19 @@ public class MainCommand {
     public void setspawn(@Sender Player player) {
         Neptune.get().getCache().setSpawn(player.getLocation());
         player.sendMessage(CC.color("&aSuccessfully set spawn!"));
+    }
+
+    @Command(name = "setcopyworld", desc = "Set the world for arena copies", usage = "<worldName>")
+    @Require("neptune.admin")
+    public void setCopyWorld(@Sender Player player, String worldName) {
+        World world = Bukkit.getWorld(worldName);
+        if (world == null) {
+            player.sendMessage(CC.error("World '" + worldName + "' does not exist or is not loaded!"));
+            return;
+        }
+
+        SettingsLocale.ARENA_COPY_WORLD.set(worldName);
+        player.sendMessage(CC.success("Arena copy world set to: &f" + world.getName()));
     }
 
     @Command(name = "info", desc = "")
