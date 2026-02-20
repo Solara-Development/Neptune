@@ -38,7 +38,7 @@ public class ArenaSelectMenu extends Menu {
     @Override
     public List<Button> getButtons(Player player) {
         List<Button> buttons = new ArrayList<>();
-        int i = 1;
+        int i = MenusLocale.ARENA_LIST_STARTING_SLOT.getInt();
 
         buttons.add(new Button(MenusLocale.ARENA_RANDOM_ITEM_SLOT.getInt()) {
             @Override
@@ -64,8 +64,13 @@ public class ArenaSelectMenu extends Menu {
                 });
             }
         });
-
+        int rows = MenusLocale.ARENA_SIZE.getInt() / 9;
+        boolean isBorder = MenusLocale.ARENA_FILTER.getString().equals("BORDER");
         for (Arena arena : kit.getArenas()) {
+            int row = i / 9;
+            int col = i % 9;
+            if (col == 8 && isBorder) i += 2;
+            if (row == rows - 1 && isBorder) i += 9;
             buttons.add(new Button(i++) {
                 @Override
                 public ItemStack getItemStack(Player p) {
