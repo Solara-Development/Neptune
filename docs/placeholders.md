@@ -81,7 +81,8 @@ May not be up-to-date.
 | \<blue-hit-difference>                                   | None                                                         | Hit difference of the blue player                                    |
 | \<combo>                                                 | %neptune_combo%                                              | The combo the player is holding against the opponent                 |
 | \<opponent-combo>                                        | %neptune_opponent_combo%                                     | The combo the opponent is holding against the player                 |
-| \<opponent-elo>                                          | %neptune_opponent_elo%                                       | The combo the opponent is holding against the player                 |
+| \<opponent-elo>                                          | %neptune_opponent_elo%                                       | The global elo of the opponent                                       |
+| \<opponent-kit-elo>                                      | %neptune_opponent_kit_elo%                                   | The kit-specific elo of the opponent                                 |
 | \<hits>                                                  | %neptune_hits%                                               | The amount of times the player has hit the opponent                  |
 | \<opponent-hits>                                         | %neptune_opponent_hits%                                      | The amount of times the opponent has hit the player                  |
 | \<hit-difference>                                        | %neptune_difference%                                         | The difference in amount of hits between the player and the opponent |
@@ -89,6 +90,10 @@ May not be up-to-date.
 | \<blue-name>                                             | %neptune_blue_name%                                          | The name of the player in the blue team                              |
 | \<red-ping>                                              | %neptune_red_ping%                                           | The ping of the player in the red team                               |
 | \<blue-ping>                                             | %neptune_blue_ping%                                          | The ping of the player in the blue team                              |
+| \<red-elo>                                               | %neptune_red_elo%                                            | The global elo of the player in the red team                         |
+| \<blue-elo>                                              | %neptune_blue_elo%                                           | The global elo of the player in the blue team                        |
+| \<red-kit-elo>                                           | %neptune_red_kit_elo%                                        | The kit-specific elo of the player in the red team                   |
+| \<blue-kit-elo>                                          | %neptune_blue_kit_elo%                                       | The kit-specific elo of the player in the blue team                  |
 | \<bed-broken><sup style="color: red">\*\*</sup>          | %neptune_bed_broken%<sup style="color: red">$</sup>          | Whether the player's bed is broken                                   |
 | \<opponent-bed-broken><sup style="color: red">\*\*</sup> | %neptune_opponent_bed_broken%<sup style="color: red">$</sup> | Whether the opponent's bed is broken                                 |
 | \<points>                                                | %neptune_points%                                             | The number of rounds won by the player's team                        |
