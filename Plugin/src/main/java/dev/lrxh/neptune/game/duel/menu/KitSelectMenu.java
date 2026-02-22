@@ -11,14 +11,13 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class KitSelectMenu extends Menu {
-    private final UUID receiver;
+    private final Player receiver;
     private final boolean party;
 
-    public KitSelectMenu(UUID receiver, boolean party) {
-        super(MenusLocale.DUEL_TITLE.getString(), MenusLocale.DUEL_SIZE.getInt(), Filter.valueOf(MenusLocale.DUEL_FILTER.getString()));
+    public KitSelectMenu(Player receiver, boolean party) {
+        super(MenusLocale.DUEL_TITLE.getString().replaceAll("<target>", receiver.getName()), MenusLocale.DUEL_SIZE.getInt(), Filter.valueOf(MenusLocale.DUEL_FILTER.getString()));
         this.receiver = receiver;
         this.party = party;
     }

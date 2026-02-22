@@ -14,14 +14,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.UUID;
-
 public class RoundSelectButton extends Button {
     private final Kit kit;
-    private final UUID receiver;
+    private final Player receiver;
     private final int round;
 
-    public RoundSelectButton(int slot, Kit kit, UUID receiver, int round) {
+    public RoundSelectButton(int slot, Kit kit, Player receiver, int round) {
         super(slot);
         this.kit = kit;
         this.receiver = receiver;

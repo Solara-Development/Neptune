@@ -27,7 +27,7 @@ public class PartyDuelButton extends Button {
 
     @Override
     public void onClick(ClickType type, Player player) {
-        new KitSelectMenu(targetParty.getLeader(), true).open(player);
+        new KitSelectMenu(targetParty.getLeaderPlayer(), true).open(player);
     }
 
     @Override

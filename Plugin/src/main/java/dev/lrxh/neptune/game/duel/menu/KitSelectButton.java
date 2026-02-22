@@ -14,14 +14,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.UUID;
-
 public class KitSelectButton extends Button {
     private final Kit kit;
-    private final UUID receiver;
+    private final Player receiver;
     private final boolean party;
 
-    public KitSelectButton(int slot, Kit kit, UUID receiver, boolean party) {
+    public KitSelectButton(int slot, Kit kit, Player receiver, boolean party) {
         super(slot);
         this.kit = kit;
         this.receiver = receiver;
@@ -51,7 +49,10 @@ public class KitSelectButton extends Button {
                 Bukkit.getScheduler().runTask(Neptune.get(), () -> player.closeInventory());
             });
         } else {
-            new RoundsSelectMenu(kit, receiver).open(player);
+            String[] roundsList = MenusLocale.ROUNDS_LIST.getString().replace(" ", "").split(",");
+            if (roundsList.length == 1)
+                new RoundSelectButton(0, kit, receiver, Integer.parseInt(roundsList[0])).onClick(ClickType.LEFT, player);
+            else new RoundsSelectMenu(kit, receiver).open(player);
         }
     }
 }

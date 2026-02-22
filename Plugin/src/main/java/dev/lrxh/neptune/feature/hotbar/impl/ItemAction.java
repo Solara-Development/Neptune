@@ -23,7 +23,6 @@ import dev.lrxh.neptune.game.match.menu.MatchListMenu;
 import dev.lrxh.neptune.game.match.menu.MatchSpectateTeleportMenu;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.PlayerUtil;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;

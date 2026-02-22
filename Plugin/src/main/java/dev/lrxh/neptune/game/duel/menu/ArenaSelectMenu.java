@@ -20,16 +20,15 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class ArenaSelectMenu extends Menu {
     private final Kit kit;
-    private final UUID receiver;
+    private final Player receiver;
     private final int round;
 
-    public ArenaSelectMenu(Kit kit, UUID receiver, int round) {
-        super(MenusLocale.ARENA_TITLE.getString(), MenusLocale.ARENA_SIZE.getInt(), Filter.valueOf(MenusLocale.ARENA_FILTER.getString()));
+    public ArenaSelectMenu(Kit kit, Player receiver, int round) {
+        super(MenusLocale.ARENA_TITLE.getString().replaceAll("<target>", receiver.getName()), MenusLocale.ARENA_SIZE.getInt(), Filter.valueOf(MenusLocale.ARENA_FILTER.getString()));
         this.kit = kit;
         this.receiver = receiver;
         this.round = round;

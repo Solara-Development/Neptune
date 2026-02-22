@@ -43,13 +43,17 @@ public class Party {
         setupPlayer(leader, false);
     }
 
-    public String getLeaderName() {
+    public Player getLeaderPlayer() {
         Player player = Bukkit.getPlayer(leader);
         if (player == null) {
             users.remove(leader);
-            return "";
+            return null;
         }
-
+        return player;
+    }
+    public String getLeaderName() {
+        Player player = getLeaderPlayer();
+        if (player == null) return "";
         return player.getName();
     }
 

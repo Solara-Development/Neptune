@@ -60,7 +60,7 @@ public class DuelCommand {
             return;
         }
 
-        new KitSelectMenu(target.getUniqueId(), userProfile.getState().equals(ProfileState.IN_PARTY)).open(player);
+        new KitSelectMenu(target, userProfile.getState().equals(ProfileState.IN_PARTY)).open(player);
     }
 
     @Command(name = "accept-uuid", desc = "", usage = "<uuid>", hidden = true)
