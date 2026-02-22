@@ -10,38 +10,40 @@ May not be up-to-date.
 
 ## Globally Available
 
-| Plugin                | PlaceholderAPI                                                              | Description                                                            |
-|-----------------------|-----------------------------------------------------------------------------|------------------------------------------------------------------------|
-| \<online>             | None<sup style="color: red">\*</sup>                                        | Use server expansion for PAPI                                          |
-| \<queued>             | %neptune_queued%                                                            | Get the number of players in queue                                     |
-| \<in-match>           | %neptune_in-match%                                                          | Get the number of players in matches                                   |
-| \<player>             | None<sup style="color: red">\*</sup>                                        | The name of the player                                                 |
-| \<ping>               | %neptune_ping%                                                              | The ping of the player in milliseconds                                 |
-| \<wins>               | %neptune_wins%                                                              | The number of wins a player has accumulated                            |
-| \<losses>             | %neptune_losses%                                                            | The number of losses a player has accumulated                          |
-| \<kills>              | %neptune_kills%                                                             | The number of kills a player has accumulated                           |
-| \<deaths>             | %neptune_deaths%                                                            | The number of deaths a player has accumulated                          |
-| \<current-win-streak> | %neptune_current_win_streak%                                                | The current win streak of the player                                   |
-| \<best-win-streak>    | %neptune_best_win_streak%                                                   | The best win streak the player has achieved                            |
-| \<division>           | %neptune_division%                                                          | The global division name of the player                                 |
-| None                  | %neptune_recent_match_(num)\_(opponent/arena/kit/date/time/unix_timestamp)% | Get details about a recent match. Unix timestamp is in seconds, not ms |
-| None                  | %neptune_state%                                                             | Get the current state of the player                                    |
+| Plugin                | PlaceholderAPI                                                                                                              | Description                                                            |
+|-----------------------|-----------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------|
+| \<online>             | None<sup style="color: red">\*</sup>                                                                                        | Use server expansion for PAPI                                          |
+| \<queued>             | %neptune_queued%                                                                                                            | Get the number of players in queue                                     |
+| \<in-match>           | %neptune_matches%                                                                                                           | Get the number of players in matches                                   |
+| \<player>             | None<sup style="color: red">\*</sup>                                                                                        | The name of the player                                                 |
+| \<ping>               | %neptune_ping%                                                                                                              | The ping of the player in milliseconds                                 |
+| \<wins>               | %neptune_wins%                                                                                                              | The number of wins a player has accumulated                            |
+| \<losses>             | %neptune_losses%                                                                                                            | The number of losses a player has accumulated                          |
+| \<kills>              | %neptune_kills%                                                                                                             | The number of kills a player has accumulated                           |
+| \<deaths>             | %neptune_deaths%                                                                                                            | The number of deaths a player has accumulated                          |
+| \<current-win-streak> | %neptune_current_win_streak%                                                                                                | The current win streak of the player                                   |
+| \<best-win-streak>    | %neptune_best_win_streak%                                                                                                   | The best win streak the player has achieved                            |
+| \<division>           | %neptune_division%                                                                                                          | The global division name of the player                                 |
+| None                  | %neptune_kit_\(kit\)_(name/elo/division/rounds/current_win_streak/best_win_streak/wins/losses/kills/deaths/queued/in_match) | Kit-specific stats                                                     |
+| None                  | %neptune_recent_match_(num)\_(opponent/arena/kit/date/time/unix_timestamp)%                                                 | Get details about a recent match. Unix timestamp is in seconds, not ms |
+| None                  | %neptune_state%                                                                                                             | Get the current state of the player                                    |
 
 ## In Queue
 
-| Plugin          | PlaceholderAPI         | Description                                                           |
-|-----------------|------------------------|-----------------------------------------------------------------------|
-| \<kit>          | %neptune_kit_name%     | The display name of the kit the player is playing on                  |
-| \<kit-division  | %neptune_kit_division% | The division                                                          |
-| \<max-ping>     | %neptune_max_ping%     | The maximum ping allowed by the player in their settings              |
-| \<time>         | %neptune_time%         | The time in minutes and seconds that the player has been queueing for |
-| \<kit-division> | %neptune_kit_division% | The kit-specific division name of the player                          |
+| Plugin          | PlaceholderAPI                                                                                                      | Description                                                           |
+|-----------------|---------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------|
+| \<kit>          | %neptune_kit_name%                                                                                                  | The display name of the kit the player is playing on                  |
+| \<kit-division  | %neptune_kit_division%                                                                                              | The division                                                          |
+| \<max-ping>     | %neptune_max_ping%                                                                                                  | The maximum ping allowed by the player in their settings              |
+| \<time>         | %neptune_time%                                                                                                      | The time in minutes and seconds that the player has been queueing for |
+| None            | %neptune_kit_(name/elo/division/rounds/current_win_streak/best_win_streak/wins/losses/kills/deaths/queued/in_match) | Kit-specific stats                                                    |
 
 ## Kit Editor
 
-| Plugin | PlaceholderAPI     | Description                                       |
-|--------|--------------------|---------------------------------------------------|
-| \<kit> | %neptune_kit_name% | The display name of the kit the player is editing |
+| Plugin | PlaceholderAPI                                                                                                      | Description                                       |
+|--------|---------------------------------------------------------------------------------------------------------------------|---------------------------------------------------|
+| \<kit> | %neptune_kit_name%                                                                                                  | The display name of the kit the player is editing |
+| None   | %neptune_kit_(name/elo/division/rounds/current_win_streak/best_win_streak/wins/losses/kills/deaths/queued/in_match) | Kit-specific stats                                |
 
 ## Party
 
@@ -53,14 +55,15 @@ May not be up-to-date.
 
 ## Any Match
 
-| Plugin                                               | PlaceholderAPI                                           | Description                                                |
-|------------------------------------------------------|----------------------------------------------------------|------------------------------------------------------------|
-| \<red-bed-broken><sup style="color: red">\*\*</sup>  | %neptune_red_bed_broken%<sup style="color: red">$</sup>  | The ping of the player in the red team                     |
-| \<blue-bed-broken><sup style="color: red">\*\*</sup> | %neptune_blue_bed_broken%<sup style="color: red">$</sup> | The ping of the player in the blue team                    |
-| \<time>                                              | %neptune_time%                                           | The time the match has been active for                     |
-| \<rounds>                                            | %neptune_roundss%                                        | The total number of rounds in a match                      |
-| \<kit>                                               | %neptune_kit%                                            | The display name of the kit the match is being played with |
-| \<arena>                                             | %neptune_arena%                                          | The display name of the arena of the match                 |
+| Plugin                                               | PlaceholderAPI                                                                                                      | Description                                                |
+|------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------|
+| \<red-bed-broken><sup style="color: red">\*\*</sup>  | %neptune_red_bed_broken%<sup style="color: red">$</sup>                                                             | The ping of the player in the red team                     |
+| \<blue-bed-broken><sup style="color: red">\*\*</sup> | %neptune_blue_bed_broken%<sup style="color: red">$</sup>                                                            | The ping of the player in the blue team                    |
+| \<time>                                              | %neptune_time%                                                                                                      | The time the match has been active for                     |
+| \<rounds>                                            | %neptune_roundss%                                                                                                   | The total number of rounds in a match                      |
+| \<kit>                                               | %neptune_kit%                                                                                                       | The display name of the kit the match is being played with |
+| \<arena>                                             | %neptune_arena%                                                                                                     | The display name of the arena of the match                 |
+| None                                                 | %neptune_kit_(name/elo/division/rounds/current_win_streak/best_win_streak/wins/losses/kills/deaths/queued/in_match) | Kit-specific stats                                         |
 
 ## Solo Match
 
