@@ -44,6 +44,7 @@ public class Participant implements IParticipant {
     private boolean frozen = false;
     private boolean bedBroken;
     private Time time;
+    private Match match;
 
     // ELO CHANGES
     private int eloChange = 0;
@@ -206,7 +207,7 @@ public class Participant implements IParticipant {
         Match match = API.getProfile(playerUUID).getMatch();
         if (match.getKit().is(KitRule.BOXING)) {
             if (match instanceof TeamFightMatch teamFightMatch
-                    ? hits >= teamFightMatch.getTeamA().getParticipants().size() * 100
+                    ? hits >= teamFightMatch.getRedTeam().getParticipants().size() * 100
                     : hits >= 100) {
                 opponent.setDeathCause(getLastAttacker() != null ? DeathCause.KILL : DeathCause.DIED);
                 match.onDeath(opponent);

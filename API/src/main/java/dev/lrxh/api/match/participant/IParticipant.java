@@ -56,6 +56,8 @@ public interface IParticipant {
 
     String getHitsDifferenceUncolored(IParticipant otherParticipant);
 
+    IMatch getMatch();
+
     void reset();
 
     void toggleFreeze();
@@ -65,5 +67,6 @@ public interface IParticipant {
     void playKillEffect();
 
     void resetCombo();
+
 
 }
