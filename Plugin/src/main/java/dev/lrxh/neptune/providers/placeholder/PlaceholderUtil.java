@@ -48,8 +48,6 @@ public class PlaceholderUtil {
         QueueEntry queue = QueueService.get().get(profile.getPlayerUUID());
         placeholders = TagResolver.resolver(placeholders, getSettingsResolvers(profile),
             Placeholder.parsed("division", globalStats.getDivision().getDisplayName()),
-            Placeholder.parsed("kill-effect", profile.getSettingData().getKillEffect().getDisplayName()),
-            Placeholder.parsed("kill-message", profile.getSettingData().getKillMessagePackage().getDisplayName()),
             Placeholder.unparsed("max-ping", String.valueOf(profile.getSettingData().getMaxPing())),
             Placeholder.unparsed("wins", String.valueOf(globalStats.getWins())),
             Placeholder.unparsed("losses", String.valueOf(globalStats.getLosses())),
@@ -98,6 +96,7 @@ public class PlaceholderUtil {
             );
         }
         if (match != null) {
+            kit = match.getKit();
             Participant participant = match.getParticipant(player);
             placeholders = TagResolver.resolver(placeholders,
                 Placeholder.parsed("arena", match.getArena().getDisplayName()),
@@ -106,12 +105,6 @@ public class PlaceholderUtil {
                 Placeholder.unparsed("round", String.valueOf(match.getCurrentRound())),
                 Placeholder.unparsed("time", match.getTime().formatTime())
             );
-            if (kit.is(KitRule.BED_WARS) && participant != null) {
-                placeholders = TagResolver.resolver(placeholders,
-                    Placeholder.unparsed("bed-broken", participant.isBedBroken() ? "&a✔" : "&c1"),
-                    Placeholder.unparsed("opponent-bed-broken", participant.getOpponent().isBedBroken() ? "&a✔" : "&c1")
-                );
-            }
             if (match instanceof SoloFightMatch sfm) {
                 Participant red = sfm.getRedParticipant();
                 Participant blue = sfm.getBlueParticipant();
@@ -120,8 +113,6 @@ public class PlaceholderUtil {
                     placeholders = TagResolver.resolver(placeholders,
                             Placeholder.parsed("bed-broken", participant.getBedMessage()),
                             Placeholder.parsed("opponent-bed-broken", opponent.getBedMessage()),
-                            Placeholder.parsed("red-bed-broken", red.getBedMessage()),
-                            Placeholder.parsed("blue-bed-broken", blue.getBedMessage()),
                             Placeholder.parsed("opponent-combo", opponent.getComboMessage()),
                             Placeholder.unparsed("combo", participant.getComboMessage()),
                             Placeholder.unparsed("longest-combo", String.valueOf(participant.getLongestCombo())),
@@ -132,7 +123,9 @@ public class PlaceholderUtil {
                             Placeholder.unparsed("opponent-longest-combo", String.valueOf(opponent.getLongestCombo())),
                             Placeholder.unparsed("opponent-hits", String.valueOf(opponent.getHits())),
                             Placeholder.unparsed("opponent-hit-difference", String.valueOf(opponent.getHitsDifference(participant))),
-                            Placeholder.unparsed("opponent-points", String.valueOf(opponent.getPoints()))
+                            Placeholder.unparsed("opponent-points", String.valueOf(opponent.getPoints())),
+                            Placeholder.unparsed("opponent-elo", String.valueOf(opponent.getProfile().getGameData().getGlobalStats().getElo())),
+                            Placeholder.unparsed("opponent-kit-elo", String.valueOf(opponent.getProfile().getGameData().get(kit).getElo()))
                     );
                     if (opponent.getPlayer() != null) placeholders = TagResolver.resolver(placeholders,
                             Placeholder.unparsed("opponent-ping", String.valueOf(opponent.getPlayer().getPing())));
@@ -140,6 +133,10 @@ public class PlaceholderUtil {
                 placeholders = TagResolver.resolver(placeholders,
                     Placeholder.parsed("red-combo", red.getComboMessage()),
                     Placeholder.parsed("blue-combo", blue.getComboMessage()),
+                    Placeholder.parsed("red-elo", String.valueOf(red.getProfile().getGameData().getGlobalStats().getElo())),
+                    Placeholder.parsed("blue-elo", String.valueOf(blue.getProfile().getGameData().getGlobalStats().getElo())),
+                    Placeholder.parsed("red-kit-elo", String.valueOf(red.getProfile().getGameData().get(kit).getElo())),
+                    Placeholder.parsed("blue-elo", String.valueOf(blue.getProfile().getGameData().get(kit).getElo())),
                     Placeholder.parsed("red-bed-broken", red.getBedMessage()),
                     Placeholder.parsed("blue-bed-broken", blue.getBedMessage()),
                     Placeholder.unparsed("red-name", red.getName()),
@@ -147,13 +144,15 @@ public class PlaceholderUtil {
                     Placeholder.unparsed("red-hits", String.valueOf(red.getHits())),
                     Placeholder.unparsed("red-hit-difference", red.getHitsDifference(sfm.getBlueParticipant())),
                     Placeholder.unparsed("red-points", String.valueOf(red.getPoints())),
-                    Placeholder.unparsed("red-ping", String.valueOf(red.getPlayer().getPing())),
                     Placeholder.unparsed("blue-name", blue.getName()),
                     Placeholder.unparsed("blue-longest-combo", String.valueOf(blue.getLongestCombo())),
                     Placeholder.unparsed("blue-hits", String.valueOf(blue.getHits())),
                     Placeholder.unparsed("blue-hit-difference", blue.getHitsDifference(sfm.getRedParticipant())),
-                    Placeholder.unparsed("blue-points", String.valueOf(blue.getPoints())),
-                    Placeholder.unparsed("blue-ping", String.valueOf(blue.getPlayer().getPing()))
+                    Placeholder.unparsed("blue-points", String.valueOf(blue.getPoints()))
+                );
+                if (kit.is(KitRule.BED_WARS) && participant != null) placeholders = TagResolver.resolver(placeholders,
+                        Placeholder.parsed("bed-broken", participant.getBedMessage()),
+                        Placeholder.parsed("opponent-bed-broken", participant.getOpponent().getBedMessage())
                 );
                 if (red.getPlayer() != null) placeholders = TagResolver.resolver(placeholders,
                         Placeholder.unparsed("red-ping", String.valueOf(red.getPlayer().getPing())));
@@ -161,8 +160,8 @@ public class PlaceholderUtil {
                         Placeholder.unparsed("blue-ping", String.valueOf(blue.getPlayer().getPing())));
             }
             if (match instanceof TeamFightMatch tfm)  {
-                MatchTeam red = tfm.getTeamA();
-                MatchTeam blue = tfm.getTeamB();
+                MatchTeam red = tfm.getRedTeam();
+                MatchTeam blue = tfm.getBlueTeam();
                 if (participant != null) {
                     MatchTeam team = tfm.getParticipantTeam(participant);
                     MatchTeam opponent = team.getOpponentTeam();
