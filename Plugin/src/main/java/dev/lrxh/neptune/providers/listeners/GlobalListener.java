@@ -60,39 +60,33 @@ public class GlobalListener implements Listener {
     }
 
     @EventHandler
-    public void onPlayerInteract(PlayerInteractEntityEvent event) {
-        if (!(event.getRightClicked() instanceof Player target) || event.getHand() != EquipmentSlot.HAND)
-            return;
-        Player sender = event.getPlayer();
-        if (sender.isSneaking()) return;
-        Profile senderProfile = API.getProfile(sender);
-        Party party = senderProfile.getGameData().getParty();
-        if (party == null || !party.isLeader(sender.getUniqueId()))
-            return;
-        if (senderProfile.getPartyInviteTarget() == target) {
-            senderProfile.setPartyInviteTarget(null);
-            sender.chat("/party invite " + target.getName());
-        } else {
-            senderProfile.setPartyInviteTarget(target);
-            MessagesLocale.PARTY_INVITE_CONFIRM.send(sender, Placeholder.unparsed("player", target.getName()));
-            TaskScheduler.get().startTaskLater(new NeptuneRunnable() {
-                @Override
-                public void run() {
-                    if (senderProfile.getPartyInviteTarget() == target) {
-                        senderProfile.setPartyInviteTarget(null);
-                    }
-                }
-            }, 200L);
-        }
-    }
-
-    @EventHandler
-    public void onShiftRightClick(PlayerInteractEntityEvent event) {
+    public void onRightClick(PlayerInteractEntityEvent event) {
         Player player = event.getPlayer();
-        if (API.getProfile(player).getMatch() != null) return;
-        if (!player.isSneaking()) return;
-        if (event.getRightClicked() instanceof Player clicked && event.getHand() == EquipmentSlot.HAND) {
-            player.chat("/duel " + clicked.getName());
+        Profile profile = API.getProfile(player);
+        if (profile == null || !profile.hasState(ProfileState.IN_LOBBY)) return;
+        if (!(event.getRightClicked() instanceof Player target) || event.getHand() != EquipmentSlot.HAND || !target.isOnline()) return;
+        if (player.isSneaking()) {
+            Party party = profile.getGameData().getParty();
+            if (party == null || !party.isLeader(player.getUniqueId()))
+                return;
+            if (profile.getPartyInviteTarget() == target) {
+                profile.setPartyInviteTarget(null);
+                player.chat("/party invite " + target.getName());
+            } else {
+                profile.setPartyInviteTarget(target);
+                MessagesLocale.PARTY_INVITE_CONFIRM.send(player, Placeholder.unparsed("player", target.getName()));
+                TaskScheduler.get().startTaskLater(new NeptuneRunnable() {
+                    @Override
+                    public void run() {
+                        if (profile.getPartyInviteTarget() == target) {
+                            profile.setPartyInviteTarget(null);
+                        }
+                    }
+                }, 200L);
+            }
+        }
+        else {
+            player.chat("/duel " + target.getName());
         }
     }
 
