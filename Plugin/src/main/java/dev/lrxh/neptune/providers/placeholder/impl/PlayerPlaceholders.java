@@ -1,11 +1,12 @@
 package dev.lrxh.neptune.providers.placeholder.impl;
 
+import org.bukkit.OfflinePlayer;
+
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.profile.data.GlobalStats;
 import dev.lrxh.neptune.profile.data.SettingData;
 import dev.lrxh.neptune.profile.impl.Profile;
 import dev.lrxh.neptune.providers.placeholder.PAPIPlaceholder;
-import org.bukkit.OfflinePlayer;
 
 public class PlayerPlaceholders implements PAPIPlaceholder {
 
@@ -28,7 +29,7 @@ public class PlayerPlaceholders implements PAPIPlaceholder {
             case "kills" -> { return String.valueOf(globalStats.getKills()); }
             case "deaths" -> { return String.valueOf(globalStats.getDeaths()); }
             case "losses" -> { return String.valueOf(globalStats.getLosses()); }
-            case "division" -> { return globalStats.getDivision().getDisplayName(); }
+            case "division" -> { return globalStats.getDivision() != null ? globalStats.getDivision().getDisplayName() : "None"; }
             case "win_loss_ratio" -> { return String.valueOf(globalStats.getWinRatio()); }
             case "best_win_streak" -> { return String.valueOf(globalStats.getBestStreak()); }
             case "current_win_streak" -> { return String.valueOf(globalStats.getCurrentStreak()); }

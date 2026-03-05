@@ -1,5 +1,10 @@
 package dev.lrxh.neptune.providers.placeholder.impl;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.bukkit.OfflinePlayer;
+
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.feature.queue.QueueEntry;
 import dev.lrxh.neptune.feature.queue.QueueService;
@@ -11,10 +16,6 @@ import dev.lrxh.neptune.profile.data.KitData;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
 import dev.lrxh.neptune.providers.placeholder.PAPIPlaceholder;
-import org.bukkit.OfflinePlayer;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class KitPlaceholders implements PAPIPlaceholder {
     @Override
@@ -56,7 +57,7 @@ public class KitPlaceholders implements PAPIPlaceholder {
         KitData kitData = profile.getGameData().get(kit);
         switch (type) {
             case "name" -> { return kit.getDisplayName(); }
-            case "division" -> { return kitData.getDivision().getDisplayName(); }
+            case "division" -> { return kitData.getDivision() != null ? kitData.getDivision().getDisplayName() : "None"; }
             case "rounds" -> { return kit.is(KitRule.BEST_OF_THREE) ? "3" : "1"; }
             case "current_win_streak" -> { return String.valueOf(kitData.getCurrentStreak()); }
             case "best_win_streak" -> { return String.valueOf(kitData.getBestStreak()); }

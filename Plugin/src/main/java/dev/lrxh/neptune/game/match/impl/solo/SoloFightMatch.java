@@ -1,5 +1,12 @@
 package dev.lrxh.neptune.game.match.impl.solo;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+import org.bukkit.Bukkit;
+
 import dev.lrxh.api.events.SoloMatchBedDestroyEvent;
 import dev.lrxh.api.match.ISoloFightMatch;
 import dev.lrxh.api.match.participant.IParticipant;
@@ -35,13 +42,6 @@ import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-
-import org.bukkit.Bukkit;
-
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 @Getter
 @Setter
@@ -143,7 +143,7 @@ public class SoloFightMatch extends Match implements ISoloFightMatch {
         loser.setEloChange(loserData.get(getKit()).getElo() - initialLoserElo);
 
         if (rankedUp) {
-            String divisionName = winnerData.get(getKit()).getDivision().getDisplayName();
+            String divisionName = winnerData.get(getKit()).getDivision() != null ? winnerData.get(getKit()).getDivision().getDisplayName() : "None";
 
             winner.sendTitle(
                     CC.color(MessagesLocale.RANKUP_TITLE_HEADER.getString().replace("<division>", divisionName)),
