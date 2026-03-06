@@ -1,5 +1,8 @@
 package dev.lrxh.neptune.providers.placeholder;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.feature.party.Party;
@@ -24,9 +27,6 @@ import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
 @UtilityClass
 public class PlaceholderUtil {
     public TagResolver getPlaceholders(Player player) {
@@ -47,7 +47,7 @@ public class PlaceholderUtil {
         Match match = profile.getGameData().getMatch();
         QueueEntry queue = QueueService.get().get(profile.getPlayerUUID());
         placeholders = TagResolver.resolver(placeholders, getSettingsResolvers(profile),
-            Placeholder.parsed("division", globalStats.getDivision().getDisplayName()),
+            Placeholder.parsed("division", globalStats.getDivision() != null ? globalStats.getDivision().getDisplayName() : "None"),
             Placeholder.unparsed("max-ping", String.valueOf(profile.getSettingData().getMaxPing())),
             Placeholder.unparsed("wins", String.valueOf(globalStats.getWins())),
             Placeholder.unparsed("losses", String.valueOf(globalStats.getLosses())),
@@ -71,7 +71,7 @@ public class PlaceholderUtil {
             KitData kitData = profile.getGameData().get(kit);
             placeholders = TagResolver.resolver(placeholders,
                 Placeholder.parsed("kit", kit.getDisplayName()),
-                Placeholder.parsed("kit-division", kitData.getDivision().getName()),
+                Placeholder.parsed("kit-division", kitData.getDivision() != null ? kitData.getDivision().getName() : "None"),
                 Placeholder.unparsed("rounds", kit.is(KitRule.BEST_OF_THREE) ? "3" : "1"),
                 Placeholder.unparsed("kit-current-win-streak", String.valueOf(kitData.getCurrentStreak())),
                 Placeholder.unparsed("kit-best-win-streak", String.valueOf(kitData.getBestStreak())),
