@@ -1,5 +1,6 @@
 package dev.lrxh.neptune.utils;
 
+import dev.lrxh.neptune.Neptune;
 import lombok.experimental.UtilityClass;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;

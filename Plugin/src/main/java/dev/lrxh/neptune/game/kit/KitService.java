@@ -3,6 +3,7 @@ package dev.lrxh.neptune.game.kit;
 import dev.lrxh.api.arena.IArena;
 import dev.lrxh.api.kit.IKit;
 import dev.lrxh.api.kit.IKitService;
+import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.configs.ConfigService;
 import dev.lrxh.neptune.game.arena.Arena;
 import dev.lrxh.neptune.game.arena.ArenaService;
@@ -36,41 +37,47 @@ public class KitService extends IService implements IKitService {
         FileConfiguration config = ConfigService.get().getKitsConfig().getConfiguration();
         if (config.contains("kits")) {
             for (String kitName : getKeys("kits")) {
-                String path = "kits." + kitName + ".";
-                String displayName = config.getString(path + "displayName", kitName);
-                ItemStack icon = ItemUtils.deserializeItem(config.getString(path + "icon", ""));
+                try {
+                    String path = "kits." + kitName + ".";
+                    String displayName = config.getString(path + "displayName", kitName);
+                    ItemStack icon = ItemUtils.deserializeItem(config.getString(path + "icon", ""));
 
-                List<ItemStack> items = ItemUtils.deserialize(config.getString(path + "items", ""));
-                int slot = config.getInt(path + "slot", kits.size() + 1);
-                int kitEditorSlot = config.getInt(path + "kitEditor-slot", slot);
-                double health = config.getDouble(path + "health", 20);
-                double damageMultiplier = config.getDouble(path + "damage-multiplier", 1.0);
+                    List<ItemStack> items = ItemUtils.deserialize(config.getString(path + "items", ""));
+                    int slot = config.getInt(path + "slot", kits.size() + 1);
+                    int kitEditorSlot = config.getInt(path + "kitEditor-slot", slot);
+                    double health = config.getDouble(path + "health", 20);
+                    double damageMultiplier = config.getDouble(path + "damage-multiplier", 1.0);
 
-                HashSet<Arena> arenas = new HashSet<>();
-                if (!config.getStringList(path + "arenas").isEmpty()) {
-                    for (String arenaName : config.getStringList(path + "arenas")) {
-                        Arena arena = ArenaService.get().getArenaByName(arenaName);
-                        if (arena == null) {
-                            ServerUtils.error("KitService: Arena " + arenaName + " not found for kit " + kitName);
-                            continue;
+                    HashSet<Arena> arenas = new HashSet<>();
+                    if (!config.getStringList(path + "arenas").isEmpty()) {
+                        for (String arenaName : config.getStringList(path + "arenas")) {
+                            Arena arena = ArenaService.get().getArenaByName(arenaName);
+                            if (arena == null) {
+                                ServerUtils.error("KitService: Arena " + arenaName + " not found for kit " + kitName);
+                                continue;
+                            }
+                            arenas.add(arena);
                         }
-                        arenas.add(arena);
                     }
-                }
 
-                HashMap<KitRule, Boolean> rules = new HashMap<>();
-                for (KitRule kitRule : KitRule.values()) {
-                    rules.put(kitRule, config.getBoolean(path + kitRule.getSaveName(), false));
-                }
-
-                List<PotionEffect> potionEffects = new ArrayList<>();
-                if (!config.getStringList(path + "potionEffects").isEmpty()) {
-                    for (String potion : config.getStringList(path + "potionEffects")) {
-                        potionEffects.add(PotionEffectUtils.deserialize(potion));
+                    HashMap<KitRule, Boolean> rules = new HashMap<>();
+                    for (KitRule kitRule : KitRule.values()) {
+                        rules.put(kitRule, config.getBoolean(path + kitRule.getSaveName(), false));
                     }
-                }
 
-                kits.add(new Kit(kitName, displayName, items, arenas, icon, rules, slot, health, kitEditorSlot, potionEffects, damageMultiplier));
+                    List<PotionEffect> potionEffects = new ArrayList<>();
+                    if (!config.getStringList(path + "potionEffects").isEmpty()) {
+                        for (String potion : config.getStringList(path + "potionEffects")) {
+                            potionEffects.add(PotionEffectUtils.deserialize(potion));
+                        }
+                    }
+
+                    kits.add(new Kit(kitName, displayName, items, arenas, icon, rules, slot, health, kitEditorSlot, potionEffects, damageMultiplier));
+                } catch (Exception e) {
+                    Neptune.get().getLogger().severe("Error occurred while loading a kit with key: " + kitName);
+                    Neptune.get().setErrored();
+                    throw e;
+                }
             }
         }
     }
