@@ -110,10 +110,11 @@ public class HotbarService extends IService {
                 byte slot = (byte) config.getInt(path + "SLOT");
                 List<String> lore = config.getStringList(path + "LORE");
                 String command = config.getString(path + "COMMAND");
+                List<String> commands = config.getStringList(path + "COMMANDS");
                 ProfileState profileState = ProfileState.valueOf(config.getString(path + "STATE"));
                 int customModelData = config.getInt(path + "CUSTOM_MODEL_DATA", 0);
-
-                CustomItem customItem = new CustomItem(displayName, material, lore, slot, command, customModelData);
+                if (command != null && !command.isEmpty() && !commands.contains(command)) commands.add(command);
+                CustomItem customItem = new CustomItem(displayName, material, lore, slot, commands, customModelData);
                 items.get(profileState).addItem(customItem, slot);
             }
         }

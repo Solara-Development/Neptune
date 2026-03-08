@@ -33,7 +33,7 @@ May not be up-to-date.
 | Plugin          | PlaceholderAPI                                                                                                      | Description                                                           |
 |-----------------|---------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------|
 | \<kit>          | %neptune_kit_name%                                                                                                  | The display name of the kit the player is playing on                  |
-| \<kit-division  | %neptune_kit_division%                                                                                              | The division                                                          |
+| \<kit-division> | %neptune_kit_division%                                                                                              | The division                                                          |
 | \<max-ping>     | %neptune_max_ping%                                                                                                  | The maximum ping allowed by the player in their settings              |
 | \<time>         | %neptune_time%                                                                                                      | The time in minutes and seconds that the player has been queueing for |
 | None            | %neptune_kit_(name/elo/division/rounds/current_win_streak/best_win_streak/wins/losses/kills/deaths/queued/in_match) | Kit-specific stats                                                    |

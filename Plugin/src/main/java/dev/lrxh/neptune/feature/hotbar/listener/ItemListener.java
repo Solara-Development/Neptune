@@ -21,6 +21,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.List;
+
 public class ItemListener implements Listener {
 
     @EventHandler
@@ -113,9 +115,11 @@ public class ItemListener implements Listener {
             return;
 
         if (clickedItem instanceof CustomItem customItem) {
-            String command = customItem.getCommand();
-            if (!command.equalsIgnoreCase("none")) {
-                profile.getPlayer().performCommand(customItem.getCommand());
+            List<String> commands = customItem.getCommands();
+            for (String command : commands) {
+                if (!command.equalsIgnoreCase("none")) {
+                    profile.getPlayer().performCommand(command);
+                }
             }
         } else {
             clickedItem.getAction().execute(profile.getPlayer());

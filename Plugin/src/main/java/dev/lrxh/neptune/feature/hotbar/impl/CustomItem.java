@@ -6,10 +6,10 @@ import java.util.List;
 
 @Getter
 public class CustomItem extends Item {
-    private final String command;
+    private final List<String> commands;
 
-    public CustomItem(String displayName, String material, List<String> lore, byte slot, String command, int customModelData) {
+    public CustomItem(String displayName, String material, List<String> lore, byte slot, List<String> commands, int customModelData) {
         super(null, displayName, material, lore, true, slot, customModelData);
-        this.command = command;
+        this.commands = commands;
     }
 }
