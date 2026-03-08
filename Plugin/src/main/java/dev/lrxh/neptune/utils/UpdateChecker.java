@@ -20,7 +20,7 @@ public class UpdateChecker {
     private void checkForUpdates() throws IOException, InterruptedException {
         if (!SettingsLocale.CHECK_FOR_UPDATES.getBoolean()) return;
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://api.github.com/repos/mallusrgreatv2/Neptune/compare/update-checker..." + GithubUtils.getCommitId()))
+                .uri(URI.create("https://api.github.com/repos/Solara-Development/Neptune/compare/master..." + GithubUtils.getCommitId()))
                 .header("Accept", "application/vnd.github+json")
                 .build();
         HttpClient client = HttpClient.newHttpClient();
