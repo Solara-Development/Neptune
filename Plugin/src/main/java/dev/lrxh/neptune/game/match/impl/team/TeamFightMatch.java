@@ -35,18 +35,18 @@ import java.util.UUID;
 @Setter
 public class TeamFightMatch extends Match implements ITeamFightMatch {
 
-    private final MatchTeam teamA;
-    private final MatchTeam teamB;
+    private final MatchTeam redTeam;
+    private final MatchTeam blueTeam;
 
     public TeamFightMatch(VirtualArena arena, Kit kit, List<Participant> participants,
-                          MatchTeam teamA, MatchTeam teamB) {
+                          MatchTeam redTeam, MatchTeam blueTeam) {
         super(MatchState.STARTING, arena, kit, participants, 1, 1, true, false);
-        this.teamA = teamA;
-        this.teamB = teamB;
+        this.redTeam = redTeam;
+        this.blueTeam = blueTeam;
     }
 
     public MatchTeam getParticipantTeam(Participant participant) {
-        return teamA.participants().contains(participant) ? teamA : teamB;
+        return redTeam.participants().contains(participant) ? redTeam : blueTeam;
     }
 
     public IMatchTeam getParticipantTeam(IParticipant participant) {
@@ -54,11 +54,11 @@ public class TeamFightMatch extends Match implements ITeamFightMatch {
     }
 
     public IMatchTeam getWinner() {
-        return teamA.isLoser() ? teamB : teamA;
+        return redTeam.isLoser() ? blueTeam : redTeam;
     }
 
     public IMatchTeam getLoser() {
-        return teamA.isLoser() ? teamA : teamB;
+        return redTeam.isLoser() ? redTeam : blueTeam;
     }
 
     @Override
@@ -71,7 +71,7 @@ public class TeamFightMatch extends Match implements ITeamFightMatch {
     @Override
     public void end(Participant loser) {
         setState(MatchState.ENDING);
-        MatchTeam winnerTeam = teamA.isLoser() ? teamB : teamA;
+        MatchTeam winnerTeam = redTeam.isLoser() ? blueTeam : redTeam;
         MatchTeam loserTeam = getParticipantTeam(loser);
 
 
@@ -89,8 +89,8 @@ public class TeamFightMatch extends Match implements ITeamFightMatch {
 
     @Override
     public void sendEndMessage() {
-        MatchTeam winnerTeam = teamA.isLoser() ? teamB : teamA;
-        MatchTeam loserTeam = teamA.isLoser() ? teamA : teamB;
+        MatchTeam winnerTeam = redTeam.isLoser() ? blueTeam : redTeam;
+        MatchTeam loserTeam = redTeam.isLoser() ? redTeam : blueTeam;
 
         forEachParticipant(participant -> 
             MessagesLocale.MATCH_END_DETAILS_TEAM.send(participant.getPlayerUUID(), TagResolver.resolver(

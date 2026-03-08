@@ -45,6 +45,8 @@ public class MatchService implements IMatchService {
         playerBlue.setColor(ParticipantColor.BLUE);
 
         SoloFightMatch match = new SoloFightMatch(arena, kit, duel, Arrays.asList(playerRed, playerBlue), playerRed, playerBlue, rounds);
+        playerRed.setMatch(match);
+        playerBlue.setMatch(match);
         MatchReadyEvent event = new MatchReadyEvent(match);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
@@ -69,7 +71,9 @@ public class MatchService implements IMatchService {
         participants.addAll(teamB.participants());
 
         TeamFightMatch match = new TeamFightMatch(arena, kit, participants, teamA, teamB);
-
+        for (Participant participant : participants) {
+            participant.setMatch(match);
+        }
         MatchReadyEvent event = new MatchReadyEvent(match);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
@@ -106,11 +110,6 @@ public class MatchService implements IMatchService {
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return;
-        }
-
-        List<Participant> participants = new ArrayList<>();
-        for (IParticipant participant : match.getParticipants()) {
-            participants.add((Participant) participant);
         }
 
         ArenaService.get().copyFrom(match.getArena()).createDuplicate().thenAccept(virtualArena ->{

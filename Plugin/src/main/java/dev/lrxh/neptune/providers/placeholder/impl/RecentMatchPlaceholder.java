@@ -18,8 +18,7 @@ public class RecentMatchPlaceholder implements PAPIPlaceholder {
 
     @Override
     public boolean match(String string) {
-        boolean matches = PATTERN.matcher(string).matches();
-        return matches;
+        return PATTERN.matcher(string).matches();
     }
 
     @Override
