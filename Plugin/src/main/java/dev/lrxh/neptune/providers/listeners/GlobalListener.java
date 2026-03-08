@@ -7,6 +7,7 @@ import dev.lrxh.neptune.configs.impl.SettingsLocale;
 import dev.lrxh.neptune.feature.party.Party;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
+import dev.lrxh.neptune.utils.UpdateChecker;
 import dev.lrxh.neptune.utils.tasks.NeptuneRunnable;
 import dev.lrxh.neptune.utils.tasks.TaskScheduler;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -24,6 +25,7 @@ import org.bukkit.event.hanging.HangingBreakEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
+import org.bukkit.event.server.ServerLoadEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.metadata.FixedMetadataValue;
@@ -32,11 +34,15 @@ import org.bukkit.potion.PotionEffect;
 import java.util.Objects;
 
 public class GlobalListener implements Listener {
-
     private boolean isPlayerNotInMatch(Profile profile) {
         if (profile == null) return true;
         ProfileState state = profile.getState();
         return !state.equals(ProfileState.IN_GAME) && !state.equals(ProfileState.IN_SPECTATOR) || profile.getMatch() == null;
+    }
+
+    @EventHandler
+    public void updateCheck(ServerLoadEvent e) {
+        UpdateChecker.run();
     }
 
     @EventHandler
