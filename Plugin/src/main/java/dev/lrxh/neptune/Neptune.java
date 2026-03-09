@@ -85,6 +85,11 @@ public final class Neptune extends JavaPlugin {
     @Setter
     private boolean allowMatches;
 
+    private boolean errored;
+    public void setErrored() {
+        errored = true;
+    }
+
     public static Neptune get() {
         return instance;
     }
@@ -215,8 +220,10 @@ public final class Neptune extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        stopService(KitService.get(), KitService::save);
-        stopService(ArenaService.get(), ArenaService::save);
+        if (!errored) {
+            stopService(KitService.get(), KitService::save);
+            stopService(ArenaService.get(), ArenaService::save);
+        }
         stopService(MatchService.get(), MatchService::stopAllGames);
         stopService(TaskScheduler.get(), TaskScheduler::stopAllTasks);
         stopService(ProfileService.get(), ProfileService::saveAll);

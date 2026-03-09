@@ -2,6 +2,7 @@ package dev.lrxh.neptune.game.arena;
 
 import dev.lrxh.api.arena.IArena;
 import dev.lrxh.api.arena.IArenaService;
+import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.configs.ConfigService;
 import dev.lrxh.neptune.providers.manager.IService;
 import dev.lrxh.neptune.providers.manager.Value;
@@ -37,8 +38,14 @@ public class ArenaService extends IService implements IArenaService {
         FileConfiguration config = ConfigService.get().getArenasConfig().getConfiguration();
         if (config.contains("arenas")) {
             for (String arenaName : getKeys("arenas")) {
-                Arena arena = loadArena(arenaName);
-                arenas.add(arena);
+                try {
+                    Arena arena = loadArena(arenaName);
+                    arenas.add(arena);
+                } catch (Exception e) {
+                    Neptune.get().getLogger().severe("Error occurred while loading an arena with key: " + arenaName);
+                    Neptune.get().setErrored();
+                    throw e;
+                }
             }
         }
     }
