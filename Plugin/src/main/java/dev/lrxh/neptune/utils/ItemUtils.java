@@ -207,25 +207,25 @@ public class ItemUtils {
         ItemStack leggings = player.getInventory().getLeggings();
         ItemStack boots = player.getInventory().getBoots();
         if (helmet != null) {
-            ArmorMeta helmetMeta = (ArmorMeta) helmet.getItemMeta();
+            if (!(helmet.getItemMeta() instanceof ArmorMeta helmetMeta)) return;
             if (trimPackage.getHelmetTrim() != null) helmetMeta.setTrim(trimPackage.getHelmetTrim());
             helmet.setItemMeta(helmetMeta);
             player.getInventory().setHelmet(helmet);
         }
         if (chestplate != null) {
-            ArmorMeta chestplateMeta = (ArmorMeta) chestplate.getItemMeta();
+            if (!(chestplate.getItemMeta() instanceof ArmorMeta chestplateMeta)) return;
             if (trimPackage.getHelmetTrim() != null) chestplateMeta.setTrim(trimPackage.getChestplateTrim());
             chestplate.setItemMeta(chestplateMeta);
             player.getInventory().setChestplate(chestplate);
         }
         if (leggings != null) {
-            ArmorMeta leggingsMeta = (ArmorMeta) leggings.getItemMeta();
+            if (!(leggings.getItemMeta() instanceof ArmorMeta leggingsMeta)) return;
             if (trimPackage.getHelmetTrim() != null) leggingsMeta.setTrim(trimPackage.getLeggingsTrim());
             leggings.setItemMeta(leggingsMeta);
             player.getInventory().setLeggings(leggings);
         }
         if (boots != null) {
-            ArmorMeta bootsMeta = (ArmorMeta) boots.getItemMeta();
+            if (!(boots.getItemMeta() instanceof ArmorMeta bootsMeta)) return;
             if (trimPackage.getHelmetTrim() != null) bootsMeta.setTrim(trimPackage.getBootsTrim());
             boots.setItemMeta(bootsMeta);
             player.getInventory().setBoots(boots);
