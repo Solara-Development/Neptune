@@ -1,43 +1,79 @@
-<img width="2000" height="1000" alt="image(6)" src="https://github.com/user-attachments/assets/76ecdb11-ead6-4598-9d0c-4327503df5ec" />
-
----
-
 <div align="center">
-  <a href="https://discord.gg/f6rUtpy6y4" target="_blank"><img alt="Discord" src="https://img.shields.io/badge/Discord-100000?style=for-the-badge&logo=Discord&logoColor=white&labelColor=7289da&color=7289da"/></a>&nbsp;
-  <a href="https://builtbybit.com/resources/neptune-practice-core.44588/" target="_blank"><img alt="BuiltByBit" src="https://img.shields.io/badge/Builtbybit-100000?style=for-the-badge&logo=builtbybit&logoColor=white&labelColor=7289da&color=7289da"/></a>
+
+<img src="https://github.com/user-attachments/assets/76ecdb11-ead6-4598-9d0c-4327503df5ec" alt="Neptune Practice Core" width="100%"/>
+
+# 🌊 Neptune Practice Core
+
+**A powerful, feature-rich practice core built for competitive Minecraft servers.**
+
+[![Discord](https://img.shields.io/badge/Discord-Join%20Server-7289da?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/f6rUtpy6y4)
+[![BuiltByBit](https://img.shields.io/badge/BuiltByBit-Purchase-7289da?style=for-the-badge&logo=builtbybit&logoColor=white)](https://builtbybit.com/resources/neptune-practice-core.44588/)
+[![Modrinth](https://img.shields.io/badge/Modrinth-Stable-00AF5C?style=for-the-badge&logo=modrinth&logoColor=white)](https://modrinth.com/plugin/neptunepractice#download)
+
 </div>
 
 ---
 
 ## 💿 Installation
 
-0. You need a PaperMC server (or forks of PaperMC) with version **1.21.11** or above.
+> [!IMPORTANT]
+> Requires a **PaperMC** server running **1.21.1**.
 
-1. **Download** the plugin.
+**1.** Download the plugin — choose a build that suits your needs:
 
-> You can download from:
->
-> - [**Nightly**](https://nightly.link/Solara-Development/Neptune/workflows/maven/master/Plugin.zip) (**latest**; more
-    features, more bugs) <ins>**recommended**</ins>
-> - [**Modrinth**](https://modrinth.com/plugin/neptunepractice#download) (**stable**; less features, less bugs).
+| Build | Link | Notes |
+|---|---|---|
+| 🌙 **Nightly** *(recommended)* | [Download](https://nightly.link/Solara-Development/Neptune/workflows/maven/master/Plugin.zip) | Latest features, may contain bugs |
+| 🟢 **Stable** | [Modrinth](https://modrinth.com/plugin/neptunepractice#download) | Fewer features, fewer bugs |
 
-2. Once downloaded, place the `.jar` file inside the **`/plugins`** directory on your server.
-3. **Restart** your server.
-4. Run the **`/neptune`** command to set up arenas & kits.
+**2.** Place the `.jar` file into your server's `/plugins` directory.
 
-## ✨ Core Features
+**3.** Restart your server.
 
-- 🥊 Kit System (Boxing, Crystal, Axe, and more)
-- 🎛️ GUI-Based Kit Editor
-- 🌐 Queue Ping Range System
-- 📊 Animated Scoreboards
-- 🧩 PlaceholderAPI Support
-- 🎆 Custom Death Messages
-- 🛠️ Management Menus
-- 🏆 Instant Leaderboards Updates
-- 🧩 Highly Customizable
-- ⚡ Dynamic Arena Creation
-- 📄 Party System
+**4.** Run `/neptune` to begin setting up arenas and kits.
+
+---
+
+## ✨ Features
+
+<table>
+<tr>
+<td>
+
+**⚔️ Combat**
+- 🥊 Kit system (Boxing, Crystal, Axe, and more)
+- 🎛️ GUI-based kit editor
+- 🌐 Queue ping range filtering
+
+</td>
+<td>
+
+**📊 Interface**
+- 📊 Animated scoreboards
+- 🏆 Instant leaderboard updates
+- 🛠️ In-game management menus
+
+</td>
+</tr>
+<tr>
+<td>
+
+**🎨 Customization**
+- 🎆 Custom death messages
+- 🧩 Highly configurable
+- ⚡ Dynamic arena creation
+
+</td>
+<td>
+
+**🔌 Integration**
+- 🧩 PlaceholderAPI support
+- 📄 Party system
+- 💻 Developer API
+
+</td>
+</tr>
+</table>
 
 ---
 
@@ -45,7 +81,26 @@
 
 Use the `/neptune` command to create and manage arenas and kits through intuitive in-game menus.
 
-[View the documentation](./docs/README.md).
+📚 **[View Full Documentation](./docs/README.md)**
+
+---
+
+## 📚 Documentation
+
+<table>
+  <thead>
+    <tr>
+      <th>Category</th>
+      <th>Link</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>💻 <strong>Click to view</strong></td>
+      <td><a href="./README.md">View →</a></td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
@@ -57,4 +112,4 @@ Join our [Discord server](https://discord.gg/f6rUtpy6y4) for help, bug reports, 
 
 ## 👤 Maintainer
 
-Project by [DevLrxxh](https://github.com/Devlrxxh)
+Built and maintained by [DevLrxxh](https://github.com/Devlrxxh) and our wonderful Contributors.
