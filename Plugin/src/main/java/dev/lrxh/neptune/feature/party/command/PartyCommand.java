@@ -9,7 +9,9 @@ import dev.lrxh.neptune.feature.party.Party;
 import dev.lrxh.neptune.feature.party.impl.PartyRequest;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.providers.clickable.Replacement;
+import dev.lrxh.neptune.providers.request.Request;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
@@ -31,36 +33,49 @@ public class PartyCommand {
         profile.createParty();
     }
 
-    @Command(name = "join", desc = "", usage = "<player>")
+    @Command(name = "join", desc = "")
     public void join(@Sender Player player, Player target) {
+        if (!joinable(player, target)) return;
         Party party = API.getProfile(target).getGameData().getParty();
+        API.getProfile(player).getGameData().removeRequest(target.getUniqueId());
+        party.accept(player.getUniqueId(), false);
+    }
+    @Command(name = "joinad", desc = "", hidden = true)
+    public void joinad(@Sender Player player, Player target) {
+        if (!joinable(player, target)) return;
+        Party party = API.getProfile(target).getGameData().getParty();
+        party.accept(player.getUniqueId(), party.isOpen());
+    }
 
-        if (party == null) {
-            MessagesLocale.PARTY_NOT_IN_PARTY.send(player.getUniqueId(), new Replacement("<player>", target.getName()));
-            return;
-        }
-        if (!party.getLeader().equals(target.getUniqueId())) {
-            MessagesLocale.PARTY_NOT_LEADER.send(player.getUniqueId(), new Replacement("<player>", target.getName()));
-            return;
-        }
-        if (!party.isOpen()) {
-            MessagesLocale.PARTY_PRIVATE.send(player.getUniqueId(), new Replacement("<player>", target.getName()));
-            return;
-        }
-
+    private boolean joinable(Player player, Player target) {
+        Party party = API.getProfile(target).getGameData().getParty();
         Profile profile = API.getProfile(player);
-
         if (profile.getGameData().getParty() != null) {
             MessagesLocale.PARTY_ALREADY_IN.send(player.getUniqueId());
-            return;
+            return false;
         }
 
         if (!profile.hasState(ProfileState.IN_LOBBY)) {
-            MessagesLocale.PARTY_CANNOT_CREATE.send(player.getUniqueId());
-            return;
+            MessagesLocale.PARTY_CANNOT_JOIN.send(player.getUniqueId());
+            return false;
         }
-
-        party.accept(player.getUniqueId());
+        if (party == null) {
+            MessagesLocale.PARTY_NOT_IN_PARTY.send(player.getUniqueId(), Placeholder.unparsed("player", target.getName()));
+            return false;
+        }
+        if (!party.getLeader().equals(target.getUniqueId())) {
+            MessagesLocale.PARTY_NOT_LEADER.send(player.getUniqueId(), Placeholder.unparsed("player", target.getName()));
+            return false;
+        }
+        Request request = profile.getGameData().getRequests().get(target.getUniqueId());
+        if (request instanceof PartyRequest) {
+            return true;
+        }
+        if (!party.isOpen()) {
+            MessagesLocale.PARTY_PRIVATE.send(player.getUniqueId(), Placeholder.unparsed("player", target.getName()));
+            return false;
+        }
+        return true;
     }
 
     @Command(name = "disband", desc = "")
@@ -101,14 +116,14 @@ public class PartyCommand {
 
         if (targetProfile.getGameData().getParty() != null) {
             MessagesLocale.PARTY_ALREADY_PARTY.send(player.getUniqueId(),
-                    new Replacement("<player>", target.getName()));
+                    Placeholder.unparsed("player", target.getName()));
             return;
         }
 
         if (profile.getGameData().getRequests().contains(player.getUniqueId()) ||
                 targetProfile.getGameData().getRequests().contains(player.getUniqueId())) {
             MessagesLocale.PARTY_ALREADY_SENT.send(player.getUniqueId(),
-                    new Replacement("<player>", target.getName()));
+                    Placeholder.unparsed("player", target.getName()));
             return;
         }
 
@@ -119,7 +134,7 @@ public class PartyCommand {
 
         party.invite(target.getUniqueId());
         MessagesLocale.PARTY_INVITED.send(player.getUniqueId(),
-                new Replacement("<player>", target.getName()));
+                Placeholder.unparsed("player", target.getName()));
     }
 
     @Command(name = "accept", desc = "", usage = "<uuid>")
@@ -133,9 +148,9 @@ public class PartyCommand {
             return;
         }
 
-        PartyRequest request = (PartyRequest) profile.getGameData().getRequests().get(uuid);
-        if (request != null) {
-            request.getParty().accept(player.getUniqueId());
+        Request request = profile.getGameData().getRequests().get(uuid);
+        if (request instanceof PartyRequest partyRequest) {
+            partyRequest.getParty().accept(player.getUniqueId(), false);
         }
     }
 
@@ -144,7 +159,7 @@ public class PartyCommand {
         Party party = API.getProfile(target).getGameData().getParty();
         if (party == null || !party.getLeader().equals(player.getUniqueId())) {
             MessagesLocale.PARTY_NOT_IN_SAME_PARTY.send(player.getUniqueId(),
-                    new Replacement("<player>", player.getName()));
+                    Placeholder.unparsed("player", player.getName()));
             return;
         }
 
@@ -167,7 +182,7 @@ public class PartyCommand {
         }
         if (!party.equals(targetParty)) {
             MessagesLocale.PARTY_NOT_IN_SAME_PARTY.send(player.getUniqueId(),
-                    new Replacement("<player>", target.getName()));
+                    Placeholder.unparsed("player", target.getName()));
             return;
         }
         if (!party.getLeader().equals(player.getUniqueId())) {

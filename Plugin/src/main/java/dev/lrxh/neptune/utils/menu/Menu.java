@@ -7,30 +7,46 @@ import dev.lrxh.neptune.utils.ServerUtils;
 import dev.lrxh.neptune.utils.menu.impl.DisplayButton;
 import lombok.Getter;
 import lombok.Setter;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.List;
+import java.util.*;
 
 public abstract class Menu {
     @Getter
     private final int size;
     @Getter
     private final boolean updateOnClick;
-    private final String title;
+    private final Component title;
     private final Filter filter;
-    private List<Button> buttons;
 
     @Getter
     @Setter
     private boolean updateEveryTick;
 
+    private final Map<Integer, Button> buttonCache = new HashMap<>();
+    private final Map<Integer, ItemStack> itemCache = new HashMap<>();
+    private final Set<Integer> dirtySlots = new HashSet<>();
+    private final Set<Integer> filterSlots = new HashSet<>();
+    @Getter
+    @Setter
+    private long updateInterval = 20L;
+    private long lastUpdateTick = 0;
+    @Getter
     private Inventory inventory;
 
     public Menu(String title, int size, Filter filter) {
+        this.title = CC.color(title);
+        this.size = size;
+        this.filter = filter;
+        this.updateOnClick = false;
+        this.updateEveryTick = false;
+    }
+    public Menu(Component title, int size, Filter filter) {
         this.title = title;
         this.size = size;
         this.filter = filter;
@@ -39,14 +55,20 @@ public abstract class Menu {
     }
 
     public Menu(int size, Filter filter) {
-        this.title = "";
+        this.title = Component.empty();
         this.size = size;
         this.filter = filter;
         this.updateOnClick = false;
         this.updateEveryTick = false;
     }
-
     public Menu(String title, int size, Filter filter, boolean updateOnClick) {
+        this.title = CC.color(title);
+        this.size = size;
+        this.filter = filter;
+        this.updateOnClick = updateOnClick;
+        this.updateEveryTick = false;
+    }
+    public Menu(Component title, int size, Filter filter, boolean updateOnClick) {
         this.title = title;
         this.size = size;
         this.filter = filter;
@@ -56,8 +78,8 @@ public abstract class Menu {
 
     public abstract List<Button> getButtons(Player player);
 
-    public String getTitle(Player player) {
-        return "";
+    public Component getTitle(Player player) {
+        return Component.empty();
     }
 
     private void set(Inventory inventory, int slot, ItemStack itemStack) {
@@ -74,64 +96,142 @@ public abstract class Menu {
                 MenuService.get().remove(player);
             }
 
-            String title;
-            if (this.title.isEmpty()) {
+            Component title;
+            if (this.title.equals(Component.empty())) {
                 title = getTitle(player);
             } else {
                 title = this.title;
             }
 
-            Inventory inventory = Bukkit.createInventory(player, size, CC.color(title));
-            this.inventory = inventory;
+            this.inventory = Bukkit.createInventory(player, size, title);
             player.openInventory(inventory);
 
-            update(player);
+            fullUpdate(player);
 
             MenuService.get().add(player, this);
         });
     }
 
     public void update(Player player) {
-        buttons = getButtons(player);
+        if (updateEveryTick) {
+            long currentTick = Bukkit.getCurrentTick();
+            if ((currentTick - lastUpdateTick) < updateInterval) {
+                return;
+            }
+            lastUpdateTick = currentTick;
+        }
+
+        List<Button> newButtons = getButtons(player);
+
+        Map<Integer, Button> newButtonMap = new HashMap<>();
+        for (Button button : newButtons) {
+            newButtonMap.put(button.getSlot(), button);
+        }
+
+        dirtySlots.clear();
+
+        for (Integer slot : buttonCache.keySet()) {
+            if (!newButtonMap.containsKey(slot) || hasButtonChanged(slot, newButtonMap.get(slot), player)) {
+                dirtySlots.add(slot);
+            }
+        }
+
+        for (Integer slot : newButtonMap.keySet()) {
+            if (!buttonCache.containsKey(slot)) {
+                dirtySlots.add(slot);
+            }
+        }
+
+        buttonCache.clear();
+        buttonCache.putAll(newButtonMap);
+
+        applyFilter();
+
+        for (Integer slot : dirtySlots) {
+            updateSlot(player, slot);
+        }
+
+        if (!dirtySlots.isEmpty()) {
+            player.updateInventory();
+        }
+    }
+
+    private void fullUpdate(Player player) {
+        buttonCache.clear();
+        itemCache.clear();
+        filterSlots.clear();
+        dirtySlots.clear();
+
+        List<Button> buttons = getButtons(player);
+        for (Button button : buttons) {
+            buttonCache.put(button.getSlot(), button);
+        }
+
+        applyFilter();
+
+        for (int slot = 0; slot < size; slot++) {
+            updateSlot(player, slot);
+        }
+
+        player.updateInventory();
+    }
+
+    private void updateSlot(Player player, int slot) {
+        Button button = buttonCache.get(slot);
+
+        ItemStack item;
+        if (button != null) {
+            item = button.getItemStack(player);
+            itemCache.put(slot, item);
+        } else {
+            item = itemCache.get(slot);
+        }
+
+        set(inventory, slot, item);
+    }
+
+    private void applyFilter() {
+        if (filter == Filter.NONE) {
+            return;
+        }
+
+        Material filterMaterial = Material.getMaterial(MenusLocale.FILTER_MATERIAL.getString());
+        String filterName = MenusLocale.FILTER_NAME.getString();
+
         switch (filter) {
             case FILL -> {
-                for (int i = 0; i < inventory.getSize(); i++) {
-                    if (getButton(i) == null) {
-                        buttons.add(new DisplayButton(i, Material.getMaterial(MenusLocale.FILTER_MATERIAL.getString()), MenusLocale.FILTER_NAME.getString()));
+                for (int i = 0; i < size; i++) {
+                    if (!buttonCache.containsKey(i)) {
+                        Button filterButton = new DisplayButton(i, filterMaterial, filterName);
+                        buttonCache.put(i, filterButton);
+                        filterSlots.add(i);
                     }
                 }
             }
             case BORDER -> {
                 int rows = size / 9;
-                int columns = 9;
-
-                for (int i = 0; i < size; i++) {
-                    int row = i / columns;
-                    int column = i % columns;
-
-                    if (row == 0 || row == rows - 1 || column == 0 || column == columns - 1) {
-                        if (getButton(i) == null) {
-                            buttons.add(new DisplayButton(i, Material.getMaterial(MenusLocale.FILTER_MATERIAL.getString()), MenusLocale.FILTER_NAME.getString()));
-                        }
+                for (int slot = 0; slot < size; slot++) {
+                    if (isBorderSlot(slot, rows) && !buttonCache.containsKey(slot)) {
+                        Button filterButton = new DisplayButton(slot, filterMaterial, filterName);
+                        buttonCache.put(slot, filterButton);
+                        filterSlots.add(slot);
                     }
                 }
             }
-            case NONE -> {
-            }
         }
+    }
 
+    private boolean isBorderSlot(int slot, int rows) {
+        int row = slot / 9;
+        int col = slot % 9;
+        return row == 0 || row == rows - 1 || col == 0 || col == 8;
+    }
 
-        for (Button button : buttons) {
-            set(inventory, button.getSlot(), button.getItemStack(player));
-        }
-        player.updateInventory();
+    protected boolean hasButtonChanged(int slot, Button newButton, Player player) {
+        return !filterSlots.contains(slot);
     }
 
     public Button getButton(int slot) {
-        for (Button button : buttons) {
-            if (button.getSlot() == slot) return button;
-        }
-
-        return null;
+        return buttonCache.get(slot);
     }
 }

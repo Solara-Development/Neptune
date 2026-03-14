@@ -4,5 +4,6 @@ public enum DataType {
     BOOLEAN,
     STRING,
     STRING_LIST,
+    LIST,
     INT
 }

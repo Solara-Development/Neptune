@@ -9,14 +9,13 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class RoundsSelectMenu extends Menu {
     private final Kit kit;
-    private final UUID receiver;
+    private final Player receiver;
 
-    public RoundsSelectMenu(Kit kit, UUID receiver) {
-        super(MenusLocale.ROUNDS_TITLE.getString(), MenusLocale.ROUNDS_SIZE.getInt(), Filter.valueOf(MenusLocale.ROUNDS_FILTER.getString()));
+    public RoundsSelectMenu(Kit kit, Player receiver) {
+        super(MenusLocale.ROUNDS_TITLE.getString().replaceAll("<target>", receiver.getName()), MenusLocale.ROUNDS_SIZE.getInt(), Filter.valueOf(MenusLocale.ROUNDS_FILTER.getString()));
         this.kit = kit;
         this.receiver = receiver;
     }

@@ -24,7 +24,7 @@ public class PlaceholderImpl extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getVersion() {
-        return plugin.getDescription().getVersion();
+        return plugin.getPluginMeta().getVersion();
     }
 
     @Override
@@ -35,7 +35,7 @@ public class PlaceholderImpl extends PlaceholderExpansion {
     @Override
     public String onRequest(OfflinePlayer player, @NotNull String identifier) {
         if (player == null) return identifier;
-        Profile profile = API.getProfile(player);
+        Profile profile = API.getProfile(player.getUniqueId());
         if (profile == null) return identifier;
 
         return PlaceholderManager.get().parse(player, identifier);

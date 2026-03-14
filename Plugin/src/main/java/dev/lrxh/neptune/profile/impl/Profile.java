@@ -5,8 +5,10 @@ import dev.lrxh.api.profile.IProfileState;
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
-import dev.lrxh.neptune.feature.cosmetics.CosmeticService;
-import dev.lrxh.neptune.feature.cosmetics.impl.KillEffect;
+import dev.lrxh.neptune.feature.cosmetics.KillEffect;
+import dev.lrxh.neptune.feature.cosmetics.impl.cosmetics.armortrims.ArmorTrimCosmetic;
+import dev.lrxh.neptune.feature.cosmetics.impl.cosmetics.killmessage.KillMessageCosmetic;
+import dev.lrxh.neptune.feature.cosmetics.impl.cosmetics.shieldpatterns.ShieldPatternCosmetic;
 import dev.lrxh.neptune.feature.divisions.DivisionService;
 import dev.lrxh.neptune.feature.hotbar.HotbarService;
 import dev.lrxh.neptune.feature.party.Party;
@@ -18,8 +20,6 @@ import dev.lrxh.neptune.game.kit.KitService;
 import dev.lrxh.neptune.game.kit.procedure.KitProcedure;
 import dev.lrxh.neptune.game.match.Match;
 import dev.lrxh.neptune.profile.data.*;
-import dev.lrxh.neptune.providers.clickable.ClickableComponent;
-import dev.lrxh.neptune.providers.clickable.Replacement;
 import dev.lrxh.neptune.providers.database.DatabaseService;
 import dev.lrxh.neptune.providers.database.impl.DataDocument;
 import dev.lrxh.neptune.utils.Cooldown;
@@ -28,7 +28,8 @@ import dev.lrxh.neptune.utils.PlayerUtil;
 import dev.lrxh.neptune.utils.tasks.NeptuneRunnable;
 import lombok.Getter;
 import lombok.Setter;
-import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
@@ -51,6 +52,7 @@ public class Profile implements IProfile {
     private Visibility visibility;
     private ArenaProcedure arenaProcedure;
     private KitProcedure kitProcedure;
+    private Player partyInviteTarget;
     private boolean fake;
 
     public Profile(String name, UUID uuid, Neptune plugin, boolean fake) {
@@ -88,7 +90,6 @@ public class Profile implements IProfile {
 
                     DataDocument kitStatistics = dataDocument.getDataDocument("kitData");
                     DataDocument settings = dataDocument.getDataDocument("settings");
-
                     for (Kit kit : KitService.get().kits) {
                         DataDocument kitDocument = kitStatistics.getDataDocument(kit.getName());
                         if (kitDocument == null)
@@ -96,28 +97,29 @@ public class Profile implements IProfile {
 
                         KitData profileKitData = gameData.get(kit);
                         profileKitData.setCurrentStreak(kitDocument.getInteger("WIN_STREAK_CURRENT", 0));
-                        profileKitData.setKills(kitDocument.getInteger("WINS", 0));
+                        profileKitData.setKills(kitDocument.getInteger("KILLS", 0));
+                        profileKitData.setDeaths(kitDocument.getInteger("DEATHS", 0));
+                        profileKitData.setWins(kitDocument.getInteger("WINS", 0));
+                        profileKitData.setLosses(kitDocument.getInteger("LOSSES", 0));
                         profileKitData.setElo(kitDocument.getInteger("ELO", 0));
                         profileKitData.setDivision(DivisionService.get().getDivisionByElo(profileKitData.getElo()));
-                        profileKitData.setDeaths(kitDocument.getInteger("LOSSES", 0));
                         profileKitData.setBestStreak(kitDocument.getInteger("WIN_STREAK_BEST", 0));
                         profileKitData.setKitLoadout(
                                 Objects.equals(kitDocument.getString("kit"), "")
                                         ? kit.getItems()
                                         : ItemUtils.deserialize(kitDocument.getString("kit")));
 
-                         DataDocument customPersistentData = kitDocument.getDataDocument("customPersistentData");
-                         if (customPersistentData != null) {
-                             for (String key : customPersistentData.data.keySet()) {
-                                 profileKitData.setPersistentData(key, customPersistentData.data.get(key));
-                             }
-                         }
+                        DataDocument customPersistentData = kitDocument.getDataDocument("customPersistentData");
+                        if (customPersistentData != null) {
+                            for (String key : customPersistentData.data.keySet()) {
+                                profileKitData.setPersistentData(key, customPersistentData.data.get(key));
+                            }
+                        }
 
                         profileKitData.updateDivision();
                     }
 
                     gameData.setLastPlayedKit(kitStatistics.getString("lastPlayedKit", ""));
-
                     settingData.setPlayerVisibility(settings.getBoolean("showPlayers", true));
                     settingData.setAllowSpectators(settings.getBoolean("allowSpectators", true));
                     settingData.setAllowDuels(settings.getBoolean("allowDuels", true));
@@ -125,15 +127,16 @@ public class Profile implements IProfile {
                     settingData.setMaxPing(settings.getInteger("maxPing", 350));
                     settingData.setKillEffect(KillEffect.valueOf(settings.getString("killEffect", "NONE")));
                     settingData.setMenuSound(settings.getBoolean("menuSound", false));
-                    settingData.setKillMessagePackage(
-                            CosmeticService.get().getDeathMessagePackage(settings.getString("deathMessagePackage")));
+                    settingData.setKillMessagePackage(KillMessageCosmetic.get().getOrDefault(settings.getString("deathMessagePackage")));
+                    settingData.setArmorTrimPackage(ArmorTrimCosmetic.get().getOrDefault(settings.getString("armorTrimPackage")));
+                    settingData.setShieldPatternPackage(ShieldPatternCosmetic.get().getOrDefault(settings.getString("shieldPatternPackage")));
 
-                    // DataDocument globalCustomPersistentData = dataDocument.getDataDocument("customPersistentData");
-                    // if (globalCustomPersistentData != null) {
-                    //     for (String key : globalCustomPersistentData.data.keySet()) {
-                    //         gameData.setPersistentData(key, globalCustomPersistentData.data.get(key));
-                    //     }
-                    // }
+                    DataDocument globalCustomPersistentData = dataDocument.getDataDocument("customPersistentData");
+                    if (globalCustomPersistentData != null) {
+                        for (String key : globalCustomPersistentData.data.keySet()) {
+                            gameData.setPersistentData(key, globalCustomPersistentData.data.get(key));
+                        }
+                    }
 
                     gameData.getGlobalStats().update();
 
@@ -159,9 +162,11 @@ public class Profile implements IProfile {
                 KitData entry = gameData.get(kit);
 
                 kitStatisticsDocument.put("WIN_STREAK_CURRENT", entry.getCurrentStreak());
-                kitStatisticsDocument.put("WINS", entry.getKills());
+                kitStatisticsDocument.put("WINS", entry.getWins());
+                kitStatisticsDocument.put("LOSSES", entry.getLosses());
+                kitStatisticsDocument.put("KILLS", entry.getKills());
+                kitStatisticsDocument.put("DEATHS", entry.getDeaths());
                 kitStatisticsDocument.put("ELO", entry.getElo());
-                kitStatisticsDocument.put("LOSSES", entry.getDeaths());
                 kitStatisticsDocument.put("WIN_STREAK_BEST", entry.getBestStreak());
                 kitStatisticsDocument.put(
                         "kit",
@@ -192,6 +197,8 @@ public class Profile implements IProfile {
             settingsDoc.put("killEffect", settingData.getKillEffect().toString());
             settingsDoc.put("menuSound", settingData.isMenuSound());
             settingsDoc.put("deathMessagePackage", settingData.getKillMessagePackage().getName());
+            settingsDoc.put("armorTrimPackage", settingData.getArmorTrimPackage().getName());
+            settingsDoc.put("shieldPatternPackage", settingData.getShieldPatternPackage().getName());
             dataDocument.put("settings", settingsDoc);
 
             DataDocument globalCustomPersistentData = new DataDocument();
@@ -329,33 +336,15 @@ public class Profile implements IProfile {
         if (player == null)
             return;
 
-        MessagesLocale.DUEL_REQUEST_SENDER.send(sender.getUniqueId(),
-                new Replacement("<receiver>", username),
-                new Replacement("<kit>", duelRequest.getKit().getDisplayName()),
-                new Replacement("<rounds>", String.valueOf(duelRequest.getRounds())),
-                new Replacement("<arena>", duelRequest.getArena().getDisplayName()));
+        duelRequest.sendSenderMessage(playerUUID, false);
 
         gameData.addRequest(duelRequest, senderUUID,
                 ignore -> {
-                    MessagesLocale.DUEL_EXPIRED.send(senderUUID, new Replacement("<player>", player.getName()));
+                    MessagesLocale.DUEL_EXPIRED.send(senderUUID, Placeholder.unparsed("player", player.getName()));
                     duelRequest.getArena().remove();
                 });
 
-        TextComponent accept = new ClickableComponent(MessagesLocale.DUEL_ACCEPT.getString(),
-                "/duel accept-uuid " + duelRequest.getSender().toString(), MessagesLocale.DUEL_ACCEPT_HOVER.getString())
-                .build();
-
-        TextComponent deny = new ClickableComponent(MessagesLocale.DUEL_DENY.getString(),
-                "/duel deny-uuid " + duelRequest.getSender().toString(), MessagesLocale.DUEL_DENY_HOVER.getString())
-                .build();
-
-        MessagesLocale.DUEL_REQUEST_RECEIVER.send(playerUUID,
-                new Replacement("<accept>", accept),
-                new Replacement("<deny>", deny),
-                new Replacement("<kit>", duelRequest.getKit().getDisplayName()),
-                new Replacement("<arena>", duelRequest.getArena().getDisplayName()),
-                new Replacement("<rounds>", String.valueOf(duelRequest.getRounds())),
-                new Replacement("<sender>", sender.getName()));
+        duelRequest.sendReceiverMessage(playerUUID, false);
     }
 
     public void sendRematch(DuelRequest duelRequest) {
@@ -368,29 +357,12 @@ public class Profile implements IProfile {
         Player player = Bukkit.getPlayer(playerUUID);
         if (player == null)
             return;
+        duelRequest.sendSenderMessage(playerUUID, true);
+        gameData.addRequest(duelRequest, senderUUID, ignore -> 
+            MessagesLocale.REMATCH_EXPIRED.send(senderUUID, Placeholder.unparsed("player", player.getName()))
+        );
 
-        MessagesLocale.REMATCH_REQUEST_SENDER.send(sender.getUniqueId(),
-                new Replacement("<receiver>", username),
-                new Replacement("<arena>", duelRequest.getArena().getDisplayName()));
-
-        gameData.addRequest(duelRequest, senderUUID, ignore -> MessagesLocale.REMATCH_EXPIRED.send(senderUUID,
-                new Replacement("<player>", player.getName())));
-
-        TextComponent accept = new ClickableComponent(MessagesLocale.REMATCH_ACCEPT.getString(),
-                "/duel accept-uuid " + duelRequest.getSender().toString(),
-                MessagesLocale.REMATCH_ACCEPT_HOVER.getString()).build();
-
-        TextComponent deny = new ClickableComponent(MessagesLocale.REMATCH_DENY.getString(),
-                "/duel accept-uuid " + duelRequest.getSender().toString(),
-                MessagesLocale.REMATCH_DENY_HOVER.getString()).build();
-
-        MessagesLocale.REMATCH_REQUEST_RECEIVER.send(playerUUID,
-                new Replacement("<accept>", accept),
-                new Replacement("<deny>", deny),
-                new Replacement("<kit>", duelRequest.getKit().getDisplayName()),
-                new Replacement("<arena>", duelRequest.getArena().getDisplayName()),
-                new Replacement("<rounds>", String.valueOf(duelRequest.getRounds())),
-                new Replacement("<sender>", sender.getName()));
+        duelRequest.sendReceiverMessage(playerUUID, true);
     }
 
     public Party createParty() {
@@ -412,8 +384,7 @@ public class Profile implements IProfile {
             return;
         }
 
-        party.broadcast(MessagesLocale.PARTY_LEFT,
-                new Replacement("<player>", username));
+        party.broadcast(MessagesLocale.PARTY_LEFT, Placeholder.unparsed("player", username));
         party.remove(playerUUID);
     }
 

@@ -29,7 +29,6 @@ public class WorldUtils {
                 if (!world.isChunkLoaded(chunkX, chunkZ)) continue;
 
                 for (Entity entity : world.getChunkAt(chunkX, chunkZ).getEntities()) {
-                    if (entity == null) continue;
 
                     if (entity instanceof Player player) {
                         if (entity.getLocation().distanceSquared(center) > radius * radius) continue;

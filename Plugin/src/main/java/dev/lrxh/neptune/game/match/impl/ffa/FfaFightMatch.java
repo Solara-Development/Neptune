@@ -4,7 +4,8 @@ import dev.lrxh.api.match.IFffaFightMatch;
 import dev.lrxh.api.match.participant.IParticipant;
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
-import dev.lrxh.neptune.game.arena.Arena;
+import dev.lrxh.neptune.configs.impl.SoundsLocale;
+import dev.lrxh.neptune.game.arena.VirtualArena;
 import dev.lrxh.neptune.game.kit.Kit;
 import dev.lrxh.neptune.game.match.Match;
 import dev.lrxh.neptune.game.match.impl.MatchState;
@@ -13,12 +14,12 @@ import dev.lrxh.neptune.game.match.impl.participant.Participant;
 import dev.lrxh.neptune.game.match.tasks.MatchEndRunnable;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.providers.clickable.Replacement;
 import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.PlayerUtil;
 import lombok.Getter;
 import net.kyori.adventure.text.TextComponent;
-import org.bukkit.Sound;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +30,8 @@ public class FfaFightMatch extends Match implements IFffaFightMatch {
     @Getter
     private Participant winner;
 
-    public FfaFightMatch(Arena arena, Kit kit, List<Participant> participants) {
-        super(MatchState.STARTING, arena, kit, participants, 1, true, false);
+    public FfaFightMatch(VirtualArena arena, Kit kit, List<Participant> participants) {
+        super(MatchState.STARTING, arena, kit, participants, 1, 1, true, false);
         this.winner = null;
         this.deadParticipants = new ArrayList<>();
         this.participants = participants;
@@ -65,9 +66,9 @@ public class FfaFightMatch extends Match implements IFffaFightMatch {
         if (isEnded()) return;
 
         hideParticipant(participant);
+        incrementDeaths(participant);
         participant.setDead(true);
         participant.setLoser(true);
-
         Profile profile = API.getProfile(participant.getPlayerUUID());
 
         if (!participant.isLeft() && !participant.isDisconnected()) {
@@ -85,7 +86,7 @@ public class FfaFightMatch extends Match implements IFffaFightMatch {
         }
 
         if (participant.getLastAttacker() != null) {
-            participant.getLastAttacker().playSound(Sound.UI_BUTTON_CLICK);
+            participant.getLastAttacker().playSound(SoundsLocale.getSound(SoundsLocale.PLAYER_KILL));
         }
 
         sendDeathMessage(participant);
@@ -96,6 +97,14 @@ public class FfaFightMatch extends Match implements IFffaFightMatch {
         winner = getLastPlayerStanding();
         setEnded(true);
         end(participant);
+    }
+
+    public String getWinnerName() {
+        return winner != null ? winner.getName() : "";
+    }
+
+    public String getLoserName() {
+        return deadParticipants.stream().map(p -> p.getNameColored()).toList().toString();
     }
 
     private boolean isLastPlayerStanding() {
@@ -135,16 +144,18 @@ public class FfaFightMatch extends Match implements IFffaFightMatch {
     public void startMatch() {
         setState(MatchState.IN_ROUND);
         showPlayerForSpectators();
-        playSound(Sound.ENTITY_FIREWORK_ROCKET_BLAST);
+        playSound(SoundsLocale.getSound(SoundsLocale.MATCH_START));
         sendTitle(CC.color(MessagesLocale.MATCH_START_TITLE_HEADER.getString()), CC.color(MessagesLocale.MATCH_START_TITLE_FOOTER.getString()), 20);
     }
 
     @Override
     public void sendEndMessage() {
         if (winner == null) return;
-        forEachParticipant(participant -> MessagesLocale.MATCH_END_DETAILS_FFA.send(participant.getPlayerUUID(),
-                new Replacement("<winner>", winner.getNameUnColored()),
-                new Replacement("<kit>", getKit().getDisplayName())));
+        forEachParticipant(participant -> 
+            MessagesLocale.MATCH_END_DETAILS_FFA.send(participant.getPlayerUUID(), TagResolver.resolver(
+                Placeholder.unparsed("winner", winner.getNameUnColored()),
+                Placeholder.parsed("kit", getKit().getDisplayName())
+            )));
     }
 
     @Override

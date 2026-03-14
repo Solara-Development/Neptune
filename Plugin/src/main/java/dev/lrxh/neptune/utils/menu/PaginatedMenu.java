@@ -15,7 +15,10 @@ public abstract class PaginatedMenu extends Menu {
     private int page = 1;
 
     public PaginatedMenu(String title, int size, Filter filter) {
-        super(title, size, filter);
+        super(title, size, filter, false);
+    }
+    public PaginatedMenu(String title, int size, Filter filter, boolean updateOnClick) {
+        super(title, size, filter, updateOnClick);
     }
 
     public final void modPage(Player player, int mod) {

@@ -4,8 +4,8 @@ import dev.lrxh.api.arena.IArena;
 import dev.lrxh.api.kit.IKit;
 import dev.lrxh.api.kit.IKitRule;
 import dev.lrxh.neptune.API;
-import dev.lrxh.neptune.configs.impl.SettingsLocale;
 import dev.lrxh.neptune.game.arena.Arena;
+import dev.lrxh.neptune.game.arena.VirtualArena;
 import dev.lrxh.neptune.game.kit.impl.KitRule;
 import dev.lrxh.neptune.game.match.impl.participant.Participant;
 import dev.lrxh.neptune.profile.ProfileService;
@@ -22,6 +22,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.ShieldMeta;
 import org.bukkit.potion.PotionEffect;
 
 import java.util.*;
@@ -189,13 +191,11 @@ public class Kit implements IKit {
                 (map, entry) -> map.put(entry.getKey(), entry.getValue()), HashMap::putAll);
     }
 
-    public CompletableFuture<Arena> getRandomArena() {
+    public CompletableFuture<VirtualArena> getRandomArena() {
         List<Arena> arenas1 = new ArrayList<>();
 
         for (Arena arena : arenas) {
             if (!arena.isEnabled())
-                continue;
-            if (arena.isUsed() && !SettingsLocale.ARENA_DUPLICATES.getBoolean())
                 continue;
             if (!arena.isSetup() || !arena.isDoneLoading())
                 continue;
@@ -207,29 +207,28 @@ public class Kit implements IKit {
 
         Arena selected = arenas1.get(ThreadLocalRandom.current().nextInt(arenas1.size()));
 
-        if (!SettingsLocale.ARENA_DUPLICATES.getBoolean()) {
-            selected.setUsed(true);
-            return CompletableFuture.completedFuture(selected);
-        }
         return selected.createDuplicate().thenApply(arena -> arena);
     }
 
     @Override
     public void giveLoadout(UUID playerUUID) {
+        giveLoadout(playerUUID, true);
+    }
+
+    public void giveLoadout(UUID playerUUID, boolean giveEffects) {
         Player player = Bukkit.getPlayer(playerUUID);
         if (player == null)
             return;
         Profile profile = API.getProfile(playerUUID);
         GameData gameData = profile.getGameData();
-        if (gameData.getKitData() == null || gameData.get(this) == null ||
-                gameData.get(this).getKitLoadout().isEmpty()) {
+        List<ItemStack> loadout = gameData.get(this).getKitLoadout();
+        if (gameData.getKitData() == null || gameData.get(this) == null || loadout.isEmpty()) {
             player.getInventory().setContents(items.toArray(new ItemStack[0]));
         } else {
-            player.getInventory().setContents(gameData.get(this).getKitLoadout().toArray(new ItemStack[0]));
+            player.getInventory().setContents(loadout.toArray(new ItemStack[0]));
         }
-
-        player.addPotionEffects(potionEffects);
-
+        if (giveEffects) player.addPotionEffects(potionEffects);
+        ItemUtils.applyArmorTrim(profile);
         player.updateInventory();
     }
 
@@ -248,9 +247,16 @@ public class Kit implements IKit {
                     .setContents(ItemUtils.color(gameData.get(this).getKitLoadout().toArray(new ItemStack[0]),
                             participant.getColor().getContentColor()));
         }
-
         player.addPotionEffects(potionEffects);
-
+        ItemUtils.applyArmorTrim(profile);
+        for(ItemStack item : player.getInventory()) {
+            if (item == null) continue;
+            ItemMeta meta = item.getItemMeta();
+            if (meta instanceof ShieldMeta shield) {
+                shield.setPatterns(profile.getSettingData().getShieldPatternPackage().getPatterns());
+                item.setItemMeta(shield);
+            }
+        }
         player.updateInventory();
     }
 

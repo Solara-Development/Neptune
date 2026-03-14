@@ -45,7 +45,7 @@ public class ArenaManagementMenu extends Menu {
             buttons.add(new ArenaDeleteButton(21, arena));
 
             buttons.add(new ArenaSetDeathYButton(9, arena));
-
+            buttons.add(new ArenaSetTimeButton(10, arena));
 
             buttons.add(new ArenaSetLimitButton(4, arena));
 

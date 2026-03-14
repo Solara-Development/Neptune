@@ -11,6 +11,7 @@ import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.providers.manager.IService;
 import dev.lrxh.neptune.utils.ConfigFile;
 import lombok.Getter;
+
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
@@ -45,7 +46,9 @@ public class HotbarService extends IService {
 
     public void giveItems(Player player) {
         player.getInventory().clear();
+        player.getActivePotionEffects().clear();
         ProfileState profileState = API.getProfile(player).getState();
+
         if (profileState.equals(ProfileState.IN_KIT_EDITOR)) return;
 
         Hotbar inventory = items.get(profileState);
@@ -87,7 +90,7 @@ public class HotbarService extends IService {
                     if (!enabled) continue;
 
                     try {
-                        Item item = new Item(ItemAction.valueOf(itemName), displayName, material, lore, enabled, slot, customModelData);
+                        Item item = new Item(ItemAction.valueOf(itemName), displayName, material, lore, true, slot, customModelData);
                         if (slot >= 0 && slot < inventory.getSlots().length) {
                             inventory.setSlot(slot, item);
                         }
@@ -107,10 +110,11 @@ public class HotbarService extends IService {
                 byte slot = (byte) config.getInt(path + "SLOT");
                 List<String> lore = config.getStringList(path + "LORE");
                 String command = config.getString(path + "COMMAND");
+                List<String> commands = config.getStringList(path + "COMMANDS");
                 ProfileState profileState = ProfileState.valueOf(config.getString(path + "STATE"));
                 int customModelData = config.getInt(path + "CUSTOM_MODEL_DATA", 0);
-
-                CustomItem customItem = new CustomItem(displayName, material, lore, slot, command, customModelData);
+                if (command != null && !command.isEmpty() && !commands.contains(command)) commands.add(command);
+                CustomItem customItem = new CustomItem(displayName, material, lore, slot, commands, customModelData);
                 items.get(profileState).addItem(customItem, slot);
             }
         }

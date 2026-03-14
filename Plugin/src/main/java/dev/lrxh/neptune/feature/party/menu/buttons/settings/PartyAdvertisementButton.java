@@ -5,10 +5,11 @@ import dev.lrxh.neptune.configs.impl.MenusLocale;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.feature.party.Party;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.providers.clickable.Replacement;
 import dev.lrxh.neptune.utils.ItemBuilder;
 import dev.lrxh.neptune.utils.ItemUtils;
 import dev.lrxh.neptune.utils.menu.Button;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
@@ -38,8 +39,7 @@ public class PartyAdvertisementButton extends Button {
 
         return new ItemBuilder(MenusLocale.PARTY_SETTINGS_ADVERTISEMENTS_MATERIAL.getString())
                 .name(MenusLocale.PARTY_SETTINGS_ADVERTISEMENTS_TITLE.getString())
-                .lore(profile.hasCooldownEnded("party_advertise") ? MenusLocale.PARTY_SETTINGS_ADVERTISEMENTS_LORE_NO_COOLDOWN.getStringList() : ItemUtils.getLore(MenusLocale.PARTY_SETTINGS_ADVERTISEMENTS_LORE_COOLDOWN.getStringList(), new Replacement("<cooldown>", profile.getCooldowns().get("party_advertise").formatMinutesSeconds())), player)
-
+                .componentLore(profile.hasCooldownEnded("party_advertise") ? ItemUtils.getLore(MenusLocale.PARTY_SETTINGS_ADVERTISEMENTS_LORE_NO_COOLDOWN.getStringList()) : ItemUtils.getLore(MenusLocale.PARTY_SETTINGS_ADVERTISEMENTS_LORE_COOLDOWN.getStringList(), Placeholder.unparsed("cooldown", profile.getCooldowns().get("party_advertise").formatMinutesSeconds())), player)
                 .build();
     }
 }

@@ -1,0 +1,19 @@
+# use "/neptune addshield <name>" while holding a shield/banner with patterns to easily add a new shield pattern
+# pattern type names from https://raw.githubusercontent.com/misode/mcmeta/refs/heads/registries/banner_pattern/data.json
+SHIELD_PATTERNS:
+  DEFAULT:
+    DISPLAY_NAME: "<gray>None"
+    MATERIAL: barrier
+    SLOT: 10
+    PATTERNS: []
+  CREEPER:
+    DISPLAY_NAME: <green>Creeper
+    DESCRIPTION:
+      - <italic>hisss
+    MATERIAL: shield
+    SLOT: 11
+    PATTERNS:
+      - DYE: LIME
+        PATTERN: base
+      - DYE: BLACK
+        PATTERN: creeper

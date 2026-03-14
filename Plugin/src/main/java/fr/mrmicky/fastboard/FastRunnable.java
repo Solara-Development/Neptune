@@ -1,9 +1,9 @@
 package fr.mrmicky.fastboard;
 
-import dev.lrxh.neptune.utils.CC;
 import fr.mrmicky.fastboard.adventure.FastBoard;
 import lombok.AllArgsConstructor;
 import net.kyori.adventure.text.Component;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -28,32 +28,27 @@ public class FastRunnable implements Runnable {
 
             FastBoard board = entry.getValue();
 
-            String rawTitle = getSafeTitle(player);
-            List<String> rawLines = getSafeLines(player);
+            Component title = getSafeTitle(player);
+            List<Component> lines = getSafeLines(player);
 
-            board.updateTitle(CC.color(rawTitle));
-
-            List<Component> newLines = new ArrayList<>();
-            for (String line : rawLines) {
-                newLines.add(CC.color(line));
-            }
-            board.updateLines(newLines);
+            board.updateTitle(title);
+            board.updateLines(lines);
         }
     }
 
-    private String getSafeTitle(Player player) {
+    private Component getSafeTitle(Player player) {
         try {
             return manager.fastAdapter.getTitle(player);
         } catch (Exception e) {
-            return "Default Title"; // Fallback title
+            return Component.text("Default Title"); // Fallback title
         }
     }
 
-    private List<String> getSafeLines(Player player) {
+    private List<Component> getSafeLines(Player player) {
         try {
             return manager.fastAdapter.getLines(player);
         } catch (Exception e) {
-            return Collections.emptyList(); // Fallback to an empty list of lines
+            return new ArrayList<>(); // Fallback to an empty list of lines
         }
     }
 }

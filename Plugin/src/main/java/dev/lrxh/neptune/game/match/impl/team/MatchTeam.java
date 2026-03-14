@@ -90,4 +90,8 @@ public class MatchTeam implements IMatchTeam {
         points++;
         forEachParticipant(Participant::addWin);
     }
+
+    public String getBedMessage() {
+        return ((Participant) getParticipants().getFirst()).getBedMessage();
+    }
 }

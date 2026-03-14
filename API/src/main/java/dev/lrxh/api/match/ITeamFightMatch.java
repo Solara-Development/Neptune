@@ -9,9 +9,9 @@ import java.util.UUID;
 public interface ITeamFightMatch extends IMatch {
     List<IParticipant> getParticipants();
 
-    IMatchTeam getTeamA();
+    IMatchTeam getRedTeam();
 
-    IMatchTeam getTeamB();
+    IMatchTeam getBlueTeam();
 
     IMatchTeam getWinner();
 

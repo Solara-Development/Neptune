@@ -2,9 +2,10 @@ package dev.lrxh.neptune.utils;
 
 import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
-import dev.lrxh.neptune.providers.clickable.Replacement;
+import dev.lrxh.neptune.profile.ProfileService;
+import dev.lrxh.neptune.profile.impl.Profile;
 import lombok.experimental.UtilityClass;
-import org.bukkit.entity.Player;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 @UtilityClass
 public class ServerUtils {
@@ -17,9 +18,19 @@ public class ServerUtils {
         Neptune.get().getLogger().severe(message);
     }
 
-    public void broadcast(MessagesLocale message, Replacement... replacements) {
-        for (Player player : Neptune.get().getServer().getOnlinePlayers()) {
-            message.send(player.getUniqueId(), replacements);
+    public void broadcast(MessagesLocale message) {
+        for (Profile profile : ProfileService.get().profiles.values()) {
+            if (profile.getPlayer() != null && profile.getPlayer().isOnline()) {
+                message.send(profile.getPlayerUUID(), TagResolver.empty());
+            }
+        }
+    }
+
+    public void broadcast(MessagesLocale message, TagResolver resolver) {
+        for (Profile profile : ProfileService.get().profiles.values()) {
+            if (profile.getPlayer() != null && profile.getPlayer().isOnline()) {
+                message.send(profile.getPlayerUUID(), resolver);
+            }
         }
     }
 }

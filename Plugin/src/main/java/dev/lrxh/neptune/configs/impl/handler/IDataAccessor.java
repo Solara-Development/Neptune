@@ -6,6 +6,7 @@ import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -23,6 +24,14 @@ public interface IDataAccessor {
 
     default int getInt() {
         return getConfigFile().getConfiguration().getInt(getPath());
+    }
+
+    default <T> List<T> getList(Class<T> type) {
+        return Objects.requireNonNull(getConfigFile().getConfiguration().getList(getPath()))
+                .stream()
+                .filter(type::isInstance)
+                .map(type::cast)
+                .toList();
     }
 
     default boolean getBoolean() {
@@ -52,18 +61,18 @@ public interface IDataAccessor {
         }
     }
 
-    default void setValue(String path, List<String> rawValue, DataType type) {
+    default void setValue(String path, List<?> rawValue, DataType type) {
         switch (type) {
-            case STRING_LIST -> getConfigFile().getConfiguration().set(path, rawValue);
-            case STRING -> getConfigFile().getConfiguration().set(path, rawValue.get(0));
-            case INT -> getConfigFile().getConfiguration().set(path, Integer.parseInt(rawValue.get(0)));
-            case BOOLEAN -> getConfigFile().getConfiguration().set(path, Boolean.parseBoolean(rawValue.get(0)));
+            case LIST -> getConfigFile().getConfiguration().set(path, rawValue);
+            case STRING_LIST -> getConfigFile().getConfiguration().set(path, rawValue.stream().map(String::valueOf).toList());
+            case STRING -> getConfigFile().getConfiguration().set(path, String.valueOf(rawValue.getFirst()));
+            case INT -> getConfigFile().getConfiguration().set(path, Integer.parseInt(String.valueOf(rawValue.getFirst())));
+            case BOOLEAN -> getConfigFile().getConfiguration().set(path, Boolean.parseBoolean(String.valueOf(rawValue.getFirst())));
         }
     }
 
     default void set(Object value) {
         getConfigFile().getConfiguration().set(getPath(), value);
-        getConfigFile().save();
     }
 
     default void comment(String path, String comment) {
@@ -122,4 +131,6 @@ public interface IDataAccessor {
             }
         }
     }
+
+    public void update();
 }

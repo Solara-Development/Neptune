@@ -4,16 +4,19 @@ import dev.lrxh.api.match.IMatch;
 import dev.lrxh.api.match.participant.IParticipant;
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
+import dev.lrxh.neptune.configs.impl.SoundsLocale;
 import dev.lrxh.neptune.game.kit.impl.KitRule;
 import dev.lrxh.neptune.game.match.Match;
 import dev.lrxh.neptune.game.match.impl.team.TeamFightMatch;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.providers.clickable.Replacement;
 import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.PlayerUtil;
 import dev.lrxh.neptune.utils.Time;
 import lombok.Data;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -41,6 +44,7 @@ public class Participant implements IParticipant {
     private boolean frozen = false;
     private boolean bedBroken;
     private Time time;
+    private Match match;
 
     // ELO CHANGES
     private int eloChange = 0;
@@ -64,7 +68,7 @@ public class Participant implements IParticipant {
 
     public void setDead(boolean dead) {
         this.dead = dead;
-        playSound(Sound.BLOCK_NOTE_BLOCK_PLING);
+        playSound(SoundsLocale.getSound(SoundsLocale.PLAYER_DEATH));
     }
 
     public boolean setCurrentCheckPoint(Location location) {
@@ -155,15 +159,20 @@ public class Participant implements IParticipant {
         PlayerUtil.sendTitle(player, CC.color(header.getString()), CC.color(footer.getString()), duration);
     }
 
-    public void sendMessage(TextComponent message) {
-        PlayerUtil.sendMessage(playerUUID, message);
+    public void sendMessage(Component component) {
+        PlayerUtil.sendMessage(getPlayerUUID(), component);
     }
-
-    public void sendMessage(MessagesLocale message, Replacement... replacements) {
+    public void sendMessage(MessagesLocale message) {
         Player player = getPlayer();
         if (player == null)
             return;
-        message.send(player, replacements);
+        message.send(player);
+    }
+    public void sendMessage(MessagesLocale message, TagResolver resolver) {
+        Player player = getPlayer();
+        if (player == null)
+            return;
+        message.send(player, resolver);
     }
 
     public void resetCombo() {
@@ -198,7 +207,7 @@ public class Participant implements IParticipant {
         Match match = API.getProfile(playerUUID).getMatch();
         if (match.getKit().is(KitRule.BOXING)) {
             if (match instanceof TeamFightMatch teamFightMatch
-                    ? hits >= teamFightMatch.getTeamA().getParticipants().size() * 100
+                    ? hits >= teamFightMatch.getRedTeam().getParticipants().size() * 100
                     : hits >= 100) {
                 opponent.setDeathCause(getLastAttacker() != null ? DeathCause.KILL : DeathCause.DIED);
                 match.onDeath(opponent);
@@ -206,23 +215,17 @@ public class Participant implements IParticipant {
         }
     }
 
-    public String getHitsDifference(Participant otherParticipant) {
-        if (hits - otherParticipant.getHits() > 0) {
-            return "&a(+" + (hits - otherParticipant.getHits()) + ")";
-        } else if (hits - otherParticipant.getHits() < 0) {
-            return "&c(" + (hits - otherParticipant.getHits()) + ")";
-        } else {
-            return "&e(" + (hits - otherParticipant.getHits()) + ")";
-        }
-    }
-
     public String getHitsDifference(IParticipant otherParticipant) {
+        String hitDiff = String.valueOf(hits - otherParticipant.getHits());
         if (hits - otherParticipant.getHits() > 0) {
-            return "&a(+" + (hits - otherParticipant.getHits()) + ")";
+            return MessagesLocale.MATCH_BOXING_HIT_DIFFERENCE_HIGHER.getString().replace("<hit-difference>",
+                    hitDiff);
         } else if (hits - otherParticipant.getHits() < 0) {
-            return "&c(" + (hits - otherParticipant.getHits()) + ")";
+            return MessagesLocale.MATCH_BOXING_HIT_DIFFERENCE_LOWER.getString().replace("<hit-difference>",
+                    hitDiff);
         } else {
-            return "&e(" + (hits - otherParticipant.getHits()) + ")";
+            return MessagesLocale.MATCH_BOXING_HIT_DIFFERENCE_EQUAL.getString().replace("<hit-difference>",
+                    hitDiff);
         }
     }
 
@@ -273,5 +276,14 @@ public class Participant implements IParticipant {
         if (p != null)
             return p;
         return Bukkit.getPlayer(getName());
+    }
+
+    public String getBedMessage() {
+        return (!isBedBroken() ? MessagesLocale.MATCH_BED_STATUS_NOT_BROKEN : MessagesLocale.MATCH_BED_STATUS_BROKEN).getString()
+            .replaceAll("<members-left>", "1");
+    }
+
+    public String getComboMessage() {
+        return getCombo() > 1 ? MessagesLocale.MATCH_BOXING_COMBO_PLACEHOLDER.toString().replaceAll("<combo>", String.valueOf(getCombo())) : MessagesLocale.MATCH_BOXING_COMBO_NO_COMBO_PLACEHOLDER.toString();
     }
 }

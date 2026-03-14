@@ -25,18 +25,15 @@ public enum SettingsLocale implements IDataAccessor {
     PARTICIPANT_COLOR_BLUE("PARTICIPANT.COLOR.BLUE", "", DataType.STRING, "&9"),
     PARTICIPANT_COLOR_RED("PARTICIPANT.COLOR.RED", "", DataType.STRING, "&c"),
     REQUEST_EXPIRY_TIME("REQUEST.EXPIRY_TIME", "How long a request should last in seconds.", DataType.INT, "30"),
-    ARENA_DUPLICATES("ARENA.DUPLICATES",
-            "Should neptune duplicate the arena on match start (EXPERIMENTAL)", DataType.BOOLEAN, "false"),
-    ARENA_COPY_OFFSET_X("ARENA.COPY_OFFSET.X", "The offset in the X direction when duplicating an arena.", DataType.INT,
-            "496"),
-    ARENA_COPY_OFFSET_Z("ARENA.COPY_OFFSET.Z", "The offset in the Z direction when duplicating an arena.", DataType.INT,
-            "0"),
+    VOID_Y_LOCATION("VOID_Y_LOCATION", "The Y level at which players are considered to be in the void and will be teleported back to spawn.", DataType.INT,
+            "-64"),
     IN_MATCH_BLOCKED_COMMANDS("IN_MATCH.BLOCK_COMMANDS", "Commands which the player can't run during a match.",
             DataType.STRING_LIST,
             ""),
     PARTY_ADVERTISE_TIME("PARTY.ADVERTISE_TIME",
             "The time it should take for sending each message for party advertisements, in ticks (20 ticks = 1 second).",
-            DataType.INT, "6000");
+            DataType.INT, "6000"),
+    VERSION("VERSION", "Do not change this!", DataType.INT, "1");
 
     private final String path;
     private final String comment;
@@ -66,5 +63,5 @@ public enum SettingsLocale implements IDataAccessor {
     public ConfigFile getConfigFile() {
         return ConfigService.get().getMainConfig();
     }
-
+    public void update() {}
 }

@@ -2,10 +2,17 @@ package dev.lrxh.neptune.providers.listeners;
 
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.Neptune;
+import dev.lrxh.neptune.configs.impl.MessagesLocale;
+import dev.lrxh.neptune.configs.impl.SettingsLocale;
+import dev.lrxh.neptune.feature.party.Party;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.utils.CC;
+import dev.lrxh.neptune.utils.tasks.NeptuneRunnable;
+import dev.lrxh.neptune.utils.tasks.TaskScheduler;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,6 +25,7 @@ import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.event.weather.WeatherChangeEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.potion.PotionEffect;
 
@@ -51,15 +59,48 @@ public class GlobalListener implements Listener {
         }
     }
 
+    @EventHandler
+    public void onRightClick(PlayerInteractEntityEvent event) {
+        Player player = event.getPlayer();
+        Profile profile = API.getProfile(player);
+        if (profile == null || !profile.hasState(ProfileState.IN_LOBBY)) return;
+        if (!(event.getRightClicked() instanceof Player target) || event.getHand() != EquipmentSlot.HAND || !target.isOnline()) return;
+        if (player.isSneaking()) {
+            Party party = profile.getGameData().getParty();
+            if (party == null || !party.isLeader(player.getUniqueId()))
+                return;
+            if (profile.getPartyInviteTarget() == target) {
+                profile.setPartyInviteTarget(null);
+                player.chat("/party invite " + target.getName());
+            } else {
+                profile.setPartyInviteTarget(target);
+                MessagesLocale.PARTY_INVITE_CONFIRM.send(player, Placeholder.unparsed("player", target.getName()));
+                TaskScheduler.get().startTaskLater(new NeptuneRunnable() {
+                    @Override
+                    public void run() {
+                        if (profile.getPartyInviteTarget() == target) {
+                            profile.setPartyInviteTarget(null);
+                        }
+                    }
+                }, 200L);
+            }
+        }
+        else {
+            player.chat("/duel " + target.getName());
+        }
+    }
 
     @EventHandler
-    public void onShiftRightClick(PlayerInteractEntityEvent event) {
+    public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
-
-        if (event.getRightClicked() instanceof Player clicked) {
-            if (!player.isSneaking()) return;
-
-            player.chat("/duel " + clicked.getName());
+        Profile profile = API.getProfile(player);
+        if (profile == null) return;
+        if (profile.getState() != ProfileState.IN_LOBBY) return;
+        Location spawn = Neptune.get().getCache().getSpawn();
+        if (spawn == null) return;
+        if (spawn.getWorld() != player.getWorld()) return;
+        if (player.getLocation().getY() <= SettingsLocale.VOID_Y_LOCATION.getInt()) {
+            player.teleport(spawn);
         }
     }
 
@@ -111,20 +152,12 @@ public class GlobalListener implements Listener {
         Player player = event.getPlayer();
         if (player.getGameMode() == GameMode.CREATIVE) return;
         Profile profile = API.getProfile(player);
-        if (profile != null && profile.getState().equals(ProfileState.IN_CUSTOM)) return;
+        if (profile == null) return;
+        if (profile.getState().equals(ProfileState.IN_CUSTOM)) return;
         if (profile.getState().equals(ProfileState.IN_SPECTATOR)) event.setCancelled(true);
         if (isPlayerNotInMatch(profile)) {
             event.setCancelled(true);
-            if (profile != null) {
-                ProfileState state = profile.getState();
-                if (state.equals(ProfileState.IN_KIT_EDITOR)) {
-                    player.sendMessage(CC.color("&cYou can't break blocks in the kit editor!"));
-                } else if (state.equals(ProfileState.IN_QUEUE)) {
-                    player.sendMessage(CC.color("&cYou can't break blocks while in queue!"));
-                } else {
-                    player.sendMessage(CC.color("&cYou can't break blocks here!"));
-                }
-            }
+            MessagesLocale.CANT_DO_THIS_NOW.send(player);
         }
     }
 
@@ -136,7 +169,7 @@ public class GlobalListener implements Listener {
         if (profile != null && profile.getState().equals(ProfileState.IN_CUSTOM)) return;
         if (isPlayerNotInMatch(profile)) {
             event.setCancelled(true);
-            player.sendMessage(CC.color("&cYou can't place liquids here!"));
+            MessagesLocale.CANT_DO_THIS_NOW.send(player);
         }
     }
 
@@ -194,14 +227,20 @@ public class GlobalListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onFoodLevelChange(FoodLevelChangeEvent event) {
-        if (event.getEntity() instanceof Player player) {
-            Profile profile = API.getProfile(player);
-            if (profile != null && profile.getState().equals(ProfileState.IN_CUSTOM)) return;
-            if (isPlayerNotInMatch(profile) && profile.getState() != ProfileState.IN_CUSTOM) {
-                event.setCancelled(true);
-            }
+        if (!(event.getEntity() instanceof Player player)) return;
+        Profile profile = API.getProfile(player);
+
+        if (profile == null) {
+            return;
         }
+
+        if (profile.getState().equals(ProfileState.IN_CUSTOM)) {
+            return;
+        }
+
+        if (isPlayerNotInMatch(profile)) event.setCancelled(true);
     }
+
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onProjectileHit(ProjectileHitEvent event) {

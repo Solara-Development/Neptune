@@ -2,6 +2,8 @@ package dev.lrxh.neptune.feature.itembrowser;
 
 import dev.lrxh.api.features.IItemBrowserService;
 import org.bukkit.Material;
+import org.bukkit.Registry;
+import org.bukkit.block.BlockType;
 import org.bukkit.entity.Player;
 
 import java.util.*;
@@ -13,12 +15,6 @@ public class ItemBrowserService implements IItemBrowserService {
 
     private final Map<String, List<Material>> sectionMaterials = new HashMap<>();
     private final Map<UUID, SearchSession> searchSessions = new HashMap<>();
-
-    private final List<Material> cachedMaterials = new ArrayList<>();
-
-    public ItemBrowserService() {
-        Arrays.stream(Material.values()).filter(m -> m != Material.AIR).forEach(cachedMaterials::add);
-    }
 
     public static ItemBrowserService get() {
         if (instance == null) {
@@ -34,7 +30,15 @@ public class ItemBrowserService implements IItemBrowserService {
     }
 
     public List<Material> getBlocks() {
-        return cachedMaterials.stream().filter(Material::isBlock).toList();
+        List<Material> list = new ArrayList<>();
+
+        for (BlockType block : Registry.BLOCK) {
+            Material m = block.asMaterial();
+            if (m != null && !m.isAir()) {
+                list.add(m);
+            }
+        }
+        return list;
     }
 
     @Override

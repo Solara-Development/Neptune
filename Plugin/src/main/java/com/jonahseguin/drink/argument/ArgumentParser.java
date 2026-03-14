@@ -11,6 +11,8 @@ import com.jonahseguin.drink.exception.CommandExitMessage;
 import com.jonahseguin.drink.parametric.CommandParameter;
 import com.jonahseguin.drink.parametric.DrinkProvider;
 
+import dev.lrxh.neptune.configs.impl.MessagesLocale;
+
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +62,8 @@ public class ArgumentParser {
     }
 
     @Nonnull
-    public Object[] parseArguments(@Nonnull CommandExecution execution, @Nonnull DrinkCommand command, @Nonnull CommandArgs args) throws CommandExitMessage, CommandArgumentException {
+    public Object[] parseArguments(@Nonnull CommandExecution execution, @Nonnull DrinkCommand command,
+            @Nonnull CommandArgs args) throws CommandExitMessage, CommandArgumentException {
 
         Preconditions.checkNotNull(command, "DrinkCommand cannot be null");
         Preconditions.checkNotNull(args, "CommandArgs cannot be null");
@@ -88,7 +91,8 @@ public class ArgumentParser {
                     continue;
                 }
 
-                Object o = provider.provide(new CommandArg(args.getSender(), value, args), parameter.getAllAnnotations());
+                Object o = provider.provide(new CommandArg(args.getSender(), value, args),
+                        parameter.getAllAnnotations());
                 o = commandService.getModifierService().executeModifiers(execution, parameter, o);
                 arguments[i] = o;
                 continue;
@@ -104,7 +108,8 @@ public class ArgumentParser {
 
                     value = parameter.getDefaultOptionalValue();
 
-                    Object o = provider.provide(new CommandArg(args.getSender(), value, args), parameter.getAllAnnotations());
+                    Object o = provider.provide(new CommandArg(args.getSender(), value, args),
+                            parameter.getAllAnnotations());
                     o = commandService.getModifierService().executeModifiers(execution, parameter, o);
                     arguments[i] = o;
                     continue;
@@ -112,7 +117,8 @@ public class ArgumentParser {
 
                 try {
 
-                    Object o = provider.provide(new CommandArg(args.getSender(), value, args), parameter.getAllAnnotations());
+                    Object o = provider.provide(new CommandArg(args.getSender(), value, args),
+                            parameter.getAllAnnotations());
                     o = commandService.getModifierService().executeModifiers(execution, parameter, o);
                     arguments[i] = o;
 
@@ -120,7 +126,8 @@ public class ArgumentParser {
 
                     value = parameter.getDefaultOptionalValue();
 
-                    Object o = provider.provide(new CommandArg(args.getSender(), value, args), parameter.getAllAnnotations());
+                    Object o = provider.provide(new CommandArg(args.getSender(), value, args),
+                            parameter.getAllAnnotations());
                     o = commandService.getModifierService().executeModifiers(execution, parameter, o);
                     arguments[i] = o;
 
@@ -133,13 +140,15 @@ public class ArgumentParser {
             if (provider.doesConsumeArgument()) {
 
                 if (!args.hasNext()) {
-                    throw new CommandArgumentException("Missing argument for: " + provider.argumentDescription());
+                    throw new CommandArgumentException(MessagesLocale.MISSING_ARGUMENT.getString()
+                            .replaceAll("<command>", provider.argumentDescription()));
                 }
 
                 value = args.next();
 
                 if (value == null && !provider.allowNullArgument()) {
-                    throw new CommandArgumentException("Argument already consumed for next argument: " + provider.argumentDescription() + " (this is a provider error!)");
+                    throw new CommandArgumentException("Argument already consumed for next argument: "
+                            + provider.argumentDescription() + " (this is a provider error!)");
                 }
             }
 

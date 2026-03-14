@@ -3,10 +3,13 @@ package dev.lrxh.neptune.game.match;
 import dev.lrxh.api.events.MatchReadyEvent;
 import dev.lrxh.api.match.IMatch;
 import dev.lrxh.api.match.IMatchService;
+import dev.lrxh.api.match.participant.IParticipant;
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.Neptune;
-import dev.lrxh.neptune.game.arena.Arena;
+import dev.lrxh.neptune.game.arena.ArenaService;
+import dev.lrxh.neptune.game.arena.VirtualArena;
 import dev.lrxh.neptune.game.kit.Kit;
+import dev.lrxh.neptune.game.kit.KitService;
 import dev.lrxh.neptune.game.match.impl.ffa.FfaFightMatch;
 import dev.lrxh.neptune.game.match.impl.participant.Participant;
 import dev.lrxh.neptune.game.match.impl.participant.ParticipantColor;
@@ -30,7 +33,7 @@ public class MatchService implements IMatchService {
         return instance;
     }
 
-    public void startMatch(Participant playerRed, Participant playerBlue, Kit kit, Arena arena, boolean duel, int rounds) {
+    public void startMatch(Participant playerRed, Participant playerBlue, Kit kit, VirtualArena arena, boolean duel, int rounds) {
         if (!Neptune.get().isAllowMatches()) return;
         kit.addPlaying();
         kit.addPlaying();
@@ -42,6 +45,8 @@ public class MatchService implements IMatchService {
         playerBlue.setColor(ParticipantColor.BLUE);
 
         SoloFightMatch match = new SoloFightMatch(arena, kit, duel, Arrays.asList(playerRed, playerBlue), playerRed, playerBlue, rounds);
+        playerRed.setMatch(match);
+        playerBlue.setMatch(match);
         MatchReadyEvent event = new MatchReadyEvent(match);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
@@ -51,7 +56,7 @@ public class MatchService implements IMatchService {
         new MatchStartRunnable(match).start(0L, 20L);
     }
 
-    public void startMatch(MatchTeam teamA, MatchTeam teamB, Kit kit, Arena arena) {
+    public void startMatch(MatchTeam teamA, MatchTeam teamB, Kit kit, VirtualArena arena) {
         if (!Neptune.get().isAllowMatches()) return;
         for (Participant participant : teamA.participants()) {
             for (Participant opponent : teamB.participants()) {
@@ -66,7 +71,9 @@ public class MatchService implements IMatchService {
         participants.addAll(teamB.participants());
 
         TeamFightMatch match = new TeamFightMatch(arena, kit, participants, teamA, teamB);
-
+        for (Participant participant : participants) {
+            participant.setMatch(match);
+        }
         MatchReadyEvent event = new MatchReadyEvent(match);
         Bukkit.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
@@ -77,7 +84,7 @@ public class MatchService implements IMatchService {
         new MatchStartRunnable(match).start(0L, 20L);
     }
 
-    public void startMatch(List<Participant> participants, Kit kit, Arena arena) {
+    public void startMatch(List<Participant> participants, Kit kit, VirtualArena arena) {
         if (!Neptune.get().isAllowMatches()) return;
         for (Participant participant : participants) {
             participant.setColor(ParticipantColor.RED);
@@ -96,7 +103,7 @@ public class MatchService implements IMatchService {
     }
 
     @Override
-    public void startMatch(IMatch match) {
+    public void startMatch(IMatch match, Player redPlayer, Player bluePlayer) {
         if (!Neptune.get().isAllowMatches()) return;
         MatchReadyEvent event = new MatchReadyEvent(match);
 
@@ -105,8 +112,20 @@ public class MatchService implements IMatchService {
             return;
         }
 
-        matches.add((Match) match);
-        new MatchStartRunnable((Match) match).start(0L, 20L);
+        ArenaService.get().copyFrom(match.getArena()).createDuplicate().thenAccept(virtualArena ->{
+            Match neptuneMatch = new SoloFightMatch(
+                    virtualArena,
+                    KitService.get().copyFrom(match.getKit()),
+                    true,
+                    new ArrayList<>(),
+                    new Participant(redPlayer),
+                    new Participant(bluePlayer),
+                    1
+            );
+
+            matches.add(neptuneMatch);
+            new MatchStartRunnable(neptuneMatch).start(0L, 20L);
+        });
     }
 
     public Optional<Match> getMatch(Player player) {

@@ -1,11 +1,13 @@
 package fr.mrmicky.fastboard;
 
-import org.bukkit.entity.Player;
-
 import java.util.List;
 
-public interface FastAdapter {
-    String getTitle(Player player);
+import org.bukkit.entity.Player;
 
-    List<String> getLines(Player player);
+import net.kyori.adventure.text.Component;
+
+public interface FastAdapter {
+    Component getTitle(Player player);
+
+    List<Component> getLines(Player player);
 }

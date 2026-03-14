@@ -1,12 +1,5 @@
 package dev.lrxh.neptune.profile.data;
 
-import dev.lrxh.api.data.IKitData;
-import dev.lrxh.neptune.feature.divisions.DivisionService;
-import dev.lrxh.neptune.feature.divisions.impl.Division;
-import lombok.Getter;
-import lombok.Setter;
-import org.bukkit.inventory.ItemStack;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -14,15 +7,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import org.bukkit.inventory.ItemStack;
+
+import dev.lrxh.api.data.IKitData;
+import dev.lrxh.neptune.feature.divisions.DivisionService;
+import dev.lrxh.neptune.feature.divisions.impl.Division;
+import lombok.Getter;
+import lombok.Setter;
+
 @Getter
 @Setter
 public class KitData implements IKitData {
     private int kills = 0;
     private int deaths = 0;
+    private int wins = 0;
+    private int losses = 0;
     private int bestStreak = 0;
     private int currentStreak = 0;
     private List<ItemStack> kitLoadout = new ArrayList<>();
-    private Division division;
+    private Division division = DivisionService.get().getDivisionByElo(0);
     private int elo = 0;
     private HashMap<String, Object> customData = new HashMap<>();
     private HashMap<String, Object> persistentData = new HashMap<>();
@@ -98,6 +101,7 @@ public class KitData implements IKitData {
     }
 
     public boolean updateDivision() {
+        if (DivisionService.get().divisions.isEmpty()) return false;
         Division previous = this.division;
         Division updated = DivisionService.get().getDivisionByElo(elo);
         if (updated == null) {

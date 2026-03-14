@@ -34,8 +34,6 @@ public interface IArena {
 
     List<Material> getWhitelistedBlocks();
 
-    IArena getOwner();
-
     boolean isSetup();
 
     void remove();
@@ -45,4 +43,6 @@ public interface IArena {
     void delete(boolean save);
 
     boolean equals(Object o);
+
+    long getTime();
 }

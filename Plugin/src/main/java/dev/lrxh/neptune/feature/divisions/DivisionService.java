@@ -65,6 +65,7 @@ public class DivisionService extends IService implements IDivisionService {
     }
 
     public Division getDivisionByElo(int elo) {
+        if (divisions.isEmpty()) return null;
         for (Division division : divisions) {
             if (elo >= division.getEloRequired()) {
                 return division;

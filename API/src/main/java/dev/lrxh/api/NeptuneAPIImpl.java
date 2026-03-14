@@ -1,7 +1,7 @@
 package dev.lrxh.api;
 
 import dev.lrxh.api.arena.IArenaService;
-import dev.lrxh.api.features.ICosmeticService;
+import dev.lrxh.api.features.cosmetics.ICosmeticService;
 import dev.lrxh.api.features.IDivisionService;
 import dev.lrxh.api.features.IItemBrowserService;
 import dev.lrxh.api.kit.IKitService;

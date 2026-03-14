@@ -7,11 +7,13 @@ import dev.lrxh.neptune.profile.impl.Profile;
 import lombok.experimental.UtilityClass;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -50,14 +52,14 @@ public class PlayerUtil {
         player.getActivePotionEffects().forEach(effect -> player.removePotionEffect(effect.getType()));
         player.updateInventory();
         player.resetTitle();
-        player.setMaxHealth(20.0f);
+        player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(20.0f);
         player.setHealth(20.0D);
         player.setCooldown(Material.ENDER_PEARL, 0);
         resetActionbar(player);
     }
 
     public void resetActionbar(Player player) {
-        player.sendActionBar(" ");
+        player.sendActionBar(CC.color(" "));
     }
 
     public void teleportToSpawn(UUID playerUUID) {
@@ -102,19 +104,23 @@ public class PlayerUtil {
         return itemStack;
     }
 
-    public void sendMessage(UUID playerUUID, Component message) {
-        Player player = Bukkit.getPlayer(playerUUID);
-        if (player == null)
-            return;
-
-        player.sendMessage(message);
-    }
-
     public void sendMessage(UUID playerUUID, String message) {
         Player player = Bukkit.getPlayer(playerUUID);
         if (player == null)
             return;
-        player.sendMessage(CC.color(message));
+        player.sendMessage(CC.returnMessage(player, message));
+    }
+    public void sendMessage(UUID playerUUID, Component message) {
+        Player player = Bukkit.getPlayer(playerUUID);
+        if (player == null)
+            return;
+        player.sendMessage(CC.returnMessage(player, message));
+    }
+    public void sendMessage(UUID playerUUID, String message, TagResolver resolver) {
+        Player player = Bukkit.getPlayer(playerUUID);
+        if (player == null)
+            return;
+        player.sendMessage(CC.returnMessage(player, message, resolver));
     }
 
     public void sendTitle(Player player, TextComponent header, TextComponent footer, int duration) {

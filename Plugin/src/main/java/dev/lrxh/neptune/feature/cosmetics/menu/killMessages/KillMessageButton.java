@@ -2,16 +2,22 @@ package dev.lrxh.neptune.feature.cosmetics.menu.killMessages;
 
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.configs.impl.MenusLocale;
-import dev.lrxh.neptune.feature.cosmetics.impl.KillMessagePackage;
+import dev.lrxh.neptune.feature.cosmetics.impl.cosmetics.killmessage.KillMessagePackage;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.providers.clickable.Replacement;
+import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.ItemBuilder;
 import dev.lrxh.neptune.utils.ItemUtils;
 import dev.lrxh.neptune.utils.menu.Button;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.JoinConfiguration;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class KillMessageButton extends Button {
@@ -40,13 +46,25 @@ public class KillMessageButton extends Button {
         } else {
             lore = MenusLocale.KILL_MESSAGES_NO_PERMISSION_LORE.getStringList();
         }
-
+        List<Component> loreToUse = new ArrayList<>();
+        for (String line : lore) {
+            if (line.contains("<description>")) {
+                for (String descLine : killMessagePackage.getDescription()) {
+                    loreToUse.add(CC.returnMessage(player, line, Placeholder.parsed("description", descLine)));
+                }
+            }
+            else if (line.contains("<messages>")) {
+                for (Component message : ItemUtils.getLore(killMessagePackage.getMessages())) {
+                    loreToUse.add(CC.returnMessage(player, line, Placeholder.component("messages", message)));
+                }
+            }
+            else loreToUse.add(CC.returnMessage(player, line));
+        }
         return new ItemBuilder(killMessagePackage.getMaterial())
                 .name(selected ? MenusLocale.KILL_MESSAGES_NAME_SELECTED.getString().replace("<displayName>", killMessagePackage.getDisplayName()) : MenusLocale.KILL_MESSAGES_NAME_NOT_SELECTED.getString().replace("<displayName>", killMessagePackage.getDisplayName()))
-                .lore(ItemUtils.getLore(lore,
-                        new Replacement("<description>", killMessagePackage.getDescription()),
-                        new Replacement("<messages>", ItemUtils.getLore(killMessagePackage.getMessages(), new Replacement("<player>", player.getName()), new Replacement("<killer>", player.getName())))), player)
-
+                .componentLore(ItemUtils.getComponentLore(loreToUse, TagResolver.resolver(
+                        Placeholder.component("messages", Component.join(JoinConfiguration.newlines(), ItemUtils.getLore(killMessagePackage.getMessages()))),
+                        Placeholder.unparsed("killer", player.getName()))), player)
                 .build();
     }
 }

@@ -35,14 +35,15 @@ import dev.lrxh.neptune.feature.settings.command.SettingsCommand;
 import dev.lrxh.neptune.game.arena.Arena;
 import dev.lrxh.neptune.game.arena.ArenaService;
 import dev.lrxh.neptune.game.arena.command.ArenaProvider;
-import dev.lrxh.neptune.game.arena.procedure.ArenaProcedureListener;
+import dev.lrxh.neptune.game.arena.listener.ArenaEditorChatListener;
 import dev.lrxh.neptune.game.duel.command.DuelCommand;
 import dev.lrxh.neptune.game.kit.Kit;
 import dev.lrxh.neptune.game.kit.KitService;
 import dev.lrxh.neptune.game.kit.command.KitEditorCommand;
 import dev.lrxh.neptune.game.kit.command.KitProvider;
 import dev.lrxh.neptune.game.kit.command.StatsCommand;
-import dev.lrxh.neptune.game.kit.procedure.KitProcedureListener;
+import dev.lrxh.neptune.game.kit.listener.KitEditorChatListener;
+import dev.lrxh.neptune.game.kit.listener.KitEditorListener;
 import dev.lrxh.neptune.game.match.MatchService;
 import dev.lrxh.neptune.game.match.commands.MatchHistoryCommand;
 import dev.lrxh.neptune.game.match.commands.SpectateCommand;
@@ -65,7 +66,7 @@ import fr.mrmicky.fastboard.FastManager;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Difficulty;
-import org.bukkit.GameRule;
+import org.bukkit.GameRules;
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.ServicePriority;
@@ -82,9 +83,12 @@ public final class Neptune extends JavaPlugin {
     private Cache cache;
     private boolean placeholder = false;
     @Setter
-    private boolean allowJoin;
-    @Setter
     private boolean allowMatches;
+
+    private boolean errored;
+    public void setErrored() {
+        errored = true;
+    }
 
     public static Neptune get() {
         return instance;
@@ -93,11 +97,9 @@ public final class Neptune extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        allowJoin = false;
         allowMatches = false;
         loadManager();
         initAPI();
-        allowJoin = true;
         allowMatches = true;
     }
 
@@ -127,11 +129,8 @@ public final class Neptune extends JavaPlugin {
         KitService.get().load();
         this.cache = new Cache();
         HotbarService.get().load();
-
         CosmeticService.get().load();
-
         DivisionService.get().load();
-
         LeaderboardService.get().load();
 
         registerListeners();
@@ -155,8 +154,9 @@ public final class Neptune extends JavaPlugin {
                         new GlobalListener(),
                         new ItemListener(),
                         new MenuListener(),
-                        new ArenaProcedureListener(),
-                        new KitProcedureListener(),
+                        new ArenaEditorChatListener(),
+                        new KitEditorChatListener(),
+                        new KitEditorListener(),
                         new ItemBrowserListener())
                 .forEach(listener -> getServer().getPluginManager().registerEvents(listener, this));
     }
@@ -176,10 +176,10 @@ public final class Neptune extends JavaPlugin {
 
     private void loadWorlds() {
         for (World world : getServer().getWorlds()) {
-            world.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
-            world.setGameRule(GameRule.DO_WEATHER_CYCLE, false);
-            world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
-            world.setGameRule(GameRule.DO_IMMEDIATE_RESPAWN, true);
+            world.setGameRule(GameRules.SHOW_ADVANCEMENT_MESSAGES, false);
+            world.setGameRule(GameRules.ADVANCE_WEATHER, false);
+            world.setGameRule(GameRules.ADVANCE_TIME, false);
+            world.setGameRule(GameRules.IMMEDIATE_RESPAWN, true);
             world.setDifficulty(Difficulty.HARD);
         }
     }
@@ -220,8 +220,10 @@ public final class Neptune extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        stopService(KitService.get(), KitService::save);
-        stopService(ArenaService.get(), ArenaService::save);
+        if (!errored) {
+            stopService(KitService.get(), KitService::save);
+            stopService(ArenaService.get(), ArenaService::save);
+        }
         stopService(MatchService.get(), MatchService::stopAllGames);
         stopService(TaskScheduler.get(), TaskScheduler::stopAllTasks);
         stopService(ProfileService.get(), ProfileService::saveAll);

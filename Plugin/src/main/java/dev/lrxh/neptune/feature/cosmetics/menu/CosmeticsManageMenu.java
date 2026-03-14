@@ -1,8 +1,10 @@
 package dev.lrxh.neptune.feature.cosmetics.menu;
 
 import dev.lrxh.neptune.configs.impl.MenusLocale;
+import dev.lrxh.neptune.feature.cosmetics.menu.armorTrims.ArmorTrimsMenu;
 import dev.lrxh.neptune.feature.cosmetics.menu.killEffects.KillEffectsMenu;
 import dev.lrxh.neptune.feature.cosmetics.menu.killMessages.KillMessagesMenu;
+import dev.lrxh.neptune.feature.cosmetics.menu.shieldPatterns.ShieldPatternMenu;
 import dev.lrxh.neptune.utils.menu.Button;
 import dev.lrxh.neptune.utils.menu.Filter;
 import dev.lrxh.neptune.utils.menu.Menu;
@@ -34,6 +36,20 @@ public class CosmeticsManageMenu extends Menu {
                 MenusLocale.KILL_MESSAGES_LORE.getStringList(),
                 Material.valueOf(MenusLocale.KILL_MESSAGES_MATERIAL.getString()),
                 new KillMessagesMenu()));
+
+        buttons.add(new CosmeticsManagementButton(
+                MenusLocale.ARMOR_TRIMS_SLOT.getInt(),
+                MenusLocale.ARMOR_TRIMS_NAME.getString(),
+                MenusLocale.ARMOR_TRIMS_LORE.getStringList(),
+                Material.valueOf(MenusLocale.ARMOR_TRIMS_MATERIAL.getString()),
+                new ArmorTrimsMenu()));
+
+        buttons.add(new CosmeticsManagementButton(
+                MenusLocale.SHIELD_PATTERNS_SLOT.getInt(),
+                MenusLocale.SHIELD_PATTERNS_NAME.getString(),
+                MenusLocale.SHIELD_PATTERNS_LORE.getStringList(),
+                Material.valueOf(MenusLocale.SHIELD_PATTERNS_MATERIAL.getString()),
+                new ShieldPatternMenu()));
         return buttons;
     }
 }

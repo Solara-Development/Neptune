@@ -10,15 +10,28 @@ import java.util.UUID;
 public class MenuRunnable extends NeptuneRunnable {
     @Override
     public void run() {
-        for (Map.Entry<UUID, Menu> entry : MenuService.get().getOpenedMenus().entrySet()) {
+        Map<UUID, Menu> menusCopy = Map.copyOf(MenuService.get().getOpenedMenus());
+
+        for (Map.Entry<UUID, Menu> entry : menusCopy.entrySet()) {
             Menu menu = entry.getValue();
-            if (!menu.isUpdateEveryTick()) continue;
+
+            if (!menu.isUpdateEveryTick()) {
+                continue;
+            }
+
             UUID playerUUID = entry.getKey();
             Player player = Bukkit.getPlayer(playerUUID);
+
             if (player == null || !player.isOnline()) {
                 continue;
             }
+
+            if (player.getOpenInventory().getTopInventory() != menu.getInventory()) {
+                continue;
+            }
+
             menu.update(player);
+
         }
     }
 }

@@ -18,6 +18,9 @@ public class ConfigService {
     private ConfigFile divisionsConfig;
     private ConfigFile cosmeticsConfig;
     private ConfigFile killMessagesConfig;
+    private ConfigFile armorTrimsConfig;
+    private ConfigFile shieldPatternsConfig;
+    private ConfigFile soundsConfig;
 
     public static ConfigService get() {
         if (instance == null) instance = new ConfigService();
@@ -36,6 +39,9 @@ public class ConfigService {
         divisionsConfig = new ConfigFile("divisions");
         cosmeticsConfig = new ConfigFile("cosmetics");
         killMessagesConfig = new ConfigFile("kill-messages");
+        armorTrimsConfig = new ConfigFile("armor-trims");
+        soundsConfig = new ConfigFile("sounds");
+        shieldPatternsConfig = new ConfigFile("shield-patterns");
 
         initialize();
     }
@@ -47,5 +53,14 @@ public class ConfigService {
         MenusLocale.FILTER_NAME.load();
         ScoreboardLocale.TITLE.load();
         CosmeticsLocale.LIGHTNING_DISPLAY_NAME.load();
+        SoundsLocale.MATCH_START.load();
+
+        HotbarLocale.LOBBY_PARTY_CREATE_NAME.update();
+        MessagesLocale.MATCH_FOUND.update();
+        SettingsLocale.SPAWN_LOCATION.update();
+        MenusLocale.FILTER_NAME.update();
+        ScoreboardLocale.TITLE.update();
+        CosmeticsLocale.LIGHTNING_DISPLAY_NAME.update();
+        SoundsLocale.MATCH_START.update();
     }
 }

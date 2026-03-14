@@ -5,18 +5,16 @@ import dev.lrxh.api.profile.IProfileService;
 import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.feature.queue.QueueService;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.utils.tasks.NeptuneRunnable;
-import dev.lrxh.neptune.utils.tasks.TaskScheduler;
-import org.bukkit.Bukkit;
+import dev.lrxh.neptune.utils.CC;
 import org.bukkit.entity.Player;
 
-import java.util.IdentityHashMap;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ProfileService implements IProfileService {
     private static ProfileService instance;
-    public final IdentityHashMap<UUID, Profile> profiles = new IdentityHashMap<>();
+    public final ConcurrentHashMap<UUID, Profile> profiles = new ConcurrentHashMap<>();
     private final Neptune plugin;
 
     public ProfileService() {
@@ -32,13 +30,17 @@ public class ProfileService implements IProfileService {
 
     public CompletableFuture<Void> createProfile(Player player) {
         return Profile.create(player.getName(), player.getUniqueId(), plugin, false)
-                .thenAccept(profile -> profiles.put(player.getUniqueId(), profile));
+                .thenAccept(profile -> profiles.put(player.getUniqueId(), profile))
+                .whenComplete((result, throwable) -> {
+                    if (throwable != null) {
+                        Neptune.get().getLogger().severe("Error occurred while loading profile for player: " + player.getName());
+                        player.kick(CC.color("<aqua>[Neptune] <dark_red>An error occurred while loading your profile information! Report to the developers."));
+                    }
+                });
     }
 
-    public CompletableFuture<Profile> createProfile(UUID uuid) {
-        return Profile.create("username", uuid, plugin, true).thenApply(profile -> {
-            return profile;
-        });
+    public CompletableFuture<Profile> createFakeProfile(UUID uuid) {
+        return Profile.create("username", uuid, plugin, true).thenApply(profile -> profile);
     }
 
     public void removeProfile(UUID playerUUID) {
@@ -52,31 +54,22 @@ public class ProfileService implements IProfileService {
     }
 
     public void saveAll() {
-        for (Profile profile : profiles.values()) {
-            Profile.save(profile);
-        }
+        profiles.values().forEach(Profile::save);
     }
 
     public Profile getByUUID(UUID playerUUID) {
-        Profile profile = profiles.get(playerUUID);
-        if (profile != null)
-            return profile;
-
-        for (UUID uuid : profiles.keySet()) {
-            if (uuid.toString().equals(playerUUID.toString()))
-                return profiles.get(uuid);
-        }
-
-        return null;
+        return profiles.get(playerUUID);
     }
 
     @Override
     public CompletableFuture<IProfile> getProfile(UUID uuid) {
+        return _getProfile(uuid).thenApply(p -> p);
+    }
+
+    public CompletableFuture<Profile> _getProfile(UUID uuid) {
         Profile profile = getByUUID(uuid);
         return (profile != null)
                 ? CompletableFuture.completedFuture(profile)
-                : createProfile(uuid).thenApply(p -> (IProfile) p);
+                : createFakeProfile(uuid).thenApply(p -> p);
     }
-
-
 }

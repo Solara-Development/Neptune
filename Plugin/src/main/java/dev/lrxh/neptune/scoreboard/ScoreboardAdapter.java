@@ -9,34 +9,35 @@ import dev.lrxh.neptune.game.match.impl.solo.SoloFightMatch;
 import dev.lrxh.neptune.game.match.impl.team.TeamFightMatch;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.providers.placeholder.PlaceholderUtil;
+import dev.lrxh.neptune.utils.CC;
 import fr.mrmicky.fastboard.FastAdapter;
-import org.bukkit.entity.Player;
+import net.kyori.adventure.text.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.entity.Player;
+
 public class ScoreboardAdapter implements FastAdapter {
-    public String getTitle(Player player) {
-        return PlaceholderUtil.format(getAnimatedText(), player);
+    public Component getTitle(Player player) {
+        return CC.returnMessage(player, getAnimatedText());
     }
 
-    public List<String> getLines(Player player) {
+    public List<Component> getLines(Player player) {
         Profile profile = API.getProfile(player);
         if (profile == null) return new ArrayList<>();
 
         ProfileState state = profile.getState();
         Match match;
-
         switch (state) {
             case IN_LOBBY:
-                return PlaceholderUtil.format(new ArrayList<>(ScoreboardLocale.LOBBY.getStringList()), player);
+                return CC.getComponentsArray(player, ScoreboardLocale.LOBBY.getStringList());
             case IN_KIT_EDITOR:
-                return PlaceholderUtil.format(new ArrayList<>(ScoreboardLocale.KIT_EDITOR.getStringList()), player);
+                return CC.getComponentsArray(player, ScoreboardLocale.KIT_EDITOR.getStringList());
             case IN_PARTY:
-                return PlaceholderUtil.format(new ArrayList<>(ScoreboardLocale.PARTY_LOBBY.getStringList()), player);
+                return CC.getComponentsArray(player, ScoreboardLocale.PARTY_LOBBY.getStringList());
             case IN_QUEUE:
-                return PlaceholderUtil.format(new ArrayList<>(ScoreboardLocale.IN_QUEUE.getStringList()), player);
+                return CC.getComponentsArray(player, ScoreboardLocale.IN_QUEUE.getStringList());
             case IN_GAME:
                 match = profile.getMatch();
                 return match.getScoreboard(player.getUniqueId());
@@ -44,20 +45,20 @@ public class ScoreboardAdapter implements FastAdapter {
                 match = profile.getMatch();
                 if (match instanceof SoloFightMatch) {
                     if (match.getKit().is(KitRule.BED_WARS)) {
-                        return PlaceholderUtil.format(new ArrayList<>(ScoreboardLocale.IN_SPECTATOR_BEDWARS.getStringList()), player);
+                        return CC.getComponentsArray(player, ScoreboardLocale.IN_SPECTATOR_BEDWARS.getStringList());
                     }
-                    return PlaceholderUtil.format(new ArrayList<>(ScoreboardLocale.IN_SPECTATOR.getStringList()), player);
+                    return CC.getComponentsArray(player, ScoreboardLocale.IN_SPECTATOR.getStringList());
                 } else if (match instanceof TeamFightMatch) {
                     if (match.getKit().is(KitRule.BED_WARS)) {
-                        return PlaceholderUtil.format(new ArrayList<>(ScoreboardLocale.IN_SPECTATOR_BEDWARS.getStringList()), player);
+                        return CC.getComponentsArray(player, ScoreboardLocale.IN_SPECTATOR_BEDWARS.getStringList());
                     }
-                    return PlaceholderUtil.format(new ArrayList<>(ScoreboardLocale.IN_SPECTATOR_TEAM.getStringList()), player);
+                    return CC.getComponentsArray(player, ScoreboardLocale.IN_SPECTATOR_TEAM.getStringList());
                 } else if (match instanceof FfaFightMatch) {
-                    return PlaceholderUtil.format(new ArrayList<>(ScoreboardLocale.IN_SPECTATOR_FFA.getStringList()), player);
+                    return CC.getComponentsArray(player, ScoreboardLocale.IN_SPECTATOR_FFA.getStringList());
                 }
-                return PlaceholderUtil.format(new ArrayList<>(ScoreboardLocale.IN_SPECTATOR.getStringList()), player);
+                return CC.getComponentsArray(player, ScoreboardLocale.IN_SPECTATOR.getStringList());
             case IN_CUSTOM:
-                return PlaceholderUtil.format(ScoreboardService.get().getScoreboardLines(profile.getCustomState(), profile), player);
+                return CC.getComponentsArray(player, ScoreboardService.get().getScoreboardLines(profile.getCustomState(), profile));
             default:
                 break;
         }

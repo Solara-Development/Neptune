@@ -3,18 +3,19 @@ package dev.lrxh.neptune.game.match.tasks;
 import dev.lrxh.api.events.MatchStartEvent;
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
+import dev.lrxh.neptune.configs.impl.SoundsLocale;
 import dev.lrxh.neptune.game.match.Match;
 import dev.lrxh.neptune.game.match.impl.MatchState;
 import dev.lrxh.neptune.game.match.impl.ffa.FfaFightMatch;
 import dev.lrxh.neptune.game.match.impl.participant.Participant;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.data.SettingData;
-import dev.lrxh.neptune.providers.clickable.Replacement;
 import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.Time;
 import dev.lrxh.neptune.utils.tasks.NeptuneRunnable;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+
 import org.bukkit.Bukkit;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
@@ -60,14 +61,14 @@ public class MatchStartRunnable extends NeptuneRunnable {
             return;
         }
         if (match.getState().equals(MatchState.STARTING)) {
-            match.playSound(Sound.UI_BUTTON_CLICK);
+            match.playSound(SoundsLocale.getSound(SoundsLocale.MATCH_START_COUNTDOWN));
             match.sendTitle(
                     CC.color(MessagesLocale.MATCH_STARTING_TITLE_HEADER.getString().replace("<countdown-time>",
                             String.valueOf(startTimer))),
                     CC.color(MessagesLocale.MATCH_STARTING_TITLE_FOOTER.getString().replace("<countdown-time>",
                             String.valueOf(startTimer))),
                     19);
-            match.sendMessage(MessagesLocale.MATCH_STARTING, new Replacement("<timer>", String.valueOf(startTimer)));
+            match.sendMessage(MessagesLocale.MATCH_STARTING, Placeholder.unparsed("timer", String.valueOf(startTimer)));
         }
         startTimer--;
 

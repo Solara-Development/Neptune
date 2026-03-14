@@ -6,6 +6,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class API {
 
@@ -17,7 +18,7 @@ public class API {
         return ProfileService.get().getByUUID(player.getUniqueId());
     }
 
-    public static Profile getProfile(OfflinePlayer player) {
-        return getProfile(player.getUniqueId());
+    public static CompletableFuture<Profile> getProfile(OfflinePlayer player) {
+        return ProfileService.get()._getProfile(player.getUniqueId());
     }
 }

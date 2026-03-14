@@ -6,7 +6,8 @@ import dev.lrxh.api.match.participant.IParticipant;
 import dev.lrxh.api.match.team.IMatchTeam;
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
-import dev.lrxh.neptune.game.arena.Arena;
+import dev.lrxh.neptune.configs.impl.SoundsLocale;
+import dev.lrxh.neptune.game.arena.VirtualArena;
 import dev.lrxh.neptune.game.kit.Kit;
 import dev.lrxh.neptune.game.kit.impl.KitRule;
 import dev.lrxh.neptune.game.match.Match;
@@ -17,14 +18,15 @@ import dev.lrxh.neptune.game.match.tasks.MatchEndRunnable;
 import dev.lrxh.neptune.game.match.tasks.MatchRespawnRunnable;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.providers.clickable.Replacement;
 import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.PlayerUtil;
 import lombok.Getter;
 import lombok.Setter;
 import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+
 import org.bukkit.Bukkit;
-import org.bukkit.Sound;
 
 import java.util.List;
 import java.util.UUID;
@@ -33,18 +35,18 @@ import java.util.UUID;
 @Setter
 public class TeamFightMatch extends Match implements ITeamFightMatch {
 
-    private final MatchTeam teamA;
-    private final MatchTeam teamB;
+    private final MatchTeam redTeam;
+    private final MatchTeam blueTeam;
 
-    public TeamFightMatch(Arena arena, Kit kit, List<Participant> participants,
-                          MatchTeam teamA, MatchTeam teamB) {
-        super(MatchState.STARTING, arena, kit, participants, 1, true, false);
-        this.teamA = teamA;
-        this.teamB = teamB;
+    public TeamFightMatch(VirtualArena arena, Kit kit, List<Participant> participants,
+                          MatchTeam redTeam, MatchTeam blueTeam) {
+        super(MatchState.STARTING, arena, kit, participants, 1, 1, true, false);
+        this.redTeam = redTeam;
+        this.blueTeam = blueTeam;
     }
 
     public MatchTeam getParticipantTeam(Participant participant) {
-        return teamA.participants().contains(participant) ? teamA : teamB;
+        return redTeam.participants().contains(participant) ? redTeam : blueTeam;
     }
 
     public IMatchTeam getParticipantTeam(IParticipant participant) {
@@ -52,11 +54,11 @@ public class TeamFightMatch extends Match implements ITeamFightMatch {
     }
 
     public IMatchTeam getWinner() {
-        return teamA.isLoser() ? teamB : teamA;
+        return redTeam.isLoser() ? blueTeam : redTeam;
     }
 
     public IMatchTeam getLoser() {
-        return teamA.isLoser() ? teamA : teamB;
+        return redTeam.isLoser() ? redTeam : blueTeam;
     }
 
     @Override
@@ -69,7 +71,7 @@ public class TeamFightMatch extends Match implements ITeamFightMatch {
     @Override
     public void end(Participant loser) {
         setState(MatchState.ENDING);
-        MatchTeam winnerTeam = teamA.isLoser() ? teamB : teamA;
+        MatchTeam winnerTeam = redTeam.isLoser() ? blueTeam : redTeam;
         MatchTeam loserTeam = getParticipantTeam(loser);
 
 
@@ -87,15 +89,18 @@ public class TeamFightMatch extends Match implements ITeamFightMatch {
 
     @Override
     public void sendEndMessage() {
-        MatchTeam winnerTeam = teamA.isLoser() ? teamB : teamA;
-        MatchTeam loserTeam = teamA.isLoser() ? teamA : teamB;
+        MatchTeam winnerTeam = redTeam.isLoser() ? blueTeam : redTeam;
+        MatchTeam loserTeam = redTeam.isLoser() ? redTeam : blueTeam;
 
-        forEachParticipant(participant -> MessagesLocale.MATCH_END_DETAILS_TEAM.send(participant.getPlayerUUID(),
-                new Replacement("<losers>", loserTeam.getTeamNames()),
-                new Replacement("<kit>", getKit().getDisplayName()),
-                new Replacement("<winners_points>", String.valueOf(winnerTeam.getPoints())),
-                new Replacement("<losers_points>", String.valueOf(loserTeam.getPoints())),
-                new Replacement("<winners>", winnerTeam.getTeamNames())));
+        forEachParticipant(participant -> 
+            MessagesLocale.MATCH_END_DETAILS_TEAM.send(participant.getPlayerUUID(), TagResolver.resolver(
+                Placeholder.parsed("kit", getKit().getDisplayName()),
+                Placeholder.unparsed("losers", loserTeam.getTeamNames()),
+                Placeholder.unparsed("winners-points", String.valueOf(winnerTeam.getPoints())),
+                Placeholder.unparsed("losers-points", String.valueOf(loserTeam.getPoints())),
+                Placeholder.unparsed("winners", winnerTeam.getTeamNames()),
+                Placeholder.unparsed("losers", loserTeam.getTeamNames())
+            )));
     }
 
 
@@ -103,7 +108,7 @@ public class TeamFightMatch extends Match implements ITeamFightMatch {
     public void breakBed(Participant participant, Participant breaker) {
         MatchTeam team = getParticipantTeam(participant);
         team.setBedBroken(true);
-        playSound(Sound.ENTITY_ENDER_DRAGON_GROWL);
+        playSound(SoundsLocale.getSound(SoundsLocale.BED_BROKEN));
         TeamMatchBedDestroyEvent event = new TeamMatchBedDestroyEvent(this, team, breaker);
         Bukkit.getPluginManager().callEvent(event);
     }
@@ -117,12 +122,11 @@ public class TeamFightMatch extends Match implements ITeamFightMatch {
     public void onDeath(Participant participant) {
         if (isEnded()) return;
         hideParticipant(participant);
-
+        incrementDeaths(participant);
         participant.setDead(true);
 
         MatchTeam team = getParticipantTeam(participant);
         team.deadParticipants().add(participant);
-
         if (!participant.isDisconnected() && !participant.isLeft()) {
             if (getKit().is(KitRule.BED_WARS)) {
                 if (!participant.isBedBroken()) {
@@ -134,7 +138,7 @@ public class TeamFightMatch extends Match implements ITeamFightMatch {
             addSpectator(participant.getPlayer(), participant.getPlayer(), false, false);
 
             if (participant.getLastAttacker() != null) {
-                participant.getLastAttacker().playSound(Sound.UI_BUTTON_CLICK);
+                participant.getLastAttacker().playSound(SoundsLocale.getSound(SoundsLocale.PLAYER_KILL));
             }
 
             sendDeathMessage(participant);
@@ -182,7 +186,15 @@ public class TeamFightMatch extends Match implements ITeamFightMatch {
     public void startMatch() {
         setState(MatchState.IN_ROUND);
         showPlayerForSpectators();
-        playSound(Sound.ENTITY_FIREWORK_ROCKET_BLAST);
+        playSound(SoundsLocale.getSound(SoundsLocale.MATCH_START));
         sendTitle(CC.color(MessagesLocale.MATCH_START_TITLE_FOOTER.getString()), CC.color(MessagesLocale.MATCH_START_TITLE_FOOTER.getString()), 10);
+    }
+
+    public String getWinnerName() {
+        return getWinner() != null ? getWinner().getTeamNames() : "";
+    }
+
+    public String getLoserName() {
+        return getLoser() != null ? getLoser().getTeamNames() : "";
     }
 }

@@ -2,6 +2,7 @@ package dev.lrxh.neptune.feature.party.impl;
 
 import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.configs.impl.MenusLocale;
+import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.game.kit.Kit;
 import dev.lrxh.neptune.game.match.MatchService;
 import dev.lrxh.neptune.game.match.impl.participant.Participant;
@@ -24,12 +25,12 @@ public enum EventType {
                 if (arena == null) {
 
                     for (Participant participant : participants) {
-                        participant.sendMessage(CC.error("No arenas were found!"));
+                        MessagesLocale.QUEUE_NO_ARENAS.send(participant.getPlayer());
                     }
                     return;
                 }
 
-                if (!arena.isSetup() || !arena.isDoneLoading()) {
+                if (!arena.isSetup()) {
 
                     for (Participant participant : participants) {
                         participant.sendMessage(CC.error("Arena wasn't setup up properly! Please contact an admin if you see this."));
@@ -61,14 +62,16 @@ public enum EventType {
 
             MatchTeam teamA = new MatchTeam(teamAList);
             MatchTeam teamB = new MatchTeam(teamBList);
+            teamA.setOpponentTeam(teamB);
+            teamB.setOpponentTeam(teamA);
 
             kit.getRandomArena().thenAccept(arena -> {
                 if (arena == null) {
                     participants.forEach(p ->
-                            p.sendMessage(CC.error("No arenas were found! Please contact an admin.")));
+                            MessagesLocale.QUEUE_NO_ARENAS.send(p.getPlayer()));
                     return;
                 }
-                if (!arena.isSetup() || !arena.isDoneLoading()) {
+                if (!arena.isSetup()) {
                     participants.forEach(p ->
                             p.sendMessage(CC.error("Arena wasn't set up properly! Please contact an admin.")));
                     return;

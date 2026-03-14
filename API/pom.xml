@@ -6,7 +6,7 @@
 
     <groupId>me.dev.lrxh</groupId>
     <artifactId>API</artifactId>
-    <version>1.4</version>
+    <version>2.3</version>
     <packaging>jar</packaging>
 
     <name>API</name>
@@ -42,14 +42,14 @@
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.21.5-R0.1-SNAPSHOT</version>
+            <version>1.21.11-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
 
     <build>
         <defaultGoal>clean package</defaultGoal>
-        <finalName>NeptuneAPI</finalName>
+        <finalName>NeptuneAPI-${project.version}</finalName>
 
         <resources>
             <resource>

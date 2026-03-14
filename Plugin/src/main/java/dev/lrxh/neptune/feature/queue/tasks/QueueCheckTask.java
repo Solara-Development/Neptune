@@ -1,7 +1,6 @@
 package dev.lrxh.neptune.feature.queue.tasks;
 
 import dev.lrxh.neptune.API;
-import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.feature.queue.QueueEntry;
 import dev.lrxh.neptune.feature.queue.QueueService;
@@ -12,15 +11,19 @@ import dev.lrxh.neptune.game.match.impl.participant.Participant;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.data.SettingData;
 import dev.lrxh.neptune.profile.impl.Profile;
-import dev.lrxh.neptune.providers.clickable.Replacement;
-import dev.lrxh.neptune.providers.placeholder.PlaceholderUtil;
 import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.PlayerUtil;
 import dev.lrxh.neptune.utils.tasks.NeptuneRunnable;
+import dev.lrxh.neptune.utils.tasks.TaskScheduler;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Queue;
+import java.util.UUID;
 
 public class QueueCheckTask extends NeptuneRunnable {
     @Override
@@ -28,9 +31,10 @@ public class QueueCheckTask extends NeptuneRunnable {
 
         for (Queue<QueueEntry> queue : QueueService.get().getAllQueues().values()) {
             for (QueueEntry entry : queue) {
-                Player player = Bukkit.getPlayer(entry.getUuid());
-                if (player != null) {
-                    player.sendActionBar(CC.color(PlaceholderUtil.format(MessagesLocale.QUEUE_ACTION_BAR.getString(), player)));
+                Profile profile = API.getProfile(entry.getUuid());
+                if (profile != null && profile.getPlayer() != null) {
+                    Player player = profile.getPlayer();
+                    player.sendActionBar(CC.returnMessage(player, MessagesLocale.QUEUE_ACTION_BAR.getString()));
                 }
             }
         }
@@ -74,14 +78,13 @@ public class QueueCheckTask extends NeptuneRunnable {
                 continue;
             }
 
-            Player player1 = Bukkit.getPlayer(uuid1);
-            Player player2 = Bukkit.getPlayer(uuid2);
+            Player player1 = profile1.getPlayer();
+            Player player2 = profile2.getPlayer();
             if (player1 == null || player2 == null) {
                 continue;
             }
 
             kit.getRandomArena().thenAccept(arena -> {
-
                 if (arena == null) {
                     PlayerUtil.sendMessage(uuid1, CC.error("No valid arena was found for this kit!"));
                     PlayerUtil.sendMessage(uuid2, CC.error("No valid arena was found for this kit!"));
@@ -91,27 +94,31 @@ public class QueueCheckTask extends NeptuneRunnable {
                 Participant participant1 = new Participant(player1);
                 Participant participant2 = new Participant(player2);
 
-                MessagesLocale.MATCH_FOUND.send(uuid1,
-                        new Replacement("<opponent>", participant2.getNameUnColored()),
-                        new Replacement("<kit>", kit.getDisplayName()),
-                        new Replacement("<arena>", arena.getDisplayName()),
-                        new Replacement("<opponent-ping>", String.valueOf(ping2)),
-                        new Replacement("<opponent-elo>", String.valueOf(profile2.getGameData().get(kit).getElo())),
-                        new Replacement("<elo>", String.valueOf(profile1.getGameData().get(kit).getElo())),
-                        new Replacement("<ping>", String.valueOf(ping1)));
+                MessagesLocale.MATCH_FOUND.send(uuid1, TagResolver.resolver(
+                        Placeholder.parsed("kit", kit.getDisplayName()),
+                        Placeholder.parsed("arena", arena.getDisplayName()),
+                        Placeholder.unparsed("opponent", participant2.getNameUnColored()),
+                        Placeholder.unparsed("opponent-ping", String.valueOf(ping2)),
+                        Placeholder.unparsed("opponent-elo", String.valueOf(profile2.getGameData().get(kit).getElo())),
+                        Placeholder.unparsed("elo", String.valueOf(profile1.getGameData().get(kit).getElo())),
+                        Placeholder.unparsed("ping", String.valueOf(ping1))));
 
-                MessagesLocale.MATCH_FOUND.send(uuid2,
-                        new Replacement("<opponent>", participant1.getNameUnColored()),
-                        new Replacement("<kit>", kit.getDisplayName()),
-                        new Replacement("<arena>", arena.getDisplayName()),
-                        new Replacement("<opponent-ping>", String.valueOf(ping1)),
-                        new Replacement("<opponent-elo>", String.valueOf(profile1.getGameData().get(kit).getElo())),
-                        new Replacement("<elo>", String.valueOf(profile2.getGameData().get(kit).getElo())),
-                        new Replacement("<ping>", String.valueOf(ping2)));
+                MessagesLocale.MATCH_FOUND.send(uuid2, TagResolver.resolver(
+                        Placeholder.parsed("kit", kit.getDisplayName()),
+                        Placeholder.parsed("arena", arena.getDisplayName()),
+                        Placeholder.unparsed("opponent", participant1.getNameUnColored()),
+                        Placeholder.unparsed("opponent-ping", String.valueOf(ping1)),
+                        Placeholder.unparsed("opponent-elo", String.valueOf(profile1.getGameData().get(kit).getElo())),
+                        Placeholder.unparsed("elo", String.valueOf(profile2.getGameData().get(kit).getElo())),
+                        Placeholder.unparsed("ping", String.valueOf(ping2))));
 
-                Bukkit.getScheduler().runTask(Neptune.get(), () -> MatchService.get().startMatch(participant1, participant2, kit, arena, false,
-                        kit.is(KitRule.BEST_OF_THREE) ? 3 : 1));
-
+                TaskScheduler.get().startTaskCurrentTick(new NeptuneRunnable() {
+                    @Override
+                    public void run() {
+                        MatchService.get().startMatch(participant1, participant2, kit, arena, false,
+                                kit.is(KitRule.BEST_OF_THREE) ? 3 : 1);
+                    }
+                });
             });
         }
     }

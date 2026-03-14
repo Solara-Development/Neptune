@@ -60,6 +60,6 @@ public class PlayerProvider extends DrinkProvider<Player> {
     @Override
     public List<String> getSuggestions(@Nonnull String prefix) {
         final String finalPrefix = prefix.toLowerCase();
-        return plugin.getServer().getOnlinePlayers().stream().map(p -> p.getName()).filter(s -> finalPrefix.length() == 0 || s.toLowerCase().startsWith(finalPrefix)).collect(Collectors.toList());
+        return plugin.getServer().getOnlinePlayers().stream().map(p -> p.getName()).filter(s -> s.toLowerCase().startsWith(finalPrefix)).collect(Collectors.toList());
     }
 }

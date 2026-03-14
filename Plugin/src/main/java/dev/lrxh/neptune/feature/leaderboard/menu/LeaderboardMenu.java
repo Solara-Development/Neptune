@@ -1,7 +1,6 @@
 package dev.lrxh.neptune.feature.leaderboard.menu;
 
 import dev.lrxh.neptune.configs.impl.MenusLocale;
-import dev.lrxh.neptune.feature.leaderboard.LeaderboardService;
 import dev.lrxh.neptune.feature.leaderboard.impl.LeaderboardType;
 import dev.lrxh.neptune.feature.leaderboard.impl.PlayerEntry;
 import dev.lrxh.neptune.feature.leaderboard.menu.button.LeaderboardSwitchButton;
@@ -21,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LeaderboardMenu extends Menu {
-
     private final LeaderboardType leaderboardType;
 
     public LeaderboardMenu(LeaderboardType leaderboardType) {
@@ -31,6 +29,7 @@ public class LeaderboardMenu extends Menu {
                 Filter.valueOf(MenusLocale.LEADERBOARD_FILTER.getString()));
         this.leaderboardType = leaderboardType;
         setUpdateEveryTick(true);
+        setUpdateInterval(60L);
     }
 
     @Override
@@ -38,8 +37,7 @@ public class LeaderboardMenu extends Menu {
         List<Button> buttons = new ArrayList<>();
 
         for (Kit kit : KitService.get().kits) {
-            if (kit.getRules().get(KitRule.HIDDEN))
-                continue;
+            if (kit.getRules().get(KitRule.HIDDEN)) continue;
             buttons.add(new DisplayButton(kit.getSlot(), buildKitItem(player, kit)));
         }
 
@@ -73,22 +71,20 @@ public class LeaderboardMenu extends Menu {
     }
 
     private List<String> buildKitLore(Kit kit) {
-        List<PlayerEntry> leaderboard = LeaderboardService.get().getPlayerEntries(kit, leaderboardType);
-
         List<String> lore = new ArrayList<>();
+
         for (String templateLine : MenusLocale.LEADERBOARD_LORE.getStringList()) {
-            lore.add(replaceLeaderboardPlaceholders(templateLine, kit, leaderboard));
+            lore.add(replaceLeaderboardPlaceholders(templateLine, kit));
         }
 
         return lore;
     }
 
-    private String replaceLeaderboardPlaceholders(String template, Kit kit, List<PlayerEntry> leaderboard) {
+    private String replaceLeaderboardPlaceholders(String template, Kit kit) {
         String result = template;
 
         for (int i = 1; i <= 10; i++) {
-            PlayerEntry entry = getEntryAtPosition(kit, leaderboard, i);
-
+            PlayerEntry entry = LeaderboardCacheService.get().getPosition(leaderboardType, kit, i);
             String player = (entry != null && entry.getUsername() != null) ? entry.getUsername() : "???";
             String value = (entry != null) ? String.valueOf(entry.getValue()) : "???";
 
@@ -98,11 +94,5 @@ public class LeaderboardMenu extends Menu {
         }
 
         return result;
-    }
-
-    private PlayerEntry getEntryAtPosition(Kit kit, List<PlayerEntry> leaderboard, int position) {
-        return position <= leaderboard.size()
-                ? LeaderboardService.get().getLeaderboardSlot(kit, leaderboardType, position)
-                : null;
     }
 }

@@ -130,6 +130,14 @@ public class SQLiteDatabase implements IDatabase {
     }
 
     @Override
+    public CompletableFuture<Void> resetAllKitLoadouts(String kitName) {
+        String sql = "UPDATE playerData SET data = json_set(data, '$.kitData.\""
+                + kitName + "\".kit', null) WHERE json_extract(data, '$.kitData.\""
+                + kitName + "\"') IS NOT NULL";
+        return executeUpdate(sql).thenApply(ignored -> null);
+    }
+
+    @Override
     public CompletableFuture<Void> replace(UUID playerUUID, DataDocument newDocument) {
         return executeUpdate(SQL_UPSERT, playerUUID.toString(), newDocument.toDocument().toJson())
                 .thenApply(ignored -> null);
@@ -143,10 +151,18 @@ public class SQLiteDatabase implements IDatabase {
 
     @Override
     public CompletableFuture<List<DataDocument>> getAllByKitType(String kitName, String type) {
-        String sql = "SELECT data FROM playerData " +
-                "WHERE json_extract(data, '$.kitData.\"" + kitName + "\"." + type + "') IS NOT NULL " +
-                "AND json_extract(data, '$.kitData.\"" + kitName + "\"." + type + "') > 0 " +
-                "ORDER BY CAST(json_extract(data, '$.kitData.\"" + kitName + "\"." + type + "') AS INTEGER) DESC";
+        String path = "$.kitData.\"" + kitName + "\"." + type;
+        String sql = """
+            SELECT data
+            FROM (
+                SELECT data,
+                    CAST(json_extract(data, '%s') AS INTEGER) AS value
+                FROM playerData
+            )
+            WHERE value > 0
+            ORDER BY value DESC
+            LIMIT 10
+        """.formatted(path);
 
         return queryData(sql).thenApply(resultList -> {
             List<DataDocument> results = new ArrayList<>();

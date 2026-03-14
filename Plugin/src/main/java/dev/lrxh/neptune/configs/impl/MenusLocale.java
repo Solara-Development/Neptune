@@ -67,41 +67,43 @@ public enum MenusLocale implements IDataAccessor {
             " &f&7* &fWins: &b<wins>",
             " &f&7* &fElo: &b<elo>",
             " &f&7* &fLosses: &b<losses>",
-            " &f&7* &fCurrent Streak: &b<win_streak_current>",
-            " &f&7* &fBest Streak: &b<win_streak_best>",
+            " &f&7* &fCurrent Streak: &b<current-win-streak>",
+            " &f&7* &fBest Streak: &b<best-win-streak>",
             " &f&7* &fDivision: &b<division>",
-            " &f&7* &fK/D &b<kill_death_ratio>"),
+            " &f&7* &fK/D &b<kdr>"),
     MATCH_LIST_TITLE("MATCH.LIST.TITLE", DataType.STRING, "&7Select Match"),
-    MATCH_LIST_SIZE("MATCH_LIST.SIZE", DataType.INT, "36"),
+    MATCH_LIST_SIZE("MATCH_LIST.SIZE", DataType.INT, "54"),
     MATCH_LIST_STARTING_SLOT("MATCH_LIST.STARTING-SLOT", DataType.INT, "10"),
-    MATCH_LIST_FILTER("MATCH_LIST.FILTER-TYPE", "FILL, BORDER, NONE", DataType.STRING, "FILL"),
+    MATCH_LIST_FILTER("MATCH_LIST.FILTER-TYPE", "FILL, BORDER, NONE", DataType.STRING, "BORDER"),
     MATCH_LIST_ITEM_NAME("MATCH_LIST.ITEM.NAME", DataType.STRING,
-            "&c<playerRed_name> &7vs &9<playerBlue_name>"),
+            "&c<red-name> &7vs &9<blue-name>"),
     MATCH_LIST_ITEM_LORE("MATCH_LIST.ITEM.LORE", DataType.STRING_LIST,
             "&fArena: &b<arena>",
             "&fKit: &b<kit>",
             "",
             "&a&lClick to watch match!"),
-    DUEL_TITLE("DUEL.TITLE", DataType.STRING, "&7Select Kit"),
+    DUEL_TITLE("DUEL.TITLE", DataType.STRING, "<b><yellow>Select Kit</b> <dark_gray>| <white><target>"),
     DUEL_SIZE("DUEL.SIZE", DataType.INT, "36"),
     DUEL_FILTER("DUEL.FILTER-TYPE", "FILL, BORDER, NONE", DataType.STRING, "FILL"),
     DUEL_ITEM_NAME("DUEL.ITEM.NAME", DataType.STRING, "&b<kit>"),
     DUEL_LORE("DUEL.LORE", DataType.STRING_LIST,
             "",
             "&a&lClick to select kit!"),
-    ROUNDS_TITLE("ROUNDS.TITLE", DataType.STRING, "&7Select Rounds amount"),
+    ROUNDS_TITLE("ROUNDS.TITLE", DataType.STRING, "<b><yellow>Select Rounds Amount</b> <dark_gray>| <white><target>"),
     ROUNDS_SIZE("ROUNDS.SIZE", DataType.INT, "27"),
     ROUNDS_STARTING_SLOT("DUEL.STARTING-SLOT", DataType.INT, "10"),
     ROUNDS_FILTER("ROUNDS.FILTER-TYPE", "FILL, BORDER, NONE", DataType.STRING, "FILL"),
     ROUNDS_ITEM_NAME("ROUNDS.ITEM.NAME", DataType.STRING, "&bFirst to &b&l<rounds>"),
+    ROUNDS_ITEM_MATERIAL("ROUNDS.ITEM.MATERIAL", DataType.STRING, "MAP"),
     ROUNDS_LORE("ROUNDS.LORE", DataType.STRING_LIST,
             "",
             "&a&lClick to select rounds amount!"),
     ROUNDS_LIST("ROUNDS.AMOUNT", "Change the amount of rounds available", DataType.STRING,
             "1, 3, 5, 6, 10, 15, 20"),
-    ARENA_TITLE("ARENA.TITLE", DataType.STRING, "Select an arena"),
+    ARENA_TITLE("ARENA.TITLE", DataType.STRING, "<b><yellow>Select Arena</b> <dark_gray>| <white><target>"),
     ARENA_FILTER("ARENA.FILTER-TYPE", DataType.STRING, "FILL"),
     ARENA_SIZE("ARENA.SIZE", DataType.INT, "27"),
+    ARENA_LIST_STARTING_SLOT("ARENA.LIST.STARTING-SLOT", DataType.INT, "1"),
     ARENA_ITEM_NAME("ARENA.ITEM.NAME", DataType.STRING, "&b<arena>"),
     ARENA_ITEM_LORE("ARENA.ITEM.LORE", DataType.STRING_LIST, "", "&fSelect <arena> as the battle arena"),
     ARENA_RANDOM_ITEM_NAME("ARENA.RANDOM_ITEM.NAME", DataType.STRING, "&bRandom Arena"),
@@ -202,10 +204,46 @@ public enum MenusLocale implements IDataAccessor {
     LEADERBOARD_TYPES_BEST_WIN_STREAK_DISABLED_MATERIAL("LEADERBOARD.TYPES.BEST_WIN_STREAK.DISABLED.MATERIAL",
             DataType.STRING,
             "GRAY_DYE"),
+        
+    LEADERBOARD_TYPES_WINS_SLOT("LEADERBOARD.TYPES.WINS.SLOT", DataType.INT, "32"),
+    LEADERBOARD_TYPES_WINS_TITLE("LEADERBOARD.TYPES.WINS.TITLE", DataType.STRING,
+                "&7Wins Leaderboards"),
+    LEADERBOARD_TYPES_WINS_ENABLED_NAME("LEADERBOARD.TYPES.WINS.ENABLED.NAME", DataType.STRING,
+                "&aWins Leaderboard"),
+    LEADERBOARD_TYPES_WINS_DISABLED_NAME("LEADERBOARD.TYPES.WINS.DISABLED.NAME", DataType.STRING,
+                "&cWins Leaderboard"),
+    LEADERBOARD_TYPES_WINS_ENABLED_LORE("LEADERBOARD.TYPES.WINS.ENABLED.LORE", DataType.STRING_LIST,
+                " ",
+                "&7Click to view wins leaderboards"),
+    LEADERBOARD_TYPES_WINS_DISABLED_LORE("LEADERBOARD.TYPES.WINS.DISABLED.LORE", DataType.STRING_LIST,
+                " ",
+                "&7Click to view wins leaderboards"),
+    LEADERBOARD_TYPES_WINS_ENABLED_MATERIAL("LEADERBOARD.TYPES.WINS.ENABLED.MATERIAL", DataType.STRING,
+                "LIME_DYE"),
+    LEADERBOARD_TYPES_WINS_DISABLED_MATERIAL("LEADERBOARD.TYPES.WINS.DISABLED.MATERIAL", DataType.STRING,
+                "GRAY_DYE"),
+
+    LEADERBOARD_TYPES_LOSSES_SLOT("LEADERBOARD.TYPES.LOSSES.SLOT", DataType.INT, "33"),
+    LEADERBOARD_TYPES_LOSSES_TITLE("LEADERBOARD.TYPES.LOSSES.TITLE", DataType.STRING,
+                "&7Losses Leaderboards"),
+    LEADERBOARD_TYPES_LOSSES_ENABLED_NAME("LEADERBOARD.TYPES.LOSSES.ENABLED.NAME", DataType.STRING,
+                "&aLosses Leaderboard"),
+    LEADERBOARD_TYPES_LOSSES_DISABLED_NAME("LEADERBOARD.TYPES.LOSSES.DISABLED.NAME", DataType.STRING,
+                "&cLosses Leaderboard"),
+    LEADERBOARD_TYPES_LOSSES_ENABLED_LORE("LEADERBOARD.TYPES.LOSSES.ENABLED.LORE", DataType.STRING_LIST,
+                " ",
+                "&7Click to view losses leaderboards"),
+    LEADERBOARD_TYPES_LOSSES_DISABLED_LORE("LEADERBOARD.TYPES.LOSSES.DISABLED.LORE", DataType.STRING_LIST,
+                " ",
+                "&7Click to view losses leaderboards"),
+    LEADERBOARD_TYPES_LOSSES_ENABLED_MATERIAL("LEADERBOARD.TYPES.LOSSES.ENABLED.MATERIAL", DataType.STRING,
+                "LIME_DYE"),
+    LEADERBOARD_TYPES_LOSSES_DISABLED_MATERIAL("LEADERBOARD.TYPES.LOSSES.DISABLED.MATERIAL", DataType.STRING,
+                "GRAY_DYE"),
 
     LEADERBOARD_TYPES_DEATHS_TITLE("LEADERBOARD.TYPES.DEATHS.TITLE", DataType.STRING,
             "&7Deaths Leaderboards"),
-    LEADERBOARD_TYPES_DEATHS_SLOT("LEADERBOARD.TYPES.DEATHS.SLOT", DataType.INT, "33"),
+    LEADERBOARD_TYPES_DEATHS_SLOT("LEADERBOARD.TYPES.DEATHS.SLOT", DataType.INT, "34"),
     LEADERBOARD_TYPES_DEATHS_ENABLED_NAME("LEADERBOARD.TYPES.DEATHS.ENABLED.NAME", DataType.STRING,
             "&aDeaths Leaderboard"),
     LEADERBOARD_TYPES_DEATHS_DISABLED_NAME("LEADERBOARD.TYPES.DEATHS.DISABLED.NAME", DataType.STRING,
@@ -220,6 +258,7 @@ public enum MenusLocale implements IDataAccessor {
             "LIME_DYE"),
     LEADERBOARD_TYPES_DEATHS_DISABLED_MATERIAL("LEADERBOARD.TYPES.DEATHS.DISABLED.MATERIAL", DataType.STRING,
             "GRAY_DYE"),
+        
     PARTY_SETTINGS_TITLE("PARTY.SETTINGS.NAME", DataType.STRING, "&7Party Settings"),
     PARTY_SETTINGS_SIZE("PARTY.SETTINGS.SIZE", DataType.INT, "27"),
     PARTY_SETTINGS_FILTER("PARTY.SETTINGS.FILTER-TYPE", "FILL, BORDER, NONE", DataType.STRING, "FILL"),
@@ -305,7 +344,16 @@ public enum MenusLocale implements IDataAccessor {
     DIVISIONS_FILTER("DIVISIONS.FILTER-TYPE", "FILL, BORDER, NONE", DataType.STRING, "FILL"),
     DIVISIONS_ITEM_NAME("DIVISIONS.ITEM.NAME", DataType.STRING, "<division>"),
     DIVISIONS_LORE("DIVISIONS.LORE", DataType.STRING_LIST,
-            "&7To reach this this rank you", "&7need <elo> elo."),
+            "&7To reach this rank, you", "&7need <elo> elo."),
+    PASSED_DIVISIONS_ITEM_NAME("DIVISIONS.PASSED.ITEM.NAME", DataType.STRING, "&a✅ <division>"),
+    PASSED_DIVISIONS_LORE("DIVISIONS.PASSED.LORE", DataType.STRING_LIST,
+            "&7You have already reached", "&7this rank."),
+    DIVISIONS_ELO_BUTTON_ENABLED("DIVISIONS.ELO_BUTTON.ENABLED", DataType.BOOLEAN, "true"),
+    DIVISIONS_ELO_BUTTON_MATERIAL("DIVISIONS.ELO_BUTTON.MATERIAL", DataType.STRING, "COAL_BLOCK"),
+    DIVISIONS_ELO_BUTTON_SLOT("DIVISIONS.ELO_BUTTON.SLOT", DataType.INT, "31"),
+    DIVISIONS_ELO_BUTTON_NAME("DIVISIONS.ELO_BUTTON.NAME", DataType.STRING, "&aYour Elo: &b<elo>"),
+    DIVISIONS_ELO_BUTTON_LORE("DIVISIONS.ELO_BUTTON.LORE", DataType.STRING_LIST,
+            ""),
     SETTINGS_TITLE("SETTINGS.TITLE", DataType.STRING, "&7Profile Settings"),
     SETTINGS_SIZE("SETTINGS.SIZE", DataType.INT, "27"),
     SETTINGS_FILTER("SETTINGS.FILTER-TYPE", "FILL, BORDER, NONE", DataType.STRING, "FILL"),
@@ -395,7 +443,7 @@ public enum MenusLocale implements IDataAccessor {
             "&7Set Max ping you",
             "&7can match against.",
             "",
-            " &7Current Ping-range: &b<ping>",
+            " &7Current Ping-range: &b<max-ping>",
             " ",
             "&a + Left Click to increase",
             "&c - Right Click to decrease"),
@@ -407,6 +455,8 @@ public enum MenusLocale implements IDataAccessor {
             "",
             " &7Current Kill Effect: &b<kill-effect>",
             " &7Current Kill Message: &b<kill-message>",
+            " &7Current Armor Trim: &b<armor-trim>",
+            " &7Current Shield Pattern: &b<shield-pattern>",
             " ",
             "&aClick to open cosmetics menu"),
     SETTINGS_COSMETICS_SLOT("SETTINGS.SETTINGS.COSMETICS.SLOT", DataType.INT, "15"),
@@ -474,6 +524,61 @@ public enum MenusLocale implements IDataAccessor {
             "<description> ",
             "<messages>",
             " ",
+            "&cNo permission"),
+    ARMOR_TRIMS_TITLE("SETTINGS.ARMOR-TRIMS.TITLE", DataType.STRING, "&7Armor Trims"),
+    ARMOR_TRIMS_FILTER("SETTINGS.ARMOR-TRIMS.FILTER-TYPE", "FILL, BORDER, NONE", DataType.STRING, "FILL"),
+    ARMOR_TRIMS_SLOT("SETTINGS.COSMETICS.ARMOR-TRIMS.SLOT", DataType.INT, "12"),
+    ARMOR_TRIMS_NAME("SETTINGS.COSMETICS.ARMOR-TRIMS.NAME", DataType.STRING, "&bArmor Trims"),
+    ARMOR_TRIMS_MATERIAL("SETTINGS.COSMETICS.ARMOR-TRIMS.MATERIAL", DataType.STRING, "NETHERITE_CHESTPLATE"),
+    ARMOR_TRIMS_LORE("SETTINGS.COSMETICS.ARMOR-TRIMS.LORE", DataType.STRING_LIST,
+            "&7View all available armor trims", " ", "&aClick to open"),
+    ARMOR_TRIMS_NAME_SELECTED("SETTINGS.ARMOR-TRIMS.SELECTED.NAME", DataType.STRING,
+            "<display-name> &7&o(Selected)"),
+    ARMOR_TRIMS_NAME_NOT_SELECTED("SETTINGS.ARMOR-TRIMS.UNSELECTED.NAME", DataType.STRING, "<display-name>"),
+    ARMOR_TRIMS_DISPLAY_HELMET_MATERIAL("SETTINGS.ARMOR-TRIMS.DISPLAY.HELMET.MATERIAL", DataType.STRING, "netherite_helmet"),
+    ARMOR_TRIMS_DISPLAY_CHESTPLATE_MATERIAL("SETTINGS.ARMOR-TRIMS.DISPLAY.CHESTPLATE.MATERIAL", DataType.STRING, "netherite_chestplate"),
+    ARMOR_TRIMS_DISPLAY_LEGGINGS_MATERIAL("SETTINGS.ARMOR-TRIMS.DISPLAY.LEGGINGS.MATERIAL", DataType.STRING, "netherite_leggings"),
+    ARMOR_TRIMS_DISPLAY_BOOTS_MATERIAL("SETTINGS.ARMOR-TRIMS.DISPLAY.BOOTS.MATERIAL", DataType.STRING, "netherite_boots"),
+    ARMOR_TRIMS_SELECTED_LORE("SETTINGS.ARMOR-TRIMS.SELECTED.LORE", DataType.STRING_LIST,
+            " ",
+            "<description>",
+            " ",
+            "&eCurrently Selected"),
+    ARMOR_TRIMS_UNSELECTED_LORE("SETTINGS.ARMOR-TRIMS.UNSELECTED.LORE", DataType.STRING_LIST,
+            " ",
+            "<description>",
+            " ",
+            "&aClick to select"),
+    ARMOR_TRIMS_NO_PERMISSION_LORE("SETTINGS.ARMOR-TRIMS.NO-PERMISSION.LORE", DataType.STRING_LIST,
+            " ",
+            "<description>",
+            " ",
+            "&cNo permission"),
+    SHIELD_PATTERNS_TITLE("SETTINGS.SHIELD-PATTERNS.TITLE", DataType.STRING, "&7Shield Patterns"),
+    SHIELD_PATTERNS_SIZE("SETTINGS.SHIELD-PATTERNS.SIZE", DataType.INT, "27"),
+    SHIELD_PATTERNS_FILTER("SETTINGS.SHIELD-PATTERNS.FILTER-TYPE", "FILL, BORDER, NONE", DataType.STRING, "FILL"),
+    SHIELD_PATTERNS_SLOT("SETTINGS.COSMETICS.SHIELD-PATTERNS.SLOT", DataType.INT, "13"),
+    SHIELD_PATTERNS_NAME("SETTINGS.COSMETICS.SHIELD-PATTERNS.NAME", DataType.STRING, "&bShield Patterns"),
+    SHIELD_PATTERNS_MATERIAL("SETTINGS.COSMETICS.SHIELD-PATTERNS.MATERIAL", DataType.STRING, "SHIELD"),
+    SHIELD_PATTERNS_LORE("SETTINGS.COSMETICS.SHIELD-PATTERNS.LORE", DataType.STRING_LIST,
+            "&7View all available shield pattern", " ", "&aClick to open"),
+    SHIELD_PATTERNS_NAME_SELECTED("SETTINGS.SHIELD-PATTERNS.SELECTED.NAME", DataType.STRING,
+            "<display-name> &7&o(Selected)"),
+    SHIELD_PATTERNS_NAME_NOT_SELECTED("SETTINGS.SHIELD-PATTERNS.UNSELECTED.NAME", DataType.STRING, "<display-name>"),
+    SHIELD_PATTERNS_SELECTED_LORE("SETTINGS.SHIELD-PATTERNS.SELECTED.LORE", DataType.STRING_LIST,
+            " ",
+            "<description> ",
+            " ",
+            "&eCurrently Selected"),
+    SHIELD_PATTERNS_UNSELECTED_LORE("SETTINGS.SHIELD-PATTERNS.UNSELECTED.LORE", DataType.STRING_LIST,
+            " ",
+            "<description> ",
+            " ",
+            "&aClick to select"),
+    SHIELD_PATTERNS_NO_PERMISSION_LORE("SETTINGS.SHIELD-PATTERNS.NO-PERMISSION.LORE", DataType.STRING_LIST,
+            " ",
+            "<description> ",
+            " ",
             "&cNo permission");
 
     private final String path;
@@ -503,5 +608,33 @@ public enum MenusLocale implements IDataAccessor {
     @Override
     public ConfigFile getConfigFile() {
         return ConfigService.get().getMenusConfig();
+    }
+    public void update() {
+        MATCH_LIST_ITEM_NAME.set(
+                MATCH_LIST_ITEM_NAME.getString()
+                        .replaceAll("<playerRed_name>", "<red-name>")
+                        .replaceAll("<playerBlue_name>", "<blue-name>")
+        );
+        STAT_LORE.set(
+                STAT_LORE.getStringList().stream().map(str ->
+                        str
+                                .replaceAll("<currentStreak>", "<current-win-streak>")
+                                .replaceAll("<win_streak_current>", "<current-win-streak>")
+                                .replaceAll("<bestStreak>", "<best-win-streak>")
+                                .replaceAll("<win_streak_best>", "<best-win-streak>")
+                                .replaceAll("<kill_death_ratio>", "<kdr>")
+                ).toList()
+        );
+        SETTINGS_PING_RANGE_LORE.set(
+                SETTINGS_PING_RANGE_LORE.getStringList().stream().map(str ->
+                        str
+                                .replaceAll("<ping>", "<max-ping>")
+                ).toList()
+        );
+        if (MATCH_LIST_SIZE.getInt() == 36) MATCH_LIST_SIZE.set(54);
+        if (MATCH_LIST_STARTING_SLOT.getInt() == 10 && MATCH_LIST_FILTER.getString().equals("FILTER")) MATCH_LIST_FILTER.set("BORDER");
+        if (MATCH_LIST_STARTING_SLOT.getInt() == 10) MATCH_LIST_STARTING_SLOT.set(1);
+        if (MATCH_LIST_STARTING_SLOT.getInt() == 0) MATCH_LIST_STARTING_SLOT.set(1);
+        getConfigFile().save();
     }
 }

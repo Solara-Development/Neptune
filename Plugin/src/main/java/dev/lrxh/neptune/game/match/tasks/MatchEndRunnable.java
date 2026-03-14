@@ -2,7 +2,6 @@ package dev.lrxh.neptune.game.match.tasks;
 
 import dev.lrxh.api.events.MatchEndEvent;
 import dev.lrxh.neptune.API;
-import dev.lrxh.neptune.configs.impl.SettingsLocale;
 import dev.lrxh.neptune.feature.hotbar.HotbarService;
 import dev.lrxh.neptune.game.kit.impl.KitRule;
 import dev.lrxh.neptune.game.match.Match;
@@ -44,8 +43,6 @@ public class MatchEndRunnable extends NeptuneRunnable {
             }
 
             match.resetArena();
-
-            if (!SettingsLocale.ARENA_DUPLICATES.getBoolean()) match.getArena().setUsed(false);
 
             match.forEachParticipant(participant -> {
 
