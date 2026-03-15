@@ -34,7 +34,6 @@ public class KitPlaceholders implements PAPIPlaceholder {
         if (!matcher.matches()) {
             throw new IllegalArgumentException("Invalid string for kit placeholder: " + string);
         }
-        System.out.println(string);
         String resultKit = null;
         try { resultKit = matcher.group("kit"); } catch (Exception ignored) {}
         String type = matcher.group("type");
