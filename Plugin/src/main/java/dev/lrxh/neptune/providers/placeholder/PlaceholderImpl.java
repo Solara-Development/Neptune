@@ -33,6 +33,11 @@ public class PlaceholderImpl extends PlaceholderExpansion {
     }
 
     @Override
+    public boolean persist() {
+        return true;
+    }
+
+    @Override
     public String onRequest(OfflinePlayer player, @NotNull String identifier) {
         if (player == null) return identifier;
         Profile profile = API.getProfile(player.getUniqueId());
