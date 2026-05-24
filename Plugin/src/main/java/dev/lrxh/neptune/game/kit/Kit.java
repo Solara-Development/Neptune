@@ -113,8 +113,8 @@ public class Kit implements IKit {
     private HashMap<KitRule, Boolean> rules() {
         HashMap<KitRule, Boolean> rules = new HashMap<>();
         for (KitRule kitRule : KitRule.values()) {
-            if (kitRule == KitRule.DAMAGE) rules.put(kitRule, true);
-            rules.put(kitRule, false);
+            boolean defaultValue = kitRule == KitRule.DAMAGE || kitRule == KitRule.PROJECTILE_DAMAGE;
+            rules.put(kitRule, defaultValue);
         }
 
         return rules;
@@ -163,7 +163,15 @@ public class Kit implements IKit {
     }
 
     public boolean is(KitRule kitRule) {
-        return rules.get(kitRule);
+        Boolean value = rules.get(kitRule);
+        if (value == null) {
+            if (kitRule == KitRule.PROJECTILE_DAMAGE) {
+                Boolean damage = rules.get(KitRule.DAMAGE);
+                return damage != null && damage;
+            }
+            return false;
+        }
+        return value;
     }
 
     public void toggle(KitRule kitRule) {

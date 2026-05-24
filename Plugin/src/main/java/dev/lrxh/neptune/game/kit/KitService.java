@@ -61,8 +61,10 @@ public class KitService extends IService implements IKitService {
                     }
 
                     HashMap<KitRule, Boolean> rules = new HashMap<>();
+                    boolean damageEnabled = config.getBoolean(path + KitRule.DAMAGE.getSaveName(), false);
                     for (KitRule kitRule : KitRule.values()) {
-                        rules.put(kitRule, config.getBoolean(path + kitRule.getSaveName(), false));
+                        boolean fallback = kitRule == KitRule.PROJECTILE_DAMAGE ? damageEnabled : false;
+                        rules.put(kitRule, config.getBoolean(path + kitRule.getSaveName(), fallback));
                     }
 
                     List<PotionEffect> potionEffects = new ArrayList<>();
