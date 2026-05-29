@@ -1,11 +1,15 @@
 package dev.lrxh.neptune.providers.manager;
 
+import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.utils.ConfigFile;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 public abstract class IService {
     public abstract ConfigFile getConfigFile();
@@ -14,11 +18,26 @@ public abstract class IService {
 
     public abstract void save();
 
-    public void save(List<Value> values, String path) {
-        for (Value value : values) {
-            getConfigFile().getConfiguration().set(path + value.getName(), value.getObject());
-        }
+    public <T extends ConfigData> void saveAll(String root, Collection<T> items, Function<T, String> keyFn) {
+        FileConfiguration config = getConfigFile().getConfiguration();
+        config.set(root, null);
+        for (T item : items) item.write(config.createSection(root + "." + keyFn.apply(item)));
         getConfigFile().save();
+    }
+
+    public <T> void loadAll(String root, Collection<T> out, BiFunction<String, ConfigurationSection, T> reader) {
+        ConfigurationSection section = getConfigFile().getConfiguration().getConfigurationSection(root);
+        if (section == null) return;
+        for (String key : section.getKeys(false)) {
+            try {
+                T value = reader.apply(key, section.getConfigurationSection(key));
+                if (value != null) out.add(value);
+            } catch (Exception e) {
+                Neptune.get().getLogger().severe("Error occurred while loading " + root + " with key: " + key);
+                Neptune.get().setErrored();
+                throw e;
+            }
+        }
     }
 
     public Set<String> getKeys(String path) {

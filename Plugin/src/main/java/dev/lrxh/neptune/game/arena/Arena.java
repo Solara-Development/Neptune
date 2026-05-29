@@ -6,6 +6,8 @@ import dev.lrxh.blockChanger.BlockChanger;
 import dev.lrxh.blockChanger.snapshot.CuboidSnapshot;
 import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.game.kit.KitService;
+import dev.lrxh.neptune.providers.manager.ConfigData;
+import dev.lrxh.neptune.utils.LocationUtil;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.*;
@@ -13,6 +15,7 @@ import org.bukkit.block.Biome;
 import org.bukkit.generator.BiomeProvider;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.generator.WorldInfo;
+import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -23,7 +26,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Getter
 @Setter
-public class Arena implements IArena {
+public class Arena implements IArena, ConfigData {
     private String name;
     private String displayName;
     private Location redSpawn;
@@ -231,6 +234,36 @@ public class Arena implements IArena {
             result.add(mat.name());
         }
         return result;
+    }
+
+    @Override
+    public void write(ConfigurationSection s) {
+        s.set("displayName", displayName);
+        s.set("redSpawn", LocationUtil.serialize(redSpawn));
+        s.set("blueSpawn", LocationUtil.serialize(blueSpawn));
+        s.set("enabled", enabled);
+        s.set("deathY", deathY);
+        s.set("time", time);
+        s.set("limit", buildLimit);
+        s.set("whitelistedBlocks", getWhitelistedBlocksAsString());
+        if (min != null) s.set("min", LocationUtil.serialize(min));
+        if (max != null) s.set("max", LocationUtil.serialize(max));
+    }
+
+    public static Arena read(String name, ConfigurationSection s) {
+        if (!s.contains("displayName")) return null;
+        List<Material> blocks = new ArrayList<>();
+        for (String n : s.getStringList("whitelistedBlocks")) {
+            Material m = Material.getMaterial(n);
+            if (m != null) blocks.add(m);
+        }
+        return new Arena(name, s.getString("displayName"),
+                LocationUtil.deserialize(s.getString("redSpawn")),
+                LocationUtil.deserialize(s.getString("blueSpawn")),
+                LocationUtil.deserialize(s.getString("min")),
+                LocationUtil.deserialize(s.getString("max")),
+                s.getDouble("limit"), s.getBoolean("enabled"),
+                blocks, s.getInt("deathY", -68321), s.getLong("time"));
     }
 
     public void restore() {
