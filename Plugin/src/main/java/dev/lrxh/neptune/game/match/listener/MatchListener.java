@@ -46,7 +46,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.projectiles.ProjectileSource;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -261,15 +260,8 @@ public class MatchListener implements Listener {
             return;
         }
 
-        getMatchForPlayer(player).ifPresent(match -> {
-            IArena arena = match.getArena();
-            List<Block> originalBlocks = new ArrayList<>(event.blockList());
-            List<Block> allowedBlocks = originalBlocks.stream()
-                    .filter(block -> arena.getWhitelistedBlocks().contains(block.getType()))
-                    .toList();
-            event.blockList().clear();
-            event.blockList().addAll(allowedBlocks);
-        });
+        getMatchForPlayer(player).ifPresent(match ->
+                retainWhitelistedBlocks(event.blockList(), match.getArena()));
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -596,7 +588,10 @@ public class MatchListener implements Listener {
             return;
         }
 
-        if (match.getParticipant(attacker).isDead()) {
+        Participant attackerParticipant = match.getParticipant(attacker.getUniqueId());
+        Participant playerParticipant = match.getParticipant(player.getUniqueId());
+
+        if (attackerParticipant.isDead()) {
             event.setCancelled(true);
         }
 
@@ -610,7 +605,7 @@ public class MatchListener implements Listener {
             event.setCancelled(true);
         }
 
-        match.getParticipant(player.getUniqueId()).setLastAttacker(match.getParticipant(attacker.getUniqueId()));
+        playerParticipant.setLastAttacker(attackerParticipant);
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -941,34 +936,30 @@ public class MatchListener implements Listener {
         if (!match.getKit().is(KitRule.BED_WARS))
             return;
 
-        if (match.getKit().is(KitRule.BED_WARS)) {
-            if (blockType == Material.OAK_PLANKS || blockType == Material.END_STONE) {
-                event.setCancelled(false);
-            }
+        if (blockType == Material.OAK_PLANKS || blockType == Material.END_STONE) {
+            event.setCancelled(false);
         }
 
-        if (match.getKit().is(KitRule.BED_WARS)) {
-            if (event.getBlock().getType().toString().contains("BED")) {
-                Location bed = event.getBlock().getLocation();
+        if (event.getBlock().getType().toString().contains("BED")) {
+            Location bed = event.getBlock().getLocation();
 
-                Participant participant = match.getParticipant(player.getUniqueId());
-                if (participant == null)
-                    return;
-                Location spawn = match.getSpawn(participant);
-                Participant opponent = participant.getOpponent();
-                Location opponentSpawn = match.getSpawn(opponent);
-                if (bed.distanceSquared(spawn) > bed.distanceSquared(opponentSpawn)) {
-                    event.setDropItems(false);
-                    match.breakBed(opponent, participant);
-                    match.sendTitle(opponent, CC.color(MessagesLocale.BED_BREAK_TITLE.getString()),
-                            CC.color(MessagesLocale.BED_BREAK_FOOTER.getString()), 20);
-                    match.broadcast(
-                            opponent.getColor().equals(ParticipantColor.RED) ? MessagesLocale.RED_BED_BROKEN_MESSAGE
-                                    : MessagesLocale.BLUE_BED_BROKEN_MESSAGE, Placeholder.parsed("player", participant.getNameColored()));
-                } else {
-                    event.setCancelled(true);
-                    participant.sendMessage(MessagesLocale.CANT_BREAK_OWN_BED);
-                }
+            Participant participant = match.getParticipant(player.getUniqueId());
+            if (participant == null)
+                return;
+            Location spawn = match.getSpawn(participant);
+            Participant opponent = participant.getOpponent();
+            Location opponentSpawn = match.getSpawn(opponent);
+            if (bed.distanceSquared(spawn) > bed.distanceSquared(opponentSpawn)) {
+                event.setDropItems(false);
+                match.breakBed(opponent, participant);
+                match.sendTitle(opponent, CC.color(MessagesLocale.BED_BREAK_TITLE.getString()),
+                        CC.color(MessagesLocale.BED_BREAK_FOOTER.getString()), 20);
+                match.broadcast(
+                        opponent.getColor().equals(ParticipantColor.RED) ? MessagesLocale.RED_BED_BROKEN_MESSAGE
+                                : MessagesLocale.BLUE_BED_BROKEN_MESSAGE, Placeholder.parsed("player", participant.getNameColored()));
+            } else {
+                event.setCancelled(true);
+                participant.sendMessage(MessagesLocale.CANT_BREAK_OWN_BED);
             }
         }
     }
@@ -1008,15 +999,8 @@ public class MatchListener implements Listener {
             return;
         }
 
-        getMatchForPlayer(player).ifPresent(match -> {
-            IArena arena = match.getArena();
-            List<Block> originalBlocks = new ArrayList<>(event.blockList());
-            List<Block> allowedBlocks = originalBlocks.stream()
-                    .filter(block -> arena.getWhitelistedBlocks().contains(block.getType()))
-                    .toList();
-            event.blockList().clear();
-            event.blockList().addAll(allowedBlocks);
-        });
+        getMatchForPlayer(player).ifPresent(match ->
+                retainWhitelistedBlocks(event.blockList(), match.getArena()));
     }
 
     @EventHandler
@@ -1047,6 +1031,14 @@ public class MatchListener implements Listener {
             Profile profile = profileOpt.get();
             profile.getMatch().getEntities().add(event.getItemDrop());
         }
+    }
+
+    private void retainWhitelistedBlocks(List<Block> blockList, IArena arena) {
+        List<Block> allowed = blockList.stream()
+                .filter(block -> arena.getWhitelistedBlocks().contains(block.getType()))
+                .toList();
+        blockList.clear();
+        blockList.addAll(allowed);
     }
 
     private Player getResponsiblePlayer(EntityDamageByEntityEvent event) {

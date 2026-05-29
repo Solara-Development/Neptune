@@ -30,7 +30,6 @@ import dev.lrxh.neptune.game.match.tasks.MatchRespawnRunnable;
 import dev.lrxh.neptune.game.match.tasks.MatchSecondRoundRunnable;
 import dev.lrxh.neptune.profile.data.GameData;
 import dev.lrxh.neptune.profile.data.MatchHistory;
-import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
 import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.DateUtils;
@@ -284,12 +283,7 @@ public class SoloFightMatch extends Match implements ISoloFightMatch {
         if (quit) {
             participant.setDisconnected(true);
         } else {
-            participant.setLeft(true);
-            PlayerUtil.reset(participant.getPlayer());
-            PlayerUtil.teleportToSpawn(participant.getPlayerUUID());
-            Profile profile = API.getProfile(participant.getPlayerUUID());
-            profile.setState(profile.getGameData().getParty() == null ? ProfileState.IN_LOBBY : ProfileState.IN_PARTY);
-            profile.setMatch(null);
+            handleLeaveToLobby(participant);
         }
 
         end(participant);

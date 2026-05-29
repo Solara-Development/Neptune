@@ -442,6 +442,15 @@ public abstract class Match implements IMatch {
         player.teleport(location);
     }
 
+    protected void handleLeaveToLobby(Participant participant) {
+        participant.setLeft(true);
+        PlayerUtil.reset(participant.getPlayer());
+        PlayerUtil.teleportToSpawn(participant.getPlayerUUID());
+        Profile profile = API.getProfile(participant.getPlayerUUID());
+        profile.setState(profile.getGameData().getParty() == null ? ProfileState.IN_LOBBY : ProfileState.IN_PARTY);
+        profile.setMatch(null);
+    }
+
     public abstract String getWinnerName();
 
     public abstract String getLoserName();

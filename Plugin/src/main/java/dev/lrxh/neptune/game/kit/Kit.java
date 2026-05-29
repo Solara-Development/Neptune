@@ -114,8 +114,7 @@ public class Kit implements IKit {
     private HashMap<KitRule, Boolean> rules() {
         HashMap<KitRule, Boolean> rules = new HashMap<>();
         for (KitRule kitRule : KitRule.values()) {
-            if (kitRule == KitRule.DAMAGE) rules.put(kitRule, true);
-            rules.put(kitRule, false);
+            rules.put(kitRule, kitRule == KitRule.DAMAGE);
         }
 
         return rules;

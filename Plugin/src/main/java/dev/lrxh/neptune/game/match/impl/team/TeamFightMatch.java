@@ -5,7 +5,6 @@ import dev.lrxh.api.events.TeamMatchBedDestroyEvent;
 import dev.lrxh.api.match.ITeamFightMatch;
 import dev.lrxh.api.match.participant.IParticipant;
 import dev.lrxh.api.match.team.IMatchTeam;
-import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.configs.impl.SoundsLocale;
 import dev.lrxh.neptune.game.kit.Kit;
@@ -16,8 +15,6 @@ import dev.lrxh.neptune.game.match.impl.participant.DeathCause;
 import dev.lrxh.neptune.game.match.impl.participant.Participant;
 import dev.lrxh.neptune.game.match.tasks.MatchEndRunnable;
 import dev.lrxh.neptune.game.match.tasks.MatchRespawnRunnable;
-import dev.lrxh.neptune.profile.data.ProfileState;
-import dev.lrxh.neptune.profile.impl.Profile;
 import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.PlayerUtil;
 import lombok.Getter;
@@ -171,12 +168,7 @@ public class TeamFightMatch extends Match implements ITeamFightMatch {
         if (quit) {
             participant.setDisconnected(true);
         } else {
-            participant.setLeft(true);
-            PlayerUtil.reset(participant.getPlayer());
-            PlayerUtil.teleportToSpawn(participant.getPlayerUUID());
-            Profile profile = API.getProfile(participant.getPlayerUUID());
-            profile.setState(profile.getGameData().getParty() == null ? ProfileState.IN_LOBBY : ProfileState.IN_PARTY);
-            profile.setMatch(null);
+            handleLeaveToLobby(participant);
         }
 
         onDeath(participant);
@@ -187,7 +179,7 @@ public class TeamFightMatch extends Match implements ITeamFightMatch {
         setState(MatchState.IN_ROUND);
         showPlayerForSpectators();
         playSound(SoundsLocale.getSound(SoundsLocale.MATCH_START));
-        sendTitle(CC.color(MessagesLocale.MATCH_START_TITLE_FOOTER.getString()), CC.color(MessagesLocale.MATCH_START_TITLE_FOOTER.getString()), 10);
+        sendTitle(CC.color(MessagesLocale.MATCH_START_TITLE_HEADER.getString()), CC.color(MessagesLocale.MATCH_START_TITLE_FOOTER.getString()), 20);
     }
 
     public String getWinnerName() {

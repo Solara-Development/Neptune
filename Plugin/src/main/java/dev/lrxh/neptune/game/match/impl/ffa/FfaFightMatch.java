@@ -125,16 +125,11 @@ public class FfaFightMatch extends Match implements IFffaFightMatch {
         if (isEnded()) return;
 
         participant.setDeathCause(DeathCause.DISCONNECT);
-        Profile profile = API.getProfile(participant.getPlayerUUID());
 
         if (quit) {
             participant.setDisconnected(true);
         } else {
-            participant.setLeft(true);
-            PlayerUtil.reset(participant.getPlayer());
-            PlayerUtil.teleportToSpawn(participant.getPlayerUUID());
-            profile.setState(profile.getGameData().getParty() == null ? ProfileState.IN_LOBBY : ProfileState.IN_PARTY);
-            profile.setMatch(null);
+            handleLeaveToLobby(participant);
         }
 
         onDeath(participant);
