@@ -169,7 +169,7 @@ public class GameData implements IGameData {
 
     public void addHistory(MatchHistory matchHistory) {
         if (matchHistories.size() >= 7) {
-            matchHistories.remove(0);
+            matchHistories.removeFirst();
         }
         matchHistories.add(matchHistory);
     }

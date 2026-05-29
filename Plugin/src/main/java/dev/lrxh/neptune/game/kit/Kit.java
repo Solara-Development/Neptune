@@ -4,6 +4,7 @@ import dev.lrxh.api.arena.IArena;
 import dev.lrxh.api.kit.IKit;
 import dev.lrxh.api.kit.IKitRule;
 import dev.lrxh.neptune.API;
+import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.game.arena.Arena;
 import dev.lrxh.neptune.game.arena.VirtualArena;
 import dev.lrxh.neptune.game.kit.impl.KitRule;
@@ -192,13 +193,15 @@ public class Kit implements IKit {
                 (map, entry) -> map.put(entry.getKey(), entry.getValue()), HashMap::putAll);
     }
 
-    public CompletableFuture<VirtualArena> getRandomArena() {
+    public CompletableFuture<IArena> getRandomArena() {
         List<Arena> arenas1 = new ArrayList<>();
 
         for (Arena arena : arenas) {
             if (!arena.isEnabled())
                 continue;
             if (!arena.isSetup() || !arena.isDoneLoading())
+                continue;
+            if (Neptune.get().isArenaGenerationDisabled() && arena.isInUse())
                 continue;
             arenas1.add(arena);
         }
@@ -208,7 +211,7 @@ public class Kit implements IKit {
 
         Arena selected = arenas1.get(ThreadLocalRandom.current().nextInt(arenas1.size()));
 
-        return selected.createDuplicate().thenApply(arena -> arena);
+        return selected.acquire();
     }
 
     @Override

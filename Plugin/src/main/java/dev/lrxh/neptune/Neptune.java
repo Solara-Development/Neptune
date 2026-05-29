@@ -84,6 +84,7 @@ public final class Neptune extends JavaPlugin {
     private boolean placeholder = false;
     @Setter
     private boolean allowMatches;
+    private boolean arenaGenerationDisabled;
 
     private boolean errored;
     public void setErrored() {
@@ -115,6 +116,7 @@ public final class Neptune extends JavaPlugin {
 
     private void loadManager() {
         ConfigService.get().load();
+        arenaGenerationDisabled = !SettingsLocale.ARENA_GENERATION.getBoolean();
 
         loadExtensions();
         if (!isEnabled())

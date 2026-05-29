@@ -38,6 +38,7 @@ public class Arena implements IArena {
     private CuboidSnapshot snapshot;
     private Arena owner;
     private boolean doneLoading;
+    private boolean inUse;
 
     public Arena(String name, String displayName, Location redSpawn, Location blueSpawn, boolean enabled, int deathY, long time) {
         this.name = name;
@@ -99,6 +100,15 @@ public class Arena implements IArena {
     @Override
     public void remove() {
 
+    }
+
+    public synchronized CompletableFuture<IArena> acquire() {
+        if (Neptune.get().isArenaGenerationDisabled()) {
+            if (inUse) return CompletableFuture.completedFuture(null);
+            inUse = true;
+            return CompletableFuture.completedFuture(this);
+        }
+        return createDuplicate().thenApply(arena -> arena);
     }
 
     public synchronized CompletableFuture<VirtualArena> createDuplicate() {

@@ -86,8 +86,8 @@ public class QueueCheckTask extends NeptuneRunnable {
 
             kit.getRandomArena().thenAccept(arena -> {
                 if (arena == null) {
-                    PlayerUtil.sendMessage(uuid1, CC.error("No valid arena was found for this kit!"));
-                    PlayerUtil.sendMessage(uuid2, CC.error("No valid arena was found for this kit!"));
+                    QueueService.get().add(queueEntry1, false);
+                    QueueService.get().add(queueEntry2, false);
                     return;
                 }
 

@@ -1,11 +1,11 @@
 package dev.lrxh.neptune.game.match.impl.ffa;
 
+import dev.lrxh.api.arena.IArena;
 import dev.lrxh.api.match.IFffaFightMatch;
 import dev.lrxh.api.match.participant.IParticipant;
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.configs.impl.SoundsLocale;
-import dev.lrxh.neptune.game.arena.VirtualArena;
 import dev.lrxh.neptune.game.kit.Kit;
 import dev.lrxh.neptune.game.match.Match;
 import dev.lrxh.neptune.game.match.impl.MatchState;
@@ -30,7 +30,7 @@ public class FfaFightMatch extends Match implements IFffaFightMatch {
     @Getter
     private Participant winner;
 
-    public FfaFightMatch(VirtualArena arena, Kit kit, List<Participant> participants) {
+    public FfaFightMatch(IArena arena, Kit kit, List<Participant> participants) {
         super(MatchState.STARTING, arena, kit, participants, 1, 1, true, false);
         this.winner = null;
         this.deadParticipants = new ArrayList<>();

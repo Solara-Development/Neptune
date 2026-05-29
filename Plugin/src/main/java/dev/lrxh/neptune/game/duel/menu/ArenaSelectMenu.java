@@ -86,7 +86,11 @@ public class ArenaSelectMenu extends Menu {
                     Profile profile = API.getProfile(receiver);
                     if (profile == null) return;
                     player.closeInventory();
-                    arena.createDuplicate().thenAccept(duplicate -> {
+                    arena.acquire().thenAccept(duplicate -> {
+                        if (duplicate == null) {
+                            p.sendMessage(CC.error("That arena is currently in use, please try another."));
+                            return;
+                        }
                         DuelRequest duelRequest = new DuelRequest(p.getUniqueId(), kit, duplicate, false, round);
                         profile.sendDuel(duelRequest);
                     });

@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 
+import dev.lrxh.api.arena.IArena;
 import dev.lrxh.api.events.SoloMatchBedDestroyEvent;
 import dev.lrxh.api.match.ISoloFightMatch;
 import dev.lrxh.api.match.participant.IParticipant;
@@ -17,7 +18,6 @@ import dev.lrxh.neptune.configs.impl.SoundsLocale;
 import dev.lrxh.neptune.feature.hotbar.HotbarService;
 import dev.lrxh.neptune.feature.leaderboard.LeaderboardService;
 import dev.lrxh.neptune.feature.leaderboard.impl.LeaderboardPlayerEntry;
-import dev.lrxh.neptune.game.arena.VirtualArena;
 import dev.lrxh.neptune.game.kit.Kit;
 import dev.lrxh.neptune.game.kit.impl.KitRule;
 import dev.lrxh.neptune.game.match.Match;
@@ -50,7 +50,7 @@ public class SoloFightMatch extends Match implements ISoloFightMatch {
     private final Participant participantA;
     private final Participant participantB;
 
-    public SoloFightMatch(VirtualArena arena, Kit kit, boolean duel, List<Participant> participants, Participant participantA,
+    public SoloFightMatch(IArena arena, Kit kit, boolean duel, List<Participant> participants, Participant participantA,
                           Participant participantB, int rounds) {
         super(MatchState.STARTING, arena, kit, participants, rounds, 1, duel, false);
         this.participantA = participantA;

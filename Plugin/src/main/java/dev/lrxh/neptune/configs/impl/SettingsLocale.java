@@ -14,6 +14,9 @@ import java.util.List;
 @Getter
 public enum SettingsLocale implements IDataAccessor {
     FRIENDLY_FIRE("FRIENDLY_FIRE", DataType.BOOLEAN, "false"),
+    ARENA_GENERATION("ARENA_GENERATION",
+            "If disabled, matches reuse the original arena (flagged in use) instead of generating a copy. Requires a server restart to apply.",
+            DataType.BOOLEAN, "false"),
     COMMANDS_AFTER_MATCH_WINNER("COMMAND_AFTER_MATCH.WINNER", DataType.STRING_LIST, "NONE"),
     COMMANDS_AFTER_MATCH_LOSER("COMMAND_AFTER_MATCH.LOSER", DataType.STRING_LIST, "NONE"),
     SPAWN_LOCATION("SPAWN.LOCATION", DataType.STRING, "NONE"),

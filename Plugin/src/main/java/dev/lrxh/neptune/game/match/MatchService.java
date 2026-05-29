@@ -1,13 +1,14 @@
 package dev.lrxh.neptune.game.match;
 
+import dev.lrxh.api.arena.IArena;
 import dev.lrxh.api.events.MatchReadyEvent;
 import dev.lrxh.api.match.IMatch;
 import dev.lrxh.api.match.IMatchService;
 import dev.lrxh.api.match.participant.IParticipant;
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.Neptune;
+import dev.lrxh.neptune.game.arena.Arena;
 import dev.lrxh.neptune.game.arena.ArenaService;
-import dev.lrxh.neptune.game.arena.VirtualArena;
 import dev.lrxh.neptune.game.kit.Kit;
 import dev.lrxh.neptune.game.kit.KitService;
 import dev.lrxh.neptune.game.match.impl.ffa.FfaFightMatch;
@@ -22,6 +23,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 public class MatchService implements IMatchService {
     private static MatchService instance;
@@ -33,7 +35,7 @@ public class MatchService implements IMatchService {
         return instance;
     }
 
-    public void startMatch(Participant playerRed, Participant playerBlue, Kit kit, VirtualArena arena, boolean duel, int rounds) {
+    public void startMatch(Participant playerRed, Participant playerBlue, Kit kit, IArena arena, boolean duel, int rounds) {
         if (!Neptune.get().isAllowMatches()) return;
         kit.addPlaying();
         kit.addPlaying();
@@ -56,7 +58,7 @@ public class MatchService implements IMatchService {
         new MatchStartRunnable(match).start(0L, 20L);
     }
 
-    public void startMatch(MatchTeam teamA, MatchTeam teamB, Kit kit, VirtualArena arena) {
+    public void startMatch(MatchTeam teamA, MatchTeam teamB, Kit kit, IArena arena) {
         if (!Neptune.get().isAllowMatches()) return;
         for (Participant participant : teamA.participants()) {
             for (Participant opponent : teamB.participants()) {
@@ -84,7 +86,7 @@ public class MatchService implements IMatchService {
         new MatchStartRunnable(match).start(0L, 20L);
     }
 
-    public void startMatch(List<Participant> participants, Kit kit, VirtualArena arena) {
+    public void startMatch(List<Participant> participants, Kit kit, IArena arena) {
         if (!Neptune.get().isAllowMatches()) return;
         for (Participant participant : participants) {
             participant.setColor(ParticipantColor.RED);
@@ -112,9 +114,15 @@ public class MatchService implements IMatchService {
             return;
         }
 
-        ArenaService.get().copyFrom(match.getArena()).createDuplicate().thenAccept(virtualArena ->{
+        Arena source = ArenaService.get().getArenaByName(match.getArena().getName());
+        CompletableFuture<? extends IArena> arenaFuture = (Neptune.get().isArenaGenerationDisabled() && source != null)
+                ? source.acquire()
+                : ArenaService.get().copyFrom(match.getArena()).createDuplicate();
+
+        arenaFuture.thenAccept(arena -> {
+            if (arena == null) return;
             Match neptuneMatch = new SoloFightMatch(
-                    virtualArena,
+                    arena,
                     KitService.get().copyFrom(match.getKit()),
                     true,
                     new ArrayList<>(),

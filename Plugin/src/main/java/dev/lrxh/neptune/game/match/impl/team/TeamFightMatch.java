@@ -1,5 +1,6 @@
 package dev.lrxh.neptune.game.match.impl.team;
 
+import dev.lrxh.api.arena.IArena;
 import dev.lrxh.api.events.TeamMatchBedDestroyEvent;
 import dev.lrxh.api.match.ITeamFightMatch;
 import dev.lrxh.api.match.participant.IParticipant;
@@ -7,7 +8,6 @@ import dev.lrxh.api.match.team.IMatchTeam;
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.configs.impl.SoundsLocale;
-import dev.lrxh.neptune.game.arena.VirtualArena;
 import dev.lrxh.neptune.game.kit.Kit;
 import dev.lrxh.neptune.game.kit.impl.KitRule;
 import dev.lrxh.neptune.game.match.Match;
@@ -38,7 +38,7 @@ public class TeamFightMatch extends Match implements ITeamFightMatch {
     private final MatchTeam redTeam;
     private final MatchTeam blueTeam;
 
-    public TeamFightMatch(VirtualArena arena, Kit kit, List<Participant> participants,
+    public TeamFightMatch(IArena arena, Kit kit, List<Participant> participants,
                           MatchTeam redTeam, MatchTeam blueTeam) {
         super(MatchState.STARTING, arena, kit, participants, 1, 1, true, false);
         this.redTeam = redTeam;
