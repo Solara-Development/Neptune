@@ -9,11 +9,11 @@ import java.util.*;
 import java.util.concurrent.*;
 
 public class SQLiteDatabase implements IDatabase {
-    private static final String SQL_CREATE_TABLE = "CREATE TABLE IF NOT EXISTS playerData (" +
+    private final String SQL_CREATE_TABLE = "CREATE TABLE IF NOT EXISTS playerData (" +
             "uuid VARCHAR(36) NOT NULL PRIMARY KEY, " +
             "data TEXT NOT NULL" +
             ")";
-    private static final String SQL_UPSERT = "INSERT INTO playerData(uuid, data) VALUES (?, ?) " +
+    private final String SQL_UPSERT = "INSERT INTO playerData(uuid, data) VALUES (?, ?) " +
             "ON CONFLICT(uuid) DO UPDATE SET data = excluded.data";
     private final String dbPath;
     private final ExecutorService dbExecutor;

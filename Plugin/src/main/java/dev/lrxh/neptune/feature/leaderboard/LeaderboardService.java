@@ -25,6 +25,9 @@ import java.util.regex.Pattern;
 public class LeaderboardService {
     private static LeaderboardService instance;
     public final Pattern PATTERN = Pattern.compile("(KILLS|BEST_WIN_STREAK|DEATHS|ELO)_(.*)_(10|[1-9])_(name|value)");
+    private final int MAX_ENTRIES = 10;
+    private final Comparator<PlayerEntry> BY_VALUE_DESC =
+            Comparator.comparingInt(PlayerEntry::getValue).reversed();
     private final List<LeaderboardPlayerEntry> changes;
     private final Map<Kit, Map<LeaderboardType, List<PlayerEntry>>> leaderboards;
 
@@ -90,7 +93,7 @@ public class LeaderboardService {
             return Collections.emptyList();
 
         List<PlayerEntry> sortedEntries = new ArrayList<>(entries);
-        sortedEntries.sort((a, b) -> Integer.compare(b.getValue(), a.getValue()));
+        sortedEntries.sort(BY_VALUE_DESC);
         return sortedEntries;
     }
 
@@ -121,7 +124,7 @@ public class LeaderboardService {
                                 String username = document.getString("username");
                                 UUID uuid = UUID.fromString(document.getString("uuid"));
 
-                                KitData kitData = getKitData(document, kit);
+                                KitData kitData = parseKitData(document, kit);
 
                                 if (kitData == null)
                                     continue;
@@ -130,7 +133,7 @@ public class LeaderboardService {
                                 tempEntries.add(playerEntry);
                             }
 
-                            tempEntries.sort((a, b) -> Integer.compare(b.getValue(), a.getValue()));
+                            tempEntries.sort(BY_VALUE_DESC);
 
                             Map<LeaderboardType, List<PlayerEntry>> kitLeaderboards = leaderboards.get(kit);
                             if (kitLeaderboards != null) {
@@ -176,10 +179,10 @@ public class LeaderboardService {
 
             entries.add(newEntry);
 
-            entries.sort((a, b) -> Integer.compare(b.getValue(), a.getValue()));
+            entries.sort(BY_VALUE_DESC);
 
-            if (entries.size() > 10) {
-                entries.subList(10, entries.size()).clear();
+            if (entries.size() > MAX_ENTRIES) {
+                entries.subList(MAX_ENTRIES, entries.size()).clear();
             }
         }
     }
@@ -203,7 +206,7 @@ public class LeaderboardService {
         });
     }
 
-    private KitData getKitData(DataDocument document, Kit kit) {
+    private KitData parseKitData(DataDocument document, Kit kit) {
         if (document == null)
             return null;
 
@@ -235,6 +238,6 @@ public class LeaderboardService {
         }
 
         return DatabaseService.get().getDatabase().getUserData(playerUUID)
-                .thenApply(document -> getKitData(document, kit));
+                .thenApply(document -> parseKitData(document, kit));
     }
 }

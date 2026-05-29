@@ -14,7 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class RecentMatchPlaceholder implements PAPIPlaceholder {
-    private static final Pattern PATTERN = Pattern.compile("recent_match_(\\d+)_(opponent|kit|arena|date|time|unix_timestamp)");
+    private final Pattern PATTERN = Pattern.compile("recent_match_(\\d+)_(opponent|kit|arena|date|time|unix_timestamp)");
 
     @Override
     public boolean match(String string) {
