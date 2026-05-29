@@ -563,70 +563,93 @@ public class MatchListener implements Listener {
 
     @EventHandler
     public void onEntityDamageByEntityMonitor(EntityDamageByEntityEvent event) {
-        if (event.getDamager() instanceof Player attacker && event.getEntity() instanceof Player player) {
-            Profile attackerProfile = API.getProfile(attacker.getUniqueId());
-            Profile profile = API.getProfile(player);
-            if (profile == null || attackerProfile == null)
-                return;
+        if (!(event.getEntity() instanceof Player player)) return;
 
-            if (profile.getState().equals(ProfileState.IN_CUSTOM)) {
-                return;
-            }
-
-            // Cancel if either player is not in match
-            if (!isPlayerInMatch(profile) || !isPlayerInMatch(attackerProfile)) {
-                event.setCancelled(true);
-                return;
-            }
-
-            Match match = profile.getMatch();
-
-            if (!attackerProfile.getMatch().getUuid().equals(match.getUuid())) {
-                event.setCancelled(true);
-                return;
-            }
-
-            if (match.getParticipant(attacker).isDead()) {
-                event.setCancelled(true);
-            }
-
-            if (match instanceof TeamFightMatch teamFightMatch) {
-                if (teamFightMatch.onSameTeam(player.getUniqueId(), attacker.getUniqueId())) {
-                    event.setCancelled(true);
-                }
-            }
-
-            if (!match.getState().equals(MatchState.IN_ROUND)) {
-                event.setCancelled(true);
-            }
-
-            match.getParticipant(player.getUniqueId()).setLastAttacker(match.getParticipant(attacker.getUniqueId()));
+        Player attacker;
+        if (event.getDamager() instanceof Player directAttacker) {
+            attacker = directAttacker;
+        } else if (event.getDamager() instanceof Projectile projectile && projectile.getShooter() instanceof Player shooter) {
+            attacker = shooter;
+        } else {
+            return;
         }
+
+        Profile attackerProfile = API.getProfile(attacker.getUniqueId());
+        Profile profile = API.getProfile(player);
+        if (profile == null || attackerProfile == null)
+            return;
+
+        if (profile.getState().equals(ProfileState.IN_CUSTOM)) {
+            return;
+        }
+
+        // Cancel if either player is not in match
+        if (!isPlayerInMatch(profile) || !isPlayerInMatch(attackerProfile)) {
+            event.setCancelled(true);
+            return;
+        }
+
+        Match match = profile.getMatch();
+
+        if (!attackerProfile.getMatch().getUuid().equals(match.getUuid())) {
+            event.setCancelled(true);
+            return;
+        }
+
+        if (match.getParticipant(attacker).isDead()) {
+            event.setCancelled(true);
+        }
+
+        if (match instanceof TeamFightMatch teamFightMatch) {
+            if (teamFightMatch.onSameTeam(player.getUniqueId(), attacker.getUniqueId())) {
+                event.setCancelled(true);
+            }
+        }
+
+        if (!match.getState().equals(MatchState.IN_ROUND)) {
+            event.setCancelled(true);
+        }
+
+        match.getParticipant(player.getUniqueId()).setLastAttacker(match.getParticipant(attacker.getUniqueId()));
     }
 
     @EventHandler(ignoreCancelled = true)
     public void onPlayerHitEvent(EntityDamageByEntityEvent event) {
-        if (event.getEntity() instanceof Player target && event.getDamager() instanceof Player damager) {
-            Profile targetProfile = API.getProfile(target);
-            Profile playerProfile = API.getProfile(damager.getUniqueId());
+        if (!(event.getEntity() instanceof Player target)) return;
 
-            if (playerProfile.getState().equals(ProfileState.IN_CUSTOM)) {
-                return;
-            }
+        Player damager;
+        if (event.getDamager() instanceof Player directDamager) {
+            damager = directDamager;
+        } else if (event.getDamager() instanceof Projectile projectile && projectile.getShooter() instanceof Player shooter) {
+            damager = shooter;
+        } else {
+            return;
+        }
 
-            if (!isPlayerInMatch(targetProfile) || !isPlayerInMatch(playerProfile)) {
-                event.setCancelled(true);
-                return;
-            }
+        Profile targetProfile = API.getProfile(target);
+        Profile playerProfile = API.getProfile(damager.getUniqueId());
 
-            if (damager.getAttackCooldown() >= 0.2) {
-                Match match = targetProfile.getMatch();
-                Participant opponent = match.getParticipant(target.getUniqueId());
+        if (playerProfile.getState().equals(ProfileState.IN_CUSTOM)) {
+            return;
+        }
 
-                if (damager.getAttackCooldown() > 0.7)
-                    match.getParticipant(damager.getUniqueId()).handleHit(opponent);
-                opponent.resetCombo();
-            }
+        if (!isPlayerInMatch(targetProfile) || !isPlayerInMatch(playerProfile)) {
+            event.setCancelled(true);
+            return;
+        }
+
+        if (event.getDamager() instanceof Player && damager.getAttackCooldown() >= 0.2) {
+            Match match = targetProfile.getMatch();
+            Participant opponent = match.getParticipant(target.getUniqueId());
+
+            if (damager.getAttackCooldown() > 0.7)
+                match.getParticipant(damager.getUniqueId()).handleHit(opponent);
+            opponent.resetCombo();
+        } else if (event.getDamager() instanceof Projectile) {
+            Match match = targetProfile.getMatch();
+            Participant opponent = match.getParticipant(target.getUniqueId());
+            match.getParticipant(damager.getUniqueId()).handleHit(opponent);
+            opponent.resetCombo();
         }
     }
 
