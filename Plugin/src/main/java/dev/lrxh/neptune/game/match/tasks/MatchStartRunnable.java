@@ -3,6 +3,7 @@ package dev.lrxh.neptune.game.match.tasks;
 import dev.lrxh.api.events.MatchStartEvent;
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
+import dev.lrxh.neptune.configs.impl.SettingsLocale;
 import dev.lrxh.neptune.configs.impl.SoundsLocale;
 import dev.lrxh.neptune.game.match.Match;
 import dev.lrxh.neptune.game.match.impl.MatchState;
@@ -27,7 +28,9 @@ public class MatchStartRunnable extends NeptuneRunnable {
 
     public MatchStartRunnable(Match match) {
         this.match = match;
-        this.startTimer = match instanceof FfaFightMatch ? 5 : 3;
+        this.startTimer = match instanceof FfaFightMatch
+                ? SettingsLocale.FFA_MATCH_START_COUNTDOWN.getInt()
+                : SettingsLocale.MATCH_START_COUNTDOWN.getInt();
 
         match.teleportToPositions();
         match.setupParticipants();

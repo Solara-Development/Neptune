@@ -14,6 +14,8 @@ import java.util.List;
 @Getter
 public enum SettingsLocale implements IDataAccessor {
     FRIENDLY_FIRE("FRIENDLY_FIRE", DataType.BOOLEAN, "false"),
+    MATCH_START_COUNTDOWN("MATCH_START_COUNTDOWN", "The countdown in seconds before a match starts.", DataType.INT, "3"),
+    FFA_MATCH_START_COUNTDOWN("FFA_MATCH_START_COUNTDOWN", "The countdown in seconds before an FFA match starts.", DataType.INT, "5"),
     ARENA_GENERATION("ARENA_GENERATION",
             "If disabled, matches reuse the original arena (flagged in use) instead of generating a copy. Requires a server restart to apply.",
             DataType.BOOLEAN, "false"),
