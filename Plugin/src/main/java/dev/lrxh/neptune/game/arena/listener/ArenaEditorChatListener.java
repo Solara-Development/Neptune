@@ -95,7 +95,14 @@ public class ArenaEditorChatListener implements Listener {
                         if (firstSetup && Neptune.get().isDuplicatesEnabled()) {
                             ArenaService.get().createDuplicate(arena);
                         }
-                        new ArenaManagementMenu(profile.getArenaProcedure().getArena()).open(player);
+                        new NeptuneRunnable() {
+                            @Override
+                            public void run() {
+                                if (!arena.isDoneLoading()) return;
+                                new ArenaManagementMenu(arena).open(player);
+                                stop();
+                            }
+                        }.start(2L);
                         profile.getArenaProcedure().setArena(null);
                     }
                 }.start();
@@ -126,7 +133,14 @@ public class ArenaEditorChatListener implements Listener {
                     public void run() {
                         arena.setMin(player.getLocation());
                         player.sendMessage(CC.success("Set arena min position"));
-                        new ArenaManagementMenu(profile.getArenaProcedure().getArena()).open(player);
+                        new NeptuneRunnable() {
+                            @Override
+                            public void run() {
+                                if (!arena.isDoneLoading()) return;
+                                new ArenaManagementMenu(arena).open(player);
+                                stop();
+                            }
+                        }.start(2L);
                         profile.getArenaProcedure().setArena(null);
                     }
                 }.start();
