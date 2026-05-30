@@ -24,7 +24,6 @@ public class ArenaService extends IService implements IArenaService {
     public final LinkedHashSet<Arena> arenas = new LinkedHashSet<>();
     public final LinkedHashSet<Arena> duplicates = new LinkedHashSet<>();
     private final Set<Integer> reservedIndices = new HashSet<>();
-    private static final int GRID_COLUMNS = 32;
 
     public static ArenaService get() {
         if (instance == null) instance = new ArenaService();
@@ -84,11 +83,11 @@ public class ArenaService extends IService implements IArenaService {
     }
 
     public int gridCellX(int index) {
-        return (index % GRID_COLUMNS) * gridDistance();
+        return (index % 32) * gridDistance();
     }
 
     public int gridCellZ(int index) {
-        return (index / GRID_COLUMNS) * gridDistance();
+        return (index / 32) * gridDistance();
     }
 
     public int nextFreeGridIndex() {
@@ -97,7 +96,7 @@ public class ArenaService extends IService implements IArenaService {
             if (dup.getMin() != null) {
                 int col = Math.floorDiv(dup.getMin().getBlockX(), gridDistance());
                 int row = Math.floorDiv(dup.getMin().getBlockZ(), gridDistance());
-                used.add(row * GRID_COLUMNS + col);
+                used.add(row * 32 + col);
             }
         }
         int i = 0;

@@ -116,7 +116,8 @@ public class ArenaEditorChatListener implements Listener {
                 event.setCancelled(true);
                 profile.getArenaProcedure().setType(ArenaProcedureType.NONE);
                 Arena arena = profile.getArenaProcedure().getArena();
-                if (!arena.isSetup() || !arena.isDoneLoading()) {
+                boolean firstSetup = !arena.isSetup() || !arena.isDoneLoading();
+                if (firstSetup) {
                     player.sendMessage(CC.success("Arena setup complete"));
                 } else {
                     player.sendMessage(CC.success("Set arena max position"));
@@ -126,6 +127,9 @@ public class ArenaEditorChatListener implements Listener {
                     @Override
                     public void run() {
                         arena.setMax(player.getLocation());
+                        if (firstSetup && Neptune.get().isDuplicatesEnabled()) {
+                            ArenaService.get().createDuplicate(arena);
+                        }
                         new ArenaManagementMenu(profile.getArenaProcedure().getArena()).open(player);
                         profile.getArenaProcedure().setArena(null);
                     }

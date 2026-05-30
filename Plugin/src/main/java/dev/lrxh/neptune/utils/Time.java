@@ -38,6 +38,10 @@ public class Time implements ITime {
         return (seconds < 10 ? "0" : "") + seconds + "." + (millis < 10 ? "0" : "") + millis + "s";
     }
 
+    public long getElapsed() {
+        return System.currentTimeMillis() - oldTime;
+    }
+
     public void setZero() {
         this.oldTime = 0;
         this.lastCurrentTime = 0;

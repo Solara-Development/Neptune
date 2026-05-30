@@ -68,7 +68,12 @@ public class QueueCheckTask extends NeptuneRunnable {
             int ping1 = PlayerUtil.getPing(uuid1);
             int ping2 = PlayerUtil.getPing(uuid2);
 
-            if (!(ping2 <= settings1.getMaxPing() && ping1 <= settings2.getMaxPing())) {
+            boolean pingInRange = ping2 <= settings1.getMaxPing() && ping1 <= settings2.getMaxPing();
+            // bypass ping range once a player has waited 10s
+            boolean waitedTooLong = queueEntry1.getTime().getElapsed() >= 10_000
+                    || queueEntry2.getTime().getElapsed() >= 10_000;
+
+            if (!pingInRange && !waitedTooLong) {
                 QueueService.get().add(queueEntry1, false);
                 QueueService.get().add(queueEntry2, false);
                 continue;

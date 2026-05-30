@@ -22,8 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CustomKitEffectsMenu extends PaginatedMenu {
-    private static final int DURATION = 1_000_000;
-    private static final int MAX_AMPLIFIER = 4;
     private final CustomKit kit;
 
     public CustomKitEffectsMenu(CustomKit kit) {
@@ -59,12 +57,12 @@ public class CustomKitEffectsMenu extends PaginatedMenu {
                 public void onClick(ClickType type2, Player p) {
                     PotionEffect current = find(type);
                     if (type2.isRightClick()) {
-                        int amp = current == null ? 0 : (current.getAmplifier() + 1) % (MAX_AMPLIFIER + 1);
+                        int amp = current == null ? 0 : (current.getAmplifier() + 1) % (4 + 1);
                         kit.getPotionEffects().remove(current);
-                        kit.getPotionEffects().add(new PotionEffect(type, DURATION, amp));
+                        kit.getPotionEffects().add(new PotionEffect(type, 1_000_000, amp));
                     } else {
                         if (current != null) kit.getPotionEffects().remove(current);
-                        else kit.getPotionEffects().add(new PotionEffect(type, DURATION, 0));
+                        else kit.getPotionEffects().add(new PotionEffect(type, 1_000_000, 0));
                     }
                     Profile profile = API.getProfile(p);
                     if (profile != null) Profile.save(profile);
