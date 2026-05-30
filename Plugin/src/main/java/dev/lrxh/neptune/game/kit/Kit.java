@@ -207,7 +207,8 @@ public class Kit implements IKit, ConfigData {
 
         List<PotionEffect> potionEffects = new ArrayList<>();
         for (String potion : s.getStringList("potionEffects")) {
-            potionEffects.add(PotionEffectUtils.deserialize(potion));
+            PotionEffect effect = PotionEffectUtils.deserialize(potion);
+            if (effect != null) potionEffects.add(effect);
         }
 
         return new Kit(name, s.getString("displayName", name), items, arenas, icon, rules,

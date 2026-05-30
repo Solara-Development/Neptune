@@ -1,13 +1,15 @@
 package dev.lrxh.neptune.utils;
 
 import lombok.experimental.UtilityClass;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 @UtilityClass
 public class PotionEffectUtils {
     public String serialize(PotionEffect effect) {
-        return effect.getType().getName() + ":" +
+        return effect.getType().getKey().getKey() + ":" +
                 effect.getDuration() + ":" +
                 effect.getAmplifier() + ":" +
                 effect.isAmbient() + ":" +
@@ -17,13 +19,14 @@ public class PotionEffectUtils {
 
     public PotionEffect deserialize(String data) {
         String[] parts = data.split(":");
-        PotionEffectType type = PotionEffectType.getByName(parts[0]);
-        int duration = Integer.parseInt(parts[1]);
-        int amplifier = Integer.parseInt(parts[2]);
-        boolean ambient = Boolean.parseBoolean(parts[3]);
-        boolean particles = Boolean.parseBoolean(parts[4]);
-        boolean icon = Boolean.parseBoolean(parts[5]);
-
-        return new PotionEffect(type, duration, amplifier, ambient, particles, icon);
+        if (parts.length < 6) return null;
+        PotionEffectType type = Registry.EFFECT.get(NamespacedKey.minecraft(parts[0].toLowerCase()));
+        if (type == null) return null;
+        return new PotionEffect(type,
+                Integer.parseInt(parts[1]),
+                Integer.parseInt(parts[2]),
+                Boolean.parseBoolean(parts[3]),
+                Boolean.parseBoolean(parts[4]),
+                Boolean.parseBoolean(parts[5]));
     }
 }

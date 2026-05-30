@@ -69,7 +69,10 @@ public class CustomKit {
         }
         this.health = d.health <= 0 ? 20 : d.health;
         this.potionEffects = new ArrayList<>();
-        if (d.effects != null) for (String e : d.effects) potionEffects.add(PotionEffectUtils.deserialize(e));
+        if (d.effects != null) for (String e : d.effects) {
+            PotionEffect effect = PotionEffectUtils.deserialize(e);
+            if (effect != null) potionEffects.add(effect);
+        }
     }
 
     private static HashMap<KitRule, Boolean> defaultRules() {
