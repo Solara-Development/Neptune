@@ -280,10 +280,10 @@ public class Participant implements IParticipant {
 
     public String getBedMessage() {
         return (!isBedBroken() ? MessagesLocale.MATCH_BED_STATUS_NOT_BROKEN : MessagesLocale.MATCH_BED_STATUS_BROKEN).getString()
-            .replaceAll("<members-left>", "1");
+            .replace("<members-left>", "1");
     }
 
     public String getComboMessage() {
-        return getCombo() > 1 ? MessagesLocale.MATCH_BOXING_COMBO_PLACEHOLDER.toString().replaceAll("<combo>", String.valueOf(getCombo())) : MessagesLocale.MATCH_BOXING_COMBO_NO_COMBO_PLACEHOLDER.toString();
+        return getCombo() > 1 ? MessagesLocale.MATCH_BOXING_COMBO_PLACEHOLDER.getString().replace("<combo>", String.valueOf(getCombo())) : MessagesLocale.MATCH_BOXING_COMBO_NO_COMBO_PLACEHOLDER.getString();
     }
 }

@@ -243,11 +243,13 @@ public abstract class Match implements IMatch {
                     }
                     return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME.getStringList());
                 case ENDING:
+                    String winnerName = getWinnerName();
+                    String loserName = getLoserName();
                     return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME_ENDED.getStringList()
                             .stream()
                             .map(str -> str
-                                    .replaceAll("<winner>", getWinnerName())
-                                    .replaceAll("<loser>", getLoserName()))
+                                    .replace("<winner>", winnerName)
+                                    .replace("<loser>", loserName))
                             .toList());
                 default:
                     break;

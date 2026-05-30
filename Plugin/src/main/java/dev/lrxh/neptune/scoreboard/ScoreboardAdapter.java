@@ -67,8 +67,9 @@ public class ScoreboardAdapter implements FastAdapter {
     }
 
     private String getAnimatedText() {
+        List<String> titles = ScoreboardLocale.TITLE.getStringList();
         int index = (int) ((System.currentTimeMillis() / ScoreboardLocale.UPDATE_INTERVAL.getInt())
-                % ScoreboardLocale.TITLE.getStringList().size());
-        return ScoreboardLocale.TITLE.getStringList().get(index);
+                % titles.size());
+        return titles.get(index);
     }
 }

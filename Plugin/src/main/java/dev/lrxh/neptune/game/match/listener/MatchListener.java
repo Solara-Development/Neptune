@@ -822,17 +822,16 @@ public class MatchListener implements Listener {
     @EventHandler
     public void onFoodLevelChange(FoodLevelChangeEvent event) {
         if (event.getEntity() instanceof Player player) {
-            if (API.getProfile(player) == null)
+            Profile profile = API.getProfile(player);
+            if (profile == null)
                 return;
-            if (API.getProfile(player).getState().equals(ProfileState.IN_CUSTOM))
+            if (profile.getState().equals(ProfileState.IN_CUSTOM))
                 return;
-            Optional<Profile> profileOpt = getProfile(player);
-            if (profileOpt.isEmpty()) {
+            if (!isPlayerInMatch(profile)) {
                 event.setCancelled(true);
                 return;
             }
 
-            Profile profile = profileOpt.get();
             Match match = profile.getMatch();
 
             if (!match.getKit().is(KitRule.HUNGER)) {

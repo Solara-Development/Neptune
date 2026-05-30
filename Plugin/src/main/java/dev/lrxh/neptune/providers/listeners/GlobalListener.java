@@ -257,7 +257,8 @@ public class GlobalListener implements Listener {
     @EventHandler
     public void onPotionEffect(EntityPotionEffectEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
-        if (API.getProfile(player) != null && API.getProfile(player).getState().equals(ProfileState.IN_CUSTOM)) return;
+        Profile profile = API.getProfile(player);
+        if (profile != null && profile.getState().equals(ProfileState.IN_CUSTOM)) return;
         if (event.getAction() == EntityPotionEffectEvent.Action.ADDED) {
             PotionEffect newEffect = event.getNewEffect();
             if (newEffect != null) {

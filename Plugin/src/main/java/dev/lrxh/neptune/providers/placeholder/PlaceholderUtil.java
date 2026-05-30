@@ -136,7 +136,7 @@ public class PlaceholderUtil {
                     Placeholder.parsed("red-elo", String.valueOf(red.getProfile().getGameData().getGlobalStats().getElo())),
                     Placeholder.parsed("blue-elo", String.valueOf(blue.getProfile().getGameData().getGlobalStats().getElo())),
                     Placeholder.parsed("red-kit-elo", String.valueOf(red.getProfile().getGameData().get(kit).getElo())),
-                    Placeholder.parsed("blue-elo", String.valueOf(blue.getProfile().getGameData().get(kit).getElo())),
+                    Placeholder.parsed("blue-kit-elo", String.valueOf(blue.getProfile().getGameData().get(kit).getElo())),
                     Placeholder.parsed("red-bed-broken", red.getBedMessage()),
                     Placeholder.parsed("blue-bed-broken", blue.getBedMessage()),
                     Placeholder.unparsed("red-name", red.getName()),

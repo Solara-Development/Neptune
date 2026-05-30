@@ -20,6 +20,9 @@ import java.util.regex.Pattern;
 @UtilityClass
 public class CC {
     private final MiniMessage mm = MiniMessage.miniMessage();
+    private final Pattern LEGACY_HEX = Pattern.compile(
+            "[§&]x[§&]([0-9a-f])[§&]([0-9a-f])[§&]([0-9a-f])[§&]([0-9a-f])[§&]([0-9a-f])[§&]([0-9a-f])", Pattern.CASE_INSENSITIVE);
+    private final Pattern SHORT_HEX = Pattern.compile("(?i)&#([a-f0-9]{6})");
     public TextComponent error(String message) {
         return color(MessagesLocale.ERROR_MESSAGE.getString().replace("<error>", message));
     }
@@ -75,11 +78,8 @@ public class CC {
                 .replace("&n", "<underlined>")
                 .replace("&o", "<italic>")
                 .replace("&r", "<reset>");
-        Pattern LEGACY_HEX = Pattern.compile(
-                "[§&]x[§&]([0-9a-f])[§&]([0-9a-f])[§&]([0-9a-f])[§&]([0-9a-f])[§&]([0-9a-f])[§&]([0-9a-f])", Pattern.CASE_INSENSITIVE);
-        text = LEGACY_HEX.matcher(text)
-            .replaceAll("<#$1$2$3$4$5$6>");
-        return text.replaceAll("(?i)&#([a-f0-9]{6})", "<#$1>");
+        text = LEGACY_HEX.matcher(text).replaceAll("<#$1$2$3$4$5$6>");
+        return SHORT_HEX.matcher(text).replaceAll("<#$1>");
     }
     public static Component replaceLegacy(Component input) {
         return mm.deserialize(replaceLegacy(mm.serialize(input)));
@@ -88,8 +88,11 @@ public class CC {
         return returnMessage(player, message, TagResolver.empty());
     }
     public Component returnMessage(Player player, String message, TagResolver resolver) {
-        String minimessageInput = replaceLegacy(message);
-        Component component = mm.deserialize(minimessageInput, TagResolver.resolver(PlaceholderUtil.getPlaceholders(player), resolver));
+        return buildComponent(player, message, TagResolver.resolver(PlaceholderUtil.getPlaceholders(player), resolver));
+    }
+
+    private Component buildComponent(Player player, String message, TagResolver placeholders) {
+        Component component = mm.deserialize(replaceLegacy(message), placeholders);
         if (Neptune.get().isPlaceholder()) {
             try {
                 return replaceLegacy(PAPIComponents.setPlaceholders(player, component));
@@ -119,9 +122,10 @@ public class CC {
         return MiniMessage.miniMessage().deserialize(replaceLegacy(message), resolver);
     }
     public List<Component> getComponentsArray(Player player, List<String> lines)  {
-        List<Component> components = new ArrayList<>();
+        TagResolver placeholders = PlaceholderUtil.getPlaceholders(player);
+        List<Component> components = new ArrayList<>(lines.size());
         for (String string : lines) {
-            components.add(CC.returnMessage(player, string));
+            components.add(buildComponent(player, string, placeholders));
         }
         return components;
     }
