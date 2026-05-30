@@ -67,7 +67,7 @@ public class MatchHistoryMenu extends Menu {
                             .replace("<loser>",
                                     !matchHistory.isWon() ? player.getName()
                                             : matchHistory.getOpponentName()))
-                    .componentLore(ItemUtils.getLore(MenusLocale.MATCH_HISTORY_LORE.getStringList()), TagResolver.resolver(
+                    .componentLore(ItemUtils.getLore(MenusLocale.MATCH_HISTORY_LORE.getStringList(), TagResolver.resolver(
                             Placeholder.parsed("arena", matchHistory.getArenaName()),
                             Placeholder.parsed("kit", matchHistory.getKitName()),
                             Placeholder.unparsed("winner",
@@ -76,7 +76,7 @@ public class MatchHistoryMenu extends Menu {
                             Placeholder.unparsed("loser",
                                     !matchHistory.isWon() ? player.getName()
                                             : matchHistory.getOpponentName()),
-                            Placeholder.unparsed("date", matchHistory.getDate())), player)
+                            Placeholder.unparsed("date", matchHistory.getDate()))), player)
                     .build();
         } else {
             return new ItemBuilder(kit.getIcon())
@@ -94,7 +94,7 @@ public class MatchHistoryMenu extends Menu {
                             .replace("<loser>",
                                     !matchHistory.isWon() ? player.getName()
                                             : matchHistory.getOpponentName()))
-                    .componentLore(ItemUtils.getLore(MenusLocale.MATCH_HISTORY_LORE.getStringList()), TagResolver.resolver(
+                    .componentLore(ItemUtils.getLore(MenusLocale.MATCH_HISTORY_LORE.getStringList(), TagResolver.resolver(
                             Placeholder.parsed("arena", matchHistory.getArenaName()),
                             Placeholder.parsed("kit", matchHistory.getKitName()),
                             Placeholder.unparsed("winner",
@@ -103,7 +103,7 @@ public class MatchHistoryMenu extends Menu {
                             Placeholder.unparsed("loser",
                                     !matchHistory.isWon() ? player.getName()
                                             : matchHistory.getOpponentName()),
-                            Placeholder.unparsed("date", matchHistory.getDate())), player)
+                            Placeholder.unparsed("date", matchHistory.getDate()))), player)
                     .build();
         }
 

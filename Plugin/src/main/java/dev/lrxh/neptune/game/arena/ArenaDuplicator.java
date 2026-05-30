@@ -16,6 +16,8 @@ import org.bukkit.World;
 
 public final class ArenaDuplicator {
 
+    // Serializes FAWE operations: all arena duplicates share one world and FAWE's
+    // per-world chunk cache is not safe under concurrent EditSessions (stray blocks).
     private static final Object FAWE_LOCK = new Object();
 
     public static boolean isAvailable() {
@@ -62,14 +64,22 @@ public final class ArenaDuplicator {
         }
         return clipboard;
     }
+
     public static void restore(World world, Object clipboard) {
         Clipboard clip = (Clipboard) clipboard;
         synchronized (FAWE_LOCK) {
-            try (EditSession target = WorldEdit.getInstance().newEditSession(BukkitAdapter.adapt(world))) {
+            try (EditSession target = WorldEdit.getInstance().newEditSessionBuilder()
+                    .world(BukkitAdapter.adapt(world))
+                    .changeSetNull()
+                    .fastMode(true)
+                    .checkMemory(false)
+                    .limitUnlimited()
+                    .build()) {
                 Operations.complete(new ClipboardHolder(clip)
                         .createPaste(target)
                         .to(clip.getOrigin())
                         .ignoreAirBlocks(false)
+                        .copyEntities(false)
                         .build());
             }
         }
