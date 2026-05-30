@@ -53,11 +53,7 @@ public class GameData implements IGameData {
     }
 
     public KitData get(Kit kit) {
-        if (!kitData.containsKey(kit)) {
-            kitData.put(kit, new KitData());
-        }
-
-        return kitData.get(kit);
+        return kitData.computeIfAbsent(kit, k -> new KitData());
     }
 
     @Override

@@ -22,7 +22,7 @@ public class Time implements ITime {
         long minutes = (elapsedTime / 1000) / 60;
         long seconds = (elapsedTime / 1000) % 60;
 
-        return String.format("%02d:%02d", minutes, seconds);
+        return (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
     }
 
     public String formatSecondsMillis() {
@@ -35,7 +35,7 @@ public class Time implements ITime {
         long millis = (elapsedTime % 1000) / 10;
         long seconds = (elapsedTime / 1000) % 60;
 
-        return String.format("%02d.%02ds", seconds, millis);
+        return (seconds < 10 ? "0" : "") + seconds + "." + (millis < 10 ? "0" : "") + millis + "s";
     }
 
     public void setZero() {

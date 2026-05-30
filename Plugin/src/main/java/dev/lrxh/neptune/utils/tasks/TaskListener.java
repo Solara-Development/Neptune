@@ -18,6 +18,7 @@ public class TaskListener implements Listener {
 
     @EventHandler
     public void onTickEnd(ServerTickEndEvent event) {
+        if (runnables.isEmpty()) return;
         for (NeptuneRunnable runnable : new HashSet<>(runnables)) {
             runnable.run();
             runnables.remove(runnable);

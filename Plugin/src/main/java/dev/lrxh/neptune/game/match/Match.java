@@ -396,12 +396,11 @@ public abstract class Match implements IMatch {
     }
 
     public void removeEntities() {
-        for (Entity entity : new HashSet<>(entities)) {
-            if (entity == null)
-                continue;
-            entity.remove();
-            entities.remove(entity);
+        for (Entity entity : new ArrayList<>(entities)) {
+            if (entity != null)
+                entity.remove();
         }
+        entities.clear();
     }
 
     public void setupParticipants() {

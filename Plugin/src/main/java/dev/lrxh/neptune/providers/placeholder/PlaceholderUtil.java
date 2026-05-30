@@ -196,10 +196,12 @@ public class PlaceholderUtil {
                 );
             }
             if (match instanceof FfaFightMatch ffm) {
+                int ffaTotal = ffm.getParticipantsList().size();
+                int ffaDead = ffm.deadParticipants.size();
                 placeholders = TagResolver.resolver(placeholders,
-                    Placeholder.unparsed("alive", String.valueOf(ffm.getParticipants().size() - ffm.getDeadParticipants().size())),
-                    Placeholder.unparsed("max", String.valueOf(ffm.getParticipants().size())),
-                    Placeholder.unparsed("dead", String.valueOf(ffm.getDeadParticipants().size()))
+                    Placeholder.unparsed("alive", String.valueOf(ffaTotal - ffaDead)),
+                    Placeholder.unparsed("max", String.valueOf(ffaTotal)),
+                    Placeholder.unparsed("dead", String.valueOf(ffaDead))
                 );
             }
         }

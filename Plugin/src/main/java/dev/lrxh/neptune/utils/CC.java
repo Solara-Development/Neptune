@@ -55,6 +55,10 @@ public class CC {
     }
 
     public String replaceLegacy(String text) {
+        // Fast path: nothing to convert if no legacy/section sigils are present.
+        if (text.indexOf('&') < 0 && text.indexOf('\u00A7') < 0) {
+            return text;
+        }
         text = text
                 .replace("&a", "<green>")
                 .replace("&b", "<aqua>")
