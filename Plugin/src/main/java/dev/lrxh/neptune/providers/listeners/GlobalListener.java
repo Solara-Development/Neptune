@@ -53,7 +53,8 @@ public class GlobalListener implements Listener {
             if (!(event.getWhoClicked() instanceof Player player)) return;
             if (player.getGameMode().equals(GameMode.CREATIVE)) return;
             Profile profile = API.getProfile(player);
-            if (isPlayerNotInMatch(profile) && profile.getState() != ProfileState.IN_CUSTOM) {
+            if (profile != null && profile.getState().equals(ProfileState.IN_CUSTOM)) return;
+            if (isPlayerNotInMatch(profile)) {
                 event.setCancelled(true);
             }
         }
@@ -142,7 +143,8 @@ public class GlobalListener implements Listener {
         Player player = event.getPlayer();
         if (player.getGameMode().equals(GameMode.CREATIVE)) return;
         Profile profile = API.getProfile(player);
-        if (isPlayerNotInMatch(profile) && profile.getState() != ProfileState.IN_CUSTOM) {
+        if (profile != null && profile.getState().equals(ProfileState.IN_CUSTOM)) return;
+        if (isPlayerNotInMatch(profile)) {
             event.setCancelled(true);
         }
     }
