@@ -38,18 +38,19 @@ public class QueueService implements IQueueService {
         if (get(playerUUID) != null) return;
 
         Profile profile = API.getProfile(playerUUID);
-        if (!profile.hasState(ProfileState.IN_LOBBY)) return;
+        if (!profile.hasState(ProfileState.IN_LOBBY, ProfileState.IN_QUEUE)) return;
         if (profile.getGameData().getParty() != null) return;
         if (queueEntry.getKit().is(KitRule.HIDDEN)) return;
 
         kitQueues.computeIfAbsent(kit, k -> new ConcurrentLinkedQueue<>()).offer(queueEntry);
 
+        if (!profile.hasState(ProfileState.IN_QUEUE)) profile.setState(ProfileState.IN_QUEUE);
+        kit.addQueue();
+
         if (add) {
             QueueJoinEvent event = new QueueJoinEvent(queueEntry);
             Bukkit.getScheduler().runTask(Neptune.get(), () -> Bukkit.getPluginManager().callEvent(event));
             if (event.isCancelled()) return;
-            profile.setState(ProfileState.IN_QUEUE);
-            kit.addQueue();
             MessagesLocale.QUEUE_JOIN.send(playerUUID, TagResolver.resolver(
                     Placeholder.parsed("kit", kit.getDisplayName()),
                     Placeholder.unparsed("max-ping", String.valueOf(profile.getSettingData().getMaxPing()))));

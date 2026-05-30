@@ -8,7 +8,6 @@ import dev.lrxh.neptune.game.kit.Kit;
 import dev.lrxh.neptune.game.kit.impl.KitRule;
 import dev.lrxh.neptune.game.match.MatchService;
 import dev.lrxh.neptune.game.match.impl.participant.Participant;
-import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.data.SettingData;
 import dev.lrxh.neptune.profile.impl.Profile;
 import dev.lrxh.neptune.utils.CC;
@@ -56,9 +55,6 @@ public class QueueCheckTask extends NeptuneRunnable {
 
             Profile profile1 = API.getProfile(uuid1);
             Profile profile2 = API.getProfile(uuid2);
-
-            profile1.setState(ProfileState.IN_LOBBY);
-            profile2.setState(ProfileState.IN_LOBBY);
 
             if (!queueEntry1.getKit().equals(queueEntry2.getKit())) {
                 QueueService.get().add(queueEntry1, false);
