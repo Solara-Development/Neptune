@@ -5,6 +5,8 @@ import org.bukkit.entity.Player;
 
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
+import dev.lrxh.neptune.feature.customkit.CustomKit;
+import dev.lrxh.neptune.feature.customkit.queue.CustomKitQueueService;
 import dev.lrxh.neptune.feature.party.Party;
 import dev.lrxh.neptune.feature.queue.QueueEntry;
 import dev.lrxh.neptune.feature.queue.QueueService;
@@ -83,8 +85,7 @@ public class PlaceholderUtil {
             );
         }
         if (kit == null && profile.hasState(ProfileState.IN_QUEUE)) {
-            dev.lrxh.neptune.feature.customkit.CustomKit customKit =
-                    dev.lrxh.neptune.feature.customkit.queue.CustomKitQueueService.get().getListings().get(profile.getPlayerUUID());
+            CustomKit customKit = CustomKitQueueService.get().getListings().get(profile.getPlayerUUID());
             if (customKit != null) placeholders = TagResolver.resolver(placeholders,
                     Placeholder.parsed("kit", customKit.getDisplayName()));
         }

@@ -25,6 +25,6 @@ public class ShieldPatternPackage extends CosmeticPackage implements IShieldPatt
     }
 
     public String permission() {
-        return "neptune.cosmetics.killmessages." + name.toLowerCase();
+        return "neptune.cosmetics.shieldpatterns." + name.toLowerCase();
     }
 }

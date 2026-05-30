@@ -11,7 +11,10 @@ These are the permissions a player needs to do specific things with the plugin.
 | `neptune.admin`                         | Access arena & kit management menu                          |
 | `neptune.cosmetics.kill-effects.[name]` | Use a specific kill effect                                  |
 | `neptune.cosmetics.killmessages.[name]` | Use a specific kill message                                 |
+| `neptune.cosmetics.armortrims.[name]`   | Use a specific armor trim                                   |
+| `neptune.cosmetics.shieldpatterns.[name]` | Use a specific shield pattern                             |
 | `neptune.party.advertise`               | Advertise party publicly                                    |
 | `neptune.silent-spectate`               | Spectate someone silently                                   |
 | `neptune.arenaselector`                 | Access to duel arena selector menu                          |
 | `neptune.party.max.<number>`            | Change max member limit for any party created by the player |
+| `neptune.customkit`                     | Create custom kits                                          |
