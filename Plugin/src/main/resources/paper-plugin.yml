@@ -22,3 +22,7 @@ dependencies:
       required: false
       load: BEFORE
       join-classpath: true
+    FastAsyncWorldEdit:
+      required: false
+      load: BEFORE
+      join-classpath: true

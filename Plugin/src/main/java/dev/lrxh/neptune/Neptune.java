@@ -33,6 +33,7 @@ import dev.lrxh.neptune.feature.settings.Setting;
 import dev.lrxh.neptune.feature.settings.command.SettingProvider;
 import dev.lrxh.neptune.feature.settings.command.SettingsCommand;
 import dev.lrxh.neptune.game.arena.Arena;
+import dev.lrxh.neptune.game.arena.ArenaDuplicator;
 import dev.lrxh.neptune.game.arena.ArenaService;
 import dev.lrxh.neptune.game.arena.command.ArenaProvider;
 import dev.lrxh.neptune.game.arena.listener.ArenaEditorChatListener;
@@ -85,6 +86,7 @@ public final class Neptune extends JavaPlugin {
     @Setter
     private boolean allowMatches;
     private boolean arenaGenerationDisabled;
+    private boolean duplicatesEnabled;
 
     private boolean errored;
     public void setErrored() {
@@ -128,6 +130,15 @@ public final class Neptune extends JavaPlugin {
 
         BlockChanger.initialize(this);
         ArenaService.get().load();
+        if (arenaGenerationDisabled) {
+            duplicatesEnabled = ArenaDuplicator.isAvailable();
+            if (duplicatesEnabled) {
+                ArenaService.get().setupDuplicatesWorld();
+                ArenaService.get().loadDuplicates();
+            } else {
+                ServerUtils.error("FastAsyncWorldEdit is not installed - arena duplicates are disabled. Falling back to using the original arenas.");
+            }
+        }
         KitService.get().load();
         this.cache = new Cache();
         HotbarService.get().load();

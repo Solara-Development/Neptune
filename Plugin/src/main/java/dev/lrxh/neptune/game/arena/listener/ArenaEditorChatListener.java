@@ -4,6 +4,7 @@ import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.game.arena.Arena;
 import dev.lrxh.neptune.game.arena.ArenaService;
+import dev.lrxh.neptune.game.arena.menu.ArenaDuplicatesMenu;
 import dev.lrxh.neptune.game.arena.menu.ArenaManagementMenu;
 import dev.lrxh.neptune.game.arena.menu.ArenasManagementMenu;
 import dev.lrxh.neptune.game.arena.menu.WhitelistedBlocksMenu;
@@ -13,10 +14,15 @@ import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.tasks.NeptuneRunnable;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class ArenaEditorChatListener implements Listener {
 
@@ -206,6 +212,45 @@ public class ArenaEditorChatListener implements Listener {
                 player.sendMessage(CC.success("Set arena time"));
                 new ArenaManagementMenu(arena).open(player);
                 profile.getArenaProcedure().setArena(null);
+            }
+            case ADD_DUPLICATE -> {
+                event.setCancelled(true);
+                profile.getArenaProcedure().setType(ArenaProcedureType.NONE);
+                Arena arena = profile.getArenaProcedure().getArena();
+                profile.getArenaProcedure().setArena(null);
+
+                final int amount;
+                try {
+                    amount = Integer.parseInt(input.trim());
+                } catch (NumberFormatException e) {
+                    player.sendMessage(CC.error("Invalid number"));
+                    return;
+                }
+                if (amount <= 0) {
+                    player.sendMessage(CC.error("Amount must be at least 1"));
+                    return;
+                }
+
+                Bukkit.getScheduler().runTask(Neptune.get(), () -> {
+                    int existing = ArenaService.get().getDuplicates(arena).size();
+                    if (existing >= 36) {
+                        player.sendMessage(CC.error("This arena already has the maximum of 36 duplicates"));
+                        return;
+                    }
+                    int toCreate = Math.min(amount, 36 - existing);
+                    player.sendMessage(CC.info("Creating " + toCreate + " duplicate(s) of " + arena.getName() + "..."));
+
+                    List<CompletableFuture<?>> futures = new ArrayList<>();
+                    for (int i = 0; i < toCreate; i++) futures.add(ArenaService.get().createDuplicate(arena));
+
+                    CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).whenComplete((v, t) -> {
+                        player.sendMessage(t == null
+                                ? CC.success("Created " + toCreate + " duplicate(s)")
+                                : CC.error("Some duplicates failed to create"));
+                        new ArenaDuplicatesMenu(arena).open(player);
+                    });
+                });
+                return;
             }
             default -> {}
         }

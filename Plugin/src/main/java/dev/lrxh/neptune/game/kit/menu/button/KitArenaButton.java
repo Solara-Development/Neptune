@@ -30,6 +30,6 @@ public class KitArenaButton extends Button {
 
     @Override
     public ItemStack getItemStack(Player player) {
-        return new ItemBuilder(Material.MAP).name("&f" + arena.getName() + " &7(" + kit.getDisplayName() + "&7)").lore(kit.isArenaAdded(arena) ? "&aArena Added" : "&cArena not added", "&7Press to toggle").build();
+        return new ItemBuilder(Material.MAP).name("&f" + arena.getName() + " &7(" + arena.getDisplayName() + "&7)").lore(kit.isArenaAdded(arena) ? "&aArena Added" : "&cArena not added", "&7Press to toggle").build();
     }
 }

@@ -19,6 +19,8 @@ public enum SettingsLocale implements IDataAccessor {
     ARENA_GENERATION("ARENA_GENERATION",
             "If disabled, matches reuse the original arena (flagged in use) instead of generating a copy. Requires a server restart to apply.",
             DataType.BOOLEAN, "false"),
+    DUPLICATE_WORLD("DUPLICATE.WORLD", "World that holds all pre-generated arena duplicates (used when ARENA_GENERATION is disabled).", DataType.STRING, "neptune_duplicates"),
+    DUPLICATE_DISTANCE("DUPLICATE.DISTANCE", "Blocks between each duplicate arena on the grid. Must be larger than your largest arena's footprint.", DataType.INT, "500"),
     COMMANDS_AFTER_MATCH_WINNER("COMMAND_AFTER_MATCH.WINNER", DataType.STRING_LIST, "NONE"),
     COMMANDS_AFTER_MATCH_LOSER("COMMAND_AFTER_MATCH.LOSER", DataType.STRING_LIST, "NONE"),
     SPAWN_LOCATION("SPAWN.LOCATION", DataType.STRING, "NONE"),

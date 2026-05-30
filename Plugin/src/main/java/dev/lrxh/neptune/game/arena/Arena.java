@@ -1,6 +1,5 @@
 package dev.lrxh.neptune.game.arena;
 
-import com.google.common.collect.Lists;
 import dev.lrxh.api.arena.IArena;
 import dev.lrxh.blockChanger.BlockChanger;
 import dev.lrxh.blockChanger.snapshot.CuboidSnapshot;
@@ -11,16 +10,10 @@ import dev.lrxh.neptune.utils.LocationUtil;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.*;
-import org.bukkit.block.Biome;
-import org.bukkit.generator.BiomeProvider;
-import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.generator.WorldInfo;
 import org.bukkit.configuration.ConfigurationSection;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -107,6 +100,12 @@ public class Arena implements IArena, ConfigData {
 
     public synchronized CompletableFuture<IArena> acquire() {
         if (Neptune.get().isArenaGenerationDisabled()) {
+            if (Neptune.get().isDuplicatesEnabled()) {
+                Arena duplicate = ArenaService.get().getFreeDuplicate(this);
+                if (duplicate == null) return CompletableFuture.completedFuture(null);
+                duplicate.setInUse(true);
+                return CompletableFuture.completedFuture(duplicate);
+            }
             if (inUse) return CompletableFuture.completedFuture(null);
             inUse = true;
             return CompletableFuture.completedFuture(this);
@@ -119,59 +118,8 @@ public class Arena implements IArena, ConfigData {
         UUID uuid = UUID.randomUUID();
         WorldCreator creator = new WorldCreator(uuid.toString())
                 .type(WorldType.NORMAL)
-                .generator(new ChunkGenerator() {
-                    @Override
-                    public boolean canSpawn(@NotNull World world, int x, int z) {
-                        return true;
-                    }
-
-                    @Override
-                    public @NotNull Location getFixedSpawnLocation(@NotNull World world, @NotNull Random random) {
-                        return new Location(world, 0, 0, 0);
-                    }
-
-
-                    @Override
-                    public boolean shouldGenerateNoise(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean shouldGenerateSurface(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean shouldGenerateCaves(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean shouldGenerateDecorations(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean shouldGenerateMobs(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ) {
-                        return false;
-                    }
-
-                    @Override
-                    public boolean shouldGenerateStructures(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ) {
-                        return false;
-                    }
-                })
-                .biomeProvider(new BiomeProvider() {
-                    @Override
-                    public org.bukkit.block.@NotNull Biome getBiome(@NotNull WorldInfo worldInfo, int x, int y, int z) {
-                        return org.bukkit.block.Biome.PLAINS;
-                    }
-
-                    @Override
-                    public @NotNull List<Biome> getBiomes(@NotNull WorldInfo worldInfo) {
-                        return Lists.newArrayList(org.bukkit.block.Biome.PLAINS);
-                    }
-                });
+                .generator(new VoidChunkGenerator())
+                .biomeProvider(new VoidBiomeProvider());
 
         BlockChanger.createVirtualWorld(creator).thenAccept(virtualWorld -> {
             try {
@@ -248,6 +196,7 @@ public class Arena implements IArena, ConfigData {
         s.set("whitelistedBlocks", getWhitelistedBlocksAsString());
         if (min != null) s.set("min", LocationUtil.serialize(min));
         if (max != null) s.set("max", LocationUtil.serialize(max));
+        if (owner != null) s.set("owner", owner.getName());
     }
 
     public static Arena read(String name, ConfigurationSection s) {

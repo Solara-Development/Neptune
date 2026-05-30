@@ -11,5 +11,6 @@ public enum ArenaProcedureType {
     SET_BUILD_LIMIT,
     SET_DEATH_Y,
     ADD_BLOCK,
-    SET_TIME
+    SET_TIME,
+    ADD_DUPLICATE
 }
