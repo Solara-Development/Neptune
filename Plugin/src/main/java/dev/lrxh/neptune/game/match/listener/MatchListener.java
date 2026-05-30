@@ -103,7 +103,6 @@ public class MatchListener implements Listener {
         if (profile.getState() == ProfileState.IN_CUSTOM)
             return;
 
-        // Cancel if not in match
         if (!isPlayerInMatch(profile)) {
             event.setCancelled(true);
             return;
@@ -121,14 +120,12 @@ public class MatchListener implements Listener {
 
             IArena arena = match.getArena();
 
-            // Check height limit
             if (blockLocation.getY() >= arena.getBuildLimit()) {
                 event.setCancelled(true);
                 MessagesLocale.MATCH_BUILD_LIMIT.send(player);
                 return;
             }
 
-            // Check arena boundaries
             if (!LocationUtil.isInside(blockLocation, arena.getMin(), arena.getMax())) {
                 event.setCancelled(true);
                 MessagesLocale.CANT_DO_THIS_HERE.send(player);
@@ -372,7 +369,6 @@ public class MatchListener implements Listener {
             return;
         }
 
-        // Check if both players are in matches
         if (getProfile(shooter).isEmpty() || getProfile(target).isEmpty()) {
             event.setCancelled(true);
             return;
@@ -575,7 +571,6 @@ public class MatchListener implements Listener {
             return;
         }
 
-        // Cancel if either player is not in match
         if (!isPlayerInMatch(profile) || !isPlayerInMatch(attackerProfile)) {
             event.setCancelled(true);
             return;
@@ -745,7 +740,6 @@ public class MatchListener implements Listener {
         Material blockType = clickedBlock.getType();
         if (event.getItem() == null) return;
         if (isStrippable(blockType) && Tag.ITEMS_AXES.isTagged(event.getItem().getType())) {
-            // Only cancel if player is in match
             Player player = event.getPlayer();
             Optional<Profile> profileOpt = getProfile(player);
             if (profileOpt.isPresent()) {

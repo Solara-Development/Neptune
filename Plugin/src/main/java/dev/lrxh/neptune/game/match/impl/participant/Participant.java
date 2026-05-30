@@ -46,10 +46,8 @@ public class Participant implements IParticipant {
     private Time time;
     private Match match;
 
-    // ELO CHANGES
     private int eloChange = 0;
 
-    // PARKOUR GAME RULE
     private Location currentCheckPoint;
     private int checkPoint = 0;
 

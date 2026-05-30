@@ -70,12 +70,10 @@ public class VirtualArena implements IArena {
 
     @Override
     public void restore() {
-        //TODO: Find a better way to restore virtual worlds other than creating a CuboidSnapshot
     }
 
     @Override
     public void delete(boolean save) {
-        //Empty since you can't delete a virtual arena
     }
 
     @Override

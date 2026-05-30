@@ -6,5 +6,6 @@ public enum KitProcedureType {
     SET_ICON,
     SET_INV,
     NONE,
-    SET_DAMAGE_MULTIPLIER
+    SET_DAMAGE_MULTIPLIER,
+    SET_HEALTH
 }

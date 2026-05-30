@@ -44,8 +44,7 @@ public class Profile implements IProfile {
     private final UUID playerUUID;
     private Map<String, Cooldown> cooldowns;
     private String username;
-    private ProfileState state; // for main plugin, if this was set to ProfileState.IN_CUSTOM, it will use
-    // customState instead
+    private ProfileState state;
     private String customState;
     private Neptune plugin;
     private GameData gameData;

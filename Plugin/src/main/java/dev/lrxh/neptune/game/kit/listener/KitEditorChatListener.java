@@ -128,6 +128,23 @@ public class KitEditorChatListener implements Listener {
                     return;
                 }
             }
+            case SET_HEALTH -> {
+                event.setCancelled(true);
+                try {
+                    double health = Double.parseDouble(input);
+                    if (health < 1 || health > 40) {
+                        player.sendMessage(CC.error("Health must be between 1 and 40."));
+                        return;
+                    }
+                    profile.getKitProcedure().setType(KitProcedureType.NONE);
+                    profile.getKitProcedure().getKit().setHealth(health);
+                    player.sendMessage(CC.success("Set max health"));
+                    new KitManagementMenu(profile.getKitProcedure().getKit()).open(player);
+                } catch (NumberFormatException e) {
+                    player.sendMessage(CC.error("Invalid number."));
+                    return;
+                }
+            }
 
         }
         profile.getKitProcedure().setKit(null);

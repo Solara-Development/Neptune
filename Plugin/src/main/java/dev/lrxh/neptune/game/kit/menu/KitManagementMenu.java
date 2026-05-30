@@ -35,6 +35,7 @@ public class KitManagementMenu extends Menu {
         buttons.add(new KitSetSlotButton(23, kit));
         buttons.add(new KitSetIconButton(24, kit));
         buttons.add(new KitSetDamageMultiplierButton(25, kit));
+        buttons.add(new KitSetHealthButton(26, kit));
 
         buttons.add(new ReturnButton(getSize() - 9, new KitsManagementMenu()));
 

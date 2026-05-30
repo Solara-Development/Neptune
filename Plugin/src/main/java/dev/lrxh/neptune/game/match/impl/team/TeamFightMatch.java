@@ -141,7 +141,6 @@ public class TeamFightMatch extends Match implements ITeamFightMatch {
             sendDeathMessage(participant);
         }
 
-        // Only end match if everyone on the team is out
         boolean allOut = team.participants().stream()
                 .allMatch(p -> p.isDead() || p.isDisconnected() || p.isLeft());
 

@@ -14,17 +14,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-/**
- * All FastAsyncWorldEdit usage is isolated here so the rest of the plugin stays loadable when FAWE is absent.
- * Must be invoked off the main thread; EditSessions are closed (try-with-resources) to flush changes.
- */
 public final class ArenaDuplicator {
 
-    /**
-     * FAWE corrupts chunk data when multiple EditSessions edit a world concurrently. Batch duplicate creation
-     * spawns one async task per duplicate, so all FAWE work is serialized through this lock to prevent the
-     * "random blocks" corruption.
-     */
     private static final Object FAWE_LOCK = new Object();
 
     public static boolean isAvailable() {
@@ -55,9 +46,6 @@ public final class ArenaDuplicator {
         }
     }
 
-    /**
-     * Snapshots [min, max] into an in-memory clipboard for later cleanup. Returned as Object so callers stay FAWE-free.
-     */
     public static Object capture(World world, Location min, Location max) {
         CuboidRegion region = new CuboidRegion(BukkitAdapter.adapt(world),
                 BlockVector3.at(min.getBlockX(), min.getBlockY(), min.getBlockZ()),
@@ -74,10 +62,6 @@ public final class ArenaDuplicator {
         }
         return clipboard;
     }
-
-    /**
-     * Pastes a clipboard from {@link #capture} back to its original location, resetting the arena.
-     */
     public static void restore(World world, Object clipboard) {
         Clipboard clip = (Clipboard) clipboard;
         synchronized (FAWE_LOCK) {
