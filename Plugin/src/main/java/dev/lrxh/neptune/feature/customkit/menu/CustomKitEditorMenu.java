@@ -13,6 +13,7 @@ import dev.lrxh.neptune.utils.menu.Button;
 import dev.lrxh.neptune.utils.menu.Filter;
 import dev.lrxh.neptune.utils.menu.Menu;
 import dev.lrxh.neptune.utils.menu.impl.ReturnButton;
+import dev.lrxh.neptune.utils.sign.SignInputMenu;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -68,7 +69,18 @@ public class CustomKitEditorMenu extends Menu {
             public void onClick(ClickType type, Player p) {
                 ItemStack item = kit.itemAt(contentsIndex);
                 if (item != null && !item.getType().isAir()) {
-                    if (type.isRightClick()) {
+                    if (type == ClickType.SHIFT_RIGHT) {
+                        p.closeInventory();
+                        SignInputMenu.open(p, "", "Enter amount (1-64)", input -> {
+                            try {
+                                item.setAmount(Math.max(1, Math.min(64, Integer.parseInt(input.trim()))));
+                                kit.setItemAt(contentsIndex, item);
+                                save(p);
+                            } catch (NumberFormatException ignored) {
+                            }
+                            new CustomKitEditorMenu(kit).open(p);
+                        });
+                    } else if (type.isRightClick()) {
                         kit.setItemAt(contentsIndex, null);
                         save(p);
                         open(p);

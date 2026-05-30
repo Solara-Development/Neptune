@@ -43,6 +43,7 @@ public class CustomKitsMenu extends Menu {
 
         int slot = 0;
         for (CustomKit kit : kits) {
+            if (hostMode && kit.getArenaNames().isEmpty()) continue;
             buttons.add(new Button(slot++) {
                 @Override
                 public ItemStack getItemStack(Player p) {
