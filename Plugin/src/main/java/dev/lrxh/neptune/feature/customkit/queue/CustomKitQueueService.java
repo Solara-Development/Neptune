@@ -19,7 +19,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CustomKitQueueService {
     private static CustomKitQueueService instance;
 
-    /** host UUID -> the kit they are hosting (one open listing per host). */
     private final Map<UUID, CustomKit> listings = new ConcurrentHashMap<>();
 
     public static CustomKitQueueService get() {
@@ -79,7 +78,6 @@ public class CustomKitQueueService {
         start(joiner, host, kit);
     }
 
-    /** Builds a throwaway kit and starts an unranked (duel) match so no stats are touched. */
     private void start(Player joiner, Player host, CustomKit kit) {
         Kit transientKit = kit.toTransientKit();
         transientKit.getRandomArena().thenAccept(arena -> Bukkit.getScheduler().runTask(Neptune.get(), () -> {

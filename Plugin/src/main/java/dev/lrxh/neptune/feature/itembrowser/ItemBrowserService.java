@@ -45,7 +45,6 @@ public class ItemBrowserService implements IItemBrowserService {
         };
     }
 
-    /** Precomputes every built-in section so the first browser open isn't doing the work. */
     public void preloadSections() {
         for (String section : new String[]{"blocks", "items", "helmet", "chestplate", "leggings", "boots"}) {
             computed.computeIfAbsent(section, this::computeSection);

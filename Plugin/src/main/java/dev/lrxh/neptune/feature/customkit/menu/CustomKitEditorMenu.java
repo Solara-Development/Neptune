@@ -38,13 +38,11 @@ public class CustomKitEditorMenu extends Menu {
     public List<Button> getButtons(Player player) {
         List<Button> buttons = new ArrayList<>();
 
-        // Main inventory: storage (editor 0-26 -> contents 9-35), hotbar (editor 27-35 -> contents 0-8)
         for (int es = 0; es <= 35; es++) {
             int ci = es <= 26 ? es + 9 : es - 27;
             buttons.add(slot(es, ci, MenusLocale.CUSTOM_KIT_EDITOR_EMPTY_MATERIAL.getString(),
                     MenusLocale.CUSTOM_KIT_EDITOR_EMPTY_NAME.getString(), "items"));
         }
-        // Armor + offhand (bottom row), each filtered to its item type
         String armor = MenusLocale.CUSTOM_KIT_EDITOR_SLOT_MATERIAL.getString();
         buttons.add(slot(45, 39, armor, MenusLocale.CUSTOM_KIT_EDITOR_HELMET_NAME.getString(), "helmet"));
         buttons.add(slot(46, 38, armor, MenusLocale.CUSTOM_KIT_EDITOR_CHESTPLATE_NAME.getString(), "chestplate"));

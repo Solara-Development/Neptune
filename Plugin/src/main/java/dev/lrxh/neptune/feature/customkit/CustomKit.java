@@ -78,8 +78,6 @@ public class CustomKit {
         return r;
     }
 
-    // Player-inventory contents layout (getContents()): 0-8 hotbar, 9-35 storage,
-    // 36 boots, 37 leggings, 38 chestplate, 39 helmet, 40 offhand.
     public static final int CONTENTS_SIZE = 41;
 
     private static List<ItemStack> defaultTemplate() {
@@ -116,11 +114,6 @@ public class CustomKit {
         if (!arenaNames.remove(arenaName)) arenaNames.add(arenaName);
     }
 
-    /**
-     * Builds a throwaway {@link Kit} for a single custom match. Uses Kit's all-args constructor,
-     * which does NOT register the kit on every profile. HIDDEN is forced so it never leaks into the
-     * normal queue (e.g. via the play-again item).
-     */
     public Kit toTransientKit() {
         HashSet<Arena> arenas = new HashSet<>();
         for (String n : arenaNames) {

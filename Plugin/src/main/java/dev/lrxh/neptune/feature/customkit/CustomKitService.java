@@ -6,7 +6,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CustomKitService {
     private static CustomKitService instance;
 
-    /** Max custom kits a player may own. */
     public static int MAX_KITS = 5;
 
     private final Map<UUID, List<CustomKit>> kits = new ConcurrentHashMap<>();
@@ -41,7 +40,6 @@ public class CustomKitService {
         get(uuid).remove(kit);
     }
 
-    // Persistence (mirrors the profile 'history' List<String> pattern)
     public List<String> serialize(UUID uuid) {
         List<String> out = new ArrayList<>();
         for (CustomKit k : get(uuid)) out.add(k.serialize());
@@ -59,7 +57,6 @@ public class CustomKitService {
         kits.put(uuid, list);
     }
 
-    // Chat-input tracking
     public void await(UUID uuid, Input type, CustomKit kit) {
         inputType.put(uuid, type);
         if (kit != null) inputKit.put(uuid, kit);

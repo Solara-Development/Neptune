@@ -10,6 +10,7 @@ import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.session.ClipboardHolder;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
@@ -19,8 +20,15 @@ import org.bukkit.World;
  */
 public final class ArenaDuplicator {
 
+    /**
+     * FAWE corrupts chunk data when multiple EditSessions edit a world concurrently. Batch duplicate creation
+     * spawns one async task per duplicate, so all FAWE work is serialized through this lock to prevent the
+     * "random blocks" corruption.
+     */
+    private static final Object FAWE_LOCK = new Object();
+
     public static boolean isAvailable() {
-        return org.bukkit.Bukkit.getPluginManager().getPlugin("FastAsyncWorldEdit") != null;
+        return Bukkit.getPluginManager().getPlugin("FastAsyncWorldEdit") != null;
     }
 
     public static void copyPaste(World sourceWorld, Location min, Location max, World targetWorld, int tx, int ty, int tz) {
@@ -30,18 +38,20 @@ public final class ArenaDuplicator {
         BlockArrayClipboard clipboard = new BlockArrayClipboard(region);
         clipboard.setOrigin(region.getMinimumPoint());
 
-        try (EditSession source = WorldEdit.getInstance().newEditSession(BukkitAdapter.adapt(sourceWorld))) {
-            ForwardExtentCopy copy = new ForwardExtentCopy(source, region, clipboard, region.getMinimumPoint());
-            copy.setCopyingEntities(false);
-            Operations.complete(copy);
-        }
+        synchronized (FAWE_LOCK) {
+            try (EditSession source = WorldEdit.getInstance().newEditSession(BukkitAdapter.adapt(sourceWorld))) {
+                ForwardExtentCopy copy = new ForwardExtentCopy(source, region, clipboard, region.getMinimumPoint());
+                copy.setCopyingEntities(false);
+                Operations.complete(copy);
+            }
 
-        try (EditSession target = WorldEdit.getInstance().newEditSession(BukkitAdapter.adapt(targetWorld))) {
-            Operations.complete(new ClipboardHolder(clipboard)
-                    .createPaste(target)
-                    .to(BlockVector3.at(tx, ty, tz))
-                    .ignoreAirBlocks(false)
-                    .build());
+            try (EditSession target = WorldEdit.getInstance().newEditSession(BukkitAdapter.adapt(targetWorld))) {
+                Operations.complete(new ClipboardHolder(clipboard)
+                        .createPaste(target)
+                        .to(BlockVector3.at(tx, ty, tz))
+                        .ignoreAirBlocks(false)
+                        .build());
+            }
         }
     }
 
@@ -55,10 +65,12 @@ public final class ArenaDuplicator {
         BlockArrayClipboard clipboard = new BlockArrayClipboard(region);
         clipboard.setOrigin(region.getMinimumPoint());
 
-        try (EditSession source = WorldEdit.getInstance().newEditSession(BukkitAdapter.adapt(world))) {
-            ForwardExtentCopy copy = new ForwardExtentCopy(source, region, clipboard, region.getMinimumPoint());
-            copy.setCopyingEntities(false);
-            Operations.complete(copy);
+        synchronized (FAWE_LOCK) {
+            try (EditSession source = WorldEdit.getInstance().newEditSession(BukkitAdapter.adapt(world))) {
+                ForwardExtentCopy copy = new ForwardExtentCopy(source, region, clipboard, region.getMinimumPoint());
+                copy.setCopyingEntities(false);
+                Operations.complete(copy);
+            }
         }
         return clipboard;
     }
@@ -68,12 +80,14 @@ public final class ArenaDuplicator {
      */
     public static void restore(World world, Object clipboard) {
         Clipboard clip = (Clipboard) clipboard;
-        try (EditSession target = WorldEdit.getInstance().newEditSession(BukkitAdapter.adapt(world))) {
-            Operations.complete(new ClipboardHolder(clip)
-                    .createPaste(target)
-                    .to(clip.getOrigin())
-                    .ignoreAirBlocks(false)
-                    .build());
+        synchronized (FAWE_LOCK) {
+            try (EditSession target = WorldEdit.getInstance().newEditSession(BukkitAdapter.adapt(world))) {
+                Operations.complete(new ClipboardHolder(clip)
+                        .createPaste(target)
+                        .to(clip.getOrigin())
+                        .ignoreAirBlocks(false)
+                        .build());
+            }
         }
     }
 }
