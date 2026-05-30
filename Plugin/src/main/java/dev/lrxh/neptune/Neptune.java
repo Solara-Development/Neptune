@@ -118,7 +118,7 @@ public final class Neptune extends JavaPlugin {
 
     private void loadManager() {
         ConfigService.get().load();
-        arenaGenerationDisabled = !SettingsLocale.ARENA_GENERATION.getBoolean();
+        arenaGenerationDisabled = !SettingsLocale.DYNAMIC_ARENA_GENERATION.getBoolean();
 
         loadExtensions();
         if (!isEnabled())
@@ -136,7 +136,7 @@ public final class Neptune extends JavaPlugin {
                 ArenaService.get().setupDuplicatesWorld();
                 ArenaService.get().loadDuplicates();
             } else {
-                ServerUtils.error("FastAsyncWorldEdit is not installed - arena duplicates are disabled. Falling back to using the original arenas.");
+                ServerUtils.error("FastAsyncWorldEdit is not installed - arena duplicates are disabled.");
             }
         }
         KitService.get().load();

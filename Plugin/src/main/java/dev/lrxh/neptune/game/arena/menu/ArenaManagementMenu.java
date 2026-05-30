@@ -1,6 +1,5 @@
 package dev.lrxh.neptune.game.arena.menu;
 
-import dev.lrxh.blockChanger.snapshot.CuboidSnapshot;
 import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.game.arena.Arena;
 import dev.lrxh.neptune.game.arena.impl.EdgeType;
@@ -65,11 +64,7 @@ public class ArenaManagementMenu extends Menu {
 
                 @Override
                 public void onClick(ClickType type, Player player) {
-                    arena.setDoneLoading(false);
-                    CuboidSnapshot.create(arena.getMin(), arena.getMax()).thenAccept(snapshot -> {
-                        arena.setSnapshot(snapshot);
-                        arena.setDoneLoading(true);
-                    });
+                    arena.capture();
                 }
             });
         }

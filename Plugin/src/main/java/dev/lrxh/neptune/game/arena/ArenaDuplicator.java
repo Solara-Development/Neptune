@@ -4,6 +4,7 @@ import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.extent.clipboard.BlockArrayClipboard;
+import com.sk89q.worldedit.extent.clipboard.Clipboard;
 import com.sk89q.worldedit.function.operation.ForwardExtentCopy;
 import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
@@ -39,6 +40,38 @@ public final class ArenaDuplicator {
             Operations.complete(new ClipboardHolder(clipboard)
                     .createPaste(target)
                     .to(BlockVector3.at(tx, ty, tz))
+                    .ignoreAirBlocks(false)
+                    .build());
+        }
+    }
+
+    /**
+     * Snapshots [min, max] into an in-memory clipboard for later cleanup. Returned as Object so callers stay FAWE-free.
+     */
+    public static Object capture(World world, Location min, Location max) {
+        CuboidRegion region = new CuboidRegion(BukkitAdapter.adapt(world),
+                BlockVector3.at(min.getBlockX(), min.getBlockY(), min.getBlockZ()),
+                BlockVector3.at(max.getBlockX(), max.getBlockY(), max.getBlockZ()));
+        BlockArrayClipboard clipboard = new BlockArrayClipboard(region);
+        clipboard.setOrigin(region.getMinimumPoint());
+
+        try (EditSession source = WorldEdit.getInstance().newEditSession(BukkitAdapter.adapt(world))) {
+            ForwardExtentCopy copy = new ForwardExtentCopy(source, region, clipboard, region.getMinimumPoint());
+            copy.setCopyingEntities(false);
+            Operations.complete(copy);
+        }
+        return clipboard;
+    }
+
+    /**
+     * Pastes a clipboard from {@link #capture} back to its original location, resetting the arena.
+     */
+    public static void restore(World world, Object clipboard) {
+        Clipboard clip = (Clipboard) clipboard;
+        try (EditSession target = WorldEdit.getInstance().newEditSession(BukkitAdapter.adapt(world))) {
+            Operations.complete(new ClipboardHolder(clip)
+                    .createPaste(target)
+                    .to(clip.getOrigin())
                     .ignoreAirBlocks(false)
                     .build());
         }

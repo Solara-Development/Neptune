@@ -2,7 +2,6 @@ package dev.lrxh.neptune.game.arena;
 
 import dev.lrxh.api.arena.IArena;
 import dev.lrxh.api.arena.IArenaService;
-import dev.lrxh.blockChanger.snapshot.CuboidSnapshot;
 import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.configs.ConfigService;
 import dev.lrxh.neptune.configs.impl.SettingsLocale;
@@ -168,11 +167,7 @@ public class ArenaService extends IService implements IArenaService {
             }
             Bukkit.getScheduler().runTask(Neptune.get(), () -> {
                 for (Arena dup : dups) {
-                    dup.setDoneLoading(false);
-                    CuboidSnapshot.create(dup.getMin(), dup.getMax()).thenAccept(s -> {
-                        dup.setSnapshot(s);
-                        dup.setDoneLoading(true);
-                    });
+                    dup.capture();
                 }
             });
         });

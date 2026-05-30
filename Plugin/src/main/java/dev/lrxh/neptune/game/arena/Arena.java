@@ -4,6 +4,7 @@ import dev.lrxh.api.arena.IArena;
 import dev.lrxh.blockChanger.BlockChanger;
 import dev.lrxh.blockChanger.snapshot.CuboidSnapshot;
 import dev.lrxh.neptune.Neptune;
+import dev.lrxh.neptune.configs.impl.SettingsLocale;
 import dev.lrxh.neptune.game.kit.KitService;
 import dev.lrxh.neptune.providers.manager.ConfigData;
 import dev.lrxh.neptune.utils.LocationUtil;
@@ -32,6 +33,7 @@ public class Arena implements IArena, ConfigData {
     private long time;
     private List<Material> whitelistedBlocks;
     private CuboidSnapshot snapshot;
+    private Object faweClipboard;
     private Arena owner;
     private boolean doneLoading;
     private boolean inUse;
@@ -60,14 +62,7 @@ public class Arena implements IArena, ConfigData {
         this.buildLimit = buildLimit;
         this.whitelistedBlocks = (whitelistedBlocks != null ? whitelistedBlocks : new ArrayList<>());
 
-        if (min != null && max != null) {
-            this.doneLoading = false;
-            CuboidSnapshot.create(min, max).thenAccept(cuboidSnapshot -> {
-                this.snapshot = cuboidSnapshot;
-                this.doneLoading = true;
-            });
-        }
-
+        capture();
     }
 
     public Arena(String name, String displayName, Location redSpawn, Location blueSpawn,
@@ -216,31 +211,44 @@ public class Arena implements IArena, ConfigData {
     }
 
     public void restore() {
-        if (snapshot != null) {
+        if (faweClipboard != null) {
+            Bukkit.getScheduler().runTaskAsynchronously(Neptune.get(),
+                    () -> ArenaDuplicator.restore(min.getWorld(), faweClipboard));
+        } else if (snapshot != null) {
             snapshot.restore(true);
+        }
+    }
+
+    private static boolean useFawe() {
+        return "FAWE".equalsIgnoreCase(SettingsLocale.ARENA_CLEANUP_METHOD.getString()) && ArenaDuplicator.isAvailable();
+    }
+
+    public void capture() {
+        if (min == null || max == null) return;
+        this.doneLoading = false;
+        if (useFawe()) {
+            this.snapshot = null;
+            Bukkit.getScheduler().runTaskAsynchronously(Neptune.get(), () -> {
+                this.faweClipboard = ArenaDuplicator.capture(min.getWorld(), min, max);
+                this.doneLoading = true;
+            });
+        } else {
+            this.faweClipboard = null;
+            CuboidSnapshot.create(min, max).thenAccept(cuboidSnapshot -> {
+                this.snapshot = cuboidSnapshot;
+                this.doneLoading = true;
+            });
         }
     }
 
     public void setMin(Location min) {
         this.min = min;
-        if (min != null && max != null) {
-            this.doneLoading = false;
-            CuboidSnapshot.create(min, max).thenAccept(cuboidSnapshot -> {
-                this.snapshot = cuboidSnapshot;
-                this.doneLoading = true;
-            });
-        }
+        capture();
     }
 
     public void setMax(Location max) {
         this.max = max;
-        if (min != null && max != null) {
-            this.doneLoading = false;
-            CuboidSnapshot.create(min, max).thenAccept(cuboidSnapshot -> {
-                this.snapshot = cuboidSnapshot;
-                this.doneLoading = true;
-            });
-        }
+        capture();
     }
 
     public void setRedSpawn(Location redSpawn) {
