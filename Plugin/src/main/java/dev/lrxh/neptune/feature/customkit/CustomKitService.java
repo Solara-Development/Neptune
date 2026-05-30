@@ -9,10 +9,6 @@ public class CustomKitService {
     public static int MAX_KITS = 5;
 
     private final Map<UUID, List<CustomKit>> kits = new ConcurrentHashMap<>();
-    private final Map<UUID, Input> inputType = new ConcurrentHashMap<>();
-    private final Map<UUID, CustomKit> inputKit = new ConcurrentHashMap<>();
-
-    public enum Input {CREATE, HEALTH}
 
     public static CustomKitService get() {
         if (instance == null) instance = new CustomKitService();
@@ -55,23 +51,5 @@ public class CustomKitService {
             }
         }
         kits.put(uuid, list);
-    }
-
-    public void await(UUID uuid, Input type, CustomKit kit) {
-        inputType.put(uuid, type);
-        if (kit != null) inputKit.put(uuid, kit);
-    }
-
-    public Input inputType(UUID uuid) {
-        return inputType.get(uuid);
-    }
-
-    public CustomKit inputKit(UUID uuid) {
-        return inputKit.get(uuid);
-    }
-
-    public void clearInput(UUID uuid) {
-        inputType.remove(uuid);
-        inputKit.remove(uuid);
     }
 }

@@ -1,13 +1,12 @@
 package dev.lrxh.neptune.game.kit.menu.button;
 
-import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.game.kit.Kit;
-import dev.lrxh.neptune.game.kit.procedure.KitProcedureType;
-import dev.lrxh.neptune.profile.impl.Profile;
+import dev.lrxh.neptune.game.kit.KitService;
+import dev.lrxh.neptune.game.kit.menu.KitManagementMenu;
 import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.ItemBuilder;
 import dev.lrxh.neptune.utils.menu.Button;
-import net.kyori.adventure.text.event.ClickEvent;
+import dev.lrxh.neptune.utils.sign.SignInputMenu;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -23,14 +22,13 @@ public class KitRenameButton extends Button {
 
     @Override
     public void onClick(ClickType type, Player player) {
-        Profile profile = API.getProfile(player);
-        profile.getKitProcedure().setType(KitProcedureType.RENAME);
-        profile.getKitProcedure().setKit(kit);
         player.closeInventory();
-        player.sendMessage(
-                CC.info("<hover:show_text:\"<yellow>Click to paste current display name\">Please type new display name &8(Color codes can be used)")
-                        .clickEvent(ClickEvent.suggestCommand(kit.getDisplayName()))
-        );
+        SignInputMenu.open(player, kit.getDisplayName(), "Enter display name", input -> {
+            kit.setDisplayName(input);
+            player.sendMessage(CC.success("Renamed kit"));
+            new KitManagementMenu(kit).open(player);
+            KitService.get().save();
+        });
     }
 
     @Override

@@ -12,6 +12,7 @@ import dev.lrxh.neptune.utils.menu.Button;
 import dev.lrxh.neptune.utils.menu.Filter;
 import dev.lrxh.neptune.utils.menu.Menu;
 import dev.lrxh.neptune.utils.menu.impl.ReturnButton;
+import dev.lrxh.neptune.utils.sign.SignInputMenu;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -80,9 +81,24 @@ public class CustomKitManageMenu extends Menu {
 
             @Override
             public void onClick(ClickType type, Player p) {
-                CustomKitService.get().await(p.getUniqueId(), CustomKitService.Input.HEALTH, kit);
                 p.closeInventory();
-                MessagesLocale.CUSTOM_KIT_HEALTH_PROMPT.send(p.getUniqueId());
+                SignInputMenu.open(p, "", "Enter max health (1-40)", input -> {
+                    try {
+                        double health = Double.parseDouble(input);
+                        if (health < 1 || health > 40) {
+                            MessagesLocale.CUSTOM_KIT_HEALTH_RANGE.send(p.getUniqueId());
+                            return;
+                        }
+                        kit.setHealth(health);
+                        Profile profile = API.getProfile(p);
+                        if (profile != null) Profile.save(profile);
+                        MessagesLocale.CUSTOM_KIT_HEALTH_SET.send(p.getUniqueId(),
+                                Placeholder.unparsed("health", String.valueOf(health)));
+                        new CustomKitManageMenu(kit).open(p);
+                    } catch (NumberFormatException e) {
+                        MessagesLocale.CUSTOM_KIT_HEALTH_INVALID.send(p.getUniqueId());
+                    }
+                });
             }
         });
 

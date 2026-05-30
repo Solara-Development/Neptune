@@ -1,12 +1,12 @@
 package dev.lrxh.neptune.game.arena.menu.button;
 
-import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.game.arena.Arena;
-import dev.lrxh.neptune.game.arena.procedure.ArenaProcedureType;
-import dev.lrxh.neptune.profile.impl.Profile;
+import dev.lrxh.neptune.game.arena.ArenaService;
+import dev.lrxh.neptune.game.arena.menu.ArenaManagementMenu;
 import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.ItemBuilder;
 import dev.lrxh.neptune.utils.menu.Button;
+import dev.lrxh.neptune.utils.sign.SignInputMenu;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -23,12 +23,27 @@ public class ArenaSetTimeButton extends Button {
 
     @Override
     public void onClick(ClickType type, Player player) {
-        Profile profile = API.getProfile(player);
-        profile.getArenaProcedure().setArena(arena);
-        profile.getArenaProcedure().setType(ArenaProcedureType.SET_TIME);
-        player.sendMessage(CC.info("Type the time (in ticks or day, night, ...) for the arena. Type &8Current &7to use the current world time"));
-
         player.closeInventory();
+        SignInputMenu.open(player, "", "Time (ticks/day/night/current)", input -> {
+            if (input.equalsIgnoreCase("day")) arena.setTime(1000);
+            if (input.equalsIgnoreCase("night")) arena.setTime(13000);
+            else if (input.equalsIgnoreCase("noon")) arena.setTime(6000);
+            else if (input.equalsIgnoreCase("midnight")) arena.setTime(18000);
+            else if (input.equalsIgnoreCase("sunrise")) arena.setTime(23000);
+            else if (input.equalsIgnoreCase("sunset")) arena.setTime(12000);
+            else if (input.equalsIgnoreCase("current")) arena.setTime(player.getWorld().getTime());
+            else {
+                try {
+                    arena.setTime(Long.parseLong(input));
+                } catch (NumberFormatException e) {
+                    player.sendMessage(CC.error("Invalid time input"));
+                    return;
+                }
+            }
+            player.sendMessage(CC.success("Set arena time"));
+            new ArenaManagementMenu(arena).open(player);
+            ArenaService.get().save();
+        });
     }
 
     @Override

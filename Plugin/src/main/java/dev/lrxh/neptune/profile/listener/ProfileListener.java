@@ -15,6 +15,7 @@ import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.GithubUtils;
 import dev.lrxh.neptune.utils.PlayerUtil;
 import dev.lrxh.neptune.utils.ServerUtils;
+import dev.lrxh.neptune.utils.sign.SignInputMenu;
 import dev.lrxh.neptune.utils.tasks.NeptuneRunnable;
 import dev.lrxh.neptune.utils.tasks.TaskScheduler;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -58,6 +59,7 @@ public class ProfileListener implements Listener {
     public void onQuit(PlayerQuitEvent event) {
         event.quitMessage(null);
         Player player = event.getPlayer();
+        SignInputMenu.remove(player.getUniqueId());
         Profile profile = API.getProfile(player);
         if (profile == null)
             return;

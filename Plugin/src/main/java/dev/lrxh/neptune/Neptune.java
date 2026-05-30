@@ -1,5 +1,7 @@
 package dev.lrxh.neptune;
 
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.event.PacketListenerPriority;
 import com.jonahseguin.drink.CommandService;
 import com.jonahseguin.drink.Drink;
 import com.jonahseguin.drink.annotation.Text;
@@ -20,7 +22,6 @@ import dev.lrxh.neptune.feature.customkit.listener.CustomKitListener;
 import dev.lrxh.neptune.feature.divisions.DivisionService;
 import dev.lrxh.neptune.feature.hotbar.HotbarService;
 import dev.lrxh.neptune.feature.hotbar.listener.ItemListener;
-import dev.lrxh.neptune.feature.itembrowser.ItemBrowserListener;
 import dev.lrxh.neptune.feature.itembrowser.ItemBrowserService;
 import dev.lrxh.neptune.feature.leaderboard.LeaderboardService;
 import dev.lrxh.neptune.feature.leaderboard.command.LeaderboardCommand;
@@ -64,6 +65,7 @@ import dev.lrxh.neptune.utils.GithubUtils;
 import dev.lrxh.neptune.utils.ServerUtils;
 import dev.lrxh.neptune.utils.menu.MenuListener;
 import dev.lrxh.neptune.utils.menu.MenuRunnable;
+import dev.lrxh.neptune.utils.sign.SignInputListener;
 import dev.lrxh.neptune.utils.tasks.TaskScheduler;
 import fr.mrmicky.fastboard.FastManager;
 import lombok.Getter;
@@ -173,9 +175,10 @@ public final class Neptune extends JavaPlugin {
                         new ArenaEditorChatListener(),
                         new KitEditorChatListener(),
                         new KitEditorListener(),
-                        new CustomKitListener(),
-                        new ItemBrowserListener())
+                        new CustomKitListener())
                 .forEach(listener -> getServer().getPluginManager().registerEvents(listener, this));
+
+        PacketEvents.getAPI().getEventManager().registerListener(new SignInputListener(), PacketListenerPriority.NORMAL);
     }
 
     private void loadExtensions() {

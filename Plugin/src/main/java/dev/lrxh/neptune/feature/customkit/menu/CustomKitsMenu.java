@@ -1,14 +1,17 @@
 package dev.lrxh.neptune.feature.customkit.menu;
 
+import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.configs.impl.MenusLocale;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.feature.customkit.CustomKit;
 import dev.lrxh.neptune.feature.customkit.CustomKitService;
 import dev.lrxh.neptune.feature.customkit.queue.CustomKitQueueService;
+import dev.lrxh.neptune.profile.impl.Profile;
 import dev.lrxh.neptune.utils.ItemBuilder;
 import dev.lrxh.neptune.utils.menu.Button;
 import dev.lrxh.neptune.utils.menu.Filter;
 import dev.lrxh.neptune.utils.menu.Menu;
+import dev.lrxh.neptune.utils.sign.SignInputMenu;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Player;
@@ -82,9 +85,19 @@ public class CustomKitsMenu extends Menu {
                         MessagesLocale.CUSTOM_KIT_MAX.send(p.getUniqueId());
                         return;
                     }
-                    CustomKitService.get().await(p.getUniqueId(), CustomKitService.Input.CREATE, null);
                     p.closeInventory();
-                    MessagesLocale.CUSTOM_KIT_CREATE_PROMPT.send(p.getUniqueId());
+                    SignInputMenu.open(p, "", "Enter kit name", input -> {
+                        CustomKit created = CustomKitService.get().create(p.getUniqueId(), input);
+                        if (created == null) {
+                            MessagesLocale.CUSTOM_KIT_CREATE_FAIL.send(p.getUniqueId());
+                            return;
+                        }
+                        Profile profile = API.getProfile(p);
+                        if (profile != null) Profile.save(profile);
+                        MessagesLocale.CUSTOM_KIT_CREATED.send(p.getUniqueId(),
+                                Placeholder.parsed("kit", created.getDisplayName()));
+                        new CustomKitManageMenu(created).open(p);
+                    });
                 }
             });
         }

@@ -1,6 +1,7 @@
 package dev.lrxh.neptune.feature.itembrowser;
 
 import dev.lrxh.api.features.IItemBrowserService;
+import dev.lrxh.neptune.utils.sign.SignInputMenu;
 import org.bukkit.Material;
 import org.bukkit.Registry;
 import org.bukkit.block.BlockType;
@@ -15,7 +16,6 @@ public class ItemBrowserService implements IItemBrowserService {
 
     private final Map<String, List<Material>> sectionMaterials = new HashMap<>();
     private final Map<String, List<Material>> computed = new HashMap<>();
-    private final Map<UUID, SearchSession> searchSessions = new HashMap<>();
 
     public static ItemBrowserService get() {
         if (instance == null) {
@@ -90,12 +90,8 @@ public class ItemBrowserService implements IItemBrowserService {
 
     public void requestSearch(Player player, String section, Consumer<Material> itemConsumer, Runnable returnConsumer) {
         player.closeInventory();
-        player.sendMessage("§ePlease type your search in chat.");
-        searchSessions.put(player.getUniqueId(), new SearchSession(section, itemConsumer, returnConsumer));
-    }
-
-    public SearchSession removeSearchSession(UUID uuid) {
-        return searchSessions.remove(uuid);
+        SignInputMenu.open(player, "", "Enter search", input ->
+                openBrowser(player, section, itemConsumer, input, returnConsumer));
     }
 
     @Override
@@ -108,8 +104,5 @@ public class ItemBrowserService implements IItemBrowserService {
             }
         }
         sectionMaterials.put(section, materials);
-    }
-
-    record SearchSession(String section, Consumer<Material> itemConsumer, Runnable returnConsumer) {
     }
 }

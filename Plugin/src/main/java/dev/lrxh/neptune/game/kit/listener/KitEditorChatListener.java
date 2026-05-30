@@ -6,7 +6,6 @@ import dev.lrxh.neptune.feature.hotbar.HotbarService;
 import dev.lrxh.neptune.game.kit.Kit;
 import dev.lrxh.neptune.game.kit.KitService;
 import dev.lrxh.neptune.game.kit.menu.KitManagementMenu;
-import dev.lrxh.neptune.game.kit.menu.KitsManagementMenu;
 import dev.lrxh.neptune.game.kit.procedure.KitProcedureType;
 import dev.lrxh.neptune.profile.ProfileService;
 import dev.lrxh.neptune.profile.impl.Profile;
@@ -41,35 +40,6 @@ public class KitEditorChatListener implements Listener {
         }
 
         switch (profile.getKitProcedure().getType()) {
-            case CREATE -> {
-                event.setCancelled(true);
-                profile.getKitProcedure().setType(KitProcedureType.NONE);
-                Kit kit = new Kit(input, player);
-
-                if (KitService.get().add(kit)) {
-                    player.sendMessage(CC.error("Kit already exists"));
-                    return;
-                }
-
-                if (input.contains(" ")) {
-                    player.sendMessage(CC.error("Kit name cannot contain spaces"));
-                    return;
-                }
-
-                player.sendMessage(CC.success("Created kit"));
-                Bukkit.getScheduler().runTask(Neptune.get(), () -> {
-                    PlayerUtil.reset(player);
-                    HotbarService.get().giveItems(player);
-                });
-                new KitsManagementMenu().open(player);
-            }
-            case RENAME -> {
-                event.setCancelled(true);
-                profile.getKitProcedure().setType(KitProcedureType.NONE);
-                profile.getKitProcedure().getKit().setDisplayName(input);
-                player.sendMessage(CC.success("Renamed kit"));
-                new KitManagementMenu(profile.getKitProcedure().getKit()).open(player);
-            }
             case SET_INV -> {
                 if (!input.equalsIgnoreCase("Done")) return;
                 event.setCancelled(true);
@@ -112,36 +82,6 @@ public class KitEditorChatListener implements Listener {
                     new KitManagementMenu(profile.getKitProcedure().getKit()).open(player);
                 } else {
                     player.sendMessage(CC.error("You must be holding an item to set the icon, please try again"));
-                    return;
-                }
-            }
-            case SET_DAMAGE_MULTIPLIER -> {
-                event.setCancelled(true);
-                try {
-                    double damageMultiplier = Double.parseDouble(input);
-                    profile.getKitProcedure().setType(KitProcedureType.NONE);
-                    profile.getKitProcedure().getKit().setDamageMultiplier(damageMultiplier);
-                    player.sendMessage(CC.success("Set damage multiplier"));
-                    new KitManagementMenu(profile.getKitProcedure().getKit()).open(player);
-                } catch (NumberFormatException e) {
-                    player.sendMessage(CC.error("Invalid number."));
-                    return;
-                }
-            }
-            case SET_HEALTH -> {
-                event.setCancelled(true);
-                try {
-                    double health = Double.parseDouble(input);
-                    if (health < 1 || health > 40) {
-                        player.sendMessage(CC.error("Health must be between 1 and 40."));
-                        return;
-                    }
-                    profile.getKitProcedure().setType(KitProcedureType.NONE);
-                    profile.getKitProcedure().getKit().setHealth(health);
-                    player.sendMessage(CC.success("Set max health"));
-                    new KitManagementMenu(profile.getKitProcedure().getKit()).open(player);
-                } catch (NumberFormatException e) {
-                    player.sendMessage(CC.error("Invalid number."));
                     return;
                 }
             }

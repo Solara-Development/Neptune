@@ -1,12 +1,12 @@
 package dev.lrxh.neptune.game.kit.menu.button;
 
-import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.game.kit.Kit;
-import dev.lrxh.neptune.game.kit.procedure.KitProcedureType;
-import dev.lrxh.neptune.profile.impl.Profile;
+import dev.lrxh.neptune.game.kit.KitService;
+import dev.lrxh.neptune.game.kit.menu.KitManagementMenu;
 import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.ItemBuilder;
 import dev.lrxh.neptune.utils.menu.Button;
+import dev.lrxh.neptune.utils.sign.SignInputMenu;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -22,11 +22,17 @@ public class KitSetDamageMultiplierButton extends Button {
 
     @Override
     public void onClick(ClickType type, Player player) {
-        Profile profile = API.getProfile(player);
-        profile.getKitProcedure().setType(KitProcedureType.SET_DAMAGE_MULTIPLIER);
-        profile.getKitProcedure().setKit(kit);
         player.closeInventory();
-        player.sendMessage(CC.info("Send a message containing the damage multiplier for this kit"));
+        SignInputMenu.open(player, "", "Enter damage multiplier", input -> {
+            try {
+                kit.setDamageMultiplier(Double.parseDouble(input));
+                player.sendMessage(CC.success("Set damage multiplier"));
+                new KitManagementMenu(kit).open(player);
+                KitService.get().save();
+            } catch (NumberFormatException e) {
+                player.sendMessage(CC.error("Invalid number."));
+            }
+        });
     }
 
     @Override

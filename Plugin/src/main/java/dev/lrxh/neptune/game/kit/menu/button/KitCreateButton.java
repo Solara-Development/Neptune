@@ -1,11 +1,14 @@
 package dev.lrxh.neptune.game.kit.menu.button;
 
-import dev.lrxh.neptune.API;
-import dev.lrxh.neptune.game.kit.procedure.KitProcedureType;
-import dev.lrxh.neptune.profile.impl.Profile;
+import dev.lrxh.neptune.feature.hotbar.HotbarService;
+import dev.lrxh.neptune.game.kit.Kit;
+import dev.lrxh.neptune.game.kit.KitService;
+import dev.lrxh.neptune.game.kit.menu.KitsManagementMenu;
 import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.ItemBuilder;
+import dev.lrxh.neptune.utils.PlayerUtil;
 import dev.lrxh.neptune.utils.menu.Button;
+import dev.lrxh.neptune.utils.sign.SignInputMenu;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -19,10 +22,23 @@ public class KitCreateButton extends Button {
 
     @Override
     public void onClick(ClickType type, Player player) {
-        Profile profile = API.getProfile(player);
-        profile.getKitProcedure().setType(KitProcedureType.CREATE);
         player.closeInventory();
-        player.sendMessage(CC.info("Please type the kit name"));
+        SignInputMenu.open(player, "", "Enter kit name", input -> {
+            Kit kit = new Kit(input, player);
+            if (KitService.get().add(kit)) {
+                player.sendMessage(CC.error("Kit already exists"));
+                return;
+            }
+            if (input.contains(" ")) {
+                player.sendMessage(CC.error("Kit name cannot contain spaces"));
+                return;
+            }
+            player.sendMessage(CC.success("Created kit"));
+            PlayerUtil.reset(player);
+            HotbarService.get().giveItems(player);
+            new KitsManagementMenu().open(player);
+            KitService.get().save();
+        });
     }
 
     @Override

@@ -1,8 +1,6 @@
 package dev.lrxh.neptune.game.arena.procedure;
 
 public enum ArenaProcedureType {
-    RENAME,
-    CREATE,
     NONE,
     SET_SPAWN_RED,
     SET_SPAWN_BLUE,
@@ -10,7 +8,5 @@ public enum ArenaProcedureType {
     SET_SPAWN_MIN,
     SET_BUILD_LIMIT,
     SET_DEATH_Y,
-    ADD_BLOCK,
-    SET_TIME,
-    ADD_DUPLICATE
+    ADD_BLOCK
 }

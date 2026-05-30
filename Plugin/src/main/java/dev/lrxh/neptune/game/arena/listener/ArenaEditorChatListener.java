@@ -4,9 +4,7 @@ import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.game.arena.Arena;
 import dev.lrxh.neptune.game.arena.ArenaService;
-import dev.lrxh.neptune.game.arena.menu.ArenaDuplicatesMenu;
 import dev.lrxh.neptune.game.arena.menu.ArenaManagementMenu;
-import dev.lrxh.neptune.game.arena.menu.ArenasManagementMenu;
 import dev.lrxh.neptune.game.arena.menu.WhitelistedBlocksMenu;
 import dev.lrxh.neptune.game.arena.procedure.ArenaProcedureType;
 import dev.lrxh.neptune.profile.impl.Profile;
@@ -14,15 +12,10 @@ import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.tasks.NeptuneRunnable;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 public class ArenaEditorChatListener implements Listener {
 
@@ -40,34 +33,6 @@ public class ArenaEditorChatListener implements Listener {
         }
 
         switch (profile.getArenaProcedure().getType()) {
-            case CREATE -> {
-                event.setCancelled(true);
-                profile.getArenaProcedure().setType(ArenaProcedureType.NONE);
-
-                if (ArenaService.get().getArenaByName(input) != null) {
-                    player.sendMessage(CC.error("Arena already exists"));
-                    return;
-                }
-
-                if (input.contains(" ")) {
-                    player.sendMessage(CC.error("Arena name cannot contain spaces"));
-                    return;
-                }
-
-                Arena arena = new Arena(input, player.getWorld().getTime());
-
-                ArenaService.get().arenas.add(arena);
-                player.sendMessage(CC.success("Created arena"));
-                new ArenasManagementMenu().open(player);
-            }
-            case RENAME -> {
-                event.setCancelled(true);
-                profile.getArenaProcedure().setType(ArenaProcedureType.NONE);
-                profile.getArenaProcedure().getArena().setDisplayName(input);
-                player.sendMessage(CC.success("Renamed arena"));
-                new ArenaManagementMenu(profile.getArenaProcedure().getArena()).open(player);
-                profile.getArenaProcedure().setArena(null);
-            }
             case SET_SPAWN_RED -> {
                 if (!input.equalsIgnoreCase("Done")) return;
                 event.setCancelled(true);
@@ -191,70 +156,6 @@ public class ArenaEditorChatListener implements Listener {
                 arena.getWhitelistedBlocks().add(player.getInventory().getItemInMainHand().getType());
                 new WhitelistedBlocksMenu(arena).open(player);
                 profile.getArenaProcedure().setArena(null);
-            }
-            case SET_TIME -> {
-                event.setCancelled(true);
-
-                profile.getArenaProcedure().setType(ArenaProcedureType.NONE);
-                Arena arena = profile.getArenaProcedure().getArena();
-                if (input.equalsIgnoreCase("day")) arena.setTime(1000);
-                if (input.equalsIgnoreCase("night")) arena.setTime(13000);
-                else if (input.equalsIgnoreCase("noon")) arena.setTime(6000);
-                else if (input.equalsIgnoreCase("midnight")) arena.setTime(18000);
-                else if (input.equalsIgnoreCase("sunrise")) arena.setTime(23000);
-                else if (input.equalsIgnoreCase("sunset")) arena.setTime(12000);
-                else if (input.equalsIgnoreCase("current")) arena.setTime(player.getWorld().getTime());
-                else {
-                    try {
-                        long time = Long.parseLong(input);
-                        arena.setTime(time);
-                    } catch (NumberFormatException e) {
-                        player.sendMessage(CC.error("Invalid time input"));
-                        return;
-                    }
-                }
-                player.sendMessage(CC.success("Set arena time"));
-                new ArenaManagementMenu(arena).open(player);
-                profile.getArenaProcedure().setArena(null);
-            }
-            case ADD_DUPLICATE -> {
-                event.setCancelled(true);
-                profile.getArenaProcedure().setType(ArenaProcedureType.NONE);
-                Arena arena = profile.getArenaProcedure().getArena();
-                profile.getArenaProcedure().setArena(null);
-
-                final int amount;
-                try {
-                    amount = Integer.parseInt(input.trim());
-                } catch (NumberFormatException e) {
-                    player.sendMessage(CC.error("Invalid number"));
-                    return;
-                }
-                if (amount <= 0) {
-                    player.sendMessage(CC.error("Amount must be at least 1"));
-                    return;
-                }
-
-                Bukkit.getScheduler().runTask(Neptune.get(), () -> {
-                    int existing = ArenaService.get().getDuplicates(arena).size();
-                    if (existing >= 36) {
-                        player.sendMessage(CC.error("This arena already has the maximum of 36 duplicates"));
-                        return;
-                    }
-                    int toCreate = Math.min(amount, 36 - existing);
-                    player.sendMessage(CC.info("Creating " + toCreate + " duplicate(s) of " + arena.getName() + "..."));
-
-                    List<CompletableFuture<?>> futures = new ArrayList<>();
-                    for (int i = 0; i < toCreate; i++) futures.add(ArenaService.get().createDuplicate(arena));
-
-                    CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).whenComplete((v, t) -> {
-                        player.sendMessage(t == null
-                                ? CC.success("Created " + toCreate + " duplicate(s)")
-                                : CC.error("Some duplicates failed to create"));
-                        new ArenaDuplicatesMenu(arena).open(player);
-                    });
-                });
-                return;
             }
             default -> {}
         }
