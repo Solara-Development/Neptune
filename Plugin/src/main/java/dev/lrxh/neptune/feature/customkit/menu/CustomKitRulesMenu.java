@@ -30,6 +30,7 @@ public class CustomKitRulesMenu extends Menu {
         List<Button> buttons = new ArrayList<>();
         int i = 0;
         for (KitRule rule : KitRule.values()) {
+            if (!rule.isCustomKit()) continue;
             buttons.add(new Button(i++) {
                 @Override
                 public ItemStack getItemStack(Player p) {

@@ -6,7 +6,7 @@ import org.bukkit.Material;
 
 @Getter
 public enum KitRule implements IKitRule {
-    HIDDEN(Material.REDSTONE_TORCH, "If the kit shouldn't appear in the queue and party events menu (Used mainly for FFA-only kits)", "Hidden", "hidden"),
+    HIDDEN(Material.REDSTONE_TORCH, "If the kit shouldn't appear in the queue and party events menu (Used mainly for FFA-only kits)", "Hidden", "hidden", false),
     BUILD(Material.LAVA_BUCKET, "Allow/Deny Players to place and break blocks placed by them.", "Build", "build"),
     HUNGER(Material.COOKED_BEEF, "Allow/Deny Players losing Hunger", "Hunger", "hunger"),
     SUMO(Material.LEAD, "Allow/Deny Sumo", "Sumo", "sumo"),
@@ -22,7 +22,7 @@ public enum KitRule implements IKitRule {
     ALLOW_PARTY(Material.PARROT_SPAWN_EGG, "If players should be able to play this kit in party events.", "Allow Party Events", "allowParty"),
     BED_WARS(Material.RED_BED, "Allow/Deny Bedwars", "Bedwars", "bedwars"),
     PARKOUR(Material.ENDER_PEARL, "Allow/Deny Parkour", "Parkour", "parkour"),
-    RESET_ARENA_AFTER_ROUND(Material.BARRIER, "If the arena should be reset after the round", "Reset Arena After Round", "resetArenaAfterMatch"),
+    RESET_ARENA_AFTER_ROUND(Material.BARRIER, "If the arena should be reset after the round", "Reset Arena After Round", "resetArenaAfterMatch", false),
     DROPPER(Material.DROPPER, "Allow/Deny Dropper", "Dropper", "dropper"),
     ENDERPEARL_COOLDOWN(Material.ENDER_PEARL, "Enderpearls have a 15s delay when being used.", "Enderpearl cooldown", "enderpearlCooldown"),
     SATURATION(Material.ENCHANTED_GOLDEN_APPLE, "Allow/Deny Saturation from eating", "Saturation", "saturation"),
@@ -31,12 +31,18 @@ public enum KitRule implements IKitRule {
     private final String name;
     private final Material icon;
     private final String saveName;
+    private final boolean customKit;
 
 
     KitRule(Material icon, String description, String name, String saveName) {
+        this(icon, description, name, saveName, true);
+    }
+
+    KitRule(Material icon, String description, String name, String saveName, boolean customKit) {
         this.description = description;
         this.name = name;
         this.saveName = saveName;
         this.icon = icon;
+        this.customKit = customKit;
     }
 }
