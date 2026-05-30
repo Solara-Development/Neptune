@@ -1,5 +1,6 @@
 package dev.lrxh.neptune.feature.itembrowser;
 
+import dev.lrxh.neptune.configs.impl.MenusLocale;
 import dev.lrxh.neptune.utils.ItemBuilder;
 import dev.lrxh.neptune.utils.menu.Button;
 import dev.lrxh.neptune.utils.menu.Filter;
@@ -75,11 +76,11 @@ public class ItemBrowserMenu extends PaginatedMenu {
     @Override
     public List<Button> getGlobalButtons(Player player) {
         List<Button> global = new ArrayList<>();
-        global.add(new Button(45) {
+        global.add(new Button(MenusLocale.ITEM_BROWSER_SEARCH_SLOT.getInt()) {
             @Override
             public ItemStack getItemStack(Player p) {
-                return new ItemBuilder(Material.OAK_SIGN)
-                        .name("&eSearch")
+                return new ItemBuilder(Material.getMaterial(MenusLocale.ITEM_BROWSER_SEARCH_MATERIAL.getString()))
+                        .name(MenusLocale.ITEM_BROWSER_SEARCH_NAME.getString())
                         .build();
             }
 
