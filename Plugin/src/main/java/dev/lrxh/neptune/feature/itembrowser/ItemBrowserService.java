@@ -14,6 +14,7 @@ public class ItemBrowserService implements IItemBrowserService {
     private static ItemBrowserService instance;
 
     private final Map<String, List<Material>> sectionMaterials = new HashMap<>();
+    private final Map<String, List<Material>> computed = new HashMap<>();
     private final Map<UUID, SearchSession> searchSessions = new HashMap<>();
 
     public static ItemBrowserService get() {
@@ -25,8 +26,46 @@ public class ItemBrowserService implements IItemBrowserService {
 
     @Override
     public List<Material> getItems(String section) {
-        if (section.equals("blocks")) return getBlocks();
-        return sectionMaterials.getOrDefault(section, Collections.emptyList());
+        return switch (section) {
+            case "blocks", "items", "helmet", "chestplate", "leggings", "boots" ->
+                    computed.computeIfAbsent(section, this::computeSection);
+            default -> sectionMaterials.getOrDefault(section, Collections.emptyList());
+        };
+    }
+
+    private List<Material> computeSection(String section) {
+        return switch (section) {
+            case "blocks" -> getBlocks();
+            case "items" -> getAllItems();
+            case "helmet" -> bySuffix("_HELMET");
+            case "chestplate" -> bySuffix("_CHESTPLATE");
+            case "leggings" -> bySuffix("_LEGGINGS");
+            case "boots" -> bySuffix("_BOOTS");
+            default -> Collections.emptyList();
+        };
+    }
+
+    /** Precomputes every built-in section so the first browser open isn't doing the work. */
+    public void preloadSections() {
+        for (String section : new String[]{"blocks", "items", "helmet", "chestplate", "leggings", "boots"}) {
+            computed.computeIfAbsent(section, this::computeSection);
+        }
+    }
+
+    private List<Material> bySuffix(String suffix) {
+        List<Material> list = new ArrayList<>();
+        for (Material m : Material.values()) {
+            if (m.isItem() && !m.isLegacy() && m.name().endsWith(suffix)) list.add(m);
+        }
+        return list;
+    }
+
+    public List<Material> getAllItems() {
+        List<Material> list = new ArrayList<>();
+        for (Material m : Material.values()) {
+            if (m.isItem() && !m.isAir() && !m.isLegacy()) list.add(m);
+        }
+        return list;
     }
 
     public List<Material> getBlocks() {

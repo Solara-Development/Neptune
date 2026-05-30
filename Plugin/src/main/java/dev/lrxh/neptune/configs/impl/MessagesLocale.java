@@ -258,7 +258,32 @@ public enum MessagesLocale implements IDataAccessor {
     FFA_KILLSTREAK_ANNOUNCE_ENABLED("FFA.KILLSTREAK_ANNOUNCE.ENABLED", DataType.BOOLEAN, "false"),
     IN_MATCH_BLOCKED_COMMAND_MESSAGE("IN_MATCH_BLOCKED_COMMAND", DataType.STRING_LIST, "&cThis command is blocked while in a match!"),
     FFA_KILLSTREAK_ANNOUNCE_MESSAGE("FFA.KILLSTREAK_ANNOUNCE.MESSAGE", DataType.STRING_LIST,
-            " ", "&b<player> &fis now on a &b&l<killstreak> KILLSTREAK!", " ");
+            " ", "&b<player> &fis now on a &b&l<killstreak> KILLSTREAK!", " "),
+
+    CUSTOM_KIT_NO_PERMISSION("CUSTOM_KIT.NO_PERMISSION", DataType.STRING_LIST, "&cYou don't have permission to create custom kits."),
+    CUSTOM_KIT_MAX("CUSTOM_KIT.MAX", DataType.STRING_LIST, "&cYou reached the max amount of custom kits."),
+    CUSTOM_KIT_NO_KITS("CUSTOM_KIT.NO_KITS", DataType.STRING_LIST, "&cYou don't have any custom kits yet."),
+    CUSTOM_KIT_CREATE_PROMPT("CUSTOM_KIT.CREATE_PROMPT", DataType.STRING_LIST, "&aType a name for your kit in chat (or 'cancel')."),
+    CUSTOM_KIT_CREATE_FAIL("CUSTOM_KIT.CREATE_FAIL", DataType.STRING_LIST, "&cCouldn't create kit (duplicate name or limit reached)."),
+    CUSTOM_KIT_CREATED("CUSTOM_KIT.CREATED", DataType.STRING_LIST, "&aCreated custom kit &b<kit>&a."),
+    CUSTOM_KIT_DELETE_CONFIRM("CUSTOM_KIT.DELETE_CONFIRM", DataType.STRING_LIST, "&cShift-click to confirm deletion."),
+    CUSTOM_KIT_DELETED("CUSTOM_KIT.DELETED", DataType.STRING_LIST, "&aDeleted kit."),
+    CUSTOM_KIT_HEALTH_PROMPT("CUSTOM_KIT.HEALTH_PROMPT", DataType.STRING_LIST, "&aType the health value in chat (1-40, or 'cancel')."),
+    CUSTOM_KIT_HEALTH_RANGE("CUSTOM_KIT.HEALTH_RANGE", DataType.STRING_LIST, "&cHealth must be between 1 and 40."),
+    CUSTOM_KIT_HEALTH_INVALID("CUSTOM_KIT.HEALTH_INVALID", DataType.STRING_LIST, "&cInvalid number."),
+    CUSTOM_KIT_HEALTH_SET("CUSTOM_KIT.HEALTH_SET", DataType.STRING_LIST, "&aSet health to <health>."),
+    CUSTOM_KIT_CANCELLED("CUSTOM_KIT.CANCELLED", DataType.STRING_LIST, "&cCancelled."),
+    CUSTOM_KIT_CANT_ENCHANT("CUSTOM_KIT.CANT_ENCHANT", DataType.STRING_LIST, "&cThis item can't be enchanted."),
+    CUSTOM_KIT_ENCHANT_APPLIED("CUSTOM_KIT.ENCHANT_APPLIED", DataType.STRING_LIST, "&aApplied <enchant> <level>."),
+    CUSTOM_KIT_NOT_LOBBY("CUSTOM_KIT.NOT_LOBBY", DataType.STRING_LIST, "&cYou can only use this in the lobby."),
+    CUSTOM_KIT_CANT_HOST("CUSTOM_KIT.CANT_HOST", DataType.STRING_LIST, "&cYou can't host a kit right now."),
+    CUSTOM_KIT_HOST_NEED_ARENA("CUSTOM_KIT.HOST_NEED_ARENA", DataType.STRING_LIST, "&cSelect at least one arena for this kit first."),
+    CUSTOM_KIT_UNAVAILABLE("CUSTOM_KIT.UNAVAILABLE", DataType.STRING_LIST, "&cThat kit is no longer available."),
+    CUSTOM_KIT_JOIN_OWN("CUSTOM_KIT.JOIN_OWN", DataType.STRING_LIST, "&cYou can't join your own kit."),
+    CUSTOM_KIT_JOIN_CANT("CUSTOM_KIT.JOIN_CANT", DataType.STRING_LIST, "&cYou can't join a match right now."),
+    CUSTOM_KIT_HOST_UNAVAILABLE("CUSTOM_KIT.HOST_UNAVAILABLE", DataType.STRING_LIST, "&cThe host is no longer available."),
+    CUSTOM_KIT_NO_ARENA("CUSTOM_KIT.NO_ARENA", DataType.STRING_LIST, "&cNo arena available for that kit."),
+    CUSTOM_KIT_HOST_NO_ARENA("CUSTOM_KIT.HOST_NO_ARENA", DataType.STRING_LIST, "&cYour hosted match couldn't start: no arena available.");
 
         private final String path;
         private final String comment;

@@ -82,6 +82,12 @@ public class PlaceholderUtil {
                 Placeholder.unparsed("kit-elo", String.valueOf(kitData.getElo()))
             );
         }
+        if (kit == null && profile.hasState(ProfileState.IN_QUEUE)) {
+            dev.lrxh.neptune.feature.customkit.CustomKit customKit =
+                    dev.lrxh.neptune.feature.customkit.queue.CustomKitQueueService.get().getListings().get(profile.getPlayerUUID());
+            if (customKit != null) placeholders = TagResolver.resolver(placeholders,
+                    Placeholder.parsed("kit", customKit.getDisplayName()));
+        }
         if (profile.hasState(ProfileState.IN_QUEUE) && queue != null) {
             placeholders = TagResolver.resolver(placeholders,
                 Placeholder.parsed("time", queue.getTime().formatTime())

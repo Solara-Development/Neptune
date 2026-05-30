@@ -3,6 +3,8 @@ package dev.lrxh.neptune.feature.hotbar.impl;
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.feature.divisions.menu.DivisionsMenu;
+import dev.lrxh.neptune.feature.customkit.menu.CustomKitsMenu;
+import dev.lrxh.neptune.feature.customkit.queue.CustomKitQueueService;
 import dev.lrxh.neptune.feature.leaderboard.impl.LeaderboardType;
 import dev.lrxh.neptune.feature.leaderboard.menu.LeaderboardMenu;
 import dev.lrxh.neptune.feature.party.Party;
@@ -49,14 +51,21 @@ public enum ItemAction {
         public void execute(Player player) {
             API.getProfile(player.getUniqueId()).setState(ProfileState.IN_LOBBY);
             QueueEntry queueEntry = QueueService.get().remove(player.getUniqueId());
+            CustomKitQueueService.get().unhost(player.getUniqueId());
             MessagesLocale.QUEUE_LEAVE.send(player.getUniqueId(),
-                    Placeholder.parsed("kit", queueEntry.getKit().getDisplayName()));
+                    Placeholder.parsed("kit", queueEntry != null ? queueEntry.getKit().getDisplayName() : "Custom Kit"));
         }
     },
     KIT_EDITOR() {
         @Override
         public void execute(Player player) {
             new KitEditorMenu().open(player);
+        }
+    },
+    CUSTOM_KITS() {
+        @Override
+        public void execute(Player player) {
+            new CustomKitsMenu().open(player);
         }
     },
     STATS() {

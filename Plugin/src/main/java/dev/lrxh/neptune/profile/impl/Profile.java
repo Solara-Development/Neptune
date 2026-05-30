@@ -9,6 +9,7 @@ import dev.lrxh.neptune.feature.cosmetics.KillEffect;
 import dev.lrxh.neptune.feature.cosmetics.impl.cosmetics.armortrims.ArmorTrimCosmetic;
 import dev.lrxh.neptune.feature.cosmetics.impl.cosmetics.killmessage.KillMessageCosmetic;
 import dev.lrxh.neptune.feature.cosmetics.impl.cosmetics.shieldpatterns.ShieldPatternCosmetic;
+import dev.lrxh.neptune.feature.customkit.CustomKitService;
 import dev.lrxh.neptune.feature.divisions.DivisionService;
 import dev.lrxh.neptune.feature.hotbar.HotbarService;
 import dev.lrxh.neptune.feature.party.Party;
@@ -88,6 +89,9 @@ public class Profile implements IProfile {
                     gameData.setMatchHistories(
                             gameData.deserializeHistory(dataDocument.getList("history", new ArrayList<>())));
 
+                    CustomKitService.get().load(profile.getPlayerUUID(),
+                            dataDocument.getList("customKits", new ArrayList<>()));
+
                     DataDocument kitStatistics = dataDocument.getDataDocument("kitData");
                     DataDocument settings = dataDocument.getDataDocument("settings");
                     for (Kit kit : KitService.get().kits) {
@@ -154,6 +158,8 @@ public class Profile implements IProfile {
             dataDocument.put("username", profile.getUsername());
 
             dataDocument.put("history", gameData.serializeHistory());
+
+            dataDocument.put("customKits", CustomKitService.get().serialize(profile.getPlayerUUID()));
 
             DataDocument kitStatsDoc = new DataDocument();
 

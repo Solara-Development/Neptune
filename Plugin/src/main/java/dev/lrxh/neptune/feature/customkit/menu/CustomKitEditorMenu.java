@@ -1,0 +1,119 @@
+package dev.lrxh.neptune.feature.customkit.menu;
+
+import dev.lrxh.neptune.API;
+import dev.lrxh.neptune.configs.impl.MenusLocale;
+import dev.lrxh.neptune.configs.impl.MessagesLocale;
+import dev.lrxh.neptune.feature.customkit.CustomKit;
+import dev.lrxh.neptune.feature.customkit.enchant.EnchantmentBrowserMenu;
+import dev.lrxh.neptune.feature.itembrowser.ItemBrowserService;
+import dev.lrxh.neptune.profile.impl.Profile;
+import dev.lrxh.neptune.utils.CC;
+import dev.lrxh.neptune.utils.ItemBuilder;
+import dev.lrxh.neptune.utils.menu.Button;
+import dev.lrxh.neptune.utils.menu.Filter;
+import dev.lrxh.neptune.utils.menu.Menu;
+import dev.lrxh.neptune.utils.menu.impl.ReturnButton;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Registry;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.ClickType;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class CustomKitEditorMenu extends Menu {
+    private final CustomKit kit;
+
+    public CustomKitEditorMenu(CustomKit kit) {
+        super(MenusLocale.CUSTOM_KIT_EDITOR_TITLE.getString(), MenusLocale.CUSTOM_KIT_EDITOR_SIZE.getInt(), Filter.FILL);
+        this.kit = kit;
+    }
+
+    @Override
+    public List<Button> getButtons(Player player) {
+        List<Button> buttons = new ArrayList<>();
+
+        // Main inventory: storage (editor 0-26 -> contents 9-35), hotbar (editor 27-35 -> contents 0-8)
+        for (int es = 0; es <= 35; es++) {
+            int ci = es <= 26 ? es + 9 : es - 27;
+            buttons.add(slot(es, ci, MenusLocale.CUSTOM_KIT_EDITOR_EMPTY_MATERIAL.getString(),
+                    MenusLocale.CUSTOM_KIT_EDITOR_EMPTY_NAME.getString(), "items"));
+        }
+        // Armor + offhand (bottom row), each filtered to its item type
+        String armor = MenusLocale.CUSTOM_KIT_EDITOR_SLOT_MATERIAL.getString();
+        buttons.add(slot(45, 39, armor, MenusLocale.CUSTOM_KIT_EDITOR_HELMET_NAME.getString(), "helmet"));
+        buttons.add(slot(46, 38, armor, MenusLocale.CUSTOM_KIT_EDITOR_CHESTPLATE_NAME.getString(), "chestplate"));
+        buttons.add(slot(47, 37, armor, MenusLocale.CUSTOM_KIT_EDITOR_LEGGINGS_NAME.getString(), "leggings"));
+        buttons.add(slot(48, 36, armor, MenusLocale.CUSTOM_KIT_EDITOR_BOOTS_NAME.getString(), "boots"));
+        buttons.add(slot(50, 40, armor, MenusLocale.CUSTOM_KIT_EDITOR_OFFHAND_NAME.getString(), "items"));
+
+        buttons.add(new ReturnButton(53, new CustomKitManageMenu(kit)));
+        return buttons;
+    }
+
+    private Button slot(int editorSlot, int contentsIndex, String placeholder, String label, String section) {
+        return new Button(editorSlot) {
+            @Override
+            public ItemStack getItemStack(Player p) {
+                ItemStack item = kit.itemAt(contentsIndex);
+                if (item != null && !item.getType().isAir()) return withHintLore(item);
+                return new ItemBuilder(placeholder).name(label)
+                        .lore(MenusLocale.CUSTOM_KIT_EDITOR_ADD_LORE.getStringList()).build();
+            }
+
+            @Override
+            public void onClick(ClickType type, Player p) {
+                ItemStack item = kit.itemAt(contentsIndex);
+                if (item != null && !item.getType().isAir()) {
+                    if (type.isRightClick()) {
+                        kit.setItemAt(contentsIndex, null);
+                        save(p);
+                        open(p);
+                    } else if (hasEnchantments(item)) {
+                        new EnchantmentBrowserMenu(kit, contentsIndex).open(p);
+                    } else {
+                        MessagesLocale.CUSTOM_KIT_CANT_ENCHANT.send(p.getUniqueId());
+                    }
+                    return;
+                }
+                ItemBrowserService.get().openBrowser(p, section, material -> {
+                    kit.setItemAt(contentsIndex, new ItemStack(material));
+                    save(p);
+                    new CustomKitEditorMenu(kit).open(p);
+                }, () -> new CustomKitEditorMenu(kit).open(p));
+            }
+        };
+    }
+
+    private ItemStack withHintLore(ItemStack item) {
+        ItemStack display = item.clone();
+        ItemMeta meta = display.getItemMeta();
+        if (meta != null) {
+            List<Component> lore = meta.lore() != null ? new ArrayList<>(meta.lore()) : new ArrayList<>();
+            for (String line : MenusLocale.CUSTOM_KIT_EDITOR_ITEM_LORE.getStringList()) {
+                lore.add(CC.color(line).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE)
+                        .colorIfAbsent(NamedTextColor.WHITE));
+            }
+            meta.lore(lore);
+            display.setItemMeta(meta);
+        }
+        return display;
+    }
+
+    private static boolean hasEnchantments(ItemStack item) {
+        for (Enchantment enchantment : Registry.ENCHANTMENT) {
+            if (enchantment.canEnchantItem(item)) return true;
+        }
+        return false;
+    }
+
+    private void save(Player player) {
+        Profile profile = API.getProfile(player);
+        if (profile != null) Profile.save(profile);
+    }
+}

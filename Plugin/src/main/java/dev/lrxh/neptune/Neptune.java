@@ -15,6 +15,8 @@ import dev.lrxh.neptune.configs.impl.ScoreboardLocale;
 import dev.lrxh.neptune.configs.impl.SettingsLocale;
 import dev.lrxh.neptune.feature.cosmetics.CosmeticService;
 import dev.lrxh.neptune.feature.cosmetics.command.CosmeticsCommand;
+import dev.lrxh.neptune.feature.customkit.command.CustomKitCommand;
+import dev.lrxh.neptune.feature.customkit.listener.CustomKitListener;
 import dev.lrxh.neptune.feature.divisions.DivisionService;
 import dev.lrxh.neptune.feature.hotbar.HotbarService;
 import dev.lrxh.neptune.feature.hotbar.listener.ItemListener;
@@ -145,6 +147,7 @@ public final class Neptune extends JavaPlugin {
         CosmeticService.get().load();
         DivisionService.get().load();
         LeaderboardService.get().load();
+        ItemBrowserService.get().preloadSections();
 
         registerListeners();
         loadCommandManager();
@@ -170,6 +173,7 @@ public final class Neptune extends JavaPlugin {
                         new ArenaEditorChatListener(),
                         new KitEditorChatListener(),
                         new KitEditorListener(),
+                        new CustomKitListener(),
                         new ItemBrowserListener())
                 .forEach(listener -> getServer().getPluginManager().registerEvents(listener, this));
     }
@@ -228,6 +232,7 @@ public final class Neptune extends JavaPlugin {
         drink.register(new CosmeticsCommand(), "cosmetics");
         drink.register(new MatchHistoryCommand(), "matchhistory").setDefaultCommandIsHelp(true);
         drink.register(new QuickQueueCommand(), "quickqueue");
+        drink.register(new CustomKitCommand(), "customkits", "ck");
         drink.registerCommands();
     }
 

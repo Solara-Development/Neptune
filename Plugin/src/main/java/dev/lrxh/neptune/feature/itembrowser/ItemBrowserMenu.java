@@ -35,8 +35,9 @@ public class ItemBrowserMenu extends PaginatedMenu {
     public List<Button> getAllPagesButtons(Player player) {
         List<Material> items = service.getItems(section);
         if (!search.isEmpty()) {
+            String q = search.toLowerCase();
             items = items.stream()
-                    .filter(mat -> mat.name().toLowerCase().contains(search.toLowerCase()))
+                    .filter(mat -> mat.name().toLowerCase().contains(q) || formatName(mat).toLowerCase().contains(q))
                     .toList();
         }
         List<Button> buttons = new ArrayList<>();
@@ -48,18 +49,27 @@ public class ItemBrowserMenu extends PaginatedMenu {
                 @Override
                 public ItemStack getItemStack(Player p) {
                     return new ItemBuilder(mat)
-                            .name("&f" + mat.name())
+                            .name("&f" + formatName(mat))
                             .build();
                 }
 
                 @Override
                 public void onClick(ClickType type, Player p) {
                     itemConsumer.accept(mat);
-                    p.closeInventory();
                 }
             });
         }
         return buttons;
+    }
+
+    private static String formatName(Material material) {
+        String[] words = material.name().toLowerCase().split("_");
+        StringBuilder sb = new StringBuilder();
+        for (String word : words) {
+            if (word.isEmpty()) continue;
+            sb.append(Character.toUpperCase(word.charAt(0))).append(word.substring(1)).append(' ');
+        }
+        return sb.toString().trim();
     }
 
     @Override
@@ -90,7 +100,6 @@ public class ItemBrowserMenu extends PaginatedMenu {
             public void onClick(ClickType type, Player p) {
                 if (returnConsumer != null) {
                     returnConsumer.run();
-                    p.closeInventory();
                 }
             }
         });
