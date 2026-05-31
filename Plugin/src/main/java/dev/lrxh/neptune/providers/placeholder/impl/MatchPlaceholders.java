@@ -57,6 +57,8 @@ public class MatchPlaceholders implements PAPIPlaceholder {
                 case "blue_hit_difference" -> { return String.valueOf(blue.getHitsDifference(blue)); }
                 case "red_elo" -> { return String.valueOf(red.getProfile().getGameData().getGlobalStats().getElo()); }
                 case "blue_elo" -> { return String.valueOf(blue.getProfile().getGameData().getGlobalStats().getElo()); }
+                case "red_kit_elo" -> { return String.valueOf(red.getProfile().getGameData().get(kit).getElo()); }
+                case "blue_kit_elo" -> { return String.valueOf(blue.getProfile().getGameData().get(kit).getElo()); }
             }
             if (participant != null) {
                 Participant opponent = participant.getOpponent();
@@ -70,6 +72,11 @@ public class MatchPlaceholders implements PAPIPlaceholder {
                     case "opponent_hit_difference" -> { return opponent.getHitsDifference(participant); }
                     case "opponent_longest_combo" -> { return String.valueOf(opponent.getLongestCombo()); }
                     case "opponent_elo" -> { return String.valueOf(opponent.getProfile().getGameData().getGlobalStats().getElo()); }
+                    case "opponent_kit_elo" -> { return String.valueOf(opponent.getProfile().getGameData().get(kit).getElo()); }
+                    case "hit_difference" -> { return participant.getHitsDifference(opponent); }
+                    case "points" -> { return String.valueOf(participant.getPoints()); }
+                    case "opponent_points" -> { return String.valueOf(opponent.getPoints()); }
+                    case "opponent" -> { return opponent.getName(); }
                 }
             }
             if (kit.is(KitRule.BED_WARS)) {

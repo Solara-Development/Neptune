@@ -35,6 +35,7 @@ public class PlayerPlaceholders implements PAPIPlaceholder {
             case "current_win_streak" -> { return String.valueOf(globalStats.getCurrentStreak()); }
             case "played" -> { return String.valueOf(globalStats.getWins() + globalStats.getLosses()); }
             case "max_ping" -> { return String.valueOf(settings.getMaxPing()); }
+            case "ping" -> { return player.isOnline() ? String.valueOf(player.getPlayer().getPing()) : "0"; }
             case "kill_effect" -> { return settings.getKillEffect().getDisplayName(); }
             case "kill_message" -> { return settings.getKillMessagePackage().getDisplayName(); }
             case "armor_trim" -> { return settings.getArmorTrimPackage().getDisplayName(); }
