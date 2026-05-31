@@ -3,6 +3,9 @@ package dev.lrxh.neptune.feature.hotbar.impl;
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.feature.divisions.menu.DivisionsMenu;
+import dev.lrxh.neptune.feature.event.AutomatedEvent;
+import dev.lrxh.neptune.feature.event.EventService;
+import dev.lrxh.neptune.feature.event.menu.EventAdminMenu;
 import dev.lrxh.neptune.feature.customkit.menu.CustomKitsMenu;
 import dev.lrxh.neptune.feature.customkit.queue.CustomKitQueueService;
 import dev.lrxh.neptune.feature.leaderboard.impl.LeaderboardType;
@@ -219,6 +222,47 @@ public enum ItemAction {
         @Override
         public void execute(Player player) {
             player.chat("/leave");
+        }
+    },
+    EVENT_START() {
+        @Override
+        public void execute(Player player) {
+            if (!player.hasPermission("neptune.event.start")) {
+                MessagesLocale.NO_PERMISSION.send(player.getUniqueId());
+                return;
+            }
+            new EventAdminMenu().open(player);
+        }
+    },
+    EVENT_LEAVE() {
+        @Override
+        public void execute(Player player) {
+            AutomatedEvent event = EventService.get().getActiveEvent();
+            if (event != null) {
+                event.getParticipants().remove(player.getUniqueId());
+            }
+            PlayerUtil.reset(player);
+            PlayerUtil.teleportToSpawn(player.getUniqueId());
+            Profile profile = API.getProfile(player);
+            profile.setState(profile.getGameData().getParty() == null ? ProfileState.IN_LOBBY : ProfileState.IN_PARTY);
+        }
+    },
+    EVENT_INFO() {
+        @Override
+        public void execute(Player player) {
+            AutomatedEvent event = EventService.get().getActiveEvent();
+            if (event == null) {
+                MessagesLocale.EVENT_NOT_ACTIVE.send(player.getUniqueId());
+                return;
+            }
+            MessagesLocale.EVENT_INFO_MESSAGE.send(player.getUniqueId(),
+                    TagResolver.resolver(
+                            Placeholder.unparsed("type", event.getType().name()),
+                            Placeholder.unparsed("players", String.valueOf(event.getParticipants().size())),
+                            Placeholder.unparsed("kit", event.getKit().getDisplayName()),
+                            Placeholder.unparsed("state", event.getState().name()),
+                            Placeholder.unparsed("round", String.valueOf(event.getCurrentRound()))
+                    ));
         }
     };
 

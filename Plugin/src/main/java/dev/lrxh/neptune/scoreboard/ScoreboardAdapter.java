@@ -59,6 +59,8 @@ public class ScoreboardAdapter implements FastAdapter {
                 return CC.getComponentsArray(player, ScoreboardLocale.IN_SPECTATOR.getStringList());
             case IN_CUSTOM:
                 return CC.getComponentsArray(player, ScoreboardService.get().getScoreboardLines(profile.getCustomState(), profile));
+            case IN_EVENT:
+                return CC.getComponentsArray(player, ScoreboardLocale.IN_EVENT_WAITING.getStringList());
             default:
                 break;
         }

@@ -18,3 +18,4 @@ These are the permissions a player needs to do specific things with the plugin.
 | `neptune.arenaselector`                 | Access to duel arena selector menu                          |
 | `neptune.party.max.<number>`            | Change max member limit for any party created by the player |
 | `neptune.customkit`                     | Create custom kits                                          |
+| `neptune.event.start`                   | Start and stop events via `/event start` and `/event stop`  |

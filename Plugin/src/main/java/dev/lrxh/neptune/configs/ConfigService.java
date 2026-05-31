@@ -66,5 +66,10 @@ public class ConfigService {
         CosmeticsLocale.LIGHTNING_DISPLAY_NAME.update();
         SoundsLocale.MATCH_START.update();
         SignsLocale.CUSTOM_KIT_NAME.update();
+
+        MessagesLocale.EVENT_ANNOUNCE.load();
+        MessagesLocale.EVENT_ANNOUNCE.update();
+        ScoreboardLocale.IN_EVENT_LMS.load();
+        ScoreboardLocale.IN_EVENT_LMS.update();
     }
 }

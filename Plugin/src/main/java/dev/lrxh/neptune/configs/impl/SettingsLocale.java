@@ -41,6 +41,10 @@ public enum SettingsLocale implements IDataAccessor {
     PARTY_ADVERTISE_TIME("PARTY.ADVERTISE_TIME",
             "The time it should take for sending each message for party advertisements, in ticks (20 ticks = 1 second).",
             DataType.INT, "6000"),
+    EVENT_AUTO_SCHEDULE_ENABLED("EVENT.AUTO_SCHEDULE.ENABLED", DataType.BOOLEAN, "false"),
+    EVENT_AUTO_SCHEDULE_INTERVAL("EVENT.AUTO_SCHEDULE.INTERVAL", "Interval in ticks between auto events.", DataType.INT, "72000"),
+    EVENT_MIN_PLAYERS("EVENT.MIN_PLAYERS", DataType.INT, "2"),
+    EVENT_START_COOLDOWN("EVENT.START_COOLDOWN", "Cooldown in seconds before a player can start another event. Set to 0 to disable.", DataType.INT, "300"),
     VERSION("VERSION", "Do not change this!", DataType.INT, "1");
 
     private final String path;

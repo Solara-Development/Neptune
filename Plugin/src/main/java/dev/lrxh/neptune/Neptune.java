@@ -15,6 +15,10 @@ import dev.lrxh.neptune.commands.LeaveCommand;
 import dev.lrxh.neptune.configs.ConfigService;
 import dev.lrxh.neptune.configs.impl.ScoreboardLocale;
 import dev.lrxh.neptune.configs.impl.SettingsLocale;
+import dev.lrxh.neptune.feature.event.EventService;
+import dev.lrxh.neptune.feature.event.command.EventCommand;
+import dev.lrxh.neptune.feature.event.listener.EventListener;
+import dev.lrxh.neptune.feature.event.task.EventScheduleTask;
 import dev.lrxh.neptune.feature.cosmetics.CosmeticService;
 import dev.lrxh.neptune.feature.cosmetics.command.CosmeticsCommand;
 import dev.lrxh.neptune.feature.customkit.command.CustomKitCommand;
@@ -178,6 +182,8 @@ public final class Neptune extends JavaPlugin {
                         new CustomKitListener())
                 .forEach(listener -> getServer().getPluginManager().registerEvents(listener, this));
 
+        getServer().getPluginManager().registerEvents(new EventListener(), this);
+
         PacketEvents.getAPI().getEventManager().registerListener(new SignInputListener(), PacketListenerPriority.NORMAL);
     }
 
@@ -210,6 +216,7 @@ public final class Neptune extends JavaPlugin {
         new LeaderboardTask().start(SettingsLocale.LEADERBOARD_UPDATE_TIME.getInt());
         new ArenaBoundaryCheckTask().start(20L);
         new MenuRunnable().start(20L);
+        if (SettingsLocale.EVENT_AUTO_SCHEDULE_ENABLED.getBoolean()) new EventScheduleTask().start(20L);
     }
 
     private void loadCommandManager() {
@@ -236,6 +243,7 @@ public final class Neptune extends JavaPlugin {
         drink.register(new MatchHistoryCommand(), "matchhistory").setDefaultCommandIsHelp(true);
         drink.register(new QuickQueueCommand(), "quickqueue");
         drink.register(new CustomKitCommand(), "customkits", "ck");
+        drink.register(new EventCommand(), "event");
         drink.registerCommands();
     }
 

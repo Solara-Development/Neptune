@@ -7,6 +7,8 @@ import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.feature.customkit.CustomKit;
 import dev.lrxh.neptune.feature.customkit.queue.CustomKitQueueService;
+import dev.lrxh.neptune.feature.event.AutomatedEvent;
+import dev.lrxh.neptune.feature.event.EventService;
 import dev.lrxh.neptune.feature.party.Party;
 import dev.lrxh.neptune.feature.queue.QueueEntry;
 import dev.lrxh.neptune.feature.queue.QueueService;
@@ -69,6 +71,10 @@ public class PlaceholderUtil {
             kit = profile.getGameData().getKitEditor();
         else if (profile.hasState(ProfileState.IN_GAME, ProfileState.IN_SPECTATOR) && match != null)
             kit = match.getKit();
+        else if (profile.hasState(ProfileState.IN_EVENT)) {
+            AutomatedEvent ev = EventService.get().getActiveEvent();
+            if (ev != null) kit = ev.getKit();
+        }
         if (kit != null) {
             KitData kitData = profile.getGameData().get(kit);
             placeholders = TagResolver.resolver(placeholders,
@@ -211,6 +217,21 @@ public class PlaceholderUtil {
                     Placeholder.unparsed("dead", String.valueOf(ffaDead))
                 );
             }
+        }
+        // Event placeholders
+        AutomatedEvent activeEvent = EventService.get().getActiveEvent();
+        if (activeEvent != null) {
+            int aliveCount = (int) activeEvent.getParticipants().stream()
+                    .filter(u -> {
+                        Profile p = API.getProfile(u);
+                        return p != null && p.hasState(ProfileState.IN_GAME);
+                    }).count();
+            placeholders = TagResolver.resolver(placeholders,
+                    Placeholder.unparsed("event-alive", String.valueOf(aliveCount)),
+                    Placeholder.unparsed("event-round", String.valueOf(activeEvent.getCurrentRound())),
+                    Placeholder.unparsed("event-type", activeEvent.getType().name()),
+                    Placeholder.unparsed("event-players", String.valueOf(activeEvent.getParticipants().size()))
+            );
         }
         return placeholders;
     }

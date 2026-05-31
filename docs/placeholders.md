@@ -59,7 +59,7 @@ Kit placeholders support two formats:
 |-------------------------|-------------------------------------------|------------------------|
 | \<kit>                  | %neptune_kit_name%                        | Kit display name       |
 | \<kit-division>         | %neptune_kit_division%                    | Kit division           |
-| \<rounds>               | %neptune_kit_rounds%                      | Rounds (1 or 3)       |
+| \<rounds>               | %neptune_kit_rounds%                      | Rounds required to win the match (1–9) |
 | \<kit-current-win-streak> | %neptune_kit_current_win_streak%        | Kit current win streak |
 | \<kit-best-win-streak>  | %neptune_kit_best_win_streak%             | Kit best win streak    |
 | \<kit-wins>             | %neptune_kit_wins%                        | Kit wins               |
@@ -186,6 +186,17 @@ Kit placeholders support two formats:
 | \<max>    | %neptune_max%        | Total players in match             |
 | \<dead>   | %neptune_dead%       | Players eliminated                 |
 | None      | %neptune_is_dead%    | Whether the player is dead (true/false) |
+
+## Event
+
+Available during an active event (LMS, Tournament, KOTH, Sumo).
+
+| Plugin | PlaceholderAPI              | Description                                      |
+|--------|-----------------------------|--------------------------------------------------|
+| None   | %neptune_event-type%        | Event type name (e.g. `LMS`, `TOURNAMENT`)       |
+| None   | %neptune_event-players%     | Total participants in the event                  |
+| None   | %neptune_event-alive%       | Players currently alive (in-game) in the event   |
+| None   | %neptune_event-round%       | Current event round number                       |
 
 ## Recent Match History
 

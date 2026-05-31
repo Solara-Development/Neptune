@@ -283,7 +283,28 @@ public enum MessagesLocale implements IDataAccessor {
     CUSTOM_KIT_JOIN_CANT("CUSTOM_KIT.JOIN_CANT", DataType.STRING_LIST, "&cYou can't join a match right now."),
     CUSTOM_KIT_HOST_UNAVAILABLE("CUSTOM_KIT.HOST_UNAVAILABLE", DataType.STRING_LIST, "&cThe host is no longer available."),
     CUSTOM_KIT_NO_ARENA("CUSTOM_KIT.NO_ARENA", DataType.STRING_LIST, "&cNo arena available for that kit."),
-    CUSTOM_KIT_HOST_NO_ARENA("CUSTOM_KIT.HOST_NO_ARENA", DataType.STRING_LIST, "&cYour hosted match couldn't start: no arena available.");
+    CUSTOM_KIT_HOST_NO_ARENA("CUSTOM_KIT.HOST_NO_ARENA", DataType.STRING_LIST, "&cYour hosted match couldn't start: no arena available."),
+    EVENT_ALREADY_ACTIVE("EVENT.ALREADY_ACTIVE", DataType.STRING_LIST, "&cAn event is already ongoing!"),
+    EVENT_COOLDOWN("EVENT.COOLDOWN", DataType.STRING_LIST, "&cYou must wait &e<time>s &cbefore starting another event."),
+    EVENT_ANNOUNCE("EVENT.ANNOUNCE", DataType.STRING_LIST, "&7(&bEvent&7) &f<type> &7is starting! <join>&a[Click here to join!]</join>"),
+    EVENT_JOIN("EVENT.JOIN", DataType.STRING_LIST, "&7(&bEvent&7) &aYou joined the &f<type> &aevent!"),
+    EVENT_ALREADY_JOINED("EVENT.ALREADY_JOINED", DataType.STRING_LIST, "&cYou already joined this event!"),
+    EVENT_NOT_ACTIVE("EVENT.NOT_ACTIVE", DataType.STRING_LIST, "&cThere is no active event right now."),
+    EVENT_STARTED("EVENT.STARTED", DataType.STRING_LIST, "&7(&bEvent&7) &fEvent has started with &b<players> &fplayers!"),
+    EVENT_ENDED("EVENT.ENDED", DataType.STRING_LIST, "&7(&bEvent&7) &fThe event has ended!"),
+    EVENT_WINNER("EVENT.WINNER", DataType.STRING_LIST, "&7(&bEvent&7) &f<winner> &awon the &f<type> &aevent!"),
+    EVENT_FULL("EVENT.FULL", DataType.STRING_LIST, "&cThe event is full!"),
+    EVENT_CANCELLED("EVENT.CANCELLED", DataType.STRING_LIST, "&cThe event was cancelled due to not enough players."),
+    EVENT_ROUND_RESULT("EVENT.ROUND_RESULT", DataType.STRING_LIST, "&7(&bEvent&7) &f<winner> &7defeated &f<loser> &7in round &b<round>!"),
+    EVENT_INFO_MESSAGE("EVENT.INFO_MESSAGE", DataType.STRING_LIST,
+            "&f&lEvent Info",
+            " ",
+            "&fType: &b<type>",
+            "&fKit: &b<kit>",
+            "&fPlayers: &b<players>",
+            "&fRound: &b<round>",
+            "&fState: &7<state>"),
+    EVENT_ACTION_BAR("EVENT.ACTION_BAR", DataType.STRING, "&f<type> &7| &aStarting in &b<time>s &7| &fPlayers: &b<players>");
 
         private final String path;
         private final String comment;

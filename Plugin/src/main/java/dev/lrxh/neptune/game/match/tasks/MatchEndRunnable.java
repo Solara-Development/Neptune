@@ -2,6 +2,9 @@ package dev.lrxh.neptune.game.match.tasks;
 
 import dev.lrxh.api.events.MatchEndEvent;
 import dev.lrxh.neptune.API;
+import dev.lrxh.neptune.feature.event.AutomatedEvent;
+import dev.lrxh.neptune.feature.event.EventService;
+import dev.lrxh.neptune.feature.event.EventState;
 import dev.lrxh.neptune.feature.hotbar.HotbarService;
 import dev.lrxh.neptune.game.arena.Arena;
 import dev.lrxh.neptune.game.kit.impl.KitRule;
@@ -53,7 +56,14 @@ public class MatchEndRunnable extends NeptuneRunnable {
                 PlayerUtil.reset(participant.getPlayer());
                 profile.setMatch(null);
                 PlayerUtil.teleportToSpawn(participant.getPlayerUUID());
-                profile.setState(profile.getGameData().getParty() == null ? ProfileState.IN_LOBBY : ProfileState.IN_PARTY);
+
+                AutomatedEvent activeEvent = EventService.get().getActiveEvent();
+                if (activeEvent != null && activeEvent.getState() == EventState.ACTIVE
+                        && activeEvent.getParticipants().contains(participant.getPlayerUUID())) {
+                    profile.setState(ProfileState.IN_EVENT);
+                } else {
+                    profile.setState(profile.getGameData().getParty() == null ? ProfileState.IN_LOBBY : ProfileState.IN_PARTY);
+                }
 
                 match.forEachPlayer(player -> HotbarService.get().giveItems(player));
             });

@@ -9,5 +9,6 @@ public enum ProfileState implements IProfileState {
     IN_KIT_EDITOR,
     IN_SPECTATOR,
     IN_PARTY,
-    IN_CUSTOM
+    IN_CUSTOM,
+    IN_EVENT
 }

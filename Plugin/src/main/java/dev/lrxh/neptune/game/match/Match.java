@@ -9,6 +9,9 @@ import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.configs.impl.ScoreboardLocale;
 import dev.lrxh.api.arena.IArena;
+import dev.lrxh.neptune.feature.event.AutomatedEvent;
+import dev.lrxh.neptune.feature.event.EventService;
+import dev.lrxh.neptune.feature.event.EventState;
 import dev.lrxh.neptune.feature.hotbar.HotbarService;
 import dev.lrxh.neptune.game.kit.Kit;
 import dev.lrxh.neptune.game.kit.impl.KitRule;
@@ -220,6 +223,18 @@ public abstract class Match implements IMatch {
         Player player = Bukkit.getPlayer(playerUUID);
         if (player == null)
             return new ArrayList<>();
+
+        // Check if this match is part of an active event
+        AutomatedEvent activeEvent = EventService.get().getActiveEvent();
+        if (activeEvent != null && activeEvent.getState() == EventState.ACTIVE) {
+            Participant participant = getParticipant(playerUUID);
+            if (participant != null && activeEvent.getParticipants().contains(playerUUID)) {
+                return switch (activeEvent.getType()) {
+                    case LMS -> CC.getComponentsArray(player, ScoreboardLocale.IN_EVENT_LMS.getStringList());
+                    case TOURNAMENT -> CC.getComponentsArray(player, ScoreboardLocale.IN_EVENT_TOURNAMENT.getStringList());
+                };
+            }
+        }
 
         if (this instanceof SoloFightMatch) {
             MatchState matchState = this.getState();
