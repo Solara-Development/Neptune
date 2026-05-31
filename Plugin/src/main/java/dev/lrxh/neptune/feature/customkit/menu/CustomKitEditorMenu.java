@@ -78,10 +78,15 @@ public class CustomKitEditorMenu extends Menu {
                 ItemStack item = kit.itemAt(contentsIndex);
                 if (item != null && !item.getType().isAir()) {
                     if (type == ClickType.SHIFT_RIGHT) {
+                        if (item.getMaxStackSize() <= 1) {
+                            MessagesLocale.CUSTOM_KIT_CANT_STACK.send(p.getUniqueId());
+                            return;
+                        }
+                        int max = item.getMaxStackSize();
                         p.closeInventory();
                         SignInputMenu.open(p, "", SignsLocale.CUSTOM_KIT_AMOUNT.getStringList(), input -> {
                             try {
-                                item.setAmount(Math.max(1, Math.min(64, Integer.parseInt(input.trim()))));
+                                item.setAmount(Math.max(1, Math.min(max, Integer.parseInt(input.trim()))));
                                 kit.setItemAt(contentsIndex, item);
                                 save(p);
                             } catch (NumberFormatException ignored) {

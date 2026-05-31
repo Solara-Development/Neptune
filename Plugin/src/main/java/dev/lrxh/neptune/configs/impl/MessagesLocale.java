@@ -274,6 +274,7 @@ public enum MessagesLocale implements IDataAccessor {
     CUSTOM_KIT_HEALTH_SET("CUSTOM_KIT.HEALTH_SET", DataType.STRING_LIST, "&aSet health to <health>."),
     CUSTOM_KIT_CANCELLED("CUSTOM_KIT.CANCELLED", DataType.STRING_LIST, "&cCancelled."),
     CUSTOM_KIT_CANT_ENCHANT("CUSTOM_KIT.CANT_ENCHANT", DataType.STRING_LIST, "&cThis item can't be enchanted."),
+    CUSTOM_KIT_CANT_STACK("CUSTOM_KIT.CANT_STACK", DataType.STRING_LIST, "&cThis item can't be stacked."),
     CUSTOM_KIT_ENCHANT_APPLIED("CUSTOM_KIT.ENCHANT_APPLIED", DataType.STRING_LIST, "&aApplied <enchant> <level>."),
     CUSTOM_KIT_NOT_LOBBY("CUSTOM_KIT.NOT_LOBBY", DataType.STRING_LIST, "&cYou can only use this in the lobby."),
     CUSTOM_KIT_CANT_HOST("CUSTOM_KIT.CANT_HOST", DataType.STRING_LIST, "&cYou can't host a kit right now."),
