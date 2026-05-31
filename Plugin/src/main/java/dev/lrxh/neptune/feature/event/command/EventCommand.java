@@ -32,20 +32,6 @@ public class EventCommand {
         EventService.get().stopEvent();
     }
 
-    @Command(name = "forcestart", desc = "Force start the event immediately")
-    public void forceStart(@Sender Player player) {
-        var event = EventService.get().getActiveEvent();
-        if (event == null || event.getState() != dev.lrxh.neptune.feature.event.EventState.WAITING) {
-            MessagesLocale.EVENT_NOT_ACTIVE.send(player.getUniqueId());
-            return;
-        }
-        if (!player.getUniqueId().equals(event.getStarterUUID()) && !player.hasPermission("neptune.event.start")) {
-            MessagesLocale.NO_PERMISSION.send(player.getUniqueId());
-            return;
-        }
-        EventService.get().forceStart();
-    }
-
     @Command(name = "info", desc = "Show active event info")
     public void info(@Sender Player player) {
         var event = EventService.get().getActiveEvent();

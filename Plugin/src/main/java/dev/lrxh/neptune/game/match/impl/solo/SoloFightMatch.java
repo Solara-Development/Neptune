@@ -15,6 +15,8 @@ import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.configs.impl.SettingsLocale;
 import dev.lrxh.neptune.configs.impl.SoundsLocale;
+import dev.lrxh.neptune.feature.event.EventService;
+import dev.lrxh.neptune.feature.event.EventState;
 import dev.lrxh.neptune.feature.hotbar.HotbarService;
 import dev.lrxh.neptune.feature.leaderboard.LeaderboardService;
 import dev.lrxh.neptune.feature.leaderboard.impl.LeaderboardPlayerEntry;
@@ -100,7 +102,13 @@ public class SoloFightMatch extends Match implements ISoloFightMatch {
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), command);
             }
 
-            forEachPlayer(player -> HotbarService.get().giveItems(player));
+            forEachPlayer(player -> {
+                var activeEvent = EventService.get().getActiveEvent();
+                if (activeEvent == null || activeEvent.getState() != EventState.ACTIVE
+                        || !activeEvent.getParticipants().contains(player.getUniqueId())) {
+                    HotbarService.get().giveItems(player);
+                }
+            });
         }
 
         removePlaying();
@@ -193,7 +201,10 @@ public class SoloFightMatch extends Match implements ISoloFightMatch {
         }
 
         forEachParticipant(participant -> {
-            if (MessagesLocale.MATCH_PLAY_AGAIN_ENABLED.getBoolean()) {
+            var activeEvent = EventService.get().getActiveEvent();
+            boolean inEvent = activeEvent != null && activeEvent.getState() == EventState.ACTIVE
+                    && activeEvent.getParticipants().contains(participant.getPlayerUUID());
+            if (!inEvent && MessagesLocale.MATCH_PLAY_AGAIN_ENABLED.getBoolean()) {
                 PlayerUtil.sendMessage(participant.getPlayerUUID(), MessagesLocale.MATCH_PLAY_AGAIN.getString(), TagResolver.resolver(
                         Placeholder.parsed("kit", getKit().getDisplayName()),
                         Placeholder.unparsed("kit-name", getKit().getName()),
