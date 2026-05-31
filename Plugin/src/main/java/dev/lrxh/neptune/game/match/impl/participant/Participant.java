@@ -160,12 +160,14 @@ public class Participant implements IParticipant {
     public void sendMessage(Component component) {
         PlayerUtil.sendMessage(getPlayerUUID(), component);
     }
+
     public void sendMessage(MessagesLocale message) {
         Player player = getPlayer();
         if (player == null)
             return;
         message.send(player);
     }
+
     public void sendMessage(MessagesLocale message, TagResolver resolver) {
         Player player = getPlayer();
         if (player == null)
@@ -278,7 +280,7 @@ public class Participant implements IParticipant {
 
     public String getBedMessage() {
         return (!isBedBroken() ? MessagesLocale.MATCH_BED_STATUS_NOT_BROKEN : MessagesLocale.MATCH_BED_STATUS_BROKEN).getString()
-            .replace("<members-left>", "1");
+                .replace("<members-left>", "1");
     }
 
     public String getComboMessage() {

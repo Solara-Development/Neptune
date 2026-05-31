@@ -86,12 +86,15 @@ public class ItemBuilder {
     public void resetAmount() {
         item.setAmount(1);
     }
+
     public ItemBuilder componentLore(Component lore, Player player) {
         return componentLore(new ArrayList<>(List.of(lore)), TagResolver.empty(), player);
     }
+
     public ItemBuilder componentLore(List<Component> lore, Player player) {
         return componentLore(lore, TagResolver.empty(), player);
     }
+
     public ItemBuilder componentLore(List<Component> lore, TagResolver resolver, Player player) {
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
@@ -110,6 +113,7 @@ public class ItemBuilder {
     public ItemBuilder lore(List<String> lore) {
         return lore(lore.toArray(new String[0]));
     }
+
     public ItemBuilder lore(List<String> lore, TagResolver resolver, Player player) {
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
@@ -124,6 +128,7 @@ public class ItemBuilder {
         }
         return this;
     }
+
     public ItemBuilder lore(List<String> lore, Player player) {
         return lore(lore, TagResolver.empty(), player);
     }
@@ -146,7 +151,7 @@ public class ItemBuilder {
         item.setAmount(amount <= 0 ? 1 : Math.min(amount, 64));
         return this;
     }
-    
+
     public ItemBuilder addEnchantedGlow() {
         ItemMeta meta = item.getItemMeta();
         if (meta != null) {
@@ -155,7 +160,7 @@ public class ItemBuilder {
         }
         return this;
     }
-    
+
     public ItemStack build() {
         ItemUtils.clearFlags(item);
         return item;

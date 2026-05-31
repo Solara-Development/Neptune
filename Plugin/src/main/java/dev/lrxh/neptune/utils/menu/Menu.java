@@ -23,15 +23,13 @@ public abstract class Menu {
     private final boolean updateOnClick;
     private final Component title;
     private final Filter filter;
-
-    @Getter
-    @Setter
-    private boolean updateEveryTick;
-
     private final Map<Integer, Button> buttonCache = new HashMap<>();
     private final Map<Integer, ItemStack> itemCache = new HashMap<>();
     private final Set<Integer> dirtySlots = new HashSet<>();
     private final Set<Integer> filterSlots = new HashSet<>();
+    @Getter
+    @Setter
+    private boolean updateEveryTick;
     @Getter
     @Setter
     private long updateInterval = 20L;
@@ -46,6 +44,7 @@ public abstract class Menu {
         this.updateOnClick = false;
         this.updateEveryTick = false;
     }
+
     public Menu(Component title, int size, Filter filter) {
         this.title = title;
         this.size = size;
@@ -61,6 +60,7 @@ public abstract class Menu {
         this.updateOnClick = false;
         this.updateEveryTick = false;
     }
+
     public Menu(String title, int size, Filter filter, boolean updateOnClick) {
         this.title = CC.color(title);
         this.size = size;
@@ -68,6 +68,7 @@ public abstract class Menu {
         this.updateOnClick = updateOnClick;
         this.updateEveryTick = false;
     }
+
     public Menu(Component title, int size, Filter filter, boolean updateOnClick) {
         this.title = title;
         this.size = size;

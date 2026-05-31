@@ -146,11 +146,11 @@ public class FfaFightMatch extends Match implements IFffaFightMatch {
     @Override
     public void sendEndMessage() {
         if (winner == null) return;
-        forEachParticipant(participant -> 
-            MessagesLocale.MATCH_END_DETAILS_FFA.send(participant.getPlayerUUID(), TagResolver.resolver(
-                Placeholder.unparsed("winner", winner.getNameUnColored()),
-                Placeholder.parsed("kit", getKit().getDisplayName())
-            )));
+        forEachParticipant(participant ->
+                MessagesLocale.MATCH_END_DETAILS_FFA.send(participant.getPlayerUUID(), TagResolver.resolver(
+                        Placeholder.unparsed("winner", winner.getNameUnColored()),
+                        Placeholder.parsed("kit", getKit().getDisplayName())
+                )));
     }
 
     @Override

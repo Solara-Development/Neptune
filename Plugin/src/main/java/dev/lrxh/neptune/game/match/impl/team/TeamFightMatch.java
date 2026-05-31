@@ -89,15 +89,15 @@ public class TeamFightMatch extends Match implements ITeamFightMatch {
         MatchTeam winnerTeam = redTeam.isLoser() ? blueTeam : redTeam;
         MatchTeam loserTeam = redTeam.isLoser() ? redTeam : blueTeam;
 
-        forEachParticipant(participant -> 
-            MessagesLocale.MATCH_END_DETAILS_TEAM.send(participant.getPlayerUUID(), TagResolver.resolver(
-                Placeholder.parsed("kit", getKit().getDisplayName()),
-                Placeholder.unparsed("losers", loserTeam.getTeamNames()),
-                Placeholder.unparsed("winners-points", String.valueOf(winnerTeam.getPoints())),
-                Placeholder.unparsed("losers-points", String.valueOf(loserTeam.getPoints())),
-                Placeholder.unparsed("winners", winnerTeam.getTeamNames()),
-                Placeholder.unparsed("losers", loserTeam.getTeamNames())
-            )));
+        forEachParticipant(participant ->
+                MessagesLocale.MATCH_END_DETAILS_TEAM.send(participant.getPlayerUUID(), TagResolver.resolver(
+                        Placeholder.parsed("kit", getKit().getDisplayName()),
+                        Placeholder.unparsed("losers", loserTeam.getTeamNames()),
+                        Placeholder.unparsed("winners-points", String.valueOf(winnerTeam.getPoints())),
+                        Placeholder.unparsed("losers-points", String.valueOf(loserTeam.getPoints())),
+                        Placeholder.unparsed("winners", winnerTeam.getTeamNames()),
+                        Placeholder.unparsed("losers", loserTeam.getTeamNames())
+                )));
     }
 
 

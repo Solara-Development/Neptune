@@ -75,5 +75,7 @@ public enum SettingsLocale implements IDataAccessor {
     public ConfigFile getConfigFile() {
         return ConfigService.get().getMainConfig();
     }
-    public void update() {}
+
+    public void update() {
+    }
 }

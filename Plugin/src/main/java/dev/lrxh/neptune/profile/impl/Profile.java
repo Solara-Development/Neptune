@@ -363,8 +363,8 @@ public class Profile implements IProfile {
         if (player == null)
             return;
         duelRequest.sendSenderMessage(playerUUID, true);
-        gameData.addRequest(duelRequest, senderUUID, ignore -> 
-            MessagesLocale.REMATCH_EXPIRED.send(senderUUID, Placeholder.unparsed("player", player.getName()))
+        gameData.addRequest(duelRequest, senderUUID, ignore ->
+                MessagesLocale.REMATCH_EXPIRED.send(senderUUID, Placeholder.unparsed("player", player.getName()))
         );
 
         duelRequest.sendReceiverMessage(playerUUID, true);

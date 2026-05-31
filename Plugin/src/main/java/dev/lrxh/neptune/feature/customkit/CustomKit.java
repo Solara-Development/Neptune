@@ -18,8 +18,8 @@ import java.util.*;
 @Getter
 @Setter
 public class CustomKit {
+    public static final int CONTENTS_SIZE = 41;
     private static final Gson GSON = new Gson();
-
     private final UUID owner;
     private String name;
     private String displayName;
@@ -83,8 +83,6 @@ public class CustomKit {
         return r;
     }
 
-    public static final int CONTENTS_SIZE = 41;
-
     private static List<ItemStack> defaultTemplate() {
         ItemStack[] c = new ItemStack[CONTENTS_SIZE];
         c[0] = new ItemStack(Material.DIAMOND_SWORD);
@@ -94,6 +92,10 @@ public class CustomKit {
         c[39] = new ItemStack(Material.DIAMOND_HELMET);
         c[40] = new ItemStack(Material.SHIELD);
         return new ArrayList<>(Arrays.asList(c));
+    }
+
+    public static CustomKit deserialize(UUID owner, String json) {
+        return new CustomKit(owner, GSON.fromJson(json, Data.class));
     }
 
     public ItemStack itemAt(int index) {
@@ -147,10 +149,6 @@ public class CustomKit {
         d.effects = new ArrayList<>();
         for (PotionEffect e : potionEffects) d.effects.add(PotionEffectUtils.serialize(e));
         return GSON.toJson(d);
-    }
-
-    public static CustomKit deserialize(UUID owner, String json) {
-        return new CustomKit(owner, GSON.fromJson(json, Data.class));
     }
 
     private static class Data {

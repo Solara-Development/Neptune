@@ -21,6 +21,13 @@ public class KitRuleButton extends Button {
         this.kit = kit;
     }
 
+    public static ItemStack buildRuleItem(KitRule rule, boolean enabled) {
+        return new ItemBuilder(MenusLocale.valueOf("KIT_RULE_" + rule.name() + "_MATERIAL").getString())
+                .name(MenusLocale.valueOf("KIT_RULE_" + rule.name() + (enabled ? "_ENABLED_NAME" : "_DISABLED_NAME")).getString())
+                .lore(MenusLocale.valueOf("KIT_RULE_" + rule.name() + "_LORE").getStringList())
+                .build();
+    }
+
     @Override
     public void onClick(ClickType type, Player player) {
         kit.toggle(kitRule);
@@ -31,12 +38,5 @@ public class KitRuleButton extends Button {
     @Override
     public ItemStack getItemStack(Player player) {
         return buildRuleItem(kitRule, kit.is(kitRule));
-    }
-
-    public static ItemStack buildRuleItem(KitRule rule, boolean enabled) {
-        return new ItemBuilder(MenusLocale.valueOf("KIT_RULE_" + rule.name() + "_MATERIAL").getString())
-                .name(MenusLocale.valueOf("KIT_RULE_" + rule.name() + (enabled ? "_ENABLED_NAME" : "_DISABLED_NAME")).getString())
-                .lore(MenusLocale.valueOf("KIT_RULE_" + rule.name() + "_LORE").getStringList())
-                .build();
     }
 }

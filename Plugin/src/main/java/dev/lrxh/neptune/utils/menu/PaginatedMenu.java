@@ -17,6 +17,7 @@ public abstract class PaginatedMenu extends Menu {
     public PaginatedMenu(String title, int size, Filter filter) {
         super(title, size, filter, false);
     }
+
     public PaginatedMenu(String title, int size, Filter filter, boolean updateOnClick) {
         super(title, size, filter, updateOnClick);
     }

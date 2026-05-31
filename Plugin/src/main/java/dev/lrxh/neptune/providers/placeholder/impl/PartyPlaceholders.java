@@ -20,9 +20,15 @@ public class PartyPlaceholders implements PAPIPlaceholder {
         Party party = profile.getGameData().getParty();
         if (party == null) return string;
         switch (p) {
-            case "leader" -> { return party.getLeaderName(); }
-            case "size" -> { return String.valueOf(party.getUsers().size()); }
-            case "max" -> { return String.valueOf(party.getMaxUsers()); }
+            case "leader" -> {
+                return party.getLeaderName();
+            }
+            case "size" -> {
+                return String.valueOf(party.getUsers().size());
+            }
+            case "max" -> {
+                return String.valueOf(party.getMaxUsers());
+            }
         }
         return null;
     }

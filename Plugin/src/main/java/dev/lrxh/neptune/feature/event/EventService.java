@@ -6,7 +6,8 @@ import dev.lrxh.neptune.configs.ConfigService;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.configs.impl.SettingsLocale;
 import dev.lrxh.neptune.feature.event.task.EventBeginTask;
-import dev.lrxh.neptune.feature.hotbar.HotbarService;import dev.lrxh.neptune.game.kit.Kit;
+import dev.lrxh.neptune.feature.hotbar.HotbarService;
+import dev.lrxh.neptune.game.kit.Kit;
 import dev.lrxh.neptune.game.kit.KitService;
 import dev.lrxh.neptune.profile.ProfileService;
 import dev.lrxh.neptune.profile.data.ProfileState;
@@ -15,26 +16,21 @@ import dev.lrxh.neptune.providers.manager.IService;
 import dev.lrxh.neptune.utils.ConfigFile;
 import dev.lrxh.neptune.utils.PlayerUtil;
 import lombok.Getter;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import net.kyori.adventure.text.event.ClickEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 public class EventService extends IService {
     private static EventService instance;
+    private final Map<UUID, Long> startCooldowns = new HashMap<>();
     private AutomatedEvent activeEvent;
     private EventBeginTask beginTask;
-    private final Map<UUID, Long> startCooldowns = new HashMap<>();
 
     public static EventService get() {
         if (instance == null) instance = new EventService();
@@ -133,7 +129,8 @@ public class EventService extends IService {
         Bukkit.getScheduler().runTaskLater(Neptune.get(), () -> activeEvent = null, 60L);
     }
 
-    public void stopEvent() {        if (activeEvent == null) return;
+    public void stopEvent() {
+        if (activeEvent == null) return;
         broadcastToAll(MessagesLocale.EVENT_ENDED, TagResolver.empty());
         resetParticipants();
         activeEvent = null;
@@ -183,8 +180,10 @@ public class EventService extends IService {
     }
 
     @Override
-    public void load() {}
+    public void load() {
+    }
 
     @Override
-    public void save() {}
+    public void save() {
+    }
 }

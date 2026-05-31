@@ -45,5 +45,7 @@ public class ArmorTrimPackage extends CosmeticPackage implements IArmorTrimPacka
         this.bootsName = bootsName;
     }
 
-    public String permission() { return "neptune.cosmetics.armortrims." + name.toLowerCase(); }
+    public String permission() {
+        return "neptune.cosmetics.armortrims." + name.toLowerCase();
+    }
 }

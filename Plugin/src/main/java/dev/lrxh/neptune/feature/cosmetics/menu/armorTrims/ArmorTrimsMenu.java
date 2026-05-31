@@ -16,7 +16,11 @@ public class ArmorTrimsMenu extends PaginatedMenu {
     public ArmorTrimsMenu() {
         super(MenusLocale.ARMOR_TRIMS_TITLE.getString(), 54, Filter.valueOf(MenusLocale.ARMOR_TRIMS_FILTER.getString()), true);
     }
-    public int getMaxItemsPerPage() { return 45; }
+
+    public int getMaxItemsPerPage() {
+        return 45;
+    }
+
     @Override
     public List<Button> getAllPagesButtons(Player player) {
         List<Button> buttons = new ArrayList<>();

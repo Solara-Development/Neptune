@@ -57,8 +57,8 @@ public class QueueSelectButton extends Button {
                 line = line.replaceAll("<player_" + split[1] + "_" + i + ">", "???");
                 line = line.replaceAll("<value" + split[1] + "_" + i + ">", "???");
             } else {
-                line = line.replaceAll("<player_" + split[1] + "_" + i + ">", playerEntry.getUsername());
-                line = line.replaceAll("<value" + split[1] + "_" + i + ">", String.valueOf(playerEntry.getValue()));
+                line = line.replaceAll("<player_" + split[1] + "_" + i + ">", playerEntry.username());
+                line = line.replaceAll("<value" + split[1] + "_" + i + ">", String.valueOf(playerEntry.value()));
             }
 
             lore.add(line);

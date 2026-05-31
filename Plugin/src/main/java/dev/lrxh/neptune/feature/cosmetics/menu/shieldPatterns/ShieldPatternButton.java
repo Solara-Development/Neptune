@@ -53,8 +53,7 @@ public class ShieldPatternButton extends Button {
                 for (String descLine : shieldPatternPackage.getDescription()) {
                     loreToUse.add(CC.returnMessage(player, line, Placeholder.parsed("description", descLine)));
                 }
-            }
-            else loreToUse.add(CC.returnMessage(player, line));
+            } else loreToUse.add(CC.returnMessage(player, line));
         }
         Material material = shieldPatternPackage.getMaterial();
         ItemStack stack = new ItemBuilder(material)

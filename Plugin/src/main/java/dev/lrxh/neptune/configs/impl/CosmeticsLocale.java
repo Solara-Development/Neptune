@@ -51,5 +51,7 @@ public enum CosmeticsLocale implements IDataAccessor {
     public ConfigFile getConfigFile() {
         return ConfigService.get().getCosmeticsConfig();
     }
-    public void update() {}
+
+    public void update() {
+    }
 }

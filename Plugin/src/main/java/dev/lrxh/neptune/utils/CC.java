@@ -23,6 +23,7 @@ public class CC {
     private final Pattern LEGACY_HEX = Pattern.compile(
             "[§&]x[§&]([0-9a-f])[§&]([0-9a-f])[§&]([0-9a-f])[§&]([0-9a-f])[§&]([0-9a-f])[§&]([0-9a-f])", Pattern.CASE_INSENSITIVE);
     private final Pattern SHORT_HEX = Pattern.compile("(?i)&#([a-f0-9]{6})");
+
     public TextComponent error(String message) {
         return color(MessagesLocale.ERROR_MESSAGE.getString().replace("<error>", message));
     }
@@ -84,12 +85,15 @@ public class CC {
         text = LEGACY_HEX.matcher(text).replaceAll("<#$1$2$3$4$5$6>");
         return SHORT_HEX.matcher(text).replaceAll("<#$1>");
     }
+
     public static Component replaceLegacy(Component input) {
         return mm.deserialize(replaceLegacy(mm.serialize(input)));
     }
+
     public Component returnMessage(Player player, String message) {
         return returnMessage(player, message, TagResolver.empty());
     }
+
     public Component returnMessage(Player player, String message, TagResolver resolver) {
         return buildComponent(player, message, TagResolver.resolver(PlaceholderUtil.getPlaceholders(player), resolver));
     }
@@ -105,26 +109,33 @@ public class CC {
         }
         return replaceLegacy(component);
     }
+
     public Component returnMessage(Player player, Component message) {
         return returnMessage(player, message, TagResolver.empty());
     }
+
     public Component returnMessage(Player player, Component message, TagResolver resolver) {
         String serialized = mm.serialize(message);
         return returnMessage(player, serialized, resolver);
     }
+
     public Component returnMessage(Component message) {
         return returnMessage(message, TagResolver.empty());
     }
+
     public Component returnMessage(Component message, TagResolver resolver) {
         return returnMessage(mm.serialize(message), resolver);
     }
+
     public Component returnMessage(String message) {
         return returnMessage(message, TagResolver.empty());
     }
+
     public Component returnMessage(String message, TagResolver resolver) {
         return MiniMessage.miniMessage().deserialize(replaceLegacy(message), resolver);
     }
-    public List<Component> getComponentsArray(Player player, List<String> lines)  {
+
+    public List<Component> getComponentsArray(Player player, List<String> lines) {
         TagResolver placeholders = PlaceholderUtil.getPlaceholders(player);
         List<Component> components = new ArrayList<>(lines.size());
         for (String string : lines) {

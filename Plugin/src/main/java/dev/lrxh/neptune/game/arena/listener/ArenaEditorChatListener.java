@@ -171,7 +171,8 @@ public class ArenaEditorChatListener implements Listener {
                 new WhitelistedBlocksMenu(arena).open(player);
                 profile.getArenaProcedure().setArena(null);
             }
-            default -> {}
+            default -> {
+            }
         }
 
         ArenaService.get().save();

@@ -1,8 +1,5 @@
 package dev.lrxh.neptune.profile.data;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-
 import dev.lrxh.api.data.IDivision;
 import dev.lrxh.api.data.IGlobalStats;
 import dev.lrxh.neptune.feature.divisions.DivisionService;
@@ -10,6 +7,9 @@ import dev.lrxh.neptune.feature.divisions.impl.Division;
 import dev.lrxh.neptune.profile.impl.Profile;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Getter
 @Setter
@@ -65,6 +65,7 @@ public class GlobalStats implements IGlobalStats {
     public double getKdr() {
         return getRatio(kills, deaths);
     }
+
     private double getRatio(int num1, int num2) {
         if (num1 == 0 || num2 == 0) return 0.0;
         return BigDecimal.valueOf(num1)

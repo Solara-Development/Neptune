@@ -1,12 +1,11 @@
 package dev.lrxh.neptune.providers.placeholder.impl;
 
-import org.bukkit.OfflinePlayer;
-
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.profile.data.GlobalStats;
 import dev.lrxh.neptune.profile.data.SettingData;
 import dev.lrxh.neptune.profile.impl.Profile;
 import dev.lrxh.neptune.providers.placeholder.PAPIPlaceholder;
+import org.bukkit.OfflinePlayer;
 
 public class PlayerPlaceholders implements PAPIPlaceholder {
 
@@ -22,24 +21,60 @@ public class PlayerPlaceholders implements PAPIPlaceholder {
         GlobalStats globalStats = profile.getGameData().getGlobalStats();
         SettingData settings = profile.getSettingData();
         switch (string) {
-            case "state" -> { return profile.getProfileState(); }
-            case "kdr" -> { return String.valueOf(globalStats.getKdr()); }
-            case "elo" -> { return String.valueOf(globalStats.getElo()); }
-            case "wins" -> { return String.valueOf(globalStats.getWins()); }
-            case "kills" -> { return String.valueOf(globalStats.getKills()); }
-            case "deaths" -> { return String.valueOf(globalStats.getDeaths()); }
-            case "losses" -> { return String.valueOf(globalStats.getLosses()); }
-            case "division" -> { return globalStats.getDivision() != null ? globalStats.getDivision().getDisplayName() : "None"; }
-            case "win_loss_ratio" -> { return String.valueOf(globalStats.getWinRatio()); }
-            case "best_win_streak" -> { return String.valueOf(globalStats.getBestStreak()); }
-            case "current_win_streak" -> { return String.valueOf(globalStats.getCurrentStreak()); }
-            case "played" -> { return String.valueOf(globalStats.getWins() + globalStats.getLosses()); }
-            case "max_ping" -> { return String.valueOf(settings.getMaxPing()); }
-            case "ping" -> { return player.isOnline() ? String.valueOf(player.getPlayer().getPing()) : "0"; }
-            case "kill_effect" -> { return settings.getKillEffect().getDisplayName(); }
-            case "kill_message" -> { return settings.getKillMessagePackage().getDisplayName(); }
-            case "armor_trim" -> { return settings.getArmorTrimPackage().getDisplayName(); }
-            case "shield_pattern" -> { return settings.getShieldPatternPackage().getDisplayName(); }
+            case "state" -> {
+                return profile.getProfileState();
+            }
+            case "kdr" -> {
+                return String.valueOf(globalStats.getKdr());
+            }
+            case "elo" -> {
+                return String.valueOf(globalStats.getElo());
+            }
+            case "wins" -> {
+                return String.valueOf(globalStats.getWins());
+            }
+            case "kills" -> {
+                return String.valueOf(globalStats.getKills());
+            }
+            case "deaths" -> {
+                return String.valueOf(globalStats.getDeaths());
+            }
+            case "losses" -> {
+                return String.valueOf(globalStats.getLosses());
+            }
+            case "division" -> {
+                return globalStats.getDivision() != null ? globalStats.getDivision().getDisplayName() : "None";
+            }
+            case "win_loss_ratio" -> {
+                return String.valueOf(globalStats.getWinRatio());
+            }
+            case "best_win_streak" -> {
+                return String.valueOf(globalStats.getBestStreak());
+            }
+            case "current_win_streak" -> {
+                return String.valueOf(globalStats.getCurrentStreak());
+            }
+            case "played" -> {
+                return String.valueOf(globalStats.getWins() + globalStats.getLosses());
+            }
+            case "max_ping" -> {
+                return String.valueOf(settings.getMaxPing());
+            }
+            case "ping" -> {
+                return player.isOnline() ? String.valueOf(player.getPlayer().getPing()) : "0";
+            }
+            case "kill_effect" -> {
+                return settings.getKillEffect().getDisplayName();
+            }
+            case "kill_message" -> {
+                return settings.getKillMessagePackage().getDisplayName();
+            }
+            case "armor_trim" -> {
+                return settings.getArmorTrimPackage().getDisplayName();
+            }
+            case "shield_pattern" -> {
+                return settings.getShieldPatternPackage().getDisplayName();
+            }
         }
         return null;
     }

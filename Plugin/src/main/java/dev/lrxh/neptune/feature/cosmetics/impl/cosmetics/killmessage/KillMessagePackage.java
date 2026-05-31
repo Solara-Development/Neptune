@@ -27,6 +27,7 @@ public class KillMessagePackage extends CosmeticPackage implements IKillMessageP
     public String getRandomMessage() {
         return messages.get(RandomUtils.getRandInt(messages.size()));
     }
+
     public String permission() {
         return "neptune.cosmetics.killmessages." + name.toLowerCase();
     }

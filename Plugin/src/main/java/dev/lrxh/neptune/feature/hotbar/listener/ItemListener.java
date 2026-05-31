@@ -54,7 +54,8 @@ public class ItemListener implements Listener {
         if (!(event.getWhoClicked() instanceof Player player))
             return;
         Profile profile = API.getProfile(player);
-        if (profile.getArenaProcedure().getType() != ArenaProcedureType.NONE || profile.getKitProcedure().getType() != KitProcedureType.NONE) return;
+        if (profile.getArenaProcedure().getType() != ArenaProcedureType.NONE || profile.getKitProcedure().getType() != KitProcedureType.NONE)
+            return;
         if (profile.getMatch() != null
                 && profile.getMatch().getState().equals(MatchState.IN_ROUND)
                 && profile.getState() != ProfileState.IN_SPECTATOR) {
@@ -87,7 +88,8 @@ public class ItemListener implements Listener {
     public void swapOffhand(PlayerSwapHandItemsEvent event) {
         Player player = event.getPlayer();
         Profile profile = API.getProfile(player);
-        if (profile.getArenaProcedure().getType() != ArenaProcedureType.NONE || profile.getKitProcedure().getType() != KitProcedureType.NONE) return;
+        if (profile.getArenaProcedure().getType() != ArenaProcedureType.NONE || profile.getKitProcedure().getType() != KitProcedureType.NONE)
+            return;
         if (profile.getMatch() != null
                 && profile.getMatch().getState().equals(MatchState.IN_ROUND)
                 && profile.getState() != ProfileState.IN_SPECTATOR) {

@@ -29,6 +29,16 @@ public class CustomKitEffectsMenu extends PaginatedMenu {
         this.kit = kit;
     }
 
+    private static String format(String key) {
+        String[] words = key.toLowerCase().split("_");
+        StringBuilder sb = new StringBuilder();
+        for (String word : words) {
+            if (word.isEmpty()) continue;
+            sb.append(Character.toUpperCase(word.charAt(0))).append(word.substring(1)).append(' ');
+        }
+        return sb.toString().trim();
+    }
+
     @Override
     public List<Button> getAllPagesButtons(Player player) {
         List<Button> buttons = new ArrayList<>();
@@ -76,16 +86,6 @@ public class CustomKitEffectsMenu extends PaginatedMenu {
     private PotionEffect find(PotionEffectType type) {
         for (PotionEffect effect : kit.getPotionEffects()) if (effect.getType().equals(type)) return effect;
         return null;
-    }
-
-    private static String format(String key) {
-        String[] words = key.toLowerCase().split("_");
-        StringBuilder sb = new StringBuilder();
-        for (String word : words) {
-            if (word.isEmpty()) continue;
-            sb.append(Character.toUpperCase(word.charAt(0))).append(word.substring(1)).append(' ');
-        }
-        return sb.toString().trim();
     }
 
     @Override

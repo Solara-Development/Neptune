@@ -4,7 +4,6 @@ import dev.lrxh.api.arena.IArena;
 import dev.lrxh.api.events.MatchReadyEvent;
 import dev.lrxh.api.match.IMatch;
 import dev.lrxh.api.match.IMatchService;
-import dev.lrxh.api.match.participant.IParticipant;
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.game.arena.Arena;

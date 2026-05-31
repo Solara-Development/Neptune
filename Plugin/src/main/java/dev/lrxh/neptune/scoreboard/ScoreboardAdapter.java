@@ -12,11 +12,10 @@ import dev.lrxh.neptune.profile.impl.Profile;
 import dev.lrxh.neptune.utils.CC;
 import fr.mrmicky.fastboard.FastAdapter;
 import net.kyori.adventure.text.Component;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.bukkit.entity.Player;
 
 public class ScoreboardAdapter implements FastAdapter {
     public Component getTitle(Player player) {

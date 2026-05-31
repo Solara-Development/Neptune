@@ -13,10 +13,14 @@ import java.util.Set;
 @Getter
 public abstract class Cosmetic implements ICosmetic {
     public abstract String key();
+
     public abstract Map<String, ? extends CosmeticPackage> getPackages();
+
     public abstract ICosmeticPackage getOrDefault(String packageName);
+
     public Set<String> getKeys(FileConfiguration config, String path) {
         return Objects.requireNonNull(config.getConfigurationSection(path)).getKeys(false);
     }
+
     public abstract YamlConfiguration getConfig();
 }

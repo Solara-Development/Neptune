@@ -15,10 +15,10 @@ public class ProviderAssigner {
 
     public DrinkProvider<?>[] assignProvidersFor(DrinkCommand drinkCommand) throws MissingProviderException, CommandStructureException {
         CommandParameters parameters = drinkCommand.getParameters();
-        DrinkProvider<?>[] providers = new DrinkProvider<?>[parameters.getParameters().length];
-        for (int i = 0; i < parameters.getParameters().length; i++) {
+        DrinkProvider<?>[] providers = new DrinkProvider<?>[parameters.parameters().length];
+        for (int i = 0; i < parameters.parameters().length; i++) {
 
-            CommandParameter param = parameters.getParameters()[i];
+            CommandParameter param = parameters.parameters()[i];
             if (param.isRequireLastArg() && !parameters.isLastArgument(i)) {
                 throw new CommandStructureException("Parameter " + param.getParameter().getName() + " [argument " + i + "] (" + param.getParameter().getType().getSimpleName() + ") in method '" + drinkCommand.getMethod().getName() + "' must be the last argument in the method.");
             }
@@ -26,9 +26,9 @@ public class ProviderAssigner {
             BindingContainer<?> bindings = commandService.getBindingsFor(param.getType());
             if (bindings != null) {
                 DrinkProvider<?> provider = null;
-                for (DrinkBinding<?> binding : bindings.getBindings()) {
+                for (DrinkBinding<?> binding : bindings.bindings()) {
                     if (binding.canProvideFor(param)) {
-                        provider = binding.getProvider();
+                        provider = binding.provider();
                         break;
                     }
                 }

@@ -1,8 +1,8 @@
 package dev.lrxh.neptune.game.match.listener;
 
+import dev.lrxh.api.arena.IArena;
 import dev.lrxh.api.events.MatchParticipantDeathEvent;
 import dev.lrxh.neptune.API;
-import dev.lrxh.api.arena.IArena;
 import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.configs.impl.SettingsLocale;
@@ -26,7 +26,6 @@ import io.papermc.paper.event.block.BlockBreakBlockEvent;
 import io.papermc.paper.event.entity.EntityPushedByEntityAttackEvent;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
@@ -444,7 +443,8 @@ public class MatchListener implements Listener {
     public void vehicleDamage(VehicleDamageEvent event) {
         if (!(event.getAttacker() instanceof Player player)) return;
         Profile profile = API.getProfile(player);
-        if (!profile.hasState(ProfileState.IN_GAME) && !profile.hasState(ProfileState.IN_CUSTOM)) event.setCancelled(true);
+        if (!profile.hasState(ProfileState.IN_GAME) && !profile.hasState(ProfileState.IN_CUSTOM))
+            event.setCancelled(true);
     }
 
     @EventHandler
@@ -750,14 +750,14 @@ public class MatchListener implements Listener {
 
     private boolean isStrippable(Material material) {
         return Tag.LOGS.isTagged(material) ||
-            material == Material.OAK_WOOD ||
-            material == Material.SPRUCE_WOOD ||
-            material == Material.BIRCH_WOOD ||
-            material == Material.JUNGLE_WOOD ||
-            material == Material.ACACIA_WOOD ||
-            material == Material.DARK_OAK_WOOD ||
-            material == Material.MANGROVE_WOOD ||
-            material == Material.BAMBOO_BLOCK;
+                material == Material.OAK_WOOD ||
+                material == Material.SPRUCE_WOOD ||
+                material == Material.BIRCH_WOOD ||
+                material == Material.JUNGLE_WOOD ||
+                material == Material.ACACIA_WOOD ||
+                material == Material.DARK_OAK_WOOD ||
+                material == Material.MANGROVE_WOOD ||
+                material == Material.BAMBOO_BLOCK;
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

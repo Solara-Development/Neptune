@@ -233,7 +233,7 @@ public class DrinkCommandService implements CommandService {
             bindings.put(type, container);
         }
         DrinkBinding<T> binding = new DrinkBinding<>(type, annotations, provider);
-        container.getBindings().add(binding);
+        container.bindings().add(binding);
     }
 
 }

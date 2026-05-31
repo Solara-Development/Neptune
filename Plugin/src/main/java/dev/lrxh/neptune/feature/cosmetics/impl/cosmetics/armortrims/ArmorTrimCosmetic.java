@@ -20,6 +20,8 @@ import java.util.Objects;
 @Getter
 public class ArmorTrimCosmetic extends Cosmetic implements IArmorTrimCosmetic {
     private static ArmorTrimCosmetic instance;
+    private final Map<String, ArmorTrimPackage> packages = new HashMap<>();
+
     public static ArmorTrimCosmetic get() {
         if (instance == null) instance = new ArmorTrimCosmetic();
         return instance;
@@ -29,7 +31,6 @@ public class ArmorTrimCosmetic extends Cosmetic implements IArmorTrimCosmetic {
         return "armortrims";
     }
 
-    private final Map<String, ArmorTrimPackage> packages = new HashMap<>();
     public void load() {
         packages.clear();
         FileConfiguration armorTrimsConfig = ConfigService.get().getArmorTrimsConfig().getConfiguration();
@@ -62,6 +63,7 @@ public class ArmorTrimCosmetic extends Cosmetic implements IArmorTrimCosmetic {
     public ArmorTrimPackage getDefault() {
         return packages.get("DEFAULT");
     }
+
     public ArmorTrimPackage getOrDefault(String packageName) {
         if (packages.containsKey(packageName)) return packages.get(packageName);
         return getDefault();
@@ -70,6 +72,7 @@ public class ArmorTrimCosmetic extends Cosmetic implements IArmorTrimCosmetic {
     public void addPackage(IArmorTrimPackage armorTrimPackage) {
         packages.put(armorTrimPackage.getName(), (ArmorTrimPackage) armorTrimPackage);
     }
+
     public YamlConfiguration getConfig() {
         return ConfigService.get().getArmorTrimsConfig().getConfiguration();
     }

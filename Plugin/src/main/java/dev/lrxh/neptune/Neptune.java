@@ -15,15 +15,14 @@ import dev.lrxh.neptune.commands.LeaveCommand;
 import dev.lrxh.neptune.configs.ConfigService;
 import dev.lrxh.neptune.configs.impl.ScoreboardLocale;
 import dev.lrxh.neptune.configs.impl.SettingsLocale;
-import dev.lrxh.neptune.feature.event.EventService;
-import dev.lrxh.neptune.feature.event.command.EventCommand;
-import dev.lrxh.neptune.feature.event.listener.EventListener;
-import dev.lrxh.neptune.feature.event.task.EventScheduleTask;
 import dev.lrxh.neptune.feature.cosmetics.CosmeticService;
 import dev.lrxh.neptune.feature.cosmetics.command.CosmeticsCommand;
 import dev.lrxh.neptune.feature.customkit.command.CustomKitCommand;
 import dev.lrxh.neptune.feature.customkit.listener.CustomKitListener;
 import dev.lrxh.neptune.feature.divisions.DivisionService;
+import dev.lrxh.neptune.feature.event.command.EventCommand;
+import dev.lrxh.neptune.feature.event.listener.EventListener;
+import dev.lrxh.neptune.feature.event.task.EventScheduleTask;
 import dev.lrxh.neptune.feature.hotbar.HotbarService;
 import dev.lrxh.neptune.feature.hotbar.listener.ItemListener;
 import dev.lrxh.neptune.feature.itembrowser.ItemBrowserService;
@@ -97,12 +96,13 @@ public final class Neptune extends JavaPlugin {
     private boolean duplicatesEnabled;
 
     private boolean errored;
-    public void setErrored() {
-        errored = true;
-    }
 
     public static Neptune get() {
         return instance;
+    }
+
+    public void setErrored() {
+        errored = true;
     }
 
     @Override

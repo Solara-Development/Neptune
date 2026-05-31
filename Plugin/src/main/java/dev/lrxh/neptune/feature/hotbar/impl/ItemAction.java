@@ -2,12 +2,12 @@ package dev.lrxh.neptune.feature.hotbar.impl;
 
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
+import dev.lrxh.neptune.feature.customkit.menu.CustomKitsMenu;
+import dev.lrxh.neptune.feature.customkit.queue.CustomKitQueueService;
 import dev.lrxh.neptune.feature.divisions.menu.DivisionsMenu;
 import dev.lrxh.neptune.feature.event.AutomatedEvent;
 import dev.lrxh.neptune.feature.event.EventService;
 import dev.lrxh.neptune.feature.event.menu.EventAdminMenu;
-import dev.lrxh.neptune.feature.customkit.menu.CustomKitsMenu;
-import dev.lrxh.neptune.feature.customkit.queue.CustomKitQueueService;
 import dev.lrxh.neptune.feature.leaderboard.impl.LeaderboardType;
 import dev.lrxh.neptune.feature.leaderboard.menu.LeaderboardMenu;
 import dev.lrxh.neptune.feature.party.Party;
@@ -31,7 +31,6 @@ import dev.lrxh.neptune.profile.impl.Profile;
 import dev.lrxh.neptune.utils.PlayerUtil;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-
 import org.bukkit.entity.Player;
 
 @SuppressWarnings("unused")

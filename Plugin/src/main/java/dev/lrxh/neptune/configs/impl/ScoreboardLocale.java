@@ -260,8 +260,9 @@ public enum ScoreboardLocale implements IDataAccessor {
     public ConfigFile getConfigFile() {
         return ConfigService.get().getScoreboardConfig();
     }
+
     public void update() {
-        IN_GAME_BOXING.set(IN_GAME_BOXING.getStringList().stream().map(str -> 
+        IN_GAME_BOXING.set(IN_GAME_BOXING.getStringList().stream().map(str ->
                 str.replaceAll("<diffrence>", "<difference>")
         ).toList());
         PARTY_LOBBY.set(PARTY_LOBBY.getStringList().stream().map(str ->

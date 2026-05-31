@@ -22,6 +22,8 @@ import java.util.*;
 @Getter
 public class ShieldPatternCosmetic extends Cosmetic implements IShieldPatternCosmetic {
     private static ShieldPatternCosmetic instance;
+    public Map<String, ShieldPatternPackage> packages = new HashMap<>();
+
     public static ShieldPatternCosmetic get() {
         if (instance == null) instance = new ShieldPatternCosmetic();
         return instance;
@@ -31,7 +33,6 @@ public class ShieldPatternCosmetic extends Cosmetic implements IShieldPatternCos
         return "shieldpatterns";
     }
 
-    public Map<String, ShieldPatternPackage> packages = new HashMap<>();
     public void load() {
         packages.clear();
         FileConfiguration shieldPatternsConfig = getConfig();
@@ -62,6 +63,7 @@ public class ShieldPatternCosmetic extends Cosmetic implements IShieldPatternCos
     public ShieldPatternPackage getDefault() {
         return packages.get("DEFAULT");
     }
+
     public ShieldPatternPackage getOrDefault(String packageName) {
         if (packages.containsKey(packageName)) return packages.get(packageName);
         return getDefault();
@@ -70,9 +72,11 @@ public class ShieldPatternCosmetic extends Cosmetic implements IShieldPatternCos
     public void addPackage(IShieldPatternPackage shieldPatternPackage) {
         packages.put(shieldPatternPackage.getName(), (ShieldPatternPackage) shieldPatternPackage);
     }
+
     public YamlConfiguration getConfig() {
         return getConfigFile().getConfiguration();
     }
+
     public ConfigFile getConfigFile() {
         return ConfigService.get().getShieldPatternsConfig();
     }

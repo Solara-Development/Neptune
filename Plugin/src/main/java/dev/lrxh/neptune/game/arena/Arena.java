@@ -85,6 +85,28 @@ public class Arena implements IArena, ConfigData {
         this.whitelistedBlocks = new ArrayList<>();
     }
 
+    public static Arena read(String name, ConfigurationSection s) {
+        if (!s.contains("displayName")) return null;
+        List<Material> blocks = new ArrayList<>();
+        for (String n : s.getStringList("whitelistedBlocks")) {
+            Material m = Material.getMaterial(n);
+            if (m != null) blocks.add(m);
+        }
+        Arena arena = new Arena(name, s.getString("displayName"),
+                LocationUtil.deserialize(s.getString("redSpawn")),
+                LocationUtil.deserialize(s.getString("blueSpawn")),
+                LocationUtil.deserialize(s.getString("min")),
+                LocationUtil.deserialize(s.getString("max")),
+                s.getDouble("limit"), s.getBoolean("enabled"),
+                blocks, s.getInt("deathY", -68321), s.getLong("time"));
+        arena.setAllowedInCustomKit(s.getBoolean("allowedInCustomKit", true));
+        return arena;
+    }
+
+    private static boolean useFawe() {
+        return "FAWE".equalsIgnoreCase(SettingsLocale.ARENA_CLEANUP_METHOD.getString()) && ArenaDuplicator.isAvailable();
+    }
+
     @Override
     public boolean isSetup() {
         return !(redSpawn == null || blueSpawn == null || min == null || max == null);
@@ -197,24 +219,6 @@ public class Arena implements IArena, ConfigData {
         if (owner != null) s.set("owner", owner.getName());
     }
 
-    public static Arena read(String name, ConfigurationSection s) {
-        if (!s.contains("displayName")) return null;
-        List<Material> blocks = new ArrayList<>();
-        for (String n : s.getStringList("whitelistedBlocks")) {
-            Material m = Material.getMaterial(n);
-            if (m != null) blocks.add(m);
-        }
-        Arena arena = new Arena(name, s.getString("displayName"),
-                LocationUtil.deserialize(s.getString("redSpawn")),
-                LocationUtil.deserialize(s.getString("blueSpawn")),
-                LocationUtil.deserialize(s.getString("min")),
-                LocationUtil.deserialize(s.getString("max")),
-                s.getDouble("limit"), s.getBoolean("enabled"),
-                blocks, s.getInt("deathY", -68321), s.getLong("time"));
-        arena.setAllowedInCustomKit(s.getBoolean("allowedInCustomKit", true));
-        return arena;
-    }
-
     public void restore() {
         if (faweClipboard != null) {
             Bukkit.getScheduler().runTaskAsynchronously(Neptune.get(),
@@ -222,10 +226,6 @@ public class Arena implements IArena, ConfigData {
         } else if (snapshot != null) {
             snapshot.restore(true);
         }
-    }
-
-    private static boolean useFawe() {
-        return "FAWE".equalsIgnoreCase(SettingsLocale.ARENA_CLEANUP_METHOD.getString()) && ArenaDuplicator.isAvailable();
     }
 
     public void capture() {

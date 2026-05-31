@@ -1,13 +1,14 @@
 package dev.lrxh.neptune.feature.customkit;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CustomKitService {
-    private static CustomKitService instance;
-
     public static int MAX_KITS = 5;
-
+    private static CustomKitService instance;
     private final Map<UUID, List<CustomKit>> kits = new ConcurrentHashMap<>();
 
     public static CustomKitService get() {

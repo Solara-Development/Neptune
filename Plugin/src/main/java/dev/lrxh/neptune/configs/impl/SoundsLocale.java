@@ -1,20 +1,19 @@
 package dev.lrxh.neptune.configs.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import org.bukkit.NamespacedKey;
-import org.bukkit.Registry;
-import org.bukkit.Sound;
-import org.jetbrains.annotations.Nullable;
-
 import dev.lrxh.neptune.configs.ConfigService;
 import dev.lrxh.neptune.configs.impl.handler.DataType;
 import dev.lrxh.neptune.configs.impl.handler.IDataAccessor;
 import dev.lrxh.neptune.utils.ConfigFile;
 import dev.lrxh.neptune.utils.ServerUtils;
 import lombok.Getter;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
+import org.bukkit.Sound;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Getter
 public enum SoundsLocale implements IDataAccessor {
@@ -31,6 +30,7 @@ public enum SoundsLocale implements IDataAccessor {
     private final String comment;
     private final List<String> defaultValue = new ArrayList<>();
     private final DataType dataType;
+
     SoundsLocale(String path, @Nullable String comment, DataType dataType, String... defaultValue) {
         this.path = path;
         this.comment = comment;
@@ -45,6 +45,15 @@ public enum SoundsLocale implements IDataAccessor {
         this.dataType = dataType;
     }
 
+    public static Sound getSound(SoundsLocale sound) {
+        try {
+            return Registry.SOUNDS.get(NamespacedKey.fromString(sound.getString()));
+        } catch (NullPointerException e) {
+            ServerUtils.error("Sound does not exist! path: " + sound.getPath() + ", value: " + sound.getString());
+            return null;
+        }
+    }
+
     @Override
     public String getHeader() {
         return "";
@@ -55,14 +64,6 @@ public enum SoundsLocale implements IDataAccessor {
         return ConfigService.get().getSoundsConfig();
     }
 
-    public static Sound getSound(SoundsLocale sound) {
-        try {
-            return Registry.SOUNDS.get(NamespacedKey.fromString(sound.getString()));
-        } catch (NullPointerException e) {
-            ServerUtils.error("Sound does not exist! path: " + sound.getPath() + ", value: " + sound.getString());
-            return null;
-        }
+    public void update() {
     }
-
-    public void update() {}
 }

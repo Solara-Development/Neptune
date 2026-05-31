@@ -5,16 +5,15 @@ import dev.lrxh.api.kit.IKit;
 import dev.lrxh.api.kit.IKitRule;
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.Neptune;
-import dev.lrxh.neptune.providers.manager.ConfigData;
 import dev.lrxh.neptune.game.arena.Arena;
 import dev.lrxh.neptune.game.arena.ArenaService;
-import dev.lrxh.neptune.game.arena.VirtualArena;
 import dev.lrxh.neptune.game.kit.impl.KitRule;
 import dev.lrxh.neptune.game.match.impl.participant.Participant;
 import dev.lrxh.neptune.profile.ProfileService;
 import dev.lrxh.neptune.profile.data.GameData;
 import dev.lrxh.neptune.profile.data.KitData;
 import dev.lrxh.neptune.profile.impl.Profile;
+import dev.lrxh.neptune.providers.manager.ConfigData;
 import dev.lrxh.neptune.utils.ItemUtils;
 import dev.lrxh.neptune.utils.PlayerUtil;
 import dev.lrxh.neptune.utils.PotionEffectUtils;
@@ -24,11 +23,11 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.ShieldMeta;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.potion.PotionEffect;
 
 import java.util.*;
@@ -119,6 +118,52 @@ public class Kit implements IKit, ConfigData {
         addToProfiles();
     }
 
+    public static Kit read(String name, ConfigurationSection s) {
+        ItemStack icon = ItemUtils.deserializeItem(s.getString("icon", ""));
+        List<ItemStack> items = ItemUtils.deserialize(s.getString("items", ""));
+        int slot = s.getInt("slot", KitService.get().kits.size() + 1);
+        int kitEditorSlot = s.getInt("kitEditor-slot", slot);
+        int leaderboardSlot = s.getInt("leaderboard-slot", slot);
+        double health = s.getDouble("health", 20);
+        double damageMultiplier = s.getDouble("damage-multiplier", 1.0);
+
+        HashSet<Arena> arenas = new HashSet<>();
+        for (String arenaName : s.getStringList("arenas")) {
+            Arena arena = ArenaService.get().getArenaByName(arenaName);
+            if (arena == null) {
+                ServerUtils.error("KitService: Arena " + arenaName + " not found for kit " + name);
+                continue;
+            }
+            arenas.add(arena);
+        }
+
+        HashMap<KitRule, Boolean> rules = new HashMap<>();
+        for (KitRule kitRule : KitRule.values()) {
+            rules.put(kitRule, s.getBoolean(kitRule.getSaveName(), false));
+        }
+
+        List<PotionEffect> potionEffects = new ArrayList<>();
+        for (String potion : s.getStringList("potionEffects")) {
+            PotionEffect effect = PotionEffectUtils.deserialize(potion);
+            if (effect != null) potionEffects.add(effect);
+        }
+
+        int rounds = clampRounds(s.getInt("rounds", defaultRounds(s.getBoolean("bestOfThree", false))));
+
+        Kit kit = new Kit(name, s.getString("displayName", name), items, arenas, icon, rules,
+                slot, health, kitEditorSlot, leaderboardSlot, potionEffects, damageMultiplier);
+        kit.setRounds(rounds);
+        return kit;
+    }
+
+    private static int defaultRounds(boolean legacyBestOfThree) {
+        return legacyBestOfThree ? 3 : 1;
+    }
+
+    public static int clampRounds(int r) {
+        return Math.max(1, Math.min(9, r));
+    }
+
     private HashMap<KitRule, Boolean> rules() {
         HashMap<KitRule, Boolean> rules = new HashMap<>();
         for (KitRule kitRule : KitRule.values()) {
@@ -187,52 +232,6 @@ public class Kit implements IKit, ConfigData {
         for (Map.Entry<KitRule, Boolean> e : rules.entrySet()) {
             s.set(e.getKey().getSaveName(), e.getValue());
         }
-    }
-
-    public static Kit read(String name, ConfigurationSection s) {
-        ItemStack icon = ItemUtils.deserializeItem(s.getString("icon", ""));
-        List<ItemStack> items = ItemUtils.deserialize(s.getString("items", ""));
-        int slot = s.getInt("slot", KitService.get().kits.size() + 1);
-        int kitEditorSlot = s.getInt("kitEditor-slot", slot);
-        int leaderboardSlot = s.getInt("leaderboard-slot", slot);
-        double health = s.getDouble("health", 20);
-        double damageMultiplier = s.getDouble("damage-multiplier", 1.0);
-
-        HashSet<Arena> arenas = new HashSet<>();
-        for (String arenaName : s.getStringList("arenas")) {
-            Arena arena = ArenaService.get().getArenaByName(arenaName);
-            if (arena == null) {
-                ServerUtils.error("KitService: Arena " + arenaName + " not found for kit " + name);
-                continue;
-            }
-            arenas.add(arena);
-        }
-
-        HashMap<KitRule, Boolean> rules = new HashMap<>();
-        for (KitRule kitRule : KitRule.values()) {
-            rules.put(kitRule, s.getBoolean(kitRule.getSaveName(), false));
-        }
-
-        List<PotionEffect> potionEffects = new ArrayList<>();
-        for (String potion : s.getStringList("potionEffects")) {
-            PotionEffect effect = PotionEffectUtils.deserialize(potion);
-            if (effect != null) potionEffects.add(effect);
-        }
-
-        int rounds = clampRounds(s.getInt("rounds", defaultRounds(s.getBoolean("bestOfThree", false))));
-
-        Kit kit = new Kit(name, s.getString("displayName", name), items, arenas, icon, rules,
-                slot, health, kitEditorSlot, leaderboardSlot, potionEffects, damageMultiplier);
-        kit.setRounds(rounds);
-        return kit;
-    }
-
-    private static int defaultRounds(boolean legacyBestOfThree) {
-        return legacyBestOfThree ? 3 : 1;
-    }
-
-    public static int clampRounds(int r) {
-        return Math.max(1, Math.min(9, r));
     }
 
     public boolean is(KitRule kitRule) {
@@ -330,7 +329,7 @@ public class Kit implements IKit, ConfigData {
         }
         player.addPotionEffects(potionEffects);
         ItemUtils.applyArmorTrim(profile);
-        for(ItemStack item : player.getInventory()) {
+        for (ItemStack item : player.getInventory()) {
             if (item == null) continue;
             ItemMeta meta = item.getItemMeta();
             if (meta instanceof ShieldMeta shield) {

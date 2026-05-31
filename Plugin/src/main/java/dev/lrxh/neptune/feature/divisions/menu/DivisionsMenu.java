@@ -50,14 +50,14 @@ public class DivisionsMenu extends Menu {
         if (playerDivision.getEloRequired() >= division.getEloRequired()) {
             builder = builder.name(MenusLocale.PASSED_DIVISIONS_ITEM_NAME.getString().replace("<division>", division.getDisplayName()).replace("<elo>", String.valueOf(division.getEloRequired())))
                     .componentLore(ItemUtils.getLore(MenusLocale.PASSED_DIVISIONS_LORE.getStringList(), TagResolver.resolver(
-                        Placeholder.parsed("division", division.getDisplayName()), 
-                        Placeholder.unparsed("elo", String.valueOf(division.getEloRequired())))), player)
+                            Placeholder.parsed("division", division.getDisplayName()),
+                            Placeholder.unparsed("elo", String.valueOf(division.getEloRequired())))), player)
                     .addEnchantedGlow();
         } else {
             builder = builder.name(MenusLocale.DIVISIONS_ITEM_NAME.getString().replace("<division>", division.getDisplayName()).replace("<elo>", String.valueOf(division.getEloRequired())))
                     .componentLore(ItemUtils.getLore(MenusLocale.DIVISIONS_LORE.getStringList(), TagResolver.resolver(
-                        Placeholder.parsed("division", division.getDisplayName()),
-                        Placeholder.unparsed("elo", String.valueOf(division.getEloRequired())))), player);
+                            Placeholder.parsed("division", division.getDisplayName()),
+                            Placeholder.unparsed("elo", String.valueOf(division.getEloRequired())))), player);
         }
         return builder.build();
     }

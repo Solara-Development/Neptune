@@ -51,6 +51,7 @@ public class Party {
         }
         return player;
     }
+
     public String getLeaderName() {
         Player player = getLeaderPlayer();
         if (player == null) return "";
@@ -131,6 +132,7 @@ public class Party {
     public void broadcast(MessagesLocale messagesLocale) {
         forEachMemberAsUUID(messagesLocale::send);
     }
+
     public void broadcast(MessagesLocale messagesLocale, TagResolver resolver) {
         forEachMemberAsUUID(uuid -> messagesLocale.send(uuid, resolver));
     }
@@ -165,8 +167,8 @@ public class Party {
     public void transfer(Player player, Player target) {
         this.setLeader(target.getUniqueId());
         this.broadcast(MessagesLocale.PARTY_TRANSFER, TagResolver.resolver(
-            Placeholder.unparsed("leader", player.getName()),
-            Placeholder.unparsed("target", target.getName())
+                Placeholder.unparsed("leader", player.getName()),
+                Placeholder.unparsed("target", target.getName())
         ));
     }
 

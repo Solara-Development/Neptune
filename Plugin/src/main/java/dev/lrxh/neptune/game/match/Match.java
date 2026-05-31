@@ -1,5 +1,6 @@
 package dev.lrxh.neptune.game.match;
 
+import dev.lrxh.api.arena.IArena;
 import dev.lrxh.api.events.MatchSpectatorAddEvent;
 import dev.lrxh.api.events.MatchSpectatorRemoveEvent;
 import dev.lrxh.api.match.IMatch;
@@ -8,7 +9,6 @@ import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.configs.impl.ScoreboardLocale;
-import dev.lrxh.api.arena.IArena;
 import dev.lrxh.neptune.feature.event.AutomatedEvent;
 import dev.lrxh.neptune.feature.event.EventService;
 import dev.lrxh.neptune.feature.event.EventState;
@@ -35,7 +35,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -108,10 +107,12 @@ public abstract class Match implements IMatch {
     public void sendTitle(TextComponent header, TextComponent footer, int duration) {
         forEachParticipant(participant -> PlayerUtil.sendTitle(participant.getPlayer(), header, footer, duration));
     }
+
     public void sendMessage(MessagesLocale message) {
         forEachParticipant(participant -> message.send(participant.getPlayerUUID(), TagResolver.empty()));
         forEachSpectator(player -> message.send(player.getUniqueId(), TagResolver.empty()));
     }
+
     public void sendMessage(MessagesLocale message, TagResolver resolver) {
         forEachParticipant(participant -> message.send(participant.getPlayerUUID(), resolver));
         forEachSpectator(player -> message.send(player.getUniqueId(), resolver));
@@ -231,7 +232,8 @@ public abstract class Match implements IMatch {
             if (participant != null && activeEvent.getParticipants().contains(playerUUID)) {
                 return switch (activeEvent.getType()) {
                     case LMS -> CC.getComponentsArray(player, ScoreboardLocale.IN_EVENT_LMS.getStringList());
-                    case TOURNAMENT -> CC.getComponentsArray(player, ScoreboardLocale.IN_EVENT_TOURNAMENT.getStringList());
+                    case TOURNAMENT ->
+                            CC.getComponentsArray(player, ScoreboardLocale.IN_EVENT_TOURNAMENT.getStringList());
                 };
             }
         }
@@ -324,6 +326,7 @@ public abstract class Match implements IMatch {
         player.setHealth(kit.getHealth());
         player.sendHealthUpdate();
     }
+
     public void broadcast(MessagesLocale messagesLocale, TagResolver resolver) {
         forEachParticipant(participant -> messagesLocale.send(participant.getPlayerUUID(), resolver));
 
@@ -434,8 +437,8 @@ public abstract class Match implements IMatch {
             broadcast(
                     deadParticipant.getDeathCause().getMessage(),
                     TagResolver.resolver(
-                        Placeholder.unparsed("player", deadParticipant.getNameColored()),
-                        Placeholder.unparsed("killer", deadParticipant.getLastAttackerName())
+                            Placeholder.unparsed("player", deadParticipant.getNameColored()),
+                            Placeholder.unparsed("killer", deadParticipant.getLastAttackerName())
                     ));
         } else {
             broadcast(deathMessage);

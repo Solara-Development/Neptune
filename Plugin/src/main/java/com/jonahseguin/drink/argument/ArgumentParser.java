@@ -63,16 +63,16 @@ public class ArgumentParser {
 
     @Nonnull
     public Object[] parseArguments(@Nonnull CommandExecution execution, @Nonnull DrinkCommand command,
-            @Nonnull CommandArgs args) throws CommandExitMessage, CommandArgumentException {
+                                   @Nonnull CommandArgs args) throws CommandExitMessage, CommandArgumentException {
 
         Preconditions.checkNotNull(command, "DrinkCommand cannot be null");
         Preconditions.checkNotNull(args, "CommandArgs cannot be null");
 
         Object[] arguments = new Object[command.getMethod().getParameterCount()];
 
-        for (int i = 0; i < command.getParameters().getParameters().length; i++) {
+        for (int i = 0; i < command.getParameters().parameters().length; i++) {
 
-            CommandParameter parameter = command.getParameters().getParameters()[i];
+            CommandParameter parameter = command.getParameters().parameters()[i];
             DrinkProvider<?> provider = command.getProviders()[i];
             String value = null;
 
@@ -80,7 +80,7 @@ public class ArgumentParser {
 
                 Flag flag = parameter.getFlag();
                 CommandFlag commandFlag = args.getFlags().get(flag.value());
-                value = commandFlag != null ? commandFlag.getValue() : null;
+                value = commandFlag != null ? commandFlag.value() : null;
 
                 if (parameter.isFlag() && value == null
                         && !parameter.getType().isAssignableFrom(Boolean.class)

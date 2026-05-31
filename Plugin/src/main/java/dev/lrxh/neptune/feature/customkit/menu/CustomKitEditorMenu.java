@@ -36,6 +36,13 @@ public class CustomKitEditorMenu extends Menu {
         this.kit = kit;
     }
 
+    private static boolean hasEnchantments(ItemStack item) {
+        for (Enchantment enchantment : Registry.ENCHANTMENT) {
+            if (enchantment.canEnchantItem(item)) return true;
+        }
+        return false;
+    }
+
     @Override
     public List<Button> getButtons(Player player) {
         List<Button> buttons = new ArrayList<>();
@@ -114,13 +121,6 @@ public class CustomKitEditorMenu extends Menu {
             display.setItemMeta(meta);
         }
         return display;
-    }
-
-    private static boolean hasEnchantments(ItemStack item) {
-        for (Enchantment enchantment : Registry.ENCHANTMENT) {
-            if (enchantment.canEnchantItem(item)) return true;
-        }
-        return false;
     }
 
     private void save(Player player) {

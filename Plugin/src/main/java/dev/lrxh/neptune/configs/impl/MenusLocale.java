@@ -214,42 +214,42 @@ public enum MenusLocale implements IDataAccessor {
     LEADERBOARD_TYPES_BEST_WIN_STREAK_DISABLED_MATERIAL("LEADERBOARD.TYPES.BEST_WIN_STREAK.DISABLED.MATERIAL",
             DataType.STRING,
             "GRAY_DYE"),
-        
+
     LEADERBOARD_TYPES_WINS_SLOT("LEADERBOARD.TYPES.WINS.SLOT", DataType.INT, "31"),
     LEADERBOARD_TYPES_WINS_TITLE("LEADERBOARD.TYPES.WINS.TITLE", DataType.STRING,
-                "&7Wins Leaderboards"),
+            "&7Wins Leaderboards"),
     LEADERBOARD_TYPES_WINS_ENABLED_NAME("LEADERBOARD.TYPES.WINS.ENABLED.NAME", DataType.STRING,
-                "&aWins Leaderboard"),
+            "&aWins Leaderboard"),
     LEADERBOARD_TYPES_WINS_DISABLED_NAME("LEADERBOARD.TYPES.WINS.DISABLED.NAME", DataType.STRING,
-                "&cWins Leaderboard"),
+            "&cWins Leaderboard"),
     LEADERBOARD_TYPES_WINS_ENABLED_LORE("LEADERBOARD.TYPES.WINS.ENABLED.LORE", DataType.STRING_LIST,
-                " ",
-                "&7Click to view wins leaderboards"),
+            " ",
+            "&7Click to view wins leaderboards"),
     LEADERBOARD_TYPES_WINS_DISABLED_LORE("LEADERBOARD.TYPES.WINS.DISABLED.LORE", DataType.STRING_LIST,
-                " ",
-                "&7Click to view wins leaderboards"),
+            " ",
+            "&7Click to view wins leaderboards"),
     LEADERBOARD_TYPES_WINS_ENABLED_MATERIAL("LEADERBOARD.TYPES.WINS.ENABLED.MATERIAL", DataType.STRING,
-                "LIME_DYE"),
+            "LIME_DYE"),
     LEADERBOARD_TYPES_WINS_DISABLED_MATERIAL("LEADERBOARD.TYPES.WINS.DISABLED.MATERIAL", DataType.STRING,
-                "GRAY_DYE"),
+            "GRAY_DYE"),
 
     LEADERBOARD_TYPES_LOSSES_SLOT("LEADERBOARD.TYPES.LOSSES.SLOT", DataType.INT, "33"),
     LEADERBOARD_TYPES_LOSSES_TITLE("LEADERBOARD.TYPES.LOSSES.TITLE", DataType.STRING,
-                "&7Losses Leaderboards"),
+            "&7Losses Leaderboards"),
     LEADERBOARD_TYPES_LOSSES_ENABLED_NAME("LEADERBOARD.TYPES.LOSSES.ENABLED.NAME", DataType.STRING,
-                "&aLosses Leaderboard"),
+            "&aLosses Leaderboard"),
     LEADERBOARD_TYPES_LOSSES_DISABLED_NAME("LEADERBOARD.TYPES.LOSSES.DISABLED.NAME", DataType.STRING,
-                "&cLosses Leaderboard"),
+            "&cLosses Leaderboard"),
     LEADERBOARD_TYPES_LOSSES_ENABLED_LORE("LEADERBOARD.TYPES.LOSSES.ENABLED.LORE", DataType.STRING_LIST,
-                " ",
-                "&7Click to view losses leaderboards"),
+            " ",
+            "&7Click to view losses leaderboards"),
     LEADERBOARD_TYPES_LOSSES_DISABLED_LORE("LEADERBOARD.TYPES.LOSSES.DISABLED.LORE", DataType.STRING_LIST,
-                " ",
-                "&7Click to view losses leaderboards"),
+            " ",
+            "&7Click to view losses leaderboards"),
     LEADERBOARD_TYPES_LOSSES_ENABLED_MATERIAL("LEADERBOARD.TYPES.LOSSES.ENABLED.MATERIAL", DataType.STRING,
-                "LIME_DYE"),
+            "LIME_DYE"),
     LEADERBOARD_TYPES_LOSSES_DISABLED_MATERIAL("LEADERBOARD.TYPES.LOSSES.DISABLED.MATERIAL", DataType.STRING,
-                "GRAY_DYE"),
+            "GRAY_DYE"),
 
     LEADERBOARD_TYPES_DEATHS_TITLE("LEADERBOARD.TYPES.DEATHS.TITLE", DataType.STRING,
             "&7Deaths Leaderboards"),
@@ -268,7 +268,7 @@ public enum MenusLocale implements IDataAccessor {
             "LIME_DYE"),
     LEADERBOARD_TYPES_DEATHS_DISABLED_MATERIAL("LEADERBOARD.TYPES.DEATHS.DISABLED.MATERIAL", DataType.STRING,
             "GRAY_DYE"),
-        
+
     PARTY_SETTINGS_TITLE("PARTY.SETTINGS.NAME", DataType.STRING, "&7Party Settings"),
     PARTY_SETTINGS_SIZE("PARTY.SETTINGS.SIZE", DataType.INT, "27"),
     PARTY_SETTINGS_FILTER("PARTY.SETTINGS.FILTER-TYPE", "FILL, BORDER, NONE", DataType.STRING, "FILL"),
@@ -834,6 +834,7 @@ public enum MenusLocale implements IDataAccessor {
     public ConfigFile getConfigFile() {
         return ConfigService.get().getMenusConfig();
     }
+
     public void update() {
         MATCH_LIST_ITEM_NAME.set(
                 MATCH_LIST_ITEM_NAME.getString()
@@ -857,7 +858,8 @@ public enum MenusLocale implements IDataAccessor {
                 ).toList()
         );
         if (MATCH_LIST_SIZE.getInt() == 36) MATCH_LIST_SIZE.set(54);
-        if (MATCH_LIST_STARTING_SLOT.getInt() == 10 && MATCH_LIST_FILTER.getString().equals("FILTER")) MATCH_LIST_FILTER.set("BORDER");
+        if (MATCH_LIST_STARTING_SLOT.getInt() == 10 && MATCH_LIST_FILTER.getString().equals("FILTER"))
+            MATCH_LIST_FILTER.set("BORDER");
         if (MATCH_LIST_STARTING_SLOT.getInt() == 10) MATCH_LIST_STARTING_SLOT.set(1);
         if (MATCH_LIST_STARTING_SLOT.getInt() == 0) MATCH_LIST_STARTING_SLOT.set(1);
         getConfigFile().save();

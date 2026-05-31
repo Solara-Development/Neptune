@@ -52,13 +52,11 @@ public class KillMessageButton extends Button {
                 for (String descLine : killMessagePackage.getDescription()) {
                     loreToUse.add(CC.returnMessage(player, line, Placeholder.parsed("description", descLine)));
                 }
-            }
-            else if (line.contains("<messages>")) {
+            } else if (line.contains("<messages>")) {
                 for (Component message : ItemUtils.getLore(killMessagePackage.getMessages())) {
                     loreToUse.add(CC.returnMessage(player, line, Placeholder.component("messages", message)));
                 }
-            }
-            else loreToUse.add(CC.returnMessage(player, line));
+            } else loreToUse.add(CC.returnMessage(player, line));
         }
         return new ItemBuilder(killMessagePackage.getMaterial())
                 .name(selected ? MenusLocale.KILL_MESSAGES_NAME_SELECTED.getString().replace("<displayName>", killMessagePackage.getDisplayName()) : MenusLocale.KILL_MESSAGES_NAME_NOT_SELECTED.getString().replace("<displayName>", killMessagePackage.getDisplayName()))

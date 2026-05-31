@@ -47,8 +47,7 @@ public class PartyDuelButton extends Button {
                 for (String name : names) {
                     lore.add(line.replaceAll("<members>", name));
                 }
-            }
-            else lore.add(line);
+            } else lore.add(line);
         }
         return new ItemBuilder(itemStack)
                 .name(MenusLocale.PARTY_DUEL_PARTY_TITLE.getString().replaceAll("<leader>", targetParty.getLeaderName()))

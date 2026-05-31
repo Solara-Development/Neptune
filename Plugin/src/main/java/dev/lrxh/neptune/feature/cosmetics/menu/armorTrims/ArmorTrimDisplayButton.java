@@ -18,6 +18,7 @@ public class ArmorTrimDisplayButton extends Button {
     private final ArmorTrim armorTrim;
     private final Material material;
     private final String itemName;
+
     public ArmorTrimDisplayButton(int slot, boolean selected, ArmorTrimPackage trimPackage, ArmorTrim armorTrim, String materialName, String itemName) {
         super(slot);
         this.selected = selected;
@@ -26,6 +27,7 @@ public class ArmorTrimDisplayButton extends Button {
         this.material = Registry.MATERIAL.get(Key.key(materialName));
         this.itemName = itemName;
     }
+
     public ItemStack getItemStack(Player player) {
         ItemBuilder builder = new ItemBuilder(material).name(itemName.replaceAll("<display-name>", trimPackage.getDisplayName()));
         ItemStack stack;

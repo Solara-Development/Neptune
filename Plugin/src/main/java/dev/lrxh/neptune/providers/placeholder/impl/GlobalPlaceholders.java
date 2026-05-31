@@ -14,8 +14,12 @@ public class GlobalPlaceholders implements PAPIPlaceholder {
     @Override
     public String parse(OfflinePlayer player, String string) {
         switch (string) {
-            case "queued" -> { return String.valueOf(QueueService.get().getQueueSize()); }
-            case "matches" -> { return String.valueOf(MatchService.get().matches.size()); }
+            case "queued" -> {
+                return String.valueOf(QueueService.get().getQueueSize());
+            }
+            case "matches" -> {
+                return String.valueOf(MatchService.get().matches.size());
+            }
         }
         return null;
     }

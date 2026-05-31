@@ -1,12 +1,5 @@
 package dev.lrxh.neptune.game.match.impl.solo;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-
-import org.bukkit.Bukkit;
-
 import dev.lrxh.api.arena.IArena;
 import dev.lrxh.api.events.SoloMatchBedDestroyEvent;
 import dev.lrxh.api.match.ISoloFightMatch;
@@ -43,6 +36,12 @@ import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import org.bukkit.Bukkit;
+
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 @Getter
 @Setter
@@ -192,9 +191,9 @@ public class SoloFightMatch extends Match implements ISoloFightMatch {
 
         if (!isDuel()) {
             resolver = TagResolver.resolver(resolver,
-                Placeholder.unparsed("winner-elo", String.valueOf(winner.getEloChange())),
-                Placeholder.unparsed("loser-elo", String.valueOf(loser.getEloChange())
-            ));
+                    Placeholder.unparsed("winner-elo", String.valueOf(winner.getEloChange())),
+                    Placeholder.unparsed("loser-elo", String.valueOf(loser.getEloChange())
+                    ));
             broadcast(MessagesLocale.MATCH_END_DETAILS_SOLO, resolver);
         } else {
             broadcast(MessagesLocale.MATCH_END_DETAILS_DUEL, resolver);
@@ -325,6 +324,7 @@ public class SoloFightMatch extends Match implements ISoloFightMatch {
     public String getWinnerName() {
         return getWinner() != null ? getWinner().getName() : "";
     }
+
     public String getLoserName() {
         return getLoser() != null ? getLoser().getName() : "";
     }

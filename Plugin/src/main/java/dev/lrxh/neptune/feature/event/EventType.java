@@ -31,7 +31,10 @@ public enum EventType {
                     .filter(p -> p.getPlayer() != null)
                     .collect(Collectors.toList());
             event.getKit().getRandomArena().thenAccept(arena -> {
-                if (arena == null) { service.stopEvent(); return; }
+                if (arena == null) {
+                    service.stopEvent();
+                    return;
+                }
                 Bukkit.getScheduler().runTask(Neptune.get(), () ->
                         MatchService.get().startMatch(participants, event.getKit(), arena));
             });

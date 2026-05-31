@@ -64,10 +64,13 @@ public interface IDataAccessor {
     default void setValue(String path, List<?> rawValue, DataType type) {
         switch (type) {
             case LIST -> getConfigFile().getConfiguration().set(path, rawValue);
-            case STRING_LIST -> getConfigFile().getConfiguration().set(path, rawValue.stream().map(String::valueOf).toList());
+            case STRING_LIST ->
+                    getConfigFile().getConfiguration().set(path, rawValue.stream().map(String::valueOf).toList());
             case STRING -> getConfigFile().getConfiguration().set(path, String.valueOf(rawValue.getFirst()));
-            case INT -> getConfigFile().getConfiguration().set(path, Integer.parseInt(String.valueOf(rawValue.getFirst())));
-            case BOOLEAN -> getConfigFile().getConfiguration().set(path, Boolean.parseBoolean(String.valueOf(rawValue.getFirst())));
+            case INT ->
+                    getConfigFile().getConfiguration().set(path, Integer.parseInt(String.valueOf(rawValue.getFirst())));
+            case BOOLEAN ->
+                    getConfigFile().getConfiguration().set(path, Boolean.parseBoolean(String.valueOf(rawValue.getFirst())));
         }
     }
 
@@ -132,5 +135,5 @@ public interface IDataAccessor {
         }
     }
 
-    public void update();
+    void update();
 }

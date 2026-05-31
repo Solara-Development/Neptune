@@ -48,12 +48,15 @@ public class CosmeticService extends IService implements ICosmeticService {
     public Map<String, ? extends CosmeticPackage> getPackages(ICosmetic cosmetic) {
         return cosmetics.getOrDefault((Cosmetic) cosmetic, null);
     }
+
     public Map<String, KillMessagePackage> getKillMessagePackages() {
         return (Map<String, KillMessagePackage>) getPackages(KillMessageCosmetic.get());
     }
+
     public Map<String, ArmorTrimPackage> getArmorTrimPackages() {
         return (Map<String, ArmorTrimPackage>) getPackages(ArmorTrimCosmetic.get());
     }
+
     public Map<String, ShieldPatternPackage> getShieldPatternPackages() {
         return (Map<String, ShieldPatternPackage>) getPackages(ShieldPatternCosmetic.get());
     }

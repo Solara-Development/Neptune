@@ -128,6 +128,7 @@ public class DuelRequest extends Request {
                 TagResolver.resolver("deny", Tag.styling(ClickEvent.runCommand("/duel deny-uuid " + getSender())))
         ));
     }
+
     public void sendSenderMessage(UUID receiverUUID, boolean rematch) {
         Player receiver = Bukkit.getPlayer(receiverUUID);
         if (receiver == null) return;

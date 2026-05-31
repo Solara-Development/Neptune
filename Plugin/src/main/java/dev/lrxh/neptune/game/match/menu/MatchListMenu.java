@@ -1,6 +1,5 @@
 package dev.lrxh.neptune.game.match.menu;
 
-import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.configs.impl.MenusLocale;
 import dev.lrxh.neptune.game.match.Match;
 import dev.lrxh.neptune.game.match.MatchService;
@@ -16,10 +15,12 @@ import java.util.List;
 
 public class MatchListMenu extends PaginatedMenu {
     private final int size = MenusLocale.MATCH_LIST_SIZE.getInt();
+
     public MatchListMenu() {
         super(MenusLocale.MATCH_LIST_TITLE.getString(), MenusLocale.MATCH_LIST_SIZE.getInt(),
                 Filter.valueOf(MenusLocale.MATCH_LIST_FILTER.getString()));
     }
+
     @Override
     public List<Button> getAllPagesButtons(Player player) {
         List<Button> buttons = new ArrayList<>();

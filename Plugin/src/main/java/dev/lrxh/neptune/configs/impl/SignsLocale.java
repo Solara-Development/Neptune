@@ -47,5 +47,6 @@ public enum SignsLocale implements IDataAccessor {
         return ConfigService.get().getSignsConfig();
     }
 
-    public void update() {}
+    public void update() {
+    }
 }

@@ -153,16 +153,16 @@ public class SQLiteDatabase implements IDatabase {
     public CompletableFuture<List<DataDocument>> getAllByKitType(String kitName, String type) {
         String path = "$.kitData.\"" + kitName + "\"." + type;
         String sql = """
-            SELECT data
-            FROM (
-                SELECT data,
-                    CAST(json_extract(data, '%s') AS INTEGER) AS value
-                FROM playerData
-            )
-            WHERE value > 0
-            ORDER BY value DESC
-            LIMIT 10
-        """.formatted(path);
+                    SELECT data
+                    FROM (
+                        SELECT data,
+                            CAST(json_extract(data, '%s') AS INTEGER) AS value
+                        FROM playerData
+                    )
+                    WHERE value > 0
+                    ORDER BY value DESC
+                    LIMIT 10
+                """.formatted(path);
 
         return queryData(sql).thenApply(resultList -> {
             List<DataDocument> results = new ArrayList<>();

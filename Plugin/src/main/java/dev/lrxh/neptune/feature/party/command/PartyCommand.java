@@ -40,6 +40,7 @@ public class PartyCommand {
         API.getProfile(player).getGameData().removeRequest(target.getUniqueId());
         party.accept(player.getUniqueId(), false);
     }
+
     @Command(name = "joinad", desc = "", hidden = true)
     public void joinad(@Sender Player player, Player target) {
         if (!joinable(player, target)) return;

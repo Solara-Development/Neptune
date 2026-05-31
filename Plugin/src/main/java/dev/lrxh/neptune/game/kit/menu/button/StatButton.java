@@ -17,14 +17,14 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 
 public class StatButton extends Button {
-        private final Kit kit;
-        private final Player target;
+    private final Kit kit;
+    private final Player target;
 
-        public StatButton(int slot, Kit kit, Player target) {
-                super(slot);
-                this.kit = kit;
-                this.target = target;
-        }
+    public StatButton(int slot, Kit kit, Player target) {
+        super(slot);
+        this.kit = kit;
+        this.target = target;
+    }
 
     @Override
     public ItemStack getItemStack(Player player) {

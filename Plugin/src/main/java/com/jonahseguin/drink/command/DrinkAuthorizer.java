@@ -1,11 +1,10 @@
 package com.jonahseguin.drink.command;
 
+import dev.lrxh.neptune.configs.impl.MessagesLocale;
+import dev.lrxh.neptune.utils.CC;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.command.CommandSender;
-
-import dev.lrxh.neptune.configs.impl.MessagesLocale;
-import dev.lrxh.neptune.utils.CC;
 
 import javax.annotation.Nonnull;
 

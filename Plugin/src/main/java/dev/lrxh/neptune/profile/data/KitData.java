@@ -1,19 +1,18 @@
 package dev.lrxh.neptune.profile.data;
 
+import dev.lrxh.api.data.IKitData;
+import dev.lrxh.neptune.feature.divisions.DivisionService;
+import dev.lrxh.neptune.feature.divisions.impl.Division;
+import lombok.Getter;
+import lombok.Setter;
+import org.bukkit.inventory.ItemStack;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
-
-import org.bukkit.inventory.ItemStack;
-
-import dev.lrxh.api.data.IKitData;
-import dev.lrxh.neptune.feature.divisions.DivisionService;
-import dev.lrxh.neptune.feature.divisions.impl.Division;
-import lombok.Getter;
-import lombok.Setter;
 
 @Getter
 @Setter

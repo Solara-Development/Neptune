@@ -50,8 +50,7 @@ public class ArmorTrimButton extends Button {
                 for (String descLine : armorTrimPackage.getDescription()) {
                     loreToUse.add(CC.returnMessage(player, line, Placeholder.parsed("description", descLine)));
                 }
-            }
-            else loreToUse.add(CC.returnMessage(player, line));
+            } else loreToUse.add(CC.returnMessage(player, line));
         }
         return new ItemBuilder(armorTrimPackage.getMaterial())
                 .name((selected ? MenusLocale.ARMOR_TRIMS_NAME_SELECTED : MenusLocale.ARMOR_TRIMS_NAME_NOT_SELECTED).getString().replace("<display-name>", armorTrimPackage.getDisplayName()))

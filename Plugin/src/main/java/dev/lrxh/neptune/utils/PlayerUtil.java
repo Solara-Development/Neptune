@@ -110,12 +110,14 @@ public class PlayerUtil {
             return;
         player.sendMessage(CC.returnMessage(player, message));
     }
+
     public void sendMessage(UUID playerUUID, Component message) {
         Player player = Bukkit.getPlayer(playerUUID);
         if (player == null)
             return;
         player.sendMessage(CC.returnMessage(player, message));
     }
+
     public void sendMessage(UUID playerUUID, String message, TagResolver resolver) {
         Player player = Bukkit.getPlayer(playerUUID);
         if (player == null)

@@ -32,6 +32,16 @@ public class ItemBrowserMenu extends PaginatedMenu {
         this.returnConsumer = returnConsumer;
     }
 
+    private static String formatName(Material material) {
+        String[] words = material.name().toLowerCase().split("_");
+        StringBuilder sb = new StringBuilder();
+        for (String word : words) {
+            if (word.isEmpty()) continue;
+            sb.append(Character.toUpperCase(word.charAt(0))).append(word.substring(1)).append(' ');
+        }
+        return sb.toString().trim();
+    }
+
     @Override
     public List<Button> getAllPagesButtons(Player player) {
         List<Material> items = service.getItems(section);
@@ -62,16 +72,6 @@ public class ItemBrowserMenu extends PaginatedMenu {
             });
         }
         return buttons;
-    }
-
-    private static String formatName(Material material) {
-        String[] words = material.name().toLowerCase().split("_");
-        StringBuilder sb = new StringBuilder();
-        for (String word : words) {
-            if (word.isEmpty()) continue;
-            sb.append(Character.toUpperCase(word.charAt(0))).append(word.substring(1)).append(' ');
-        }
-        return sb.toString().trim();
     }
 
     @Override

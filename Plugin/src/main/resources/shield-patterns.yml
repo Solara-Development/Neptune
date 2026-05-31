@@ -5,7 +5,7 @@ SHIELD_PATTERNS:
     DISPLAY_NAME: "<gray>None"
     MATERIAL: barrier
     SLOT: 10
-    PATTERNS: []
+    PATTERNS: [ ]
   CREEPER:
     DISPLAY_NAME: <green>Creeper
     DESCRIPTION:

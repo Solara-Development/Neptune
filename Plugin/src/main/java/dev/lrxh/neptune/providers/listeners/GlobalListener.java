@@ -65,7 +65,8 @@ public class GlobalListener implements Listener {
         Player player = event.getPlayer();
         Profile profile = API.getProfile(player);
         if (profile == null || !profile.hasState(ProfileState.IN_LOBBY)) return;
-        if (!(event.getRightClicked() instanceof Player target) || event.getHand() != EquipmentSlot.HAND || !target.isOnline()) return;
+        if (!(event.getRightClicked() instanceof Player target) || event.getHand() != EquipmentSlot.HAND || !target.isOnline())
+            return;
         if (player.isSneaking()) {
             Party party = profile.getGameData().getParty();
             if (party == null || !party.isLeader(player.getUniqueId()))
@@ -85,8 +86,7 @@ public class GlobalListener implements Listener {
                     }
                 }, 200L);
             }
-        }
-        else {
+        } else {
             player.chat("/duel " + target.getName());
         }
     }

@@ -72,8 +72,8 @@ public class DrinkCommand {
 
     private String generateUsage() {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < parameters.getParameters().length; i++) {
-            CommandParameter parameter = parameters.getParameters()[i];
+        for (int i = 0; i < parameters.parameters().length; i++) {
+            CommandParameter parameter = parameters.parameters()[i];
             DrinkProvider provider = providers[i];
             String description = parameter.getParameter().getName(); // provider.argumentDescription()
             if (parameter.isFlag()) {
@@ -136,8 +136,8 @@ public class DrinkCommand {
 
     private int calculateRequiredArgCount() {
         int count = 0;
-        for (int i = 0; i < parameters.getParameters().length; i++) {
-            CommandParameter parameter = parameters.getParameters()[i];
+        for (int i = 0; i < parameters.parameters().length; i++) {
+            CommandParameter parameter = parameters.parameters()[i];
             if (!parameter.isFlag() && !parameter.isOptional()) {
                 DrinkProvider provider = providers[i];
                 if (provider.doesConsumeArgument()) {

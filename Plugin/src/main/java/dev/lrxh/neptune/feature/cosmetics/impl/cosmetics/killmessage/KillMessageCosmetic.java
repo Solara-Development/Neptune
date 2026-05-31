@@ -18,6 +18,8 @@ import java.util.Objects;
 @Getter
 public class KillMessageCosmetic extends Cosmetic implements IKillMessageCosmetic {
     private static KillMessageCosmetic instance;
+    public Map<String, KillMessagePackage> packages = new HashMap<>();
+
     public static KillMessageCosmetic get() {
         if (instance == null) instance = new KillMessageCosmetic();
         return instance;
@@ -27,7 +29,6 @@ public class KillMessageCosmetic extends Cosmetic implements IKillMessageCosmeti
         return "killmessages";
     }
 
-    public Map<String, KillMessagePackage> packages = new HashMap<>();
     public void load() {
         packages.clear();
         FileConfiguration killMessagesConfig = ConfigService.get().getKillMessagesConfig().getConfiguration();
@@ -49,6 +50,7 @@ public class KillMessageCosmetic extends Cosmetic implements IKillMessageCosmeti
     public KillMessagePackage getDefault() {
         return packages.get("DEFAULT");
     }
+
     public KillMessagePackage getOrDefault(String packageName) {
         if (packages.containsKey(packageName)) return packages.get(packageName);
         return getDefault();
@@ -57,6 +59,7 @@ public class KillMessageCosmetic extends Cosmetic implements IKillMessageCosmeti
     public void addPackage(IKillMessagePackage killMessagePackage) {
         packages.put(killMessagePackage.getName(), (KillMessagePackage) killMessagePackage);
     }
+
     public YamlConfiguration getConfig() {
         return ConfigService.get().getKillMessagesConfig().getConfiguration();
     }

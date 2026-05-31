@@ -22,6 +22,7 @@ public class SpectateCommand {
         }
         new MatchListMenu().open(player);
     }
+
     @Command(name = "", desc = "", usage = "<player> [-s: silent]")
     public void spectate(@Sender Player player, Player target, @Flag('s') boolean silent) {
         if (silent && !player.hasPermission("neptune.silent-spectate")) {

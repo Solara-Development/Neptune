@@ -85,8 +85,8 @@ public class LeaderboardMenu extends Menu {
 
         for (int i = 1; i <= 10; i++) {
             PlayerEntry entry = LeaderboardCacheService.get().getPosition(leaderboardType, kit, i);
-            String player = (entry != null && entry.getUsername() != null) ? entry.getUsername() : "???";
-            String value = (entry != null) ? String.valueOf(entry.getValue()) : "???";
+            String player = (entry != null && entry.username() != null) ? entry.username() : "???";
+            String value = (entry != null) ? String.valueOf(entry.value()) : "???";
 
             result = result
                     .replace("<player_" + i + ">", player)

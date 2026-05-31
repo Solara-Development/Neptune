@@ -1,10 +1,5 @@
 package dev.lrxh.neptune.providers.placeholder.impl;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.bukkit.OfflinePlayer;
-
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.feature.queue.QueueEntry;
 import dev.lrxh.neptune.feature.queue.QueueService;
@@ -15,6 +10,10 @@ import dev.lrxh.neptune.profile.data.KitData;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
 import dev.lrxh.neptune.providers.placeholder.PAPIPlaceholder;
+import org.bukkit.OfflinePlayer;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class KitPlaceholders implements PAPIPlaceholder {
     @Override
@@ -34,7 +33,10 @@ public class KitPlaceholders implements PAPIPlaceholder {
             throw new IllegalArgumentException("Invalid string for kit placeholder: " + string);
         }
         String resultKit = null;
-        try { resultKit = matcher.group("kit"); } catch (Exception ignored) {}
+        try {
+            resultKit = matcher.group("kit");
+        } catch (Exception ignored) {
+        }
         String type = matcher.group("type");
         if (resultKit != null) kit = KitService.get().getKitByName(resultKit);
         if (profile == null) return null;
@@ -54,18 +56,42 @@ public class KitPlaceholders implements PAPIPlaceholder {
 
         KitData kitData = profile.getGameData().get(kit);
         switch (type) {
-            case "name" -> { return kit.getDisplayName(); }
-            case "division" -> { return kitData.getDivision() != null ? kitData.getDivision().getDisplayName() : "None"; }
-            case "rounds" -> { return String.valueOf(kit.getRounds()); }
-            case "current_win_streak" -> { return String.valueOf(kitData.getCurrentStreak()); }
-            case "best_win_streak" -> { return String.valueOf(kitData.getBestStreak()); }
-            case "wins" -> { return String.valueOf(kitData.getWins()); }
-            case "losses" -> { return String.valueOf(kitData.getLosses()); }
-            case "kills" -> { return String.valueOf(kitData.getKills()); }
-            case "deaths" -> { return String.valueOf(kitData.getDeaths()); }
-            case "elo" -> { return String.valueOf(kitData.getElo()); }
-            case "queued" -> { return String.valueOf(kit.getQueue()); }
-            case "in_match" -> { return String.valueOf(kit.getPlaying()); }
+            case "name" -> {
+                return kit.getDisplayName();
+            }
+            case "division" -> {
+                return kitData.getDivision() != null ? kitData.getDivision().getDisplayName() : "None";
+            }
+            case "rounds" -> {
+                return String.valueOf(kit.getRounds());
+            }
+            case "current_win_streak" -> {
+                return String.valueOf(kitData.getCurrentStreak());
+            }
+            case "best_win_streak" -> {
+                return String.valueOf(kitData.getBestStreak());
+            }
+            case "wins" -> {
+                return String.valueOf(kitData.getWins());
+            }
+            case "losses" -> {
+                return String.valueOf(kitData.getLosses());
+            }
+            case "kills" -> {
+                return String.valueOf(kitData.getKills());
+            }
+            case "deaths" -> {
+                return String.valueOf(kitData.getDeaths());
+            }
+            case "elo" -> {
+                return String.valueOf(kitData.getElo());
+            }
+            case "queued" -> {
+                return String.valueOf(kit.getQueue());
+            }
+            case "in_match" -> {
+                return String.valueOf(kit.getPlaying());
+            }
         }
         return null;
     }

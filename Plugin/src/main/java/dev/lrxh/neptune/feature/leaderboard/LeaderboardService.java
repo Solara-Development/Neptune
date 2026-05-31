@@ -27,7 +27,7 @@ public class LeaderboardService {
     public final Pattern PATTERN = Pattern.compile("(KILLS|BEST_WIN_STREAK|DEATHS|ELO)_(.*)_(10|[1-9])_(name|value)");
     private final int MAX_ENTRIES = 10;
     private final Comparator<PlayerEntry> BY_VALUE_DESC =
-            Comparator.comparingInt(PlayerEntry::getValue).reversed();
+            Comparator.comparingInt(PlayerEntry::value).reversed();
     private final List<LeaderboardPlayerEntry> changes;
     private final Map<Kit, Map<LeaderboardType, List<PlayerEntry>>> leaderboards;
 
@@ -59,7 +59,7 @@ public class LeaderboardService {
 
             if (playerEntry == null)
                 return "???";
-            return name ? playerEntry.getUsername() : String.valueOf(playerEntry.getValue());
+            return name ? playerEntry.username() : String.valueOf(playerEntry.value());
         }
         return placeholder;
     }
@@ -175,7 +175,7 @@ public class LeaderboardService {
 
             List<PlayerEntry> entries = kitLeaderboards.computeIfAbsent(leaderboardType, k -> new ArrayList<>());
 
-            entries.removeIf(e -> e.getUuid().equals(newEntry.getUuid()));
+            entries.removeIf(e -> e.uuid().equals(newEntry.uuid()));
 
             entries.add(newEntry);
 
@@ -193,9 +193,9 @@ public class LeaderboardService {
 
     private CompletableFuture<Void> loadLB(LeaderboardType leaderboardType,
                                            LeaderboardPlayerEntry leaderboardPlayerEntry) {
-        Kit kit = leaderboardPlayerEntry.getKit();
-        UUID playerUUID = leaderboardPlayerEntry.getPlayerUUID();
-        String username = leaderboardPlayerEntry.getUsername();
+        Kit kit = leaderboardPlayerEntry.kit();
+        UUID playerUUID = leaderboardPlayerEntry.playerUUID();
+        String username = leaderboardPlayerEntry.username();
 
         return getKitData(playerUUID, kit).thenAccept(kitData -> {
             if (kitData == null)

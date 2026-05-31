@@ -11,8 +11,10 @@ import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-
-import org.bukkit.*;
+import org.bukkit.Color;
+import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ArmorMeta;
@@ -126,9 +128,11 @@ public class ItemUtils {
         }
         return items;
     }
+
     public List<Component> getComponentLore(List<Component> lore) {
         return getComponentLore(lore, TagResolver.empty());
     }
+
     public List<Component> getComponentLore(List<Component> lore, TagResolver resolver) {
         if (resolver == TagResolver.empty()) return lore;
 
@@ -140,9 +144,11 @@ public class ItemUtils {
         }
         return newLore;
     }
+
     public List<Component> getLore(List<String> lore) {
         return getLore(lore, TagResolver.empty());
     }
+
     public List<Component> getLore(List<String> lore, TagResolver resolver) {
         List<Component> newLore = new ArrayList<>();
 
@@ -171,6 +177,7 @@ public class ItemUtils {
     public Material getMaterial(String key) {
         return Registry.MATERIAL.get(Key.key(key));
     }
+
     public ArmorTrim getArmorTrim(String materialKey, String patternKey) {
         if (materialKey == null || patternKey == null || materialKey.isEmpty() || patternKey.isEmpty()) return null;
         RegistryAccess registry = RegistryAccess.registryAccess();
@@ -183,6 +190,7 @@ public class ItemUtils {
                 ))
         );
     }
+
     public void clearFlags(ItemStack item) {
         TooltipDisplay hideAttributes = TooltipDisplay.tooltipDisplay()
                 .addHiddenComponents(

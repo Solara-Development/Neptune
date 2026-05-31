@@ -10,7 +10,9 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.*;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.CraftingInventory;
 
 import java.util.Arrays;
@@ -24,7 +26,7 @@ public class KitEditorListener implements Listener {
         if (profile == null)
             return;
         if (profile.hasState(ProfileState.IN_KIT_EDITOR)) {
-            if (event.getView().getCursor().getType() != Material.AIR){
+            if (event.getView().getCursor().getType() != Material.AIR) {
                 event.getPlayer().getInventory().addItem(event.getView().getCursor());
                 event.getView().setCursor(null);
             }
@@ -42,6 +44,7 @@ public class KitEditorListener implements Listener {
             }
         }
     }
+
     @EventHandler
     public void onClick(InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player player)) return;
