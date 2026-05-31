@@ -2,6 +2,7 @@ package dev.lrxh.neptune.utils;
 
 import dev.lrxh.neptune.Neptune;
 import lombok.Getter;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
@@ -36,7 +37,13 @@ public class ConfigFile {
             }
         }
 
-        this.configuration = YamlConfiguration.loadConfiguration(this.file);
+        this.configuration = new YamlConfiguration();
+        try {
+            this.configuration.load(this.file);
+        } catch (IOException | InvalidConfigurationException e) {
+            ServerUtils.error("Failed to load '" + name + ".yml'" + e);
+            Neptune.get().setErrored();
+        }
     }
 
     public void save() {

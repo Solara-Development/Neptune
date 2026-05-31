@@ -19,6 +19,7 @@ public abstract class IService {
     public abstract void save();
 
     public <T extends ConfigData> void saveAll(String root, Collection<T> items, Function<T, String> keyFn) {
+        if (Neptune.get().isErrored()) return;
         FileConfiguration config = getConfigFile().getConfiguration();
         config.set(root, null);
         for (T item : items) item.write(config.createSection(root + "." + keyFn.apply(item)));
