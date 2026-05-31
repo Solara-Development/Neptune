@@ -51,6 +51,7 @@ public class ItemBrowserMenu extends PaginatedMenu {
                 public ItemStack getItemStack(Player p) {
                     return new ItemBuilder(mat)
                             .name("&f" + formatName(mat))
+                            .lore(MenusLocale.ITEM_BROWSER_ITEM_LORE.getStringList())
                             .build();
                 }
 

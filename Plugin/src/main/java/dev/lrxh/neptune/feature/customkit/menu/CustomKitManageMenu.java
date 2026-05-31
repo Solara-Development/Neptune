@@ -3,6 +3,7 @@ package dev.lrxh.neptune.feature.customkit.menu;
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.configs.impl.MenusLocale;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
+import dev.lrxh.neptune.configs.impl.SignsLocale;
 import dev.lrxh.neptune.feature.customkit.CustomKit;
 import dev.lrxh.neptune.feature.customkit.CustomKitService;
 import dev.lrxh.neptune.feature.itembrowser.ItemBrowserService;
@@ -82,7 +83,7 @@ public class CustomKitManageMenu extends Menu {
             @Override
             public void onClick(ClickType type, Player p) {
                 p.closeInventory();
-                SignInputMenu.open(p, "", "Enter max health (1-40)", input -> {
+                SignInputMenu.open(p, "", SignsLocale.CUSTOM_KIT_HEALTH.getStringList(), input -> {
                     try {
                         double health = Double.parseDouble(input);
                         if (health < 1 || health > 40) {

@@ -74,7 +74,7 @@ public class PlaceholderUtil {
             placeholders = TagResolver.resolver(placeholders,
                 Placeholder.parsed("kit", kit.getDisplayName()),
                 Placeholder.parsed("kit-division", kitData.getDivision() != null ? kitData.getDivision().getName() : "None"),
-                Placeholder.unparsed("rounds", kit.is(KitRule.BEST_OF_THREE) ? "3" : "1"),
+                Placeholder.unparsed("rounds", String.valueOf(kit.getRounds())),
                 Placeholder.unparsed("kit-current-win-streak", String.valueOf(kitData.getCurrentStreak())),
                 Placeholder.unparsed("kit-best-win-streak", String.valueOf(kitData.getBestStreak())),
                 Placeholder.unparsed("kit-wins", String.valueOf(kitData.getWins())),

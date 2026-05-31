@@ -10,7 +10,6 @@ import dev.lrxh.neptune.feature.queue.QueueEntry;
 import dev.lrxh.neptune.feature.queue.QueueService;
 import dev.lrxh.neptune.game.kit.Kit;
 import dev.lrxh.neptune.game.kit.KitService;
-import dev.lrxh.neptune.game.kit.impl.KitRule;
 import dev.lrxh.neptune.game.match.Match;
 import dev.lrxh.neptune.profile.data.KitData;
 import dev.lrxh.neptune.profile.data.ProfileState;
@@ -57,7 +56,7 @@ public class KitPlaceholders implements PAPIPlaceholder {
         switch (type) {
             case "name" -> { return kit.getDisplayName(); }
             case "division" -> { return kitData.getDivision() != null ? kitData.getDivision().getDisplayName() : "None"; }
-            case "rounds" -> { return kit.is(KitRule.BEST_OF_THREE) ? "3" : "1"; }
+            case "rounds" -> { return String.valueOf(kit.getRounds()); }
             case "current_win_streak" -> { return String.valueOf(kitData.getCurrentStreak()); }
             case "best_win_streak" -> { return String.valueOf(kitData.getBestStreak()); }
             case "wins" -> { return String.valueOf(kitData.getWins()); }

@@ -55,7 +55,7 @@ public class CustomKitSelectMenu extends Menu {
                             p.sendMessage(CC.error("No arena found, please contact an admin"));
                             return;
                         }
-                        DuelRequest duelRequest = new DuelRequest(p.getUniqueId(), transientKit, arena, party, 1);
+                        DuelRequest duelRequest = new DuelRequest(p.getUniqueId(), transientKit, arena, party, transientKit.getRounds());
                         profile.sendDuel(duelRequest);
                         Bukkit.getScheduler().runTask(Neptune.get(), () -> p.closeInventory());
                     });

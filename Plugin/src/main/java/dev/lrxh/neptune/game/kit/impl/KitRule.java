@@ -15,7 +15,6 @@ public enum KitRule implements IKitRule {
     BOXING(Material.DIAMOND_CHESTPLATE, "Allow/Deny Boxing", "Boxing", "boxing"),
     ALLOW_ARENA_BREAK(Material.WOODEN_AXE, "Allow Players to break blocks from the arena (They need to be whitelisted)", "Arena Break", "arenaBreak"),
     DAMAGE(Material.DIAMOND_SWORD, "Allow/Deny Players to take Damage", "Damage", "damage"),
-    BEST_OF_THREE(Material.GOLDEN_AXE, "If enabled Players would need to win 3 times", "Best of 3", "bestOfThree"),
     SATURATION_HEAL(Material.GOLDEN_APPLE, "If Players should regen from saturation", "Natural Regeneration", "saturationHeal"),
     SHOW_HP(Material.APPLE, "If players should see their enemies health under their name", "Show Health", "showHP"),
     ALLOW_KIT_EDITOR(Material.WOODEN_AXE, "If players should be able to modify this kit in kiteditor.", "Allow Kit Editor", "allowKitEditor", false),

@@ -5,7 +5,6 @@ import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.feature.queue.QueueEntry;
 import dev.lrxh.neptune.feature.queue.QueueService;
 import dev.lrxh.neptune.game.kit.Kit;
-import dev.lrxh.neptune.game.kit.impl.KitRule;
 import dev.lrxh.neptune.game.match.MatchService;
 import dev.lrxh.neptune.game.match.impl.participant.Participant;
 import dev.lrxh.neptune.profile.data.SettingData;
@@ -117,7 +116,7 @@ public class QueueCheckTask extends NeptuneRunnable {
                     @Override
                     public void run() {
                         MatchService.get().startMatch(participant1, participant2, kit, arena, false,
-                                kit.is(KitRule.BEST_OF_THREE) ? 3 : 1);
+                                kit.getRounds());
                     }
                 });
             });

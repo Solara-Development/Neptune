@@ -21,6 +21,7 @@ public class ConfigService {
     private ConfigFile armorTrimsConfig;
     private ConfigFile shieldPatternsConfig;
     private ConfigFile soundsConfig;
+    private ConfigFile signsConfig;
 
     public static ConfigService get() {
         if (instance == null) instance = new ConfigService();
@@ -42,6 +43,7 @@ public class ConfigService {
         armorTrimsConfig = new ConfigFile("armor-trims");
         soundsConfig = new ConfigFile("sounds");
         shieldPatternsConfig = new ConfigFile("shield-patterns");
+        signsConfig = new ConfigFile("signs");
 
         initialize();
     }
@@ -54,6 +56,7 @@ public class ConfigService {
         ScoreboardLocale.TITLE.load();
         CosmeticsLocale.LIGHTNING_DISPLAY_NAME.load();
         SoundsLocale.MATCH_START.load();
+        SignsLocale.CUSTOM_KIT_NAME.load();
 
         HotbarLocale.LOBBY_PARTY_CREATE_NAME.update();
         MessagesLocale.MATCH_FOUND.update();
@@ -62,5 +65,6 @@ public class ConfigService {
         ScoreboardLocale.TITLE.update();
         CosmeticsLocale.LIGHTNING_DISPLAY_NAME.update();
         SoundsLocale.MATCH_START.update();
+        SignsLocale.CUSTOM_KIT_NAME.update();
     }
 }

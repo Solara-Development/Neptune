@@ -89,7 +89,7 @@ public class CustomKitQueueService {
             }
             arena.getWhitelistedBlocks().clear();
             arena.getWhitelistedBlocks().addAll(kit.getWhitelistedBlocks());
-            MatchService.get().startMatch(new Participant(joiner), new Participant(host), transientKit, arena, true, 1);
+            MatchService.get().startMatch(new Participant(joiner), new Participant(host), transientKit, arena, true, transientKit.getRounds());
         }));
     }
 }

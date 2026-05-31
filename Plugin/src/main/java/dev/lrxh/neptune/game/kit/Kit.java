@@ -49,6 +49,7 @@ public class Kit implements IKit, ConfigData {
     private double health;
     private List<PotionEffect> potionEffects;
     private double damageMultiplier;
+    private int rounds = 1;
 
     public Kit(String name, String displayName, List<ItemStack> items, HashSet<Arena> arenas, ItemStack icon,
                HashMap<KitRule, Boolean> rules, int slot, double health, int kitEditorSlot, int leaderboardSlot,
@@ -181,6 +182,8 @@ public class Kit implements IKit, ConfigData {
         s.set("kitEditor-slot", kitEditorSlot);
         s.set("leaderboard-slot", leaderboardSlot);
         s.set("damage-multiplier", damageMultiplier);
+        s.set("rounds", rounds);
+        s.set("bestOfThree", null);
         for (Map.Entry<KitRule, Boolean> e : rules.entrySet()) {
             s.set(e.getKey().getSaveName(), e.getValue());
         }
@@ -216,8 +219,20 @@ public class Kit implements IKit, ConfigData {
             if (effect != null) potionEffects.add(effect);
         }
 
-        return new Kit(name, s.getString("displayName", name), items, arenas, icon, rules,
+        int rounds = clampRounds(s.getInt("rounds", defaultRounds(s.getBoolean("bestOfThree", false))));
+
+        Kit kit = new Kit(name, s.getString("displayName", name), items, arenas, icon, rules,
                 slot, health, kitEditorSlot, leaderboardSlot, potionEffects, damageMultiplier);
+        kit.setRounds(rounds);
+        return kit;
+    }
+
+    private static int defaultRounds(boolean legacyBestOfThree) {
+        return legacyBestOfThree ? 3 : 1;
+    }
+
+    public static int clampRounds(int r) {
+        return Math.max(1, Math.min(9, r));
     }
 
     public boolean is(KitRule kitRule) {

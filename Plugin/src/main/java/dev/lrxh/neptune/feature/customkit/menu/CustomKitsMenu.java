@@ -3,6 +3,7 @@ package dev.lrxh.neptune.feature.customkit.menu;
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.configs.impl.MenusLocale;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
+import dev.lrxh.neptune.configs.impl.SignsLocale;
 import dev.lrxh.neptune.feature.customkit.CustomKit;
 import dev.lrxh.neptune.feature.customkit.CustomKitService;
 import dev.lrxh.neptune.feature.customkit.queue.CustomKitQueueService;
@@ -87,7 +88,7 @@ public class CustomKitsMenu extends Menu {
                         return;
                     }
                     p.closeInventory();
-                    SignInputMenu.open(p, "", "Enter kit name", input -> {
+                    SignInputMenu.open(p, "", SignsLocale.CUSTOM_KIT_NAME.getStringList(), input -> {
                         CustomKit created = CustomKitService.get().create(p.getUniqueId(), input);
                         if (created == null) {
                             MessagesLocale.CUSTOM_KIT_CREATE_FAIL.send(p.getUniqueId());

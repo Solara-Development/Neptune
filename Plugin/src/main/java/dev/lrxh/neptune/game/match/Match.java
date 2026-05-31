@@ -224,7 +224,7 @@ public abstract class Match implements IMatch {
         if (this instanceof SoloFightMatch) {
             MatchState matchState = this.getState();
 
-            if (kit.is(KitRule.BEST_OF_THREE) && matchState.equals(MatchState.STARTING)) {
+            if (getRounds() > 1 && matchState.equals(MatchState.STARTING)) {
                 return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME_BEST_OF.getStringList());
             }
 

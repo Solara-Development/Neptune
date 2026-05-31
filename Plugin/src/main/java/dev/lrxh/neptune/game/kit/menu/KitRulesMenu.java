@@ -2,6 +2,7 @@ package dev.lrxh.neptune.game.kit.menu;
 
 import dev.lrxh.neptune.game.kit.Kit;
 import dev.lrxh.neptune.game.kit.impl.KitRule;
+import dev.lrxh.neptune.game.kit.menu.button.KitRoundsButton;
 import dev.lrxh.neptune.game.kit.menu.button.KitRuleButton;
 import dev.lrxh.neptune.utils.menu.Button;
 import dev.lrxh.neptune.utils.menu.Filter;
@@ -30,6 +31,7 @@ public class KitRulesMenu extends Menu {
             buttons.add(new KitRuleButton(i++, kit, entry.getKey()));
         }
 
+        buttons.add(new KitRoundsButton(getSize() - 5, kit));
         buttons.add(new ReturnButton(getSize() - 9, new KitManagementMenu(kit)));
 
         return buttons;

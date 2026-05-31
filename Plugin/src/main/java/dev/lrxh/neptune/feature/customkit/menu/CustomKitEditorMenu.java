@@ -3,6 +3,7 @@ package dev.lrxh.neptune.feature.customkit.menu;
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.configs.impl.MenusLocale;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
+import dev.lrxh.neptune.configs.impl.SignsLocale;
 import dev.lrxh.neptune.feature.customkit.CustomKit;
 import dev.lrxh.neptune.feature.customkit.enchant.EnchantmentBrowserMenu;
 import dev.lrxh.neptune.feature.itembrowser.ItemBrowserService;
@@ -71,7 +72,7 @@ public class CustomKitEditorMenu extends Menu {
                 if (item != null && !item.getType().isAir()) {
                     if (type == ClickType.SHIFT_RIGHT) {
                         p.closeInventory();
-                        SignInputMenu.open(p, "", "Enter amount (1-64)", input -> {
+                        SignInputMenu.open(p, "", SignsLocale.CUSTOM_KIT_AMOUNT.getStringList(), input -> {
                             try {
                                 item.setAmount(Math.max(1, Math.min(64, Integer.parseInt(input.trim()))));
                                 kit.setItemAt(contentsIndex, item);

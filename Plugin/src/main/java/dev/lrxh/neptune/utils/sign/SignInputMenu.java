@@ -14,6 +14,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -31,19 +32,27 @@ public class SignInputMenu {
     }
 
     public static void open(Player player, String prefill, String prompt, Consumer<String> callback) {
+        String p = prompt == null ? "" : prompt;
+        open(player, prefill, List.of(
+                "<input>",
+                "^^^^^^^^^^^^^^^",
+                p.length() > 15 ? p.substring(0, 15) : p,
+                p.length() > 15 ? p.substring(15, Math.min(p.length(), 30)) : ""
+        ), callback);
+    }
+
+    public static void open(Player player, String prefill, List<String> promptLines, Consumer<String> callback) {
         Location loc = player.getLocation().getBlock().getLocation();
         sessions.put(player.getUniqueId(), new SignInputMenu(loc, callback));
 
         player.sendBlockChange(loc, Material.OAK_SIGN.createBlockData());
 
         Vector3i position = new Vector3i(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
-        String p = prompt == null ? "" : prompt;
-        String[] lines = {
-                prefill == null ? "" : prefill,
-                "^^^^^^^^^^^^^^^",
-                p.length() > 15 ? p.substring(0, 15) : p,
-                p.length() > 15 ? p.substring(15, Math.min(p.length(), 30)) : ""
-        };
+        String in = prefill == null ? "" : prefill;
+        String[] lines = new String[4];
+        for (int i = 0; i < 4; i++) {
+            lines[i] = (i < promptLines.size() ? promptLines.get(i) : "").replace("<input>", in);
+        }
 
         PacketEvents.getAPI().getPlayerManager().sendPacket(player,
                 new WrapperPlayServerBlockEntityData(position, BlockEntityTypes.SIGN, signNBT(position, lines)));

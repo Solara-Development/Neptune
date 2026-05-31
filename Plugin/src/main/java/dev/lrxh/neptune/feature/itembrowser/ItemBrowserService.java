@@ -1,6 +1,7 @@
 package dev.lrxh.neptune.feature.itembrowser;
 
 import dev.lrxh.api.features.IItemBrowserService;
+import dev.lrxh.neptune.configs.impl.SignsLocale;
 import dev.lrxh.neptune.utils.sign.SignInputMenu;
 import org.bukkit.Material;
 import org.bukkit.Registry;
@@ -90,7 +91,7 @@ public class ItemBrowserService implements IItemBrowserService {
 
     public void requestSearch(Player player, String section, Consumer<Material> itemConsumer, Runnable returnConsumer) {
         player.closeInventory();
-        SignInputMenu.open(player, "", "Enter search", input ->
+        SignInputMenu.open(player, "", SignsLocale.ITEM_BROWSER_SEARCH.getStringList(), input ->
                 openBrowser(player, section, itemConsumer, input, returnConsumer));
     }
 

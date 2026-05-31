@@ -29,6 +29,7 @@ public class CustomKit {
     private List<String> arenaNames;
     private List<Material> whitelistedBlocks;
     private double health;
+    private int rounds = 1;
     private List<PotionEffect> potionEffects;
 
     public CustomKit(UUID owner, String name) {
@@ -68,6 +69,7 @@ public class CustomKit {
             if (mat != null) whitelistedBlocks.add(mat);
         }
         this.health = d.health <= 0 ? 20 : d.health;
+        this.rounds = Kit.clampRounds(d.rounds);
         this.potionEffects = new ArrayList<>();
         if (d.effects != null) for (String e : d.effects) {
             PotionEffect effect = PotionEffectUtils.deserialize(e);
@@ -126,7 +128,7 @@ public class CustomKit {
         HashMap<KitRule, Boolean> r = new HashMap<>(rules);
         r.put(KitRule.HIDDEN, true);
         return new Kit(name, displayName, new ArrayList<>(items), arenas, icon, r,
-                0, 0, 0, 0, 0, health, new ArrayList<>(potionEffects), 1.0);
+                0, 0, 0, 0, 0, health, new ArrayList<>(potionEffects), 1.0, rounds);
     }
 
     public String serialize() {
@@ -141,6 +143,7 @@ public class CustomKit {
         d.whitelist = new ArrayList<>();
         for (Material m : whitelistedBlocks) d.whitelist.add(m.name());
         d.health = health;
+        d.rounds = rounds;
         d.effects = new ArrayList<>();
         for (PotionEffect e : potionEffects) d.effects.add(PotionEffectUtils.serialize(e));
         return GSON.toJson(d);
@@ -155,5 +158,6 @@ public class CustomKit {
         HashMap<String, Boolean> rules;
         List<String> arenas, whitelist, effects;
         double health;
+        int rounds;
     }
 }
