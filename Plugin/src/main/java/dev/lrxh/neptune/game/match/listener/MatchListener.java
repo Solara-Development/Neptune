@@ -68,13 +68,19 @@ public class MatchListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onCrystalSpawn(EntitySpawnEvent event) {
+    public void onEntitySpawn(EntitySpawnEvent event) {
         if (event.getEntity() instanceof EnderCrystal crystal) {
             Player player = getNearbyPlayer(crystal.getLocation());
             if (player == null)
                 return;
 
             getMatchForPlayer(player).ifPresent(match -> match.getEntities().add(crystal));
+        } else if (event.getEntity() instanceof ArmorStand armorStand) {
+            Player player = getNearbyPlayer(armorStand.getLocation());
+            if (player == null)
+                return;
+
+            getMatchForPlayer(player).ifPresent(match -> match.getEntities().add(armorStand));
         }
     }
 

@@ -15,6 +15,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -42,6 +43,9 @@ public class GlobalListener implements Listener {
     @EventHandler
     public void onCreatureSpawnEvent(CreatureSpawnEvent event) {
         if (event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.SPAWNER_EGG) || event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.EGG) || event.getSpawnReason().equals(CreatureSpawnEvent.SpawnReason.BUCKET)) {
+            return;
+        }
+        if (event.getEntity() instanceof ArmorStand) {
             return;
         }
         event.setCancelled(true);
