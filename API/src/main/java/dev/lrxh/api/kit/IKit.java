@@ -26,6 +26,8 @@ public interface IKit {
 
     int getKitEditorSlot();
 
+    int getLeaderboardSlot();
+
     double getHealth();
 
     List<PotionEffect> getPotionEffects();

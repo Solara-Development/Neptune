@@ -126,7 +126,7 @@ public class CustomKit {
         HashMap<KitRule, Boolean> r = new HashMap<>(rules);
         r.put(KitRule.HIDDEN, true);
         return new Kit(name, displayName, new ArrayList<>(items), arenas, icon, r,
-                0, 0, 0, 0, health, new ArrayList<>(potionEffects), 1.0);
+                0, 0, 0, 0, 0, health, new ArrayList<>(potionEffects), 1.0);
     }
 
     public String serialize() {

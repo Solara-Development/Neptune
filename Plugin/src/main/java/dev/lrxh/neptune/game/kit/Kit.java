@@ -45,13 +45,13 @@ public class Kit implements IKit, ConfigData {
     private HashSet<Arena> arenas;
     private ItemStack icon;
     private HashMap<KitRule, Boolean> rules;
-    private int queue, playing, slot, kitEditorSlot;
+    private int queue, playing, slot, kitEditorSlot, leaderboardSlot;
     private double health;
     private List<PotionEffect> potionEffects;
     private double damageMultiplier;
 
     public Kit(String name, String displayName, List<ItemStack> items, HashSet<Arena> arenas, ItemStack icon,
-               HashMap<KitRule, Boolean> rules, int slot, double health, int kitEditorSlot,
+               HashMap<KitRule, Boolean> rules, int slot, double health, int kitEditorSlot, int leaderboardSlot,
                List<PotionEffect> potionEffects, double damageMultiplier) {
         this.name = name;
         this.displayName = displayName;
@@ -64,6 +64,7 @@ public class Kit implements IKit, ConfigData {
         this.slot = slot;
         this.health = health;
         this.kitEditorSlot = kitEditorSlot;
+        this.leaderboardSlot = leaderboardSlot;
         this.potionEffects = potionEffects;
         this.damageMultiplier = damageMultiplier;
 
@@ -82,6 +83,7 @@ public class Kit implements IKit, ConfigData {
         this.slot = KitService.get().kits.size() + 1;
         this.health = 20;
         this.kitEditorSlot = slot;
+        this.leaderboardSlot = slot;
         this.damageMultiplier = 1.0;
 
         this.potionEffects = new ArrayList<>();
@@ -109,6 +111,7 @@ public class Kit implements IKit, ConfigData {
         this.slot = KitService.get().kits.size() + 1;
         this.health = 20;
         this.kitEditorSlot = slot;
+        this.leaderboardSlot = slot;
         this.potionEffects = new ArrayList<>();
         this.damageMultiplier = 1.0;
 
@@ -176,6 +179,7 @@ public class Kit implements IKit, ConfigData {
         s.set("slot", slot);
         s.set("health", health);
         s.set("kitEditor-slot", kitEditorSlot);
+        s.set("leaderboard-slot", leaderboardSlot);
         s.set("damage-multiplier", damageMultiplier);
         for (Map.Entry<KitRule, Boolean> e : rules.entrySet()) {
             s.set(e.getKey().getSaveName(), e.getValue());
@@ -187,6 +191,7 @@ public class Kit implements IKit, ConfigData {
         List<ItemStack> items = ItemUtils.deserialize(s.getString("items", ""));
         int slot = s.getInt("slot", KitService.get().kits.size() + 1);
         int kitEditorSlot = s.getInt("kitEditor-slot", slot);
+        int leaderboardSlot = s.getInt("leaderboard-slot", slot);
         double health = s.getDouble("health", 20);
         double damageMultiplier = s.getDouble("damage-multiplier", 1.0);
 
@@ -212,7 +217,7 @@ public class Kit implements IKit, ConfigData {
         }
 
         return new Kit(name, s.getString("displayName", name), items, arenas, icon, rules,
-                slot, health, kitEditorSlot, potionEffects, damageMultiplier);
+                slot, health, kitEditorSlot, leaderboardSlot, potionEffects, damageMultiplier);
     }
 
     public boolean is(KitRule kitRule) {

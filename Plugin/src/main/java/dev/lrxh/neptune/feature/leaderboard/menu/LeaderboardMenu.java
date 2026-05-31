@@ -38,7 +38,7 @@ public class LeaderboardMenu extends Menu {
 
         for (Kit kit : KitService.get().kits) {
             if (kit.getRules().get(KitRule.HIDDEN)) continue;
-            buttons.add(new DisplayButton(kit.getSlot(), buildKitItem(player, kit)));
+            buttons.add(new DisplayButton(kit.getLeaderboardSlot(), buildKitItem(player, kit)));
         }
 
         for (LeaderboardType type : LeaderboardType.values()) {

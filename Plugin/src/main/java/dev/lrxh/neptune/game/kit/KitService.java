@@ -106,6 +106,7 @@ public class KitService extends IService implements IKitService {
                 kit.getSlot(),
                 kit.getHealth(),
                 kit.getKitEditorSlot(),
+                kit.getLeaderboardSlot(),
                 kit.getPotionEffects(),
                 kit.getDamageMultiplier()
         );
