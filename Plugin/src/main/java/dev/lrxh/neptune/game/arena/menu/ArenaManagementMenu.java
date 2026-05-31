@@ -38,6 +38,7 @@ public class ArenaManagementMenu extends Menu {
             buttons.add(new ArenaSetSpawnButton(1, arena, ParticipantColor.RED));
 
             buttons.add(new ArenaEnableButton(getSize() - 1, arena));
+            buttons.add(new ArenaCustomKitButton(getSize() - 2, arena));
 
             buttons.add(new ArenaRenameButton(23, arena));
             buttons.add(new DisplayButton(22, Material.MAP, "&aTeleport to arena", o -> player.teleport(arena.getBlueSpawn())));

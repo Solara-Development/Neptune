@@ -37,6 +37,7 @@ public class Arena implements IArena, ConfigData {
     private Arena owner;
     private boolean doneLoading;
     private boolean inUse;
+    private boolean allowedInCustomKit;
 
     public Arena(String name, String displayName, Location redSpawn, Location blueSpawn, boolean enabled, int deathY, long time) {
         this.name = name;
@@ -50,6 +51,7 @@ public class Arena implements IArena, ConfigData {
         this.buildLimit = 0;
         this.whitelistedBlocks = new ArrayList<>();
         this.doneLoading = true;
+        this.allowedInCustomKit = true;
     }
 
     public Arena(String name, String displayName, Location redSpawn, Location blueSpawn,
@@ -189,6 +191,7 @@ public class Arena implements IArena, ConfigData {
         s.set("time", time);
         s.set("limit", buildLimit);
         s.set("whitelistedBlocks", getWhitelistedBlocksAsString());
+        s.set("allowedInCustomKit", allowedInCustomKit);
         if (min != null) s.set("min", LocationUtil.serialize(min));
         if (max != null) s.set("max", LocationUtil.serialize(max));
         if (owner != null) s.set("owner", owner.getName());
@@ -201,13 +204,15 @@ public class Arena implements IArena, ConfigData {
             Material m = Material.getMaterial(n);
             if (m != null) blocks.add(m);
         }
-        return new Arena(name, s.getString("displayName"),
+        Arena arena = new Arena(name, s.getString("displayName"),
                 LocationUtil.deserialize(s.getString("redSpawn")),
                 LocationUtil.deserialize(s.getString("blueSpawn")),
                 LocationUtil.deserialize(s.getString("min")),
                 LocationUtil.deserialize(s.getString("max")),
                 s.getDouble("limit"), s.getBoolean("enabled"),
                 blocks, s.getInt("deathY", -68321), s.getLong("time"));
+        arena.setAllowedInCustomKit(s.getBoolean("allowedInCustomKit", true));
+        return arena;
     }
 
     public void restore() {
