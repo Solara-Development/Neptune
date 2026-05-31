@@ -6,12 +6,16 @@ import java.lang.reflect.Parameter;
 public record CommandParameters(int count, CommandParameter[] parameters) {
 
     public CommandParameters(Method method) {
+        this(method.getParameterCount(), buildParameters(method));
+    }
+
+    private static CommandParameter[] buildParameters(Method method) {
         CommandParameter[] parameters = new CommandParameter[method.getParameters().length];
         for (int i = 0; i < method.getParameters().length; i++) {
             Parameter param = method.getParameters()[i];
             parameters[i] = new CommandParameter(param.getType(), param, method.getParameterAnnotations()[i]);
         }
-        this(method.getParameterCount(), parameters);
+        return parameters;
     }
 
     public boolean isLastArgument(int index) {

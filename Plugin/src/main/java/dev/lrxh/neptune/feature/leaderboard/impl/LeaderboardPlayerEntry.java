@@ -5,6 +5,5 @@ import lombok.AllArgsConstructor;
 
 import java.util.UUID;
 
-@AllArgsConstructor
 public record LeaderboardPlayerEntry(String username, UUID playerUUID, Kit kit) {
 }

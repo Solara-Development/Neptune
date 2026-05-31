@@ -4,6 +4,5 @@ import lombok.AllArgsConstructor;
 
 import java.util.UUID;
 
-@AllArgsConstructor
 public record PlayerEntry(String username, UUID uuid, int value) {
 }

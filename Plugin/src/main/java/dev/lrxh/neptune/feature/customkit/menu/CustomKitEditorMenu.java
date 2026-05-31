@@ -99,8 +99,8 @@ public class CustomKitEditorMenu extends Menu {
                     }
                     return;
                 }
-                ItemBrowserService.get().openBrowser(p, section, material -> {
-                    kit.setItemAt(contentsIndex, new ItemStack(material));
+                ItemBrowserService.get().openItemBrowser(p, section, selected -> {
+                    kit.setItemAt(contentsIndex, selected);
                     save(p);
                     new CustomKitEditorMenu(kit).open(p);
                 }, () -> new CustomKitEditorMenu(kit).open(p));

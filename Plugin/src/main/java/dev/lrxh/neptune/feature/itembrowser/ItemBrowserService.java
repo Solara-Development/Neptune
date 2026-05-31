@@ -7,16 +7,22 @@ import org.bukkit.Material;
 import org.bukkit.Registry;
 import org.bukkit.block.BlockType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.potion.PotionType;
 
 import java.util.*;
 import java.util.function.Consumer;
 
 public class ItemBrowserService implements IItemBrowserService {
 
+    private static final Set<Material> POTION_MATERIALS = Set.of(
+            Material.POTION, Material.SPLASH_POTION, Material.LINGERING_POTION, Material.TIPPED_ARROW);
+
     private static ItemBrowserService instance;
 
     private final Map<String, List<Material>> sectionMaterials = new HashMap<>();
-    private final Map<String, List<Material>> computed = new HashMap<>();
+    private final Map<String, List<ItemStack>> computed = new HashMap<>();
 
     public static ItemBrowserService get() {
         if (instance == null) {
@@ -27,15 +33,25 @@ public class ItemBrowserService implements IItemBrowserService {
 
     @Override
     public List<Material> getItems(String section) {
+        return getItemStacks(section).stream().map(ItemStack::getType).distinct().toList();
+    }
+
+    public List<ItemStack> getItemStacks(String section) {
         return switch (section) {
             case "blocks", "items", "helmet", "chestplate", "leggings", "boots" ->
                     computed.computeIfAbsent(section, this::computeSection);
-            default -> sectionMaterials.getOrDefault(section, Collections.emptyList());
+            default -> {
+                List<ItemStack> list = new ArrayList<>();
+                for (Material m : sectionMaterials.getOrDefault(section, Collections.emptyList())) {
+                    list.add(new ItemStack(m));
+                }
+                yield list;
+            }
         };
     }
 
-    private List<Material> computeSection(String section) {
-        return switch (section) {
+    private List<ItemStack> computeSection(String section) {
+        List<Material> materials = switch (section) {
             case "blocks" -> getBlocks();
             case "items" -> getAllItems();
             case "helmet" -> bySuffix("_HELMET");
@@ -44,6 +60,23 @@ public class ItemBrowserService implements IItemBrowserService {
             case "boots" -> bySuffix("_BOOTS");
             default -> Collections.emptyList();
         };
+        List<ItemStack> list = new ArrayList<>();
+        for (Material m : materials) {
+            if (!m.isItem()) continue;
+            if (POTION_MATERIALS.contains(m)) {
+                for (PotionType type : PotionType.values()) {
+                    ItemStack stack = new ItemStack(m);
+                    if (stack.getItemMeta() instanceof PotionMeta meta) {
+                        meta.setBasePotionType(type);
+                        stack.setItemMeta(meta);
+                    }
+                    list.add(stack);
+                }
+            } else {
+                list.add(new ItemStack(m));
+            }
+        }
+        return list;
     }
 
     public void preloadSections() {
@@ -82,17 +115,21 @@ public class ItemBrowserService implements IItemBrowserService {
 
     @Override
     public void openBrowser(Player player, String section, Consumer<Material> itemConsumer, Runnable returnConsumer) {
-        openBrowser(player, section, itemConsumer, "", returnConsumer);
+        openItemBrowser(player, section, item -> itemConsumer.accept(item.getType()), "", returnConsumer);
     }
 
-    public void openBrowser(Player player, String section, Consumer<Material> itemConsumer, String search, Runnable returnConsumer) {
+    public void openItemBrowser(Player player, String section, Consumer<ItemStack> itemConsumer, Runnable returnConsumer) {
+        openItemBrowser(player, section, itemConsumer, "", returnConsumer);
+    }
+
+    public void openItemBrowser(Player player, String section, Consumer<ItemStack> itemConsumer, String search, Runnable returnConsumer) {
         new ItemBrowserMenu(get(), section, itemConsumer, search, returnConsumer).open(player);
     }
 
-    public void requestSearch(Player player, String section, Consumer<Material> itemConsumer, Runnable returnConsumer) {
+    public void requestSearch(Player player, String section, Consumer<ItemStack> itemConsumer, Runnable returnConsumer) {
         player.closeInventory();
         SignInputMenu.open(player, "", SignsLocale.ITEM_BROWSER_SEARCH.getStringList(), input ->
-                openBrowser(player, section, itemConsumer, input, returnConsumer));
+                openItemBrowser(player, section, itemConsumer, input, returnConsumer));
     }
 
     @Override

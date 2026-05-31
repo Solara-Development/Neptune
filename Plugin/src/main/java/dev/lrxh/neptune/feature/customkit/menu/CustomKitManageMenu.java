@@ -65,8 +65,8 @@ public class CustomKitManageMenu extends Menu {
         buttons.add(action(MenusLocale.CUSTOM_KIT_MANAGE_ICON_SLOT.getInt(),
                 new ItemBuilder(MenusLocale.CUSTOM_KIT_MANAGE_ICON_MATERIAL.getString())
                         .name(MenusLocale.CUSTOM_KIT_MANAGE_ICON_NAME.getString()).build(),
-                p -> ItemBrowserService.get().openBrowser(p, "items", material -> {
-                    kit.setIcon(new ItemStack(material));
+                p -> ItemBrowserService.get().openItemBrowser(p, "items", item -> {
+                    kit.setIcon(item);
                     save(p);
                     new CustomKitManageMenu(kit).open(p);
                 }, () -> new CustomKitManageMenu(kit).open(p))));
