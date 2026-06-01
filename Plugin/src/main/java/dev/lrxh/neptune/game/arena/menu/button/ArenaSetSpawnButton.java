@@ -41,11 +41,15 @@ public class ArenaSetSpawnButton extends Button {
 
     @Override
     public ItemStack getItemStack(Player player) {
-        if (participantColor.equals(ParticipantColor.BLUE)) {
-            return new ItemBuilder(Material.BLUE_WOOL).name("&9Set Blue spawn")
-                    .lore("&7X: " + arena.getBlueSpawn().getBlockX() + " Y: " + arena.getBlueSpawn().getBlockY() + " Z: " + arena.getBlueSpawn().getBlockZ()).build();
+        if (participantColor.equals(ParticipantColor.RED)) {
+            return new ItemBuilder(Material.RED_WOOL).name("&cSet Red spawn")
+                    .lore("&7Click to set the red team's spawn point",
+                            "&7X: " + arena.getRedSpawn().getBlockX() + " Y: " + arena.getRedSpawn().getBlockY() + " Z: " + arena.getRedSpawn().getBlockZ())
+                    .build();
         }
-        return new ItemBuilder(Material.RED_WOOL).name("&cSet Red spawn")
-                .lore("&7X: " + arena.getRedSpawn().getBlockX() + " Y: " + arena.getRedSpawn().getBlockY() + " Z: " + arena.getRedSpawn().getBlockZ()).build();
+        return new ItemBuilder(Material.BLUE_WOOL).name("&9Set Blue spawn")
+                .lore("&7Click to set the blue team's spawn point",
+                        "&7X: " + arena.getBlueSpawn().getBlockX() + " Y: " + arena.getBlueSpawn().getBlockY() + " Z: " + arena.getBlueSpawn().getBlockZ())
+                .build();
     }
 }

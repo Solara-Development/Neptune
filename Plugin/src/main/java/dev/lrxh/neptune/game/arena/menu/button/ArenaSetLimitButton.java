@@ -22,6 +22,14 @@ public class ArenaSetLimitButton extends Button {
     }
 
     @Override
+    public ItemStack getItemStack(Player player) {
+        return new ItemBuilder(Material.LADDER)
+                .name("&cSet Build Limit")
+                .lore("&7Click to set the maximum build height for this arena")
+                .build();
+    }
+
+    @Override
     public void onClick(ClickType type, Player player) {
         Profile profile = API.getProfile(player);
         profile.getArenaProcedure().setArena(arena);
@@ -29,10 +37,5 @@ public class ArenaSetLimitButton extends Button {
         player.sendMessage(CC.info("Go to the build limit and type &aDone"));
 
         player.closeInventory();
-    }
-
-    @Override
-    public ItemStack getItemStack(Player player) {
-        return new ItemBuilder(Material.LADDER).name("&cSet Build Limit").build();
     }
 }

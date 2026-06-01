@@ -24,9 +24,11 @@ public class ArenaSelectButton extends Button {
 
     @Override
     public ItemStack getItemStack(Player player) {
-        return new ItemBuilder(Material.DIAMOND_SWORD).name("&f" + arena.getName() + " &7(" + arena.getDisplayName() + "&7)").lore("&7Press to manage arena",
-                "&7Enabled: " + (arena.isEnabled() ? "&aEnabled" : "&cDisabled"),
-                "&7Setup: " + (arena.isSetup() ? "&aDone" : "&cNot Done"),
-                "&7Snapshot: " + (arena.isDoneLoading() ? "&aDone" : arena.isSetup() ? "&eLoading..." : "&cNot Setup")).build();
+        return new ItemBuilder(Material.DIAMOND_SWORD).name("&f" + arena.getName() + " &7(" + arena.getDisplayName() + "&7)")
+                .lore("&7Click to open this arena's management settings",
+                        "&7Enabled: " + (arena.isEnabled() ? "&aEnabled" : "&cDisabled"),
+                        "&7Setup: " + (arena.isSetup() ? "&aDone" : "&cNot Done"),
+                        "&7Snapshot: " + (arena.isDoneLoading() ? "&aDone" : arena.isSetup() ? "&eLoading..." : "&cNot Setup"))
+                .build();
     }
 }

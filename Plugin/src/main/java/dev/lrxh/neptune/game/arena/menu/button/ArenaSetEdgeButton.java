@@ -43,9 +43,13 @@ public class ArenaSetEdgeButton extends Button {
     public ItemStack getItemStack(Player player) {
         if (edgeType.equals(EdgeType.MIN)) {
             return new ItemBuilder(Material.BLUE_DYE).name("&9Set lowest edge")
-                    .lore("&7Min: " + arena.getMin().getBlockX() + " Y: " + arena.getMin().getBlockY() + " Z: " + arena.getMin().getBlockZ()).build();
+                    .lore("&7Click to set the lowest corner of the arena boundary",
+                            "&7Min: " + arena.getMin().getBlockX() + " Y: " + arena.getMin().getBlockY() + " Z: " + arena.getMin().getBlockZ())
+                    .build();
         }
         return new ItemBuilder(Material.RED_DYE).name("&cSet highest edge")
-                .lore("&7X: " + arena.getMax().getBlockX() + " Y: " + arena.getMax().getBlockY() + " Z: " + arena.getMax().getBlockZ()).build();
+                .lore("&7Click to set the highest corner of the arena boundary",
+                        "&7X: " + arena.getMax().getBlockX() + " Y: " + arena.getMax().getBlockY() + " Z: " + arena.getMax().getBlockZ())
+                .build();
     }
 }

@@ -21,6 +21,15 @@ public class ArenaCreateButton extends Button {
     }
 
     @Override
+    public ItemStack getItemStack(Player player) {
+        return new ItemBuilder(Material.GREEN_STAINED_GLASS_PANE)
+                .name("&aCreate arena")
+                .lore("&7Click to create a new arena")
+                .build();
+    }
+
+
+    @Override
     public void onClick(ClickType type, Player player) {
         Location location = Neptune.get().getCache().getSpawn();
         if (location == null) {
@@ -43,10 +52,5 @@ public class ArenaCreateButton extends Button {
             new ArenasManagementMenu().open(player);
             ArenaService.get().save();
         });
-    }
-
-    @Override
-    public ItemStack getItemStack(Player player) {
-        return new ItemBuilder(Material.GREEN_STAINED_GLASS_PANE).name("&aCreate arena").build();
     }
 }

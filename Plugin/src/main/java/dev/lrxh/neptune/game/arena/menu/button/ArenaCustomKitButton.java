@@ -28,8 +28,12 @@ public class ArenaCustomKitButton extends Button {
     @Override
     public ItemStack getItemStack(Player player) {
         if (arena.isAllowedInCustomKit()) {
-            return new ItemBuilder(Material.GREEN_WOOL).name("&aAllowed in Custom Kits").build();
+            return new ItemBuilder(Material.GREEN_WOOL).name("&aAllowed in Custom Kits")
+                    .lore("&7Click to disallow custom kits in this arena")
+                    .build();
         }
-        return new ItemBuilder(Material.RED_WOOL).name("&cNot Allowed in Custom Kits").build();
+        return new ItemBuilder(Material.RED_WOOL).name("&cNot Allowed in Custom Kits")
+                .lore("&7Click to allow custom kits in this arena")
+                .build();
     }
 }

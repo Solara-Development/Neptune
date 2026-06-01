@@ -17,6 +17,7 @@ import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -60,7 +61,7 @@ public class ArenaDuplicatesMenu extends Menu {
             });
         }
 
-        buttons.add(new DisplayButton(getSize() - 4, Material.LIME_DYE, "&aAdd Duplicate", p -> {
+        buttons.add(new DisplayButton(getSize() - 4, Material.LIME_DYE, "&aAdd Duplicate", Arrays.asList("&7Click to create additional copies of this arena"), p -> {
             p.closeInventory();
             SignInputMenu.open(p, "", "Amount of duplicates (max 36)", input -> {
                 final int amount;
@@ -95,7 +96,7 @@ public class ArenaDuplicatesMenu extends Menu {
             });
         }));
 
-        buttons.add(new DisplayButton(getSize() - 6, Material.EMERALD, "&aRecopy Duplicates", p -> {
+        buttons.add(new DisplayButton(getSize() - 6, Material.EMERALD, "&aRecopy Duplicates", Arrays.asList("&7Click to repaste all duplicate copies of this arena"), p -> {
             if (!ArenaDuplicator.isAvailable()) {
                 p.sendMessage(CC.error("FastAsyncWorldEdit is not installed."));
                 return;
