@@ -91,9 +91,16 @@ public class ArenaEditorChatListener implements Listener {
                 new NeptuneRunnable() {
                     @Override
                     public void run() {
-                        arena.setMax(player.getLocation());
+                        if (firstSetup) {
+                            arena.setMaxDirect(player.getLocation());
+                        } else {
+                            arena.setMax(player.getLocation());
+                        }
                         if (firstSetup && Neptune.get().isDuplicatesEnabled()) {
                             ArenaService.get().createDuplicate(arena);
+                        }
+                        if (firstSetup) {
+                            arena.capture();
                         }
                         new NeptuneRunnable() {
                             @Override

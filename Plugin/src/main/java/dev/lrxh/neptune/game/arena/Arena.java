@@ -256,6 +256,10 @@ public class Arena implements IArena, ConfigData {
         capture();
     }
 
+    public void setMaxDirect(Location max) {
+        this.max = max;
+    }
+
     public void setRedSpawn(Location redSpawn) {
         this.redSpawn = redSpawn;
         if (buildLimit == 68321) {
