@@ -59,6 +59,36 @@ public class VirtualArena implements IArena {
     }
 
     @Override
+    public double getBuildLimit() {
+        return owner.getBuildLimit();
+    }
+
+    @Override
+    public List<Material> getWhitelistedBlocks() {
+        return owner.getWhitelistedBlocks();
+    }
+
+    @Override
+    public int getDeathY() {
+        return owner.getDeathY();
+    }
+
+    @Override
+    public long getTime() {
+        return owner.getTime();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return owner.isEnabled();
+    }
+
+    @Override
+    public String getDisplayName() {
+        return owner.getDisplayName();
+    }
+
+    @Override
     public boolean isSetup() {
         return redSpawn != null && blueSpawn != null && min != null && max != null && virtualWorld != null;
     }

@@ -162,6 +162,12 @@ public class ArenaService extends IService implements IArenaService {
             }
             Bukkit.getScheduler().runTask(Neptune.get(), () -> {
                 for (Arena dup : dups) {
+                    dup.setBuildLimit(owner.getBuildLimit());
+                    dup.setWhitelistedBlocks(new ArrayList<>(owner.getWhitelistedBlocks()));
+                    dup.setDeathY(owner.getDeathY());
+                    dup.setTime(owner.getTime());
+                    dup.setEnabled(owner.isEnabled());
+                    dup.setAllowedInCustomKit(owner.isAllowedInCustomKit());
                     dup.capture();
                 }
             });

@@ -85,6 +85,40 @@ public class Arena implements IArena, ConfigData {
         this.whitelistedBlocks = new ArrayList<>();
     }
 
+    @Override
+    public double getBuildLimit() {
+        return owner != null ? owner.getBuildLimit() : buildLimit;
+    }
+
+    @Override
+    public List<Material> getWhitelistedBlocks() {
+        return owner != null ? owner.getWhitelistedBlocks() : whitelistedBlocks;
+    }
+
+    @Override
+    public int getDeathY() {
+        return owner != null ? owner.getDeathY() : deathY;
+    }
+
+    @Override
+    public long getTime() {
+        return owner != null ? owner.getTime() : time;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return owner != null ? owner.isEnabled() : enabled;
+    }
+
+    @Override
+    public String getDisplayName() {
+        return owner != null ? owner.getDisplayName() : displayName;
+    }
+
+    public boolean isAllowedInCustomKit() {
+        return owner != null ? owner.isAllowedInCustomKit() : allowedInCustomKit;
+    }
+
     public static Arena read(String name, ConfigurationSection s) {
         if (!s.contains("displayName")) return null;
         List<Material> blocks = new ArrayList<>();
