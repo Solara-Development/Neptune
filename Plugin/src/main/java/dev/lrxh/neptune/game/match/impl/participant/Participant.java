@@ -66,7 +66,9 @@ public class Participant implements IParticipant {
 
     public void setDead(boolean dead) {
         this.dead = dead;
-        playSound(SoundsLocale.getSound(SoundsLocale.PLAYER_DEATH));
+        if (dead) {
+            playSound(SoundsLocale.getSound(SoundsLocale.PLAYER_DEATH));
+        }
     }
 
     public boolean setCurrentCheckPoint(Location location) {
