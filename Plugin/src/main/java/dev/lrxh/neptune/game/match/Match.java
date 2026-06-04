@@ -41,6 +41,8 @@ import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.World;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Criteria;
@@ -419,6 +421,27 @@ public abstract class Match implements IMatch {
                 entity.remove();
         }
         entities.clear();
+
+        // Sweep arena bounds for any untracked item entities
+        if (arena != null) {
+            Location min = arena.getMin();
+            Location max = arena.getMax();
+            if (min != null && max != null && min.getWorld() != null) {
+                World world = min.getWorld();
+                double cx = (min.getX() + max.getX() + 1) / 2.0;
+                double cy = (min.getY() + max.getY() + 1) / 2.0;
+                double cz = (min.getZ() + max.getZ() + 1) / 2.0;
+                double rx = (max.getX() + 1 - min.getX()) / 2.0;
+                double ry = (max.getY() + 1 - min.getY()) / 2.0;
+                double rz = (max.getZ() + 1 - min.getZ()) / 2.0;
+                for (Entity nearby : new ArrayList<>(world.getNearbyEntities(
+                        new Location(world, cx, cy, cz), rx, ry, rz))) {
+                    if (nearby instanceof Item) {
+                        nearby.remove();
+                    }
+                }
+            }
+        }
     }
 
     public void setupParticipants() {

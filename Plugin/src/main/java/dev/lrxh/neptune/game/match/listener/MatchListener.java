@@ -18,7 +18,6 @@ import dev.lrxh.neptune.profile.ProfileService;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
 import dev.lrxh.neptune.utils.CC;
-import dev.lrxh.neptune.utils.EntityUtils;
 import dev.lrxh.neptune.utils.LocationUtil;
 import dev.lrxh.neptune.utils.WorldUtils;
 import dev.lrxh.neptune.utils.tasks.NeptuneRunnable;
@@ -1002,20 +1001,6 @@ public class MatchListener implements Listener {
                 retainWhitelistedBlocks(event.blockList(), match.getArena()));
     }
 
-    @EventHandler
-    public void onItemDrop(BlockBreakBlockEvent event) {
-        Player player = getNearbyPlayer(event.getBlock().getLocation());
-        if (player == null) {
-            event.getDrops().clear();
-            return;
-        }
-
-        getMatchForPlayer(player).ifPresent(match -> Bukkit.getScheduler().runTaskLater(Neptune.get(), () -> {
-            for (ItemStack item : event.getDrops()) {
-                match.getEntities().add(EntityUtils.getEntityByItemStack(player.getWorld(), item));
-            }
-        }, 1));
-    }
 
     @EventHandler
     public void onItemDrop(PlayerDropItemEvent event) {
