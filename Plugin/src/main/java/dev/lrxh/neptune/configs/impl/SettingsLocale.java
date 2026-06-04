@@ -35,6 +35,7 @@ public enum SettingsLocale implements IDataAccessor {
     REQUEST_EXPIRY_TIME("REQUEST.EXPIRY_TIME", "How long a request should last in seconds.", DataType.INT, "30"),
     VOID_Y_LOCATION("VOID_Y_LOCATION", "The Y level at which players are considered to be in the void and will be teleported back to spawn.", DataType.INT,
             "-64"),
+    STARTING_ELO("STARTING_ELO", "The starting ELO rating for new players. Requires a server restart or full profile reset to apply to existing players.", DataType.INT, "0"),
     IN_MATCH_BLOCKED_COMMANDS("IN_MATCH.BLOCK_COMMANDS", "Commands which the player can't run during a match.",
             DataType.STRING_LIST,
             ""),

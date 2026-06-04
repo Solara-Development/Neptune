@@ -85,16 +85,16 @@ public class GameData implements IGameData {
         return kitData;
     }
 
-    public boolean run(Kit kit, boolean won) {
+    public boolean run(Kit kit, boolean won, int opponentElo) {
         lastPlayedKit = kit.getName();
         KitData kitData = this.kitData.get(kit);
 
         boolean value = false;
 
         if (won) {
-            value = updateWins(kitData);
+            value = updateWins(kitData, opponentElo);
         } else {
-            updateLosses(kitData);
+            updateLosses(kitData, opponentElo);
         }
 
         globalStats.update();
@@ -102,15 +102,15 @@ public class GameData implements IGameData {
         return value;
     }
 
-    private boolean updateWins(KitData kitData) {
+    private boolean updateWins(KitData kitData, int opponentElo) {
         kitData.setWins(kitData.getWins() + 1);
         updateWinStreak(kitData, true);
-        return kitData.updateElo(true);
+        return kitData.updateElo(true, opponentElo);
     }
 
-    private void updateLosses(KitData kitData) {
+    private void updateLosses(KitData kitData, int opponentElo) {
         kitData.setLosses(kitData.getLosses() + 1);
-        kitData.updateElo(false);
+        kitData.updateElo(false, opponentElo);
         updateWinStreak(kitData, false);
     }
 

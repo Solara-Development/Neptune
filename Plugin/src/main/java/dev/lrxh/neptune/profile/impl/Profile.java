@@ -5,6 +5,7 @@ import dev.lrxh.api.profile.IProfileState;
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
+import dev.lrxh.neptune.configs.impl.SettingsLocale;
 import dev.lrxh.neptune.feature.cosmetics.KillEffect;
 import dev.lrxh.neptune.feature.cosmetics.impl.cosmetics.armortrims.ArmorTrimCosmetic;
 import dev.lrxh.neptune.feature.cosmetics.impl.cosmetics.killmessage.KillMessageCosmetic;
@@ -104,7 +105,7 @@ public class Profile implements IProfile {
                         profileKitData.setDeaths(kitDocument.getInteger("DEATHS", 0));
                         profileKitData.setWins(kitDocument.getInteger("WINS", 0));
                         profileKitData.setLosses(kitDocument.getInteger("LOSSES", 0));
-                        profileKitData.setElo(kitDocument.getInteger("ELO", 0));
+                        profileKitData.setElo(kitDocument.getInteger("ELO", SettingsLocale.STARTING_ELO.getInt()));
                         profileKitData.setDivision(DivisionService.get().getDivisionByElo(profileKitData.getElo()));
                         profileKitData.setBestStreak(kitDocument.getInteger("WIN_STREAK_BEST", 0));
                         profileKitData.setKitLoadout(

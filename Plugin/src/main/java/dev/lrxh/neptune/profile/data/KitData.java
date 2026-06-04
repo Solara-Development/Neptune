@@ -3,6 +3,7 @@ package dev.lrxh.neptune.profile.data;
 import dev.lrxh.api.data.IKitData;
 import dev.lrxh.neptune.feature.divisions.DivisionService;
 import dev.lrxh.neptune.feature.divisions.impl.Division;
+import dev.lrxh.neptune.configs.impl.SettingsLocale;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.inventory.ItemStack;
@@ -12,7 +13,6 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 @Getter
 @Setter
@@ -24,8 +24,8 @@ public class KitData implements IKitData {
     private int bestStreak = 0;
     private int currentStreak = 0;
     private List<ItemStack> kitLoadout = new ArrayList<>();
-    private Division division = DivisionService.get().getDivisionByElo(0);
-    private int elo = 0;
+    private Division division = DivisionService.get().getDivisionByElo(SettingsLocale.STARTING_ELO.getInt());
+    private int elo = SettingsLocale.STARTING_ELO.getInt();
     private HashMap<String, Object> customData = new HashMap<>();
     private HashMap<String, Object> persistentData = new HashMap<>();
 
@@ -57,43 +57,21 @@ public class KitData implements IKitData {
         return persistentData.get(key) != null ? persistentData.get(key) : null;
     }
 
-    public boolean updateElo(boolean won) {
-        int min, max;
+    private static final int K_FACTOR = 32;
 
-        if (won) {
-            if (elo < 300) {
-                min = 15;
-                max = 25;
-            } else if (elo < 600) {
-                min = 10;
-                max = 20;
-            } else if (elo < 900) {
-                min = 5;
-                max = 15;
-            } else {
-                min = 3;
-                max = 10;
-            }
-        } else {
-            if (elo < 300) {
-                min = -5;
-                max = 0;
-            } else if (elo < 600) {
-                min = -10;
-                max = -5;
-            } else if (elo < 900) {
-                min = -20;
-                max = -10;
-            } else {
-                min = -25;
-                max = -15;
-            }
-        }
-
-        int change = ThreadLocalRandom.current().nextInt(min, max + 1);
+    /**
+     * Updates ELO rating using the Arpad Elo system.
+     *
+     * @param won         true if the player won, false if they lost
+     * @param opponentElo the opponent's ELO rating before this match
+     * @return true if the player ranked up to a new division
+     */
+    public boolean updateElo(boolean won, int opponentElo) {
+        double expected = 1.0 / (1.0 + Math.pow(10.0, (opponentElo - elo) / 400.0));
+        double actual = won ? 1.0 : 0.0;
+        int change = (int) Math.round(K_FACTOR * (actual - expected));
 
         elo += change;
-
         if (elo < 0) elo = 0;
 
         return updateDivision();

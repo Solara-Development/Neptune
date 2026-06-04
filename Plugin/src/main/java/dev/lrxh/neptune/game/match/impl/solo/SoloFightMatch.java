@@ -142,8 +142,8 @@ public class SoloFightMatch extends Match implements ISoloFightMatch {
         int initialWinnerElo = winnerData.get(getKit()).getElo();
         int initialLoserElo = loserData.get(getKit()).getElo();
 
-        boolean rankedUp = winnerData.run(getKit(), true);
-        loserData.run(getKit(), false);
+        boolean rankedUp = winnerData.run(getKit(), true, initialLoserElo);
+        loserData.run(getKit(), false, initialWinnerElo);
 
         winner.setEloChange(winnerData.get(getKit()).getElo() - initialWinnerElo);
         loser.setEloChange(loserData.get(getKit()).getElo() - initialLoserElo);

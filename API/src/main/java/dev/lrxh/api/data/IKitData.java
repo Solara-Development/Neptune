@@ -26,6 +26,10 @@ public interface IKitData {
     int getBestStreak();
 
     void setBestStreak(int amount);
+    int getElo();
+
+    void setElo(int elo);
+
 
     double getKdr();
 
