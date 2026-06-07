@@ -18,6 +18,7 @@ import org.bukkit.Registry;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ArmorMeta;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.trim.ArmorTrim;
 import org.bukkit.util.io.BukkitObjectInputStream;
@@ -180,15 +181,21 @@ public class ItemUtils {
 
     public ArmorTrim getArmorTrim(String materialKey, String patternKey) {
         if (materialKey == null || patternKey == null || materialKey.isEmpty() || patternKey.isEmpty()) return null;
-        RegistryAccess registry = RegistryAccess.registryAccess();
-        return new ArmorTrim(
-                Objects.requireNonNull(registry.getRegistry(RegistryKey.TRIM_MATERIAL).get(
-                        Objects.requireNonNull(NamespacedKey.fromString(materialKey))
-                )),
-                Objects.requireNonNull(registry.getRegistry(RegistryKey.TRIM_PATTERN).get(
-                        Objects.requireNonNull(NamespacedKey.fromString(patternKey))
-                ))
-        );
+        try {
+            RegistryAccess registry = RegistryAccess.registryAccess();
+            var materialRegistry = registry.getRegistry(RegistryKey.TRIM_MATERIAL);
+            var patternRegistry = registry.getRegistry(RegistryKey.TRIM_PATTERN);
+            var mKey = NamespacedKey.fromString(materialKey);
+            var pKey = NamespacedKey.fromString(patternKey);
+            if (materialRegistry == null || patternRegistry == null || mKey == null || pKey == null) return null;
+
+            var m = materialRegistry.get(mKey);
+            var p = patternRegistry.get(pKey);
+            if (m == null || p == null) return null;
+            return new ArmorTrim(m, p);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public void clearFlags(ItemStack item) {
@@ -209,7 +216,28 @@ public class ItemUtils {
 
     public void applyArmorTrim(Profile profile) {
         Player player = profile.getPlayer();
-        ArmorTrimPackage trimPackage = profile.getSettingData().getArmorTrimPackage();
+        dev.lrxh.neptune.profile.data.SettingData sd = profile.getSettingData();
+        dev.lrxh.neptune.feature.cosmetics.custom.CustomArmorTrimData custom = sd.getCustomArmorTrimData();
+
+        // If custom per-piece mode is active, apply piece-by-piece
+        if (custom != null && custom.isActive()) {
+            applyTrimToSlot(player.getInventory().getHelmet(),
+                    custom.getTrimForSlot(dev.lrxh.neptune.feature.cosmetics.custom.CustomArmorTrimData.ArmorSlot.HELMET),
+                    item -> player.getInventory().setHelmet(item));
+            applyTrimToSlot(player.getInventory().getChestplate(),
+                    custom.getTrimForSlot(dev.lrxh.neptune.feature.cosmetics.custom.CustomArmorTrimData.ArmorSlot.CHESTPLATE),
+                    item -> player.getInventory().setChestplate(item));
+            applyTrimToSlot(player.getInventory().getLeggings(),
+                    custom.getTrimForSlot(dev.lrxh.neptune.feature.cosmetics.custom.CustomArmorTrimData.ArmorSlot.LEGGINGS),
+                    item -> player.getInventory().setLeggings(item));
+            applyTrimToSlot(player.getInventory().getBoots(),
+                    custom.getTrimForSlot(dev.lrxh.neptune.feature.cosmetics.custom.CustomArmorTrimData.ArmorSlot.BOOTS),
+                    item -> player.getInventory().setBoots(item));
+            return;
+        }
+
+        // Fall back to package-based trim
+        ArmorTrimPackage trimPackage = sd.getArmorTrimPackage();
         ItemStack helmet = player.getInventory().getHelmet();
         ItemStack chestplate = player.getInventory().getChestplate();
         ItemStack leggings = player.getInventory().getLeggings();
@@ -220,19 +248,35 @@ public class ItemUtils {
             player.getInventory().setHelmet(helmet);
         }
         if (chestplate != null && (chestplate.getItemMeta() instanceof ArmorMeta chestplateMeta)) {
-            if (trimPackage.getHelmetTrim() != null) chestplateMeta.setTrim(trimPackage.getChestplateTrim());
+            if (trimPackage.getChestplateTrim() != null) chestplateMeta.setTrim(trimPackage.getChestplateTrim());
             chestplate.setItemMeta(chestplateMeta);
             player.getInventory().setChestplate(chestplate);
         }
         if (leggings != null && (leggings.getItemMeta() instanceof ArmorMeta leggingsMeta)) {
-            if (trimPackage.getHelmetTrim() != null) leggingsMeta.setTrim(trimPackage.getLeggingsTrim());
+            if (trimPackage.getLeggingsTrim() != null) leggingsMeta.setTrim(trimPackage.getLeggingsTrim());
             leggings.setItemMeta(leggingsMeta);
             player.getInventory().setLeggings(leggings);
         }
         if (boots != null && (boots.getItemMeta() instanceof ArmorMeta bootsMeta)) {
-            if (trimPackage.getHelmetTrim() != null) bootsMeta.setTrim(trimPackage.getBootsTrim());
+            if (trimPackage.getBootsTrim() != null) bootsMeta.setTrim(trimPackage.getBootsTrim());
             boots.setItemMeta(bootsMeta);
             player.getInventory().setBoots(boots);
         }
+    }
+
+    private void applyTrimToSlot(ItemStack item,
+                                  dev.lrxh.neptune.feature.cosmetics.custom.CustomArmorTrimData.TrimEntry entry,
+                                  java.util.function.Consumer<ItemStack> setter) {
+        if (item == null) return;
+        ItemMeta meta = item.getItemMeta();
+        if (!(meta instanceof ArmorMeta am)) return;
+        if (entry != null) {
+            var trim = entry.toArmorTrim();
+            if (trim != null) am.setTrim(trim);
+        } else {
+            am.setTrim(null);
+        }
+        item.setItemMeta(am);
+        setter.accept(item);
     }
 }

@@ -74,6 +74,8 @@ import fr.mrmicky.fastboard.FastManager;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Difficulty;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.GameRules;
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
@@ -111,6 +113,7 @@ public final class Neptune extends JavaPlugin {
         allowMatches = false;
         loadManager();
         initAPI();
+        registerPermissions();
         allowMatches = true;
     }
 
@@ -261,5 +264,72 @@ public final class Neptune extends JavaPlugin {
 
     public <T> void stopService(T service, Consumer<T> consumer) {
         Optional.ofNullable(service).ifPresent(consumer);
+    }
+
+    /**
+     * Registers all cosmetic trim permissions.
+     */
+    private void registerPermissions() {
+        // Patterns
+        String[] patterns = {
+            "bolt","coast","dune","eye","flow","host","raiser","rib",
+            "sentry","shaper","silence","snout","spire","tide","vex",
+            "wayfinder","ward","wild"
+        };
+        // Materials
+        String[] materials = {
+            "amethyst","copper","diamond","emerald","gold","iron",
+            "lapis","netherite","quartz","redstone"
+        };
+        // Armor slots
+        String[] slots = {"helmet","chestplate","leggings","boots"};
+
+        // Register individual permissions first.
+        for (String p : patterns) {
+            safeAddPermission("neptune.cosmetics.trim.pattern." + p, PermissionDefault.FALSE);
+        }
+        for (String m : materials) {
+            safeAddPermission("neptune.cosmetics.trim.material." + m, PermissionDefault.FALSE);
+        }
+        for (String s : slots) {
+            safeAddPermission("neptune.cosmetics.trim." + s, PermissionDefault.FALSE);
+        }
+
+        // Wildcard. grant all patterns.
+        java.util.Map<String, Boolean> patternChildren = new java.util.HashMap<>();
+        for (String p : patterns) patternChildren.put("neptune.cosmetics.trim.pattern." + p, true);
+        safeAddPermission("neptune.cosmetics.trim.pattern.*", PermissionDefault.FALSE, patternChildren);
+
+        // Wildcard. grant all materials.
+        java.util.Map<String, Boolean> materialChildren = new java.util.HashMap<>();
+        for (String m : materials) materialChildren.put("neptune.cosmetics.trim.material." + m, true);
+        safeAddPermission("neptune.cosmetics.trim.material.*", PermissionDefault.FALSE, materialChildren);
+
+        // Root wildcard. grants all.
+        java.util.Map<String, Boolean> rootChildren = new java.util.HashMap<>();
+        rootChildren.put("neptune.cosmetics.trim.pattern.*", true);
+        rootChildren.put("neptune.cosmetics.trim.material.*", true);
+        for (String s : slots) rootChildren.put("neptune.cosmetics.trim." + s, true);
+        safeAddPermission("neptune.cosmetics.trim.*", PermissionDefault.FALSE, rootChildren);
+
+        // Admin permission
+        safeAddPermission("neptune.admin", PermissionDefault.OP);
+    }
+
+    private void safeAddPermission(String node, PermissionDefault def) {
+        safeAddPermission(node, def, null);
+    }
+
+    private void safeAddPermission(String node, PermissionDefault def,
+                                   java.util.Map<String, Boolean> children) {
+        try {
+            if (getServer().getPluginManager().getPermission(node) != null) return;
+            Permission perm = children != null
+                    ? new Permission(node, def, children)
+                    : new Permission(node, def);
+            getServer().getPluginManager().addPermission(perm);
+        } catch (Exception ignored) {
+        
+        }
     }
 }

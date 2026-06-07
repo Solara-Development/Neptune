@@ -1,6 +1,7 @@
 package dev.lrxh.neptune.configs;
 
 import dev.lrxh.neptune.configs.impl.*;
+import dev.lrxh.neptune.feature.cosmetics.custom.CustomTrimLocale;
 import dev.lrxh.neptune.utils.ConfigFile;
 import lombok.Getter;
 
@@ -57,6 +58,7 @@ public class ConfigService {
         CosmeticsLocale.LIGHTNING_DISPLAY_NAME.load();
         SoundsLocale.MATCH_START.load();
         SignsLocale.CUSTOM_KIT_NAME.load();
+        CustomTrimLocale.ENABLED.load();
 
         HotbarLocale.LOBBY_PARTY_CREATE_NAME.update();
         MessagesLocale.MATCH_FOUND.update();
@@ -66,6 +68,7 @@ public class ConfigService {
         CosmeticsLocale.LIGHTNING_DISPLAY_NAME.update();
         SoundsLocale.MATCH_START.update();
         SignsLocale.CUSTOM_KIT_NAME.update();
+        CustomTrimLocale.ENABLED.update();
 
         MessagesLocale.EVENT_ANNOUNCE.load();
         MessagesLocale.EVENT_ANNOUNCE.update();

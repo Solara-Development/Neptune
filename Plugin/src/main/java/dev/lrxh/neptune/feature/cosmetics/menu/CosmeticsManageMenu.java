@@ -1,7 +1,7 @@
 package dev.lrxh.neptune.feature.cosmetics.menu;
 
 import dev.lrxh.neptune.configs.impl.MenusLocale;
-import dev.lrxh.neptune.feature.cosmetics.menu.armorTrims.ArmorTrimsMenu;
+import dev.lrxh.neptune.feature.cosmetics.menu.armorTrims.custom.CustomArmorTrimMenu;
 import dev.lrxh.neptune.feature.cosmetics.menu.killEffects.KillEffectsMenu;
 import dev.lrxh.neptune.feature.cosmetics.menu.killMessages.KillMessagesMenu;
 import dev.lrxh.neptune.feature.cosmetics.menu.shieldPatterns.ShieldPatternMenu;
@@ -42,7 +42,7 @@ public class CosmeticsManageMenu extends Menu {
                 MenusLocale.ARMOR_TRIMS_NAME.getString(),
                 MenusLocale.ARMOR_TRIMS_LORE.getStringList(),
                 Material.valueOf(MenusLocale.ARMOR_TRIMS_MATERIAL.getString()),
-                new ArmorTrimsMenu()));
+                new CustomArmorTrimMenu()));
 
         buttons.add(new CosmeticsManagementButton(
                 MenusLocale.SHIELD_PATTERNS_SLOT.getInt(),

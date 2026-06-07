@@ -134,6 +134,8 @@ public class Profile implements IProfile {
                     settingData.setKillMessagePackage(KillMessageCosmetic.get().getOrDefault(settings.getString("deathMessagePackage")));
                     settingData.setArmorTrimPackage(ArmorTrimCosmetic.get().getOrDefault(settings.getString("armorTrimPackage")));
                     settingData.setShieldPatternPackage(ShieldPatternCosmetic.get().getOrDefault(settings.getString("shieldPatternPackage")));
+                    settingData.setCustomArmorTrimData(
+                            dev.lrxh.neptune.feature.cosmetics.custom.CustomArmorTrimData.deserialize(settings.getString("customArmorTrim", "")));
 
                     DataDocument globalCustomPersistentData = dataDocument.getDataDocument("customPersistentData");
                     if (globalCustomPersistentData != null) {
@@ -205,6 +207,9 @@ public class Profile implements IProfile {
             settingsDoc.put("deathMessagePackage", settingData.getKillMessagePackage().getName());
             settingsDoc.put("armorTrimPackage", settingData.getArmorTrimPackage().getName());
             settingsDoc.put("shieldPatternPackage", settingData.getShieldPatternPackage().getName());
+            if (settingData.getCustomArmorTrimData() != null) {
+                settingsDoc.put("customArmorTrim", settingData.getCustomArmorTrimData().serialize());
+            }
             dataDocument.put("settings", settingsDoc);
 
             DataDocument globalCustomPersistentData = new DataDocument();

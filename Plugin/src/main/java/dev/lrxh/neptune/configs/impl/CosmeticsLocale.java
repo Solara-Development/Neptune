@@ -52,6 +52,11 @@ public enum CosmeticsLocale implements IDataAccessor {
         return ConfigService.get().getCosmeticsConfig();
     }
 
+    @Override
+    public boolean resetUnknown() {
+        return false;
+    }
+
     public void update() {
     }
 }

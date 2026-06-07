@@ -8,6 +8,7 @@ import dev.lrxh.neptune.feature.cosmetics.impl.cosmetics.killmessage.KillMessage
 import dev.lrxh.neptune.feature.cosmetics.impl.cosmetics.killmessage.KillMessagePackage;
 import dev.lrxh.neptune.feature.cosmetics.impl.cosmetics.shieldpatterns.ShieldPatternCosmetic;
 import dev.lrxh.neptune.feature.cosmetics.impl.cosmetics.shieldpatterns.ShieldPatternPackage;
+import dev.lrxh.neptune.feature.cosmetics.custom.CustomArmorTrimData;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -29,6 +30,7 @@ public class SettingData {
     private KillMessagePackage killMessagePackage;
     private ArmorTrimPackage armorTrimPackage;
     private ShieldPatternPackage shieldPatternPackage;
+    private CustomArmorTrimData customArmorTrimData = new CustomArmorTrimData();
     private List<UUID> followings = new ArrayList<>();
 
     public SettingData(Neptune plugin) {

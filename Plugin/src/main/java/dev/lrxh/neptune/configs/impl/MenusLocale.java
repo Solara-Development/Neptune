@@ -804,7 +804,50 @@ public enum MenusLocale implements IDataAccessor {
     EVENT_KIT_SELECT_SIZE("EVENT.KIT_SELECT.SIZE", DataType.INT, "36"),
     EVENT_KIT_CUSTOM_NAME("EVENT.KIT_SELECT.CUSTOM.NAME", DataType.STRING, "&bCustom Kit"),
     EVENT_KIT_CUSTOM_MATERIAL("EVENT.KIT_SELECT.CUSTOM.MATERIAL", DataType.STRING, "NETHERITE_SWORD"),
-    EVENT_KIT_CUSTOM_LORE("EVENT.KIT_SELECT.CUSTOM.LORE", DataType.STRING_LIST, "&7Use one of your custom kits", " ", "&aClick to select!");
+    EVENT_KIT_CUSTOM_LORE("EVENT.KIT_SELECT.CUSTOM.LORE", DataType.STRING_LIST, "&7Use one of your custom kits", " ", "&aClick to select!"),
+
+    // Global GUI Borders & Accents
+    GUI_BORDER_MATERIAL("GUI.BORDER.MATERIAL",
+            "Material used for border/filler panes across all GUIs",
+            DataType.STRING, "BLACK_STAINED_GLASS_PANE"),
+    GUI_ACCENT_MATERIAL("GUI.ACCENT.MATERIAL",
+            "Material used for accent panes (e.g. beside armor slots in trim menu)",
+            DataType.STRING, "CYAN_STAINED_GLASS_PANE"),
+
+    // Armor Trim Customizer (page 1)
+    ARMOR_TRIM_MENU_TITLE("COSMETICS.ARMOR-TRIM.MENU.TITLE",
+            DataType.STRING, "&8\u2694 &b&lArmor Trim Customizer"),
+    ARMOR_TRIM_INFO_SLOT("COSMETICS.ARMOR-TRIM.MENU.INFO.SLOT", DataType.INT, "22"),
+    ARMOR_TRIM_INFO_MATERIAL("COSMETICS.ARMOR-TRIM.MENU.INFO.MATERIAL", DataType.STRING, "BOOK"),
+    ARMOR_TRIM_INFO_NAME("COSMETICS.ARMOR-TRIM.MENU.INFO.NAME",
+            DataType.STRING, "&b&lHow to Customize"),
+    ARMOR_TRIM_INFO_LORE("COSMETICS.ARMOR-TRIM.MENU.INFO.LORE", DataType.STRING_LIST,
+            "&8\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500",
+            "&7Click any armor piece to",
+            "&7choose a &bpattern &7then a &ematerial&7.",
+            " ",
+            "&cRight-click &7a piece to remove its trim."),
+    ARMOR_TRIM_CLEAR_SLOT("COSMETICS.ARMOR-TRIM.MENU.CLEAR.SLOT", DataType.INT, "49"),
+    ARMOR_TRIM_CLEAR_MATERIAL_HAS("COSMETICS.ARMOR-TRIM.MENU.CLEAR.MATERIAL-HAS",
+            DataType.STRING, "BARRIER"),
+    ARMOR_TRIM_CLEAR_MATERIAL_EMPTY("COSMETICS.ARMOR-TRIM.MENU.CLEAR.MATERIAL-EMPTY",
+            DataType.STRING, "GRAY_STAINED_GLASS_PANE"),
+    ARMOR_TRIM_CLEAR_NAME_HAS("COSMETICS.ARMOR-TRIM.MENU.CLEAR.NAME-HAS",
+            DataType.STRING, "&c&lClear All Trims"),
+    ARMOR_TRIM_CLEAR_NAME_EMPTY("COSMETICS.ARMOR-TRIM.MENU.CLEAR.NAME-EMPTY",
+            DataType.STRING, "&8No Trims Applied"),
+    ARMOR_TRIM_CLEAR_LORE_HAS("COSMETICS.ARMOR-TRIM.MENU.CLEAR.LORE-HAS", DataType.STRING_LIST,
+            "&7Removes all custom trims.", " ", "&cClick to confirm"),
+    ARMOR_TRIM_CLEAR_LORE_EMPTY("COSMETICS.ARMOR-TRIM.MENU.CLEAR.LORE-EMPTY", DataType.STRING_LIST,
+            "&7You have no trims set."),
+
+    // Armor Trim — Pattern selector (page 2)
+    ARMOR_TRIM_PATTERN_TITLE_PREFIX("COSMETICS.ARMOR-TRIM.PATTERN.TITLE-PREFIX",
+            DataType.STRING, "&8\u00bb &b&lSelect Pattern &8| &7"),
+
+    // Armor Trim — Material selector (page 3)
+    ARMOR_TRIM_MATERIAL_TITLE_PREFIX("COSMETICS.ARMOR-TRIM.MATERIAL.TITLE-PREFIX",
+            DataType.STRING, "&8\u00bb &b&lSelect Material &8| &7");
 
     private final String path;
     private final String comment;
