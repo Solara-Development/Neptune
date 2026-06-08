@@ -10,12 +10,11 @@ import dev.lrxh.neptune.profile.impl.Profile;
 import dev.lrxh.neptune.utils.tasks.NeptuneRunnable;
 import dev.lrxh.neptune.utils.tasks.TaskScheduler;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;

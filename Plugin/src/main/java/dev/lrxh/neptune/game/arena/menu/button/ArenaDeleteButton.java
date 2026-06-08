@@ -3,12 +3,12 @@ package dev.lrxh.neptune.game.arena.menu.button;
 import dev.lrxh.neptune.game.arena.Arena;
 import dev.lrxh.neptune.game.arena.menu.ArenasManagementMenu;
 import dev.lrxh.neptune.utils.CC;
+import dev.lrxh.neptune.utils.ItemBuilder;
 import dev.lrxh.neptune.utils.menu.Button;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import dev.lrxh.neptune.utils.ItemBuilder;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.inventory.ItemStack;
 
 public class ArenaDeleteButton extends Button {
     private final Arena arena;

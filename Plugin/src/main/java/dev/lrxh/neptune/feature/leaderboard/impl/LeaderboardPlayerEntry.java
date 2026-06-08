@@ -1,7 +1,6 @@
 package dev.lrxh.neptune.feature.leaderboard.impl;
 
 import dev.lrxh.neptune.game.kit.Kit;
-import lombok.AllArgsConstructor;
 
 import java.util.UUID;
 

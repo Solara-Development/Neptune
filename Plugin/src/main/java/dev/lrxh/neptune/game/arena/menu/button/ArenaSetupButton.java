@@ -9,8 +9,8 @@ import dev.lrxh.neptune.utils.ItemBuilder;
 import dev.lrxh.neptune.utils.menu.Button;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.inventory.ItemStack;
 
 public class ArenaSetupButton extends Button {
     private final Arena arena;
@@ -36,5 +36,5 @@ public class ArenaSetupButton extends Button {
         player.closeInventory();
         if (arena.getRedSpawn() != null) player.teleport(arena.getRedSpawn());
         player.sendMessage(CC.info("Go to the spawn of the &cred&7 player and type &aDone"));
-}
+    }
 }

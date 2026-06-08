@@ -1,9 +1,9 @@
 package dev.lrxh.neptune.profile.data;
 
 import dev.lrxh.api.data.IKitData;
+import dev.lrxh.neptune.configs.impl.SettingsLocale;
 import dev.lrxh.neptune.feature.divisions.DivisionService;
 import dev.lrxh.neptune.feature.divisions.impl.Division;
-import dev.lrxh.neptune.configs.impl.SettingsLocale;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.inventory.ItemStack;
@@ -17,6 +17,7 @@ import java.util.List;
 @Getter
 @Setter
 public class KitData implements IKitData {
+    private static final int K_FACTOR = 32;
     private int kills = 0;
     private int deaths = 0;
     private int wins = 0;
@@ -56,8 +57,6 @@ public class KitData implements IKitData {
     public Object getPersistentData(String key) {
         return persistentData.get(key) != null ? persistentData.get(key) : null;
     }
-
-    private static final int K_FACTOR = 32;
 
     /**
      * Updates ELO rating using the Arpad Elo system.

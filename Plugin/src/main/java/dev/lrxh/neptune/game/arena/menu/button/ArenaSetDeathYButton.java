@@ -5,11 +5,11 @@ import dev.lrxh.neptune.game.arena.Arena;
 import dev.lrxh.neptune.game.arena.procedure.ArenaProcedureType;
 import dev.lrxh.neptune.profile.impl.Profile;
 import dev.lrxh.neptune.utils.CC;
+import dev.lrxh.neptune.utils.ItemBuilder;
 import dev.lrxh.neptune.utils.menu.Button;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
-import dev.lrxh.neptune.utils.ItemBuilder;
 import org.bukkit.inventory.ItemStack;
 
 

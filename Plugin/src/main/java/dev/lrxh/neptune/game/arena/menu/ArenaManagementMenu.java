@@ -42,7 +42,7 @@ public class ArenaManagementMenu extends Menu {
             buttons.add(new ArenaCustomKitButton(getSize() - 2, arena));
 
             buttons.add(new ArenaRenameButton(23, arena));
-            buttons.add(new DisplayButton(22, Material.MAP, "&aTeleport to arena", Arrays.asList("&7Click to teleport to this arena's blue spawn"), o -> player.teleport(arena.getBlueSpawn())));
+            buttons.add(new DisplayButton(22, Material.MAP, "&aTeleport to arena", List.of("&7Click to teleport to this arena's blue spawn"), o -> player.teleport(arena.getBlueSpawn())));
 
             buttons.add(new ArenaDeleteButton(21, arena));
 
@@ -51,9 +51,9 @@ public class ArenaManagementMenu extends Menu {
 
             buttons.add(new ArenaSetLimitButton(4, arena));
 
-            buttons.add(new DisplayButton(getSize() - 5, Material.GRASS_BLOCK, "&aManage Whitelisted Blocks", Arrays.asList("&7Click to manage which blocks players can place or break"), o -> new WhitelistedBlocksMenu(arena).open(player)));
+            buttons.add(new DisplayButton(getSize() - 5, Material.GRASS_BLOCK, "&aManage Whitelisted Blocks", List.of("&7Click to manage which blocks players can place or break"), o -> new WhitelistedBlocksMenu(arena).open(player)));
             if (Neptune.get().isDuplicatesEnabled()) {
-                buttons.add(new DisplayButton(13, Material.PAPER, "&aManage Duplicates", Arrays.asList("&7Click to manage duplicate copies of this arena"), o -> new ArenaDuplicatesMenu(arena).open(o)));
+                buttons.add(new DisplayButton(13, Material.PAPER, "&aManage Duplicates", List.of("&7Click to manage duplicate copies of this arena"), o -> new ArenaDuplicatesMenu(arena).open(o)));
             }
             buttons.add(new ArenaSetEdgeButton(8, arena, EdgeType.MAX));
             buttons.add(new ArenaSetEdgeButton(7, arena, EdgeType.MIN));

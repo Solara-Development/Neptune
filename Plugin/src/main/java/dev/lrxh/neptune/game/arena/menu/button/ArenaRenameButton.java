@@ -4,13 +4,13 @@ import dev.lrxh.neptune.game.arena.Arena;
 import dev.lrxh.neptune.game.arena.ArenaService;
 import dev.lrxh.neptune.game.arena.menu.ArenaManagementMenu;
 import dev.lrxh.neptune.utils.CC;
+import dev.lrxh.neptune.utils.ItemBuilder;
 import dev.lrxh.neptune.utils.menu.Button;
 import dev.lrxh.neptune.utils.sign.SignInputMenu;
-import dev.lrxh.neptune.utils.ItemBuilder;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.inventory.ItemStack;
 
 public class ArenaRenameButton extends Button {
     private final Arena arena;

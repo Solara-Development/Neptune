@@ -45,7 +45,7 @@ public class ArenasManagementMenu extends PaginatedMenu {
         buttons.add(new ArenaCreateButton(getSize() - 5));
         buttons.add(new ReturnButton(getSize() - 9, new MainMenu()));
         if (Neptune.get().isDuplicatesEnabled()) {
-            buttons.add(new DisplayButton(getSize() - 1, Material.EMERALD_BLOCK, "&aRecopy All Duplicates", Arrays.asList("&7Click to repaste all arena duplicate copies"), p -> {
+            buttons.add(new DisplayButton(getSize() - 1, Material.EMERALD_BLOCK, "&aRecopy All Duplicates", List.of("&7Click to repaste all arena duplicate copies"), p -> {
                 ArenaService.get().recopyAll();
                 p.sendMessage(CC.success("Repasting all duplicates of every arena."));
             }));

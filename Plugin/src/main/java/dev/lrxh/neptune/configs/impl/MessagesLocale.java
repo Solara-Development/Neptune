@@ -195,7 +195,7 @@ public enum MessagesLocale implements IDataAccessor {
     PARTY_JOINED_FROM_ADVERTISEMENT("PARTY.JOINED_FROM_ADVERTISEMENT", DataType.STRING_LIST,
             "&f<player> &bjoined the party from the advertisement!"),
     PARTY_INVITATION("PARTY.INVITATION", DataType.STRING_LIST,
-            "&bYou have been invited to &f<leader>&b's party <accept><hover:show_text:'Click to join party'><green>(ACCEPT)</hover></accept>"),
+            "&bYou have been invited to &f<leader>&b's party <click:run_command:'/party accept <leader>'><hover:show_text:'Click to join party'><green>(ACCEPT)</hover></click>"),
     PARTY_INVITE_OWN("PARTY.INVITE_OWN", DataType.STRING_LIST, "&cYou can't invite yourself to the party."),
     PARTY_TRANSFER_OWN("PARTY.TRANSFER", DataType.STRING_LIST, "&cYou can't transfer a party to yourself."),
     PARTY_NO_PERMISSION("PARTY.NO_PERMISSION", DataType.STRING_LIST, "&cYou do not have permission to do this."),
@@ -206,7 +206,7 @@ public enum MessagesLocale implements IDataAccessor {
     PARTY_TRANSFER("PARTY.TRANSFER.MEMBERS", DataType.STRING_LIST,
             "&f<leader> &btransferred the party to &f<target>&b."),
     PARTY_ADVERTISE_MESSAGE("PARTY.ADVERTISE.MESSAGE", DataType.STRING_LIST,
-            "&d&l[AD] &r&f<leader> &6wants you in their party! <join><hover:show_text:'&aClick to join their party'>&a(JOIN)</hover></join>"),
+            "&d&l[AD] &r&f<leader> &6wants you in their party! <click:run_command:'/party joinad <leader>'><hover:show_text:'&aClick to join their party'>&a(JOIN)</hover></click>"),
     PARTY_KICK("PARTY.KICK", DataType.STRING_LIST, "&f<player> &bhas been kicked from the party."),
     PARTY_CANNOT_CREATE("PARTY.CANNOT_CREATE", DataType.STRING_LIST, "&cYou can only create a party while in lobby!"),
     PARTY_CANNOT_JOIN("PARTY.CANNOT_JOIN", DataType.STRING_LIST, "&cYou can only join a party while in lobby!"),
@@ -305,7 +305,8 @@ public enum MessagesLocale implements IDataAccessor {
             "&fPlayers: &b<players>",
             "&fRound: &b<round>",
             "&fState: &7<state>"),
-    EVENT_ACTION_BAR("EVENT.ACTION_BAR", DataType.STRING, "&f<type> &7| &aStarting in &b<time>s &7| &fPlayers: &b<players>");
+    EVENT_ACTION_BAR("EVENT.ACTION_BAR", DataType.STRING, "&f<type> &7| &aStarting in &b<time>s &7| &fPlayers: &b<players>"),
+    EVENT_FORCE_START_NOT_OWNER("EVENT.FORCE_START_NOT_OWNER", DataType.STRING_LIST, "&cOnly the player who started the event can force-start it.");
 
     private final String path;
     private final String comment;
@@ -377,6 +378,18 @@ public enum MessagesLocale implements IDataAccessor {
                 REMATCH_REQUEST_RECEIVER.getStringList().stream().map(
                         str -> str.replace("<hover:show_text:'&aClick to accept rematch request'><click:run_command:'/duel accept-uuid <uuid>'>&a&l(ACCEPT)</click></hover>", "<accept><hover:show_text:'&aClick to accept rematch request'>&a&l(ACCEPT)</hover></accept>")
                                 .replace("<hover:show_text:'&cClick to deny rematch request'><click:run_command:'/duel deny-uuid <uuid>'>&a&l(DENY)</click></hover>", "<deny><hover:show_text:'&cClick to deny rematch request'>&a&l(DENY)</hover></deny>")
+                ).toList()
+        );
+        PARTY_ADVERTISE_MESSAGE.set(
+                PARTY_ADVERTISE_MESSAGE.getStringList().stream().map(
+                        str -> str.replace("<join>", "<click:run_command:'/party joinad <leader>'>")
+                                .replace("</join>", "</click>")
+                ).toList()
+        );
+        PARTY_INVITATION.set(
+                PARTY_INVITATION.getStringList().stream().map(
+                        str -> str.replace("<accept>", "<click:run_command:'/party accept <leader>'>")
+                                .replace("</accept>", "</click>")
                 ).toList()
         );
         getConfigFile().save();

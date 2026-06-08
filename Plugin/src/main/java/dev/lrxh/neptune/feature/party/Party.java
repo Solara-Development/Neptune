@@ -9,11 +9,8 @@ import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
 import lombok.Getter;
 import lombok.Setter;
-import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -68,7 +65,6 @@ public class Party {
             return;
 
         MessagesLocale.PARTY_INVITATION.send(playerUUID, TagResolver.resolver(
-                TagResolver.resolver("accept", Tag.styling(ClickEvent.runCommand("/party accept " + getLeader()))),
                 Placeholder.unparsed("leader", getLeaderName()),
                 Placeholder.unparsed("party-max", String.valueOf(getMaxUsers())),
                 Placeholder.unparsed("party-size", String.valueOf(getUsers().size()))
@@ -181,8 +177,7 @@ public class Party {
             setOpen(true);
             for (Profile profile : ProfileService.get().profiles.values()) {
                 MessagesLocale.PARTY_ADVERTISE_MESSAGE.send(profile.getPlayerUUID(), TagResolver.resolver(
-                        Placeholder.parsed("leader", getLeaderName()),
-                        TagResolver.resolver("join", Tag.styling(ClickEvent.runCommand("/party joinad " + getLeaderName())))
+                        Placeholder.parsed("leader", getLeaderName())
                 ));
             }
 
