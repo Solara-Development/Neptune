@@ -15,29 +15,15 @@ public interface IDataAccessor {
     Neptune plugin = Neptune.get();
 
     default String getString() {
-        String val = getConfigFile().getConfiguration().getString(getPath());
-        if (val == null && !getDefaultValue().isEmpty()) return getDefaultValue().get(0);
-        return val;
+        return getConfigFile().getConfiguration().getString(getPath());
     }
 
     default List<String> getStringList() {
-        List<String> val = getConfigFile().getConfiguration().getStringList(getPath());
-        if (val.isEmpty() && !getDefaultValue().isEmpty()) return getDefaultValue();
-        return val;
+        return getConfigFile().getConfiguration().getStringList(getPath());
     }
 
     default int getInt() {
-        if (getConfigFile().getConfiguration().get(getPath()) == null && !getDefaultValue().isEmpty()) {
-            try { return Integer.parseInt(getDefaultValue().get(0)); } catch (NumberFormatException ignored) {}
-        }
         return getConfigFile().getConfiguration().getInt(getPath());
-    }
-
-    default boolean getBoolean() {
-        if (getConfigFile().getConfiguration().get(getPath()) == null && !getDefaultValue().isEmpty()) {
-            try { return Boolean.parseBoolean(getDefaultValue().get(0)); } catch (Exception ignored) {}
-        }
-        return getConfigFile().getConfiguration().getBoolean(getPath());
     }
 
     default <T> List<T> getList(Class<T> type) {
@@ -46,6 +32,10 @@ public interface IDataAccessor {
                 .filter(type::isInstance)
                 .map(type::cast)
                 .toList();
+    }
+
+    default boolean getBoolean() {
+        return getConfigFile().getConfiguration().getBoolean(getPath());
     }
 
     default boolean resetUnknown() {
