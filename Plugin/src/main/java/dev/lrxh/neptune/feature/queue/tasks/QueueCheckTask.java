@@ -30,13 +30,23 @@ public class QueueCheckTask extends NeptuneRunnable {
     public void run() {
         // Track players already matched in this tick to prevent double-matching
         Set<UUID> matchedPlayers = new HashSet<>();
+        
+        // Track players who already received action bar this tick
+        Set<UUID> actionBarSent = new HashSet<>();
 
         for (Queue<QueueEntry> queue : QueueService.get().getAllQueues().values()) {
             for (QueueEntry entry : queue) {
-                Profile profile = API.getProfile(entry.getUuid());
+                UUID playerUUID = entry.getUuid();
+                
+                // Skip if we already sent action bar to this player this tick
+                if (actionBarSent.contains(playerUUID)) {
+                    continue;
+                }
+                
+                Profile profile = API.getProfile(playerUUID);
                 if (profile != null && profile.getPlayer() != null) {
                     Player player = profile.getPlayer();
-                    List<IQueueEntry> playerQueues = QueueService.get().getAll(entry.getUuid());
+                    List<IQueueEntry> playerQueues = QueueService.get().getAll(playerUUID);
                     int queueCount = playerQueues.size();
                     
                     // Calculate total time in queue (use the longest queue time)
@@ -64,6 +74,9 @@ public class QueueCheckTask extends NeptuneRunnable {
                                         Placeholder.unparsed("time", timeFormatted)
                                 )));
                     }
+                    
+                    // Mark that we sent action bar to this player
+                    actionBarSent.add(playerUUID);
                 }
             }
         }
