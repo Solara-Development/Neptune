@@ -137,7 +137,8 @@ public class PlaceholderUtil {
                             Placeholder.unparsed("opponent-hit-difference", String.valueOf(opponent.getHitsDifference(participant))),
                             Placeholder.unparsed("opponent-points", String.valueOf(opponent.getPoints())),
                             Placeholder.unparsed("opponent-elo", String.valueOf(opponent.getProfile().getGameData().getGlobalStats().getElo())),
-                            Placeholder.unparsed("opponent-kit-elo", String.valueOf(opponent.getProfile().getGameData().get(kit).getElo()))
+                            Placeholder.unparsed("opponent-kit-elo", String.valueOf(opponent.getProfile().getGameData().get(kit).getElo())),
+                            Placeholder.parsed("opponent-division", opponent.getProfile().getGameData().getGlobalStats().getDivision() != null ? opponent.getProfile().getGameData().getGlobalStats().getDivision().getDisplayName() : "None")
                     );
                     if (opponent.getPlayer() != null) placeholders = TagResolver.resolver(placeholders,
                             Placeholder.unparsed("opponent-ping", String.valueOf(opponent.getPlayer().getPing())));
@@ -149,7 +150,8 @@ public class PlaceholderUtil {
                         Placeholder.parsed("blue-elo", String.valueOf(blue.getProfile().getGameData().getGlobalStats().getElo())),
                         Placeholder.parsed("red-kit-elo", String.valueOf(red.getProfile().getGameData().get(kit).getElo())),
                         Placeholder.parsed("blue-kit-elo", String.valueOf(blue.getProfile().getGameData().get(kit).getElo())),
-                        Placeholder.parsed("red-bed-broken", red.getBedMessage()),
+                        Placeholder.parsed("red-division", red.getProfile().getGameData().getGlobalStats().getDivision() != null ? red.getProfile().getGameData().getGlobalStats().getDivision().getDisplayName() : "None"),
+                        Placeholder.parsed("blue-division", blue.getProfile().getGameData().getGlobalStats().getDivision() != null ? blue.getProfile().getGameData().getGlobalStats().getDivision().getDisplayName() : "None"),
                         Placeholder.parsed("blue-bed-broken", blue.getBedMessage()),
                         Placeholder.unparsed("red-name", red.getName()),
                         Placeholder.unparsed("red-longest-combo", String.valueOf(red.getLongestCombo())),

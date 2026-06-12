@@ -105,6 +105,7 @@ Kit placeholders support two formats:
 | \<opponent>            | %neptune_opponent%          | Opponent name                            |
 | \<opponent-ping>       | %neptune_opponent_ping%       | Opponent ping                            |
 | \<opponent-elo>        | %neptune_opponent_elo%        | Opponent global elo                      |
+| \<opponent-division>   | %neptune_opponent_division%   | Opponent global division                 |
 | \<opponent-kit-elo>    | %neptune_opponent_kit_elo%  | Opponent kit elo                         |
 | \<combo>               | %neptune_combo%               | Player combo                             |
 | \<opponent-combo>      | %neptune_opponent_combo%      | Opponent combo                           |
@@ -121,8 +122,10 @@ Kit placeholders support two formats:
 | \<red-ping>            | %neptune_red_ping%            | Red player ping                          |
 | \<blue-ping>           | %neptune_blue_ping%           | Blue player ping                         |
 | \<red-elo>             | %neptune_red_elo%             | Red player global elo                    |
-| \<blue-elo>            | %neptune_blue_elo%            | Blue player global elo                   |
+| \<red-division>        | %neptune_red_division%        | Red player global division               |
 | \<red-kit-elo>         | %neptune_red_kit_elo%         | Red player kit elo                       |
+| \<blue-elo>            | %neptune_blue_elo%            | Blue player global elo                   |
+| \<blue-division>       | %neptune_blue_division%       | Blue player global division              |
 | \<blue-kit-elo>        | %neptune_blue_kit_elo%        | Blue player kit elo                      |
 | \<red-combo>           | %neptune_red_combo%           | Red player combo                         |
 | \<blue-combo>          | %neptune_blue_combo%          | Blue player combo                        |
