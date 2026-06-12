@@ -1,5 +1,6 @@
 package dev.lrxh.neptune.feature.queue.tasks;
 
+import dev.lrxh.api.queue.IQueueEntry;
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.feature.queue.QueueEntry;
@@ -17,20 +18,43 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.entity.Player;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 import java.util.UUID;
 
 public class QueueCheckTask extends NeptuneRunnable {
     @Override
     public void run() {
+        // Track players already matched in this tick to prevent double-matching
+        Set<UUID> matchedPlayers = new HashSet<>();
 
         for (Queue<QueueEntry> queue : QueueService.get().getAllQueues().values()) {
             for (QueueEntry entry : queue) {
                 Profile profile = API.getProfile(entry.getUuid());
                 if (profile != null && profile.getPlayer() != null) {
                     Player player = profile.getPlayer();
-                    player.sendActionBar(CC.returnMessage(player, MessagesLocale.QUEUE_ACTION_BAR.getString()));
+                    List<IQueueEntry> playerQueues = QueueService.get().getAll(entry.getUuid());
+                    int queueCount = playerQueues.size();
+                    
+                    // Calculate total time in queue (use the longest queue time)
+                    long maxTime = 0;
+                    for (IQueueEntry queueEntry : playerQueues) {
+                        long elapsed = queueEntry.getTime().getElapsed();
+                        if (elapsed > maxTime) {
+                            maxTime = elapsed;
+                        }
+                    }
+                    
+                String timeFormatted = String.format("%d:%02d", maxTime / 60000, (maxTime / 1000) % 60);
+                
+                player.sendActionBar(CC.returnMessage(player, MessagesLocale.QUEUE_ACTION_BAR.getString(),
+                        TagResolver.resolver(
+                                Placeholder.unparsed("queue-count", String.valueOf(queueCount)),
+                                Placeholder.unparsed("time", timeFormatted)
+                        )));
                 }
             }
         }
@@ -49,6 +73,13 @@ public class QueueCheckTask extends NeptuneRunnable {
 
             UUID uuid1 = queueEntry1.getUuid();
             UUID uuid2 = queueEntry2.getUuid();
+
+            // Check if either player was already matched in this tick
+            if (matchedPlayers.contains(uuid1) || matchedPlayers.contains(uuid2)) {
+                QueueService.get().add(queueEntry1, false);
+                QueueService.get().add(queueEntry2, false);
+                continue;
+            }
 
             Profile profile1 = API.getProfile(uuid1);
             Profile profile2 = API.getProfile(uuid2);
@@ -82,10 +113,16 @@ public class QueueCheckTask extends NeptuneRunnable {
                 continue;
             }
 
+            // Mark both players as matched in this tick
+            matchedPlayers.add(uuid1);
+            matchedPlayers.add(uuid2);
+
             kit.getRandomArena().thenAccept(arena -> {
                 if (arena == null) {
                     QueueService.get().add(queueEntry1, false);
                     QueueService.get().add(queueEntry2, false);
+                    matchedPlayers.remove(uuid1);
+                    matchedPlayers.remove(uuid2);
                     return;
                 }
 

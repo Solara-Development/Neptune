@@ -25,6 +25,7 @@ public class QueueService implements IQueueService {
     private static QueueService instance;
 
     private final Map<Kit, Queue<QueueEntry>> kitQueues = new HashMap<>();
+    private final Map<UUID, List<QueueEntry>> playerQueues = new HashMap<>();
 
     public static QueueService get() {
         if (instance == null) instance = new QueueService();
@@ -35,14 +36,27 @@ public class QueueService implements IQueueService {
         UUID playerUUID = queueEntry.getUuid();
         Kit kit = queueEntry.getKit();
 
-        if (get(playerUUID) != null) return;
-
         Profile profile = API.getProfile(playerUUID);
         if (!profile.hasState(ProfileState.IN_LOBBY, ProfileState.IN_QUEUE)) return;
         if (profile.getGameData().getParty() != null) return;
         if (queueEntry.getKit().is(KitRule.HIDDEN)) return;
 
+        // Check if player is already in queue for this specific kit
+        List<QueueEntry> playerEntries = playerQueues.get(playerUUID);
+        if (playerEntries != null) {
+            for (QueueEntry entry : playerEntries) {
+                if (entry.getKit().equals(kit)) {
+                    // Player already in queue for this kit
+                    return;
+                }
+            }
+        }
+
+        // Add to kit queue
         kitQueues.computeIfAbsent(kit, k -> new ConcurrentLinkedQueue<>()).offer(queueEntry);
+        
+        // Add to player queue
+        playerQueues.computeIfAbsent(playerUUID, k -> new ArrayList<>()).add(queueEntry);
 
         if (!profile.hasState(ProfileState.IN_QUEUE)) profile.setState(ProfileState.IN_QUEUE);
         kit.addQueue();
@@ -58,17 +72,24 @@ public class QueueService implements IQueueService {
     }
 
     public QueueEntry remove(UUID playerUUID) {
-        QueueEntry entry = get(playerUUID);
-        if (entry == null) return null;
+        List<QueueEntry> entries = playerQueues.get(playerUUID);
+        if (entries == null || entries.isEmpty()) return null;
 
-        Kit kit = entry.getKit();
-        Queue<QueueEntry> queue = kitQueues.get(kit);
-        if (queue != null) {
-            queue.remove(entry);
-            entry.getKit().removeQueue();
+        // Remove from all queues
+        for (QueueEntry entry : new ArrayList<>(entries)) {
+            Kit kit = entry.getKit();
+            Queue<QueueEntry> queue = kitQueues.get(kit);
+            if (queue != null) {
+                queue.remove(entry);
+                kit.removeQueue();
+            }
         }
 
-        return entry;
+        // Clear player's queue list
+        playerQueues.remove(playerUUID);
+
+        // Return first entry for compatibility
+        return entries.get(0);
     }
 
     public void remove(QueueEntry queueEntry) {
@@ -80,16 +101,40 @@ public class QueueService implements IQueueService {
         if (queue == null || queue.isEmpty()) return null;
 
         List<QueueEntry> entries = new ArrayList<>(queue);
-        return remove(entries.get(new Random().nextInt(entries.size())).getUuid());
+        QueueEntry selectedEntry = entries.get(new Random().nextInt(entries.size()));
+        
+        // Remove only from this specific kit queue
+        UUID playerUUID = selectedEntry.getUuid();
+        Kit selectedKit = selectedEntry.getKit();
+        
+        Queue<QueueEntry> kitQueue = kitQueues.get(selectedKit);
+        if (kitQueue != null) {
+            kitQueue.remove(selectedEntry);
+            selectedKit.removeQueue();
+        }
+        
+        // Remove from player's queue list
+        List<QueueEntry> playerEntries = playerQueues.get(playerUUID);
+        if (playerEntries != null) {
+            playerEntries.remove(selectedEntry);
+            if (playerEntries.isEmpty()) {
+                playerQueues.remove(playerUUID);
+            }
+        }
+        
+        return selectedEntry;
     }
 
     public QueueEntry get(UUID uuid) {
-        for (Queue<QueueEntry> queue : kitQueues.values()) {
-            for (QueueEntry entry : queue) {
-                if (entry.getUuid().equals(uuid)) return entry;
-            }
-        }
-        return null;
+        List<QueueEntry> entries = playerQueues.get(uuid);
+        if (entries == null || entries.isEmpty()) return null;
+        return entries.get(0);
+    }
+
+    @Override
+    public List<IQueueEntry> getAll(UUID uuid) {
+        List<QueueEntry> entries = playerQueues.get(uuid);
+        return entries != null ? new ArrayList<>(entries) : new ArrayList<>();
     }
 
     public int getQueueSize() {
