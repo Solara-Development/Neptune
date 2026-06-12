@@ -78,6 +78,6 @@ public class QueueSelectButton extends Button {
     @Override
     public void onClick(ClickType type, Player player) {
         QueueService.get().add(new QueueEntry(kit, player.getUniqueId()), true);
-        player.closeInventory();
+        // Don't close inventory - allow players to select multiple kits
     }
 }

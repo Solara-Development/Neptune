@@ -65,9 +65,16 @@ public class QueueService implements IQueueService {
             QueueJoinEvent event = new QueueJoinEvent(queueEntry);
             Bukkit.getScheduler().runTask(Neptune.get(), () -> Bukkit.getPluginManager().callEvent(event));
             if (event.isCancelled()) return;
-            MessagesLocale.QUEUE_JOIN.send(playerUUID, TagResolver.resolver(
-                    Placeholder.parsed("kit", kit.getDisplayName()),
-                    Placeholder.unparsed("max-ping", String.valueOf(profile.getSettingData().getMaxPing()))));
+            
+            // Only send message if this is the player's first queue entry
+            List<QueueEntry> currentEntries = playerQueues.get(playerUUID);
+            boolean isFirstQueue = (currentEntries != null && currentEntries.size() == 1);
+            
+            if (isFirstQueue) {
+                MessagesLocale.QUEUE_JOIN.send(playerUUID, TagResolver.resolver(
+                        Placeholder.parsed("kit", kit.getDisplayName()),
+                        Placeholder.unparsed("max-ping", String.valueOf(profile.getSettingData().getMaxPing()))));
+            }
         }
     }
 

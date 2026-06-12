@@ -48,13 +48,22 @@ public class QueueCheckTask extends NeptuneRunnable {
                         }
                     }
                     
-                String timeFormatted = String.format("%d:%02d", maxTime / 60000, (maxTime / 1000) % 60);
-                
-                player.sendActionBar(CC.returnMessage(player, MessagesLocale.QUEUE_ACTION_BAR.getString(),
-                        TagResolver.resolver(
-                                Placeholder.unparsed("queue-count", String.valueOf(queueCount)),
-                                Placeholder.unparsed("time", timeFormatted)
-                        )));
+                    String timeFormatted = String.format("%d:%02d", maxTime / 60000, (maxTime / 1000) % 60);
+                    
+                    // Show kit name if in 1 queue, show count if in multiple queues
+                    if (queueCount == 1) {
+                        player.sendActionBar(CC.returnMessage(player, MessagesLocale.QUEUE_ACTION_BAR_SINGLE.getString(),
+                                TagResolver.resolver(
+                                        Placeholder.parsed("kit", entry.getKit().getDisplayName()),
+                                        Placeholder.unparsed("time", timeFormatted)
+                                )));
+                    } else {
+                        player.sendActionBar(CC.returnMessage(player, MessagesLocale.QUEUE_ACTION_BAR.getString(),
+                                TagResolver.resolver(
+                                        Placeholder.unparsed("queue-count", String.valueOf(queueCount)),
+                                        Placeholder.unparsed("time", timeFormatted)
+                                )));
+                    }
                 }
             }
         }

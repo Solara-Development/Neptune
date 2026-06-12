@@ -37,6 +37,7 @@ public enum MessagesLocale implements IDataAccessor {
     QUEUE_JOIN("QUEUE.JOIN", DataType.STRING_LIST, "&7(&bDuels&7) Joined Queue"),
     QUEUE_LEAVE("QUEUE.LEAVE", DataType.STRING_LIST, "&7(&bDuels&7) Left queue"),
     QUEUE_ACTION_BAR("QUEUE.ACTION_BAR", DataType.STRING, "&7<queue-count> Modes &8| &a<time>"),
+    QUEUE_ACTION_BAR_SINGLE("QUEUE.ACTION_BAR_SINGLE", DataType.STRING, "&7<kit> &8| &a<time>"),
     QUEUE_REPEAT("QUEUE.REPEAT.MESSAGE", DataType.STRING_LIST, "&aSearching for other players in queue..."),
     QUEUE_REPEAT_TOGGLE("QUEUE.REPEAT.TOGGLE", DataType.BOOLEAN, "true"),
     QUEUE_NO_ARENAS("QUEUE.NO_ARENAS", DataType.STRING_LIST,
