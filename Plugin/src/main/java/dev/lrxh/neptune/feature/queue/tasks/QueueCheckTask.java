@@ -40,7 +40,6 @@ public class QueueCheckTask extends NeptuneRunnable {
                 
                 // Skip if we already sent action bar to this player this tick
                 if (actionBarSent.contains(playerUUID)) {
-                    org.bukkit.Bukkit.getLogger().info("[ACTION BAR DEBUG] Skipping duplicate action bar for player " + playerUUID);
                     continue;
                 }
                 

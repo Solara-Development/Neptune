@@ -70,9 +70,6 @@ public class QueueService implements IQueueService {
             List<QueueEntry> currentEntries = playerQueues.get(playerUUID);
             boolean isFirstQueue = (currentEntries != null && currentEntries.size() == 1);
             
-            // DEBUG: Log queue state
-            Bukkit.getLogger().info("[QUEUE DEBUG] Player " + playerUUID + " joining " + kit.getName() + " | Queue count: " + (currentEntries != null ? currentEntries.size() : 0) + " | Will send message: " + isFirstQueue);
-            
             if (isFirstQueue) {
                 MessagesLocale.QUEUE_JOIN.send(playerUUID, TagResolver.resolver(
                         Placeholder.parsed("kit", kit.getDisplayName()),
