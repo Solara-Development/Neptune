@@ -168,8 +168,8 @@ public class ArenaService extends IService implements IArenaService {
                     dup.setTime(owner.getTime());
                     dup.setEnabled(owner.isEnabled());
                     dup.setAllowedInCustomKit(owner.isAllowedInCustomKit());
+                    dup.capture();
                 }
-                owner.capture();
             });
         });
     }

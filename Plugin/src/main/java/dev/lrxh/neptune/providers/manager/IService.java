@@ -6,7 +6,6 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
@@ -22,16 +21,8 @@ public abstract class IService {
     public <T extends ConfigData> void saveAll(String root, Collection<T> items, Function<T, String> keyFn) {
         if (Neptune.get().isErrored()) return;
         FileConfiguration config = getConfigFile().getConfiguration();
-        ConfigurationSection section = config.getConfigurationSection(root);
-        Set<String> existingKeys = section != null ? new HashSet<>(section.getKeys(false)) : new HashSet<>();
-        for (T item : items) {
-            String key = keyFn.apply(item);
-            existingKeys.remove(key);
-            item.write(config.createSection(root + "." + key));
-        }
-        for (String stale : existingKeys) {
-            config.set(root + "." + stale, null);
-        }
+        config.set(root, null);
+        for (T item : items) item.write(config.createSection(root + "." + keyFn.apply(item)));
         getConfigFile().save();
     }
 

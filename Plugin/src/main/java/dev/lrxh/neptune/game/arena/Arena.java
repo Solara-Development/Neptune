@@ -34,7 +34,6 @@ public class Arena implements IArena, ConfigData {
     private List<Material> whitelistedBlocks;
     private CuboidSnapshot snapshot;
     private Object faweClipboard;
-    private int captureVersion;
     private Arena owner;
     private boolean doneLoading;
     private boolean inUse;
@@ -68,23 +67,6 @@ public class Arena implements IArena, ConfigData {
         capture();
     }
 
-
-
-    public void setOwner(Arena owner) {
-        this.owner = owner;
-        if (owner != null) {
-            this.faweClipboard = null;
-            this.snapshot = null;
-            this.doneLoading = true;
-            captureVersion++;
-        }
-    }
-
-
-    public boolean isDoneLoading() {
-        if (owner != null) return owner.isDoneLoading();
-        return doneLoading;
-    }
     public Arena(String name, String displayName, Location redSpawn, Location blueSpawn,
                  Location min, Location max, double buildLimit, boolean enabled,
                  List<Material> whitelistedBlocks, int deathY, long time, CuboidSnapshot snapshot, Arena owner) {
@@ -258,8 +240,8 @@ public class Arena implements IArena, ConfigData {
     @Override
     public void write(ConfigurationSection s) {
         s.set("displayName", displayName);
-        if (redSpawn != null) s.set("redSpawn", LocationUtil.serialize(redSpawn));
-        if (blueSpawn != null) s.set("blueSpawn", LocationUtil.serialize(blueSpawn));
+        s.set("redSpawn", LocationUtil.serialize(redSpawn));
+        s.set("blueSpawn", LocationUtil.serialize(blueSpawn));
         s.set("enabled", enabled);
         s.set("deathY", deathY);
         s.set("time", time);
@@ -272,10 +254,7 @@ public class Arena implements IArena, ConfigData {
     }
 
     public void restore() {
-        if (owner != null && owner.faweClipboard != null) {
-            Bukkit.getScheduler().runTaskAsynchronously(Neptune.get(),
-                    () -> ArenaDuplicator.restore(min.getWorld(), owner.faweClipboard, min));
-        } else if (faweClipboard != null) {
+        if (faweClipboard != null) {
             Bukkit.getScheduler().runTaskAsynchronously(Neptune.get(),
                     () -> ArenaDuplicator.restore(min.getWorld(), faweClipboard));
         } else if (snapshot != null) {
@@ -286,32 +265,17 @@ public class Arena implements IArena, ConfigData {
     public void capture() {
         if (min == null || max == null) return;
         this.doneLoading = false;
-
-        if (owner != null) {
-            this.faweClipboard = null;
-            this.snapshot = null;
-            this.doneLoading = true;
-            return;
-        }
-
-        int version = ++captureVersion;
-
         if (useFawe()) {
             this.snapshot = null;
             Bukkit.getScheduler().runTaskAsynchronously(Neptune.get(), () -> {
-                Object captured = ArenaDuplicator.capture(min.getWorld(), min, max);
-                if (version == captureVersion) {
-                    this.faweClipboard = captured;
-                    this.doneLoading = true;
-                }
+                this.faweClipboard = ArenaDuplicator.capture(min.getWorld(), min, max);
+                this.doneLoading = true;
             });
         } else {
             this.faweClipboard = null;
             CuboidSnapshot.create(min, max).thenAccept(cuboidSnapshot -> {
-                if (version == captureVersion) {
-                    this.snapshot = cuboidSnapshot;
-                    this.doneLoading = true;
-                }
+                this.snapshot = cuboidSnapshot;
+                this.doneLoading = true;
             });
         }
     }
