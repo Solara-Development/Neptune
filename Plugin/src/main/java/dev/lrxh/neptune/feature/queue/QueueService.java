@@ -110,24 +110,9 @@ public class QueueService implements IQueueService {
         List<QueueEntry> entries = new ArrayList<>(queue);
         QueueEntry selectedEntry = entries.get(new Random().nextInt(entries.size()));
         
-        // Remove only from this specific kit queue
+        // Remove player from ALL queues they're in (not just this one)
         UUID playerUUID = selectedEntry.getUuid();
-        Kit selectedKit = selectedEntry.getKit();
-        
-        Queue<QueueEntry> kitQueue = kitQueues.get(selectedKit);
-        if (kitQueue != null) {
-            kitQueue.remove(selectedEntry);
-            selectedKit.removeQueue();
-        }
-        
-        // Remove from player's queue list
-        List<QueueEntry> playerEntries = playerQueues.get(playerUUID);
-        if (playerEntries != null) {
-            playerEntries.remove(selectedEntry);
-            if (playerEntries.isEmpty()) {
-                playerQueues.remove(playerUUID);
-            }
-        }
+        remove(playerUUID);
         
         return selectedEntry;
     }
