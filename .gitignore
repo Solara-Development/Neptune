@@ -25,6 +25,9 @@ hs_err_pid*
 log/
 target/
 
+# Gradle
+.gradle/
+
 # Compiled Files
 *.class
 bin/
