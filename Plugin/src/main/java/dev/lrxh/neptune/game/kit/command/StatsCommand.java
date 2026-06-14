@@ -10,7 +10,7 @@ public class StatsCommand {
 
     @Command(name = "", desc = "")
     public void open(@Sender Player player) {
-        new StatsMenu(player.getName()).open(player);
+        new StatsMenu(player).open(player);
     }
 
     @Command(name = "", desc = "", usage = "<player>")
