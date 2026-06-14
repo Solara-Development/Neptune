@@ -1,18 +1,14 @@
 package dev.lrxh.neptune.game.kit.menu.editor;
 
 import dev.lrxh.neptune.configs.impl.MenusLocale;
-import dev.lrxh.neptune.feature.customkit.menu.CustomKitsMenu;
 import dev.lrxh.neptune.game.kit.Kit;
 import dev.lrxh.neptune.game.kit.KitService;
 import dev.lrxh.neptune.game.kit.impl.KitRule;
 import dev.lrxh.neptune.game.kit.menu.editor.button.KitEditorSelectButton;
-import dev.lrxh.neptune.utils.ItemBuilder;
 import dev.lrxh.neptune.utils.menu.Button;
 import dev.lrxh.neptune.utils.menu.Filter;
 import dev.lrxh.neptune.utils.menu.Menu;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,23 +30,6 @@ public class KitEditorMenu extends Menu {
                 buttons.add(new KitEditorSelectButton(kit.getKitEditorSlot(), kit));
             }
         }
-
-        // Add Custom Kits button
-        buttons.add(new Button(MenusLocale.KIT_EDITOR_CUSTOM_KITS_SLOT.getInt()) {
-            @Override
-            public ItemStack getItemStack(Player p) {
-                return new ItemBuilder(MenusLocale.KIT_EDITOR_CUSTOM_KITS_MATERIAL.getString())
-                        .name(MenusLocale.KIT_EDITOR_CUSTOM_KITS_NAME.getString())
-                        .lore(MenusLocale.KIT_EDITOR_CUSTOM_KITS_LORE.getStringList())
-                        .build();
-            }
-
-            @Override
-            public void onClick(ClickType type, Player p) {
-                new CustomKitsMenu().open(p);
-            }
-        });
-
         return buttons;
     }
 }

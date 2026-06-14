@@ -80,6 +80,7 @@ public class PlaceholderUtil {
                     Placeholder.parsed("kit", kit.getDisplayName()),
                     Placeholder.parsed("kit-division", kitData.getDivision() != null ? kitData.getDivision().getName() : "None"),
                     Placeholder.unparsed("rounds", String.valueOf(kit.getRounds())),
+                    Placeholder.unparsed("maxpoint", String.valueOf(kit.getRounds())),
                     Placeholder.unparsed("kit-current-win-streak", String.valueOf(kitData.getCurrentStreak())),
                     Placeholder.unparsed("kit-best-win-streak", String.valueOf(kitData.getBestStreak())),
                     Placeholder.unparsed("kit-wins", String.valueOf(kitData.getWins())),
