@@ -46,6 +46,9 @@ public enum SettingsLocale implements IDataAccessor {
     EVENT_AUTO_SCHEDULE_INTERVAL("EVENT.AUTO_SCHEDULE.INTERVAL", "Interval in ticks between auto events.", DataType.INT, "72000"),
     EVENT_MIN_PLAYERS("EVENT.MIN_PLAYERS", DataType.INT, "2"),
     EVENT_START_COOLDOWN("EVENT.START_COOLDOWN", "Cooldown in seconds before a player can start another event. Set to 0 to disable.", DataType.INT, "300"),
+    QUEUE_MENU_LIVE_UPDATE("QUEUE.MENU_LIVE_UPDATE",
+            "Refresh the queue kit selection menu while it is open so queue/fight counts stay up to date.",
+            DataType.BOOLEAN, "true"),
     VERSION("VERSION", "Do not change this!", DataType.INT, "1");
 
     private final String path;

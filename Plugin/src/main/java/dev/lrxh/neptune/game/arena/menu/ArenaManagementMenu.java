@@ -51,7 +51,7 @@ public class ArenaManagementMenu extends Menu {
 
             buttons.add(new ArenaSetLimitButton(4, arena));
 
-            buttons.add(new DisplayButton(getSize() - 5, Material.GRASS_BLOCK, "&aManage Whitelisted Blocks", List.of("&7Click to manage which blocks players can place or break"), o -> new WhitelistedBlocksMenu(arena).open(player)));
+            buttons.add(new DisplayButton(getSize() - 5, Material.GRASS_BLOCK, "&aManage Whitelisted Blocks", List.of("&7Add or remove blocks players can break", "&7or destroy with explosions"), o -> new WhitelistedBlocksMenu(arena).open(player)));
             if (Neptune.get().isDuplicatesEnabled()) {
                 buttons.add(new DisplayButton(13, Material.PAPER, "&aManage Duplicates", List.of("&7Click to manage duplicate copies of this arena"), o -> new ArenaDuplicatesMenu(arena).open(o)));
             }

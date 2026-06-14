@@ -8,6 +8,7 @@ import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.configs.impl.SettingsLocale;
 import dev.lrxh.neptune.game.kit.Kit;
 import dev.lrxh.neptune.game.kit.impl.KitRule;
+import dev.lrxh.neptune.game.arena.ArenaWhitelistUtils;
 import dev.lrxh.neptune.game.match.Match;
 import dev.lrxh.neptune.game.match.impl.MatchState;
 import dev.lrxh.neptune.game.match.impl.participant.DeathCause;
@@ -197,6 +198,15 @@ public class MatchListener implements Listener {
                 PersistentDataType.STRING,
                 event.getPlayer().getUniqueId().toString());
         profileOpt.get().getMatch().getEntities().add(creeper);
+
+        Player player = event.getPlayer();
+        ItemStack handItem = event.getHand() != null
+                ? player.getInventory().getItem(event.getHand())
+                : player.getInventory().getItemInMainHand();
+        if (handItem.getType() == Material.CREEPER_SPAWN_EGG) {
+            handItem.setAmount(handItem.getAmount() - 1);
+        }
+
         event.setCancelled(true);
     }
 
@@ -262,7 +272,7 @@ public class MatchListener implements Listener {
         }
 
         getMatchForPlayer(player).ifPresent(match ->
-                retainWhitelistedBlocks(event.blockList(), match.getArena()));
+                filterExplosionBlocks(event.blockList(), match));
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -833,7 +843,9 @@ public class MatchListener implements Listener {
 
             Match match = profile.getMatch();
 
-            if (!match.getKit().is(KitRule.HUNGER)) {
+            if (!match.getKit().is(KitRule.HUNGER)
+                    && event.getItem() == null
+                    && event.getFoodLevel() <= player.getFoodLevel()) {
                 event.setCancelled(true);
             }
         }
@@ -892,6 +904,10 @@ public class MatchListener implements Listener {
 
         if (match.getKit().is(KitRule.BUILD) && match.getPlacedBlocks().contains(blockLocation)) {
             cancel = false;
+        } else if (match.getKit().is(KitRule.ALLOW_ANY_ARENA_BREAK)) {
+            if (!ArenaWhitelistUtils.isProtected(blockType)) {
+                cancel = false;
+            }
         } else if (match.getKit().is(KitRule.ALLOW_ARENA_BREAK)) {
             if (arena.getWhitelistedBlocks().contains(blockType)) {
                 cancel = false;
@@ -998,7 +1014,7 @@ public class MatchListener implements Listener {
         }
 
         getMatchForPlayer(player).ifPresent(match ->
-                retainWhitelistedBlocks(event.blockList(), match.getArena()));
+                filterExplosionBlocks(event.blockList(), match));
     }
 
 
@@ -1015,6 +1031,14 @@ public class MatchListener implements Listener {
             Profile profile = profileOpt.get();
             profile.getMatch().getEntities().add(event.getItemDrop());
         }
+    }
+
+    private void filterExplosionBlocks(List<Block> blockList, Match match) {
+        if (match.getKit().is(KitRule.ALLOW_ANY_ARENA_BREAK)) {
+            blockList.removeIf(block -> ArenaWhitelistUtils.isProtected(block.getType()));
+            return;
+        }
+        retainWhitelistedBlocks(blockList, match.getArena());
     }
 
     private void retainWhitelistedBlocks(List<Block> blockList, IArena arena) {

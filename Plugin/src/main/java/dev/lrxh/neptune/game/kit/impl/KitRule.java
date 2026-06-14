@@ -14,6 +14,7 @@ public enum KitRule implements IKitRule {
     DENY_MOVEMENT(Material.WATER_BUCKET, "Allow/Deny Movement on match start", "Deny Movement", "denyMovement"),
     BOXING(Material.DIAMOND_CHESTPLATE, "Allow/Deny Boxing", "Boxing", "boxing"),
     ALLOW_ARENA_BREAK(Material.WOODEN_AXE, "Allow Players to break blocks from the arena (They need to be whitelisted)", "Arena Break", "arenaBreak"),
+    ALLOW_ANY_ARENA_BREAK(Material.IRON_AXE, "Allow Players to break any arena block without a whitelist", "Arena Break (All)", "anyArenaBreak"),
     DAMAGE(Material.DIAMOND_SWORD, "Allow/Deny Players to take Damage", "Damage", "damage"),
     SATURATION_HEAL(Material.GOLDEN_APPLE, "If Players should regen from saturation", "Natural Regeneration", "saturationHeal"),
     SHOW_HP(Material.APPLE, "If players should see their enemies health under their name", "Show Health", "showHP"),

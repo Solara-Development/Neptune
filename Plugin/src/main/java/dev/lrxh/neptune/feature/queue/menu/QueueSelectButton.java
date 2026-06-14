@@ -1,6 +1,7 @@
 package dev.lrxh.neptune.feature.queue.menu;
 
 import dev.lrxh.neptune.configs.impl.MenusLocale;
+import dev.lrxh.neptune.configs.impl.SettingsLocale;
 import dev.lrxh.neptune.feature.leaderboard.LeaderboardService;
 import dev.lrxh.neptune.feature.leaderboard.impl.LeaderboardType;
 import dev.lrxh.neptune.feature.leaderboard.impl.PlayerEntry;
@@ -9,6 +10,8 @@ import dev.lrxh.neptune.feature.queue.QueueService;
 import dev.lrxh.neptune.game.kit.Kit;
 import dev.lrxh.neptune.utils.ItemBuilder;
 import dev.lrxh.neptune.utils.menu.Button;
+import dev.lrxh.neptune.utils.menu.Menu;
+import dev.lrxh.neptune.utils.menu.MenuService;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
@@ -78,6 +81,11 @@ public class QueueSelectButton extends Button {
     @Override
     public void onClick(ClickType type, Player player) {
         QueueService.get().add(new QueueEntry(kit, player.getUniqueId()), true);
-        // Don't close inventory - allow players to select multiple kits
+        if (SettingsLocale.QUEUE_MENU_LIVE_UPDATE.getBoolean()) {
+            Menu menu = MenuService.get().get(player);
+            if (menu != null) {
+                menu.update(player);
+            }
+        }
     }
 }

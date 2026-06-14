@@ -1,6 +1,7 @@
 package dev.lrxh.neptune.feature.queue.menu;
 
 import dev.lrxh.neptune.configs.impl.MenusLocale;
+import dev.lrxh.neptune.configs.impl.SettingsLocale;
 import dev.lrxh.neptune.feature.customkit.queue.CustomKitListingsMenu;
 import dev.lrxh.neptune.game.kit.Kit;
 import dev.lrxh.neptune.game.kit.KitService;
@@ -20,6 +21,10 @@ public class QueueMenu extends Menu {
 
     public QueueMenu() {
         super(MenusLocale.QUEUE_SELECT_TITLE.getString(), MenusLocale.QUEUE_SELECT_SIZE.getInt(), Filter.valueOf(MenusLocale.QUEUE_SELECT_FILTER.getString()));
+        if (SettingsLocale.QUEUE_MENU_LIVE_UPDATE.getBoolean()) {
+            setUpdateEveryTick(true);
+            setUpdateInterval(20L);
+        }
     }
 
     @Override
