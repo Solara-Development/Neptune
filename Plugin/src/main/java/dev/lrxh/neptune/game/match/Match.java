@@ -420,21 +420,25 @@ public abstract class Match implements IMatch {
 
             @Override
             public void run() {
+                // Cancel if player is no longer in this match
+                Profile profile = API.getProfile(player);
+                if (profile == null || !profile.getState().equals(ProfileState.IN_GAME) || !profile.getMatch().getUuid().equals(getUuid())) {
+                    cancel();
+                    return;
+                }
+
                 // Determine heart color based on absorption
                 boolean hasAbsorption = player.hasPotionEffect(PotionEffectType.ABSORPTION);
                 String displayName = hasAbsorption ? ChatColor.GOLD + "\u2764" : ChatColor.RED + "\u2764";
 
                 if (!objective.getDisplayName().equals(displayName)) {
                     objective.setDisplayName(displayName);
-
-                    // Force re-set display slot to refresh
                     objective.setDisplaySlot(DisplaySlot.BELOW_NAME);
                 }
 
-                // Force health sync every tick to ensure decimal precision
                 player.sendHealthUpdate();
             }
-        }.runTaskTimer(Neptune.get(), 0L, 1L);
+        }.runTaskTimer(Neptune.get(), 0L, 2L);
     }
 
     public void removeEntities() {
