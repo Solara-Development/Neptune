@@ -28,6 +28,7 @@ import dev.lrxh.neptune.profile.impl.Profile;
 import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.PlayerUtil;
 import dev.lrxh.neptune.utils.Time;
+import dev.lrxh.neptune.utils.tasks.NeptuneRunnable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -41,6 +42,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
@@ -398,19 +400,43 @@ public abstract class Match implements IMatch {
         forEachPlayer(player -> {
             Objective objective = player.getScoreboard().getObjective("neptune_health");
 
-            if (objective != null) {
-                objective.unregister();
+            if (objective == null) {
+                objective = player.getScoreboard().registerNewObjective("neptune_health", Criteria.HEALTH,
+                        CC.color("&c❤"));
             }
 
-            objective = player.getScoreboard().registerNewObjective("neptune_health", Criteria.HEALTH,
-                    CC.color("&c❤"));
-            try {
-                objective.setDisplaySlot(DisplaySlot.BELOW_NAME);
-            } catch (IllegalStateException ignored) {
-            }
+            objective.setDisplaySlot(DisplaySlot.BELOW_NAME);
 
-            player.damage(0.001);
+            // Force health sync so it doesn't show 0
+            player.sendHealthUpdate();
+
+            // Start a repeating task to update heart color and decimals
+            startHealthDisplayTask(player, objective);
         });
+    }
+
+    private void startHealthDisplayTask(Player player, Objective objective) {
+        new NeptuneRunnable() {
+            private int healthTaskId = -1;
+
+            @Override
+            public void run() {
+                // Determine heart color based on absorption
+                boolean hasAbsorption = player.hasPotionEffect(PotionEffectType.ABSORPTION);
+                String heartIcon = hasAbsorption ? "&6\u2764" : "&c\u2764";
+                String displayName = CC.color(heartIcon);
+
+                if (!objective.getDisplayName().equals(displayName)) {
+                    objective.setDisplayName(displayName);
+
+                    // Force re-set display slot to refresh
+                    objective.setDisplaySlot(DisplaySlot.BELOW_NAME);
+                }
+
+                // Force health sync every tick to ensure decimal precision
+                player.sendHealthUpdate();
+            }
+        }.runTaskTimer(Neptune.get(), 0L, 1L);
     }
 
     public void removeEntities() {
