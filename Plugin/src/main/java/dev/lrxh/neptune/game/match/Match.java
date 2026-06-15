@@ -42,7 +42,6 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
@@ -347,11 +346,6 @@ public abstract class Match implements IMatch {
                     participant.toggleFreeze();
                 }
             }
-            if (kit.is(KitRule.SHOW_HP)) {
-                if (state.equals(MatchState.STARTING)) {
-                    showHealth();
-                }
-            }
 
             if (!kit.is(KitRule.SATURATION)) {
                 Player player = participant.getPlayer();
@@ -367,6 +361,11 @@ public abstract class Match implements IMatch {
 
             participant.setDead(false);
         });
+
+        // Show health display once for all players (not per-participant to avoid duplicate tasks)
+        if (kit.is(KitRule.SHOW_HP) && state.equals(MatchState.STARTING)) {
+            showHealth();
+        }
 
         showPlayerForSpectators();
     }
@@ -427,15 +426,7 @@ public abstract class Match implements IMatch {
                     return;
                 }
 
-                // Determine heart color based on absorption
-                boolean hasAbsorption = player.hasPotionEffect(PotionEffectType.ABSORPTION);
-                String displayName = hasAbsorption ? ChatColor.GOLD + "\u2764" : ChatColor.RED + "\u2764";
-
-                if (!objective.getDisplayName().equals(displayName)) {
-                    objective.setDisplayName(displayName);
-                    objective.setDisplaySlot(DisplaySlot.BELOW_NAME);
-                }
-
+                // Force health sync to ensure decimal precision at low HP
                 player.sendHealthUpdate();
             }
         }.runTaskTimer(Neptune.get(), 0L, 2L);
