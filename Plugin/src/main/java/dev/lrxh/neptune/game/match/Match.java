@@ -417,14 +417,12 @@ public abstract class Match implements IMatch {
 
     private void startHealthDisplayTask(Player player, Objective objective) {
         new NeptuneRunnable() {
-            private int healthTaskId = -1;
 
             @Override
             public void run() {
                 // Determine heart color based on absorption
                 boolean hasAbsorption = player.hasPotionEffect(PotionEffectType.ABSORPTION);
-                String heartIcon = hasAbsorption ? "&6\u2764" : "&c\u2764";
-                String displayName = CC.color(heartIcon);
+                String displayName = hasAbsorption ? ChatColor.GOLD + "\u2764" : ChatColor.RED + "\u2764";
 
                 if (!objective.getDisplayName().equals(displayName)) {
                     objective.setDisplayName(displayName);
