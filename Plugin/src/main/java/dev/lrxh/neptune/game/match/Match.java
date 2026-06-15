@@ -396,7 +396,7 @@ public abstract class Match implements IMatch {
 
     private void showHealth() {
         forEachPlayer(player -> {
-            Objective objective = player.getScoreboard().getObjective(DisplaySlot.BELOW_NAME);
+            Objective objective = player.getScoreboard().getObjective("neptune_health");
 
             if (objective == null) {
                 objective = player.getScoreboard().registerNewObjective("neptune_health", Criteria.HEALTH,
