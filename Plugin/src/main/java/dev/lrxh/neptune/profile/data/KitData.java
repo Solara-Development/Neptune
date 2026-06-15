@@ -17,7 +17,15 @@ import java.util.List;
 @Getter
 @Setter
 public class KitData implements IKitData {
-    private static final int K_FACTOR = 32;
+    private static final int K_FLOOR = 16;
+
+    private int getKFactor() {
+        if (elo < 500) return 64;
+        if (elo < 1000) return 48;
+        if (elo < 1500) return 32;
+        if (elo < 2000) return 24;
+        return K_FLOOR;
+    }
     private int kills = 0;
     private int deaths = 0;
     private int wins = 0;
@@ -68,7 +76,7 @@ public class KitData implements IKitData {
     public boolean updateElo(boolean won, int opponentElo) {
         double expected = 1.0 / (1.0 + Math.pow(10.0, (opponentElo - elo) / 400.0));
         double actual = won ? 1.0 : 0.0;
-        int change = (int) Math.round(K_FACTOR * (actual - expected));
+        int change = (int) Math.round(getKFactor() * (actual - expected));
 
         elo += change;
         if (elo < 0) elo = 0;

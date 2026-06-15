@@ -10,6 +10,7 @@ import dev.lrxh.neptune.game.match.impl.solo.SoloFightMatch;
 import dev.lrxh.neptune.game.match.impl.team.MatchTeam;
 import dev.lrxh.neptune.game.match.impl.team.TeamFightMatch;
 import dev.lrxh.neptune.profile.impl.Profile;
+import dev.lrxh.neptune.feature.divisions.impl.Division;
 import dev.lrxh.neptune.providers.placeholder.PAPIPlaceholder;
 import org.bukkit.OfflinePlayer;
 
@@ -103,6 +104,14 @@ public class MatchPlaceholders implements PAPIPlaceholder {
                 case "blue_kit_elo" -> {
                     return String.valueOf(blue.getProfile().getGameData().get(kit).getElo());
                 }
+                case "red_division" -> {
+                    Division redDiv = red.getProfile().getGameData().getGlobalStats().getDivision();
+                    return redDiv != null ? redDiv.getDisplayName() : "None";
+                }
+                case "blue_division" -> {
+                    Division blueDiv = blue.getProfile().getGameData().getGlobalStats().getDivision();
+                    return blueDiv != null ? blueDiv.getDisplayName() : "None";
+                }
             }
             if (participant != null) {
                 Participant opponent = participant.getOpponent();
@@ -136,6 +145,10 @@ public class MatchPlaceholders implements PAPIPlaceholder {
                     }
                     case "opponent_kit_elo" -> {
                         return String.valueOf(opponent.getProfile().getGameData().get(kit).getElo());
+                    }
+                    case "opponent_division" -> {
+                        Division oppDiv = opponent.getProfile().getGameData().getGlobalStats().getDivision();
+                        return oppDiv != null ? oppDiv.getDisplayName() : "None";
                     }
                     case "hit_difference" -> {
                         return participant.getHitsDifference(opponent);
