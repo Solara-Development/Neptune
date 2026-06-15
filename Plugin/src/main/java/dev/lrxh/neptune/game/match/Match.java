@@ -371,7 +371,7 @@ public abstract class Match implements IMatch {
 
     public void hideHealth() {
         forEachPlayer(player -> {
-            Objective objective = player.getScoreboard().getObjective(DisplaySlot.BELOW_NAME);
+            Objective objective = player.getScoreboard().getObjective("neptune_health");
             if (objective != null) {
                 objective.unregister();
             }
@@ -396,12 +396,14 @@ public abstract class Match implements IMatch {
 
     private void showHealth() {
         forEachPlayer(player -> {
-            Objective objective = player.getScoreboard().getObjective(DisplaySlot.BELOW_NAME);
+            Objective objective = player.getScoreboard().getObjective("neptune_health");
 
-            if (objective == null) {
-                objective = player.getScoreboard().registerNewObjective("neptune_health", Criteria.HEALTH,
-                        CC.color("&c❤"));
+            if (objective != null) {
+                objective.unregister();
             }
+
+            objective = player.getScoreboard().registerNewObjective("neptune_health", Criteria.HEALTH,
+                    CC.color("&c❤"));
             try {
                 objective.setDisplaySlot(DisplaySlot.BELOW_NAME);
             } catch (IllegalStateException ignored) {
