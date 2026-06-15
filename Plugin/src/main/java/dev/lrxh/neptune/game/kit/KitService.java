@@ -6,6 +6,7 @@ import dev.lrxh.api.kit.IKitService;
 import dev.lrxh.neptune.configs.ConfigService;
 import dev.lrxh.neptune.game.arena.Arena;
 import dev.lrxh.neptune.game.arena.ArenaService;
+import dev.lrxh.neptune.feature.rankedloadout.LoadoutWhitelistUtils;
 import dev.lrxh.neptune.game.kit.impl.KitRule;
 import dev.lrxh.neptune.providers.manager.IService;
 import dev.lrxh.neptune.utils.ConfigFile;
@@ -27,6 +28,15 @@ public class KitService extends IService implements IKitService {
     @Override
     public void load() {
         loadAll("kits", kits, Kit::read);
+        registerLoadoutBrowserSections();
+    }
+
+    private void registerLoadoutBrowserSections() {
+        for (Kit kit : kits) {
+            if (kit.is(KitRule.ADVANCED_KIT_EDITOR) && !kit.getLoadoutWhitelist().isEmpty()) {
+                LoadoutWhitelistUtils.registerBrowserSection(kit);
+            }
+        }
     }
 
     public boolean add(Kit kit) {

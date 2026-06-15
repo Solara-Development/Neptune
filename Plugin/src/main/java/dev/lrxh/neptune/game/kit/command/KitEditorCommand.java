@@ -6,7 +6,10 @@ import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.game.kit.Kit;
 import dev.lrxh.neptune.game.kit.menu.editor.KitEditorMenu;
+import dev.lrxh.neptune.feature.rankedloadout.RankedLoadoutService;
+import dev.lrxh.neptune.game.kit.impl.KitRule;
 import dev.lrxh.neptune.game.kit.menu.editor.button.KitEditorSelectButton;
+import dev.lrxh.neptune.feature.rankedloadout.menu.RankedLoadoutListMenu;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -33,7 +36,11 @@ public class KitEditorCommand {
         if (player == null) return;
         Profile profile = API.getProfile(player);
         if (profile.hasState(ProfileState.IN_LOBBY, ProfileState.IN_PARTY)) {
-            new KitEditorSelectButton(0, kit).onClick(ClickType.LEFT, player);
+            if (kit.is(KitRule.ADVANCED_KIT_EDITOR)) {
+                new RankedLoadoutListMenu(kit).open(player);
+            } else {
+                new KitEditorSelectButton(0, kit).onClick(ClickType.LEFT, player);
+            }
         }
     }
 
@@ -42,6 +49,14 @@ public class KitEditorCommand {
         if (player == null)
             return;
         Profile profile = API.getProfile(player);
+
+        if (kit.is(KitRule.ADVANCED_KIT_EDITOR)) {
+            RankedLoadoutService.get().resetActiveLoadout(profile, kit);
+            Profile.save(profile);
+            MessagesLocale.RANKED_LOADOUT_RESET.send(player.getUniqueId(),
+                    Placeholder.parsed("kit", kit.getDisplayName()));
+            return;
+        }
 
         profile.getGameData().get(kit).setKitLoadout(kit.getItems());
 

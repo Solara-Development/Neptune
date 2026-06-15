@@ -19,13 +19,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EnchantmentBrowserMenu extends PaginatedMenu {
-    private final CustomKit kit;
-    private final int index;
+    private final LoadoutEnchantContext context;
 
     public EnchantmentBrowserMenu(CustomKit kit, int index) {
+        this(new LoadoutEnchantContext(kit, index, () -> new CustomKitEditorMenu(kit), () -> {
+        }));
+    }
+
+    public EnchantmentBrowserMenu(LoadoutEnchantContext context) {
         super(MenusLocale.CUSTOM_KIT_ENCHANT_TITLE.getString(), MenusLocale.CUSTOM_KIT_ENCHANT_SIZE.getInt(), Filter.NONE);
-        this.kit = kit;
-        this.index = index;
+        this.context = context;
     }
 
     public static String format(String key) {
@@ -41,7 +44,7 @@ public class EnchantmentBrowserMenu extends PaginatedMenu {
     @Override
     public List<Button> getAllPagesButtons(Player player) {
         List<Button> buttons = new ArrayList<>();
-        ItemStack item = kit.itemAt(index);
+        ItemStack item = context.getLoadout().itemAt(context.getIndex());
         if (item == null) return buttons;
         int i = 0;
         for (Enchantment enchantment : Registry.ENCHANTMENT) {
@@ -60,7 +63,7 @@ public class EnchantmentBrowserMenu extends PaginatedMenu {
 
                 @Override
                 public void onClick(ClickType type, Player p) {
-                    new EnchantLevelMenu(kit, index, enchantment).open(p);
+                    new EnchantLevelMenu(context, enchantment).open(p);
                 }
             });
         }
@@ -70,7 +73,7 @@ public class EnchantmentBrowserMenu extends PaginatedMenu {
     @Override
     public List<Button> getGlobalButtons(Player player) {
         List<Button> buttons = new ArrayList<>();
-        buttons.add(new ReturnButton(getSize() - 9, new CustomKitEditorMenu(kit)));
+        buttons.add(new ReturnButton(getSize() - 9, context.getReturnMenu().get()));
         return buttons;
     }
 

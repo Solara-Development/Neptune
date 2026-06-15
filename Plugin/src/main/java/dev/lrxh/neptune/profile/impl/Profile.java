@@ -11,6 +11,7 @@ import dev.lrxh.neptune.feature.cosmetics.impl.cosmetics.armortrims.ArmorTrimCos
 import dev.lrxh.neptune.feature.cosmetics.impl.cosmetics.killmessage.KillMessageCosmetic;
 import dev.lrxh.neptune.feature.cosmetics.impl.cosmetics.shieldpatterns.ShieldPatternCosmetic;
 import dev.lrxh.neptune.feature.customkit.CustomKitService;
+import dev.lrxh.neptune.feature.rankedloadout.RankedLoadoutService;
 import dev.lrxh.neptune.feature.divisions.DivisionService;
 import dev.lrxh.neptune.feature.hotbar.HotbarService;
 import dev.lrxh.neptune.feature.party.Party;
@@ -121,6 +122,9 @@ public class Profile implements IProfile {
                         }
 
                         profileKitData.updateDivision();
+                        if (kit.is(dev.lrxh.neptune.game.kit.impl.KitRule.ADVANCED_KIT_EDITOR)) {
+                            RankedLoadoutService.get().sanitizeOnProfileLoad(profile, kit);
+                        }
                     }
 
                     gameData.setLastPlayedKit(kitStatistics.getString("lastPlayedKit", ""));

@@ -21,6 +21,8 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import java.time.Duration;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
 @UtilityClass
@@ -56,6 +58,35 @@ public class PlayerUtil {
         player.setHealth(20.0D);
         player.setCooldown(Material.ENDER_PEARL, 0);
         resetActionbar(player);
+    }
+
+    public void applyLoadout(Player player, List<ItemStack> items) {
+        if (player == null || items == null || items.isEmpty()) return;
+
+        ItemStack[] contents = new ItemStack[36];
+        for (int i = 0; i < 36; i++) {
+            contents[i] = i < items.size() ? items.get(i) : null;
+        }
+        player.getInventory().setContents(contents);
+
+        ItemStack[] armor = new ItemStack[4];
+        if (items.size() > 36) armor[0] = items.get(36);
+        if (items.size() > 37) armor[1] = items.get(37);
+        if (items.size() > 38) armor[2] = items.get(38);
+        if (items.size() > 39) armor[3] = items.get(39);
+        player.getInventory().setArmorContents(armor);
+
+        if (items.size() > 40) {
+            player.getInventory().setItemInOffHand(items.get(40));
+        } else {
+            player.getInventory().setItemInOffHand(null);
+        }
+        player.updateInventory();
+    }
+
+    public void applyLoadout(Player player, ItemStack[] items) {
+        if (items == null) return;
+        applyLoadout(player, Arrays.asList(items));
     }
 
     public void resetActionbar(Player player) {

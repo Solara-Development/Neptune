@@ -6,6 +6,7 @@ import dev.lrxh.neptune.game.kit.Kit;
 import dev.lrxh.neptune.game.kit.KitService;
 import dev.lrxh.neptune.game.kit.impl.KitRule;
 import dev.lrxh.neptune.game.kit.menu.editor.button.KitEditorSelectButton;
+import dev.lrxh.neptune.feature.rankedloadout.menu.RankedLoadoutSelectButton;
 import dev.lrxh.neptune.utils.ItemBuilder;
 import dev.lrxh.neptune.utils.menu.Button;
 import dev.lrxh.neptune.utils.menu.Filter;
@@ -31,7 +32,9 @@ public class KitEditorMenu extends Menu {
 
         for (Kit kit : KitService.get().kits) {
             if (kit.getRules().get(KitRule.HIDDEN)) continue;
-            if (kit.is(KitRule.ALLOW_KIT_EDITOR)) {
+            if (kit.is(KitRule.ADVANCED_KIT_EDITOR)) {
+                buttons.add(new RankedLoadoutSelectButton(kit.getKitEditorSlot(), kit));
+            } else if (kit.is(KitRule.ALLOW_KIT_EDITOR)) {
                 buttons.add(new KitEditorSelectButton(kit.getKitEditorSlot(), kit));
             }
         }

@@ -16,7 +16,8 @@ public enum SignsLocale implements IDataAccessor {
     CUSTOM_KIT_NAME("CUSTOM_KIT.NAME", "Create custom kit sign lines. <input> = typed value.", DataType.STRING_LIST, "<input>", "Enter kit name"),
     CUSTOM_KIT_AMOUNT("CUSTOM_KIT.AMOUNT", "Custom kit item amount sign lines. <input> = typed value.", DataType.STRING_LIST, "<input>", "Enter amount", "1- 64"),
     CUSTOM_KIT_HEALTH("CUSTOM_KIT.HEALTH", "Custom kit health sign lines. <input> = typed value.", DataType.STRING_LIST, "<input>", "Enter max health", "1- 40"),
-    ITEM_BROWSER_SEARCH("ITEM_BROWSER.SEARCH", "Item browser search sign lines. <input> = typed value.", DataType.STRING_LIST, "<input>", "Enter search");
+    ITEM_BROWSER_SEARCH("ITEM_BROWSER.SEARCH", "Item browser search sign lines. <input> = typed value.", DataType.STRING_LIST, "<input>", "Enter search"),
+    RANKED_LOADOUT_NAME("RANKED_LOADOUT.NAME", "Ranked loadout name sign lines. <input> = typed value.", DataType.STRING_LIST, "<input>", "Enter loadout name");
 
     private final String path;
     private final String comment;

@@ -7,6 +7,7 @@ import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.game.arena.Arena;
 import dev.lrxh.neptune.game.arena.ArenaService;
+import dev.lrxh.neptune.feature.rankedloadout.RankedLoadoutService;
 import dev.lrxh.neptune.game.kit.impl.KitRule;
 import dev.lrxh.neptune.game.match.impl.participant.Participant;
 import dev.lrxh.neptune.profile.ProfileService;
@@ -18,7 +19,6 @@ import dev.lrxh.neptune.utils.ItemUtils;
 import dev.lrxh.neptune.utils.PlayerUtil;
 import dev.lrxh.neptune.utils.PotionEffectUtils;
 import dev.lrxh.neptune.utils.ServerUtils;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -36,7 +36,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 @Getter
 @Setter
-@AllArgsConstructor
 public class Kit implements IKit, ConfigData {
     private String name;
     private String displayName;
@@ -49,6 +48,9 @@ public class Kit implements IKit, ConfigData {
     private List<PotionEffect> potionEffects;
     private double damageMultiplier;
     private int rounds = 1;
+    private List<Material> loadoutWhitelist = new ArrayList<>();
+    private List<Material> loadoutBlacklist = new ArrayList<>();
+    private int maxItemStack = 64;
 
     public Kit(String name, String displayName, List<ItemStack> items, HashSet<Arena> arenas, ItemStack icon,
                HashMap<KitRule, Boolean> rules, int slot, double health, int kitEditorSlot, int leaderboardSlot,
@@ -153,7 +155,20 @@ public class Kit implements IKit, ConfigData {
         Kit kit = new Kit(name, s.getString("displayName", name), items, arenas, icon, rules,
                 slot, health, kitEditorSlot, leaderboardSlot, potionEffects, damageMultiplier);
         kit.setRounds(rounds);
+        kit.setLoadoutWhitelist(parseMaterials(s.getStringList("loadoutWhitelist")));
+        kit.setLoadoutBlacklist(parseMaterials(s.getStringList("loadoutBlacklist")));
+        kit.setMaxItemStack(s.getInt("maxItemStack", 64));
         return kit;
+    }
+
+    private static List<Material> parseMaterials(List<String> names) {
+        List<Material> list = new ArrayList<>();
+        if (names == null) return list;
+        for (String name : names) {
+            Material mat = Material.matchMaterial(name);
+            if (mat != null && mat.isItem()) list.add(mat);
+        }
+        return list;
     }
 
     private static int defaultRounds(boolean legacyBestOfThree) {
@@ -232,6 +247,9 @@ public class Kit implements IKit, ConfigData {
         for (Map.Entry<KitRule, Boolean> e : rules.entrySet()) {
             s.set(e.getKey().getSaveName(), e.getValue());
         }
+        s.set("loadoutWhitelist", loadoutWhitelist.stream().map(Material::name).toList());
+        s.set("loadoutBlacklist", loadoutBlacklist.stream().map(Material::name).toList());
+        s.set("maxItemStack", maxItemStack);
     }
 
     public boolean is(KitRule kitRule) {
@@ -301,11 +319,15 @@ public class Kit implements IKit, ConfigData {
             return;
         Profile profile = API.getProfile(playerUUID);
         GameData gameData = profile.getGameData();
-        List<ItemStack> loadout = gameData.get(this).getKitLoadout();
-        if (gameData.getKitData() == null || gameData.get(this) == null || loadout.isEmpty()) {
-            player.getInventory().setContents(items.toArray(new ItemStack[0]));
+        if (is(KitRule.ADVANCED_KIT_EDITOR)) {
+            PlayerUtil.applyLoadout(player, RankedLoadoutService.get().resolveActiveLoadout(profile, this));
         } else {
-            player.getInventory().setContents(loadout.toArray(new ItemStack[0]));
+            List<ItemStack> loadout = gameData.get(this).getKitLoadout();
+            if (gameData.getKitData() == null || gameData.get(this) == null || loadout.isEmpty()) {
+                player.getInventory().setContents(items.toArray(new ItemStack[0]));
+            } else {
+                player.getInventory().setContents(loadout.toArray(new ItemStack[0]));
+            }
         }
         if (giveEffects) player.addPotionEffects(potionEffects);
         ItemUtils.applyArmorTrim(profile);
@@ -318,7 +340,11 @@ public class Kit implements IKit, ConfigData {
             return;
         Profile profile = API.getProfile(player);
         GameData gameData = profile.getGameData();
-        if (gameData.getKitData() == null || gameData.get(this) == null ||
+        if (is(KitRule.ADVANCED_KIT_EDITOR)) {
+            List<ItemStack> loadout = RankedLoadoutService.get().resolveActiveLoadout(profile, this);
+            PlayerUtil.applyLoadout(player, ItemUtils.color(loadout.toArray(new ItemStack[0]),
+                    participant.getColor().getContentColor()));
+        } else if (gameData.getKitData() == null || gameData.get(this) == null ||
                 gameData.get(this).getKitLoadout().isEmpty()) {
             player.getInventory().setContents(
                     ItemUtils.color(items.toArray(new ItemStack[0]), participant.getColor().getContentColor()));

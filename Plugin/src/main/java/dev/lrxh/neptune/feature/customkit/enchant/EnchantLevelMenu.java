@@ -22,15 +22,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EnchantLevelMenu extends Menu {
-    private final CustomKit kit;
-    private final int index;
+    private final LoadoutEnchantContext context;
     private final Enchantment enchantment;
 
     public EnchantLevelMenu(CustomKit kit, int index, Enchantment enchantment) {
+        this(new LoadoutEnchantContext(kit, index, () -> new EnchantmentBrowserMenu(kit, index), () -> {
+        }), enchantment);
+    }
+
+    public EnchantLevelMenu(LoadoutEnchantContext context, Enchantment enchantment) {
         super(MenusLocale.CUSTOM_KIT_ENCHANT_LEVEL_TITLE.getString(),
                 MenusLocale.CUSTOM_KIT_ENCHANT_LEVEL_SIZE.getInt(), Filter.FILL);
-        this.kit = kit;
-        this.index = index;
+        this.context = context;
         this.enchantment = enchantment;
     }
 
@@ -50,18 +53,19 @@ public class EnchantLevelMenu extends Menu {
 
                 @Override
                 public void onClick(ClickType type, Player p) {
-                    ItemStack item = kit.itemAt(index);
+                    ItemStack item = context.getLoadout().itemAt(context.getIndex());
                     if (item == null) {
                         p.closeInventory();
                         return;
                     }
                     item.addUnsafeEnchantment(enchantment, lvl);
+                    context.getOnSave().run();
                     Profile profile = API.getProfile(p);
                     if (profile != null) Profile.save(profile);
                     MessagesLocale.CUSTOM_KIT_ENCHANT_APPLIED.send(p.getUniqueId(), TagResolver.resolver(
                             Placeholder.parsed("enchant", EnchantmentBrowserMenu.format(enchantment.getKey().getKey())),
                             Placeholder.unparsed("level", String.valueOf(lvl))));
-                    new EnchantmentBrowserMenu(kit, index).open(p);
+                    new EnchantmentBrowserMenu(context).open(p);
                 }
             });
         }
@@ -73,16 +77,17 @@ public class EnchantLevelMenu extends Menu {
 
             @Override
             public void onClick(ClickType type, Player p) {
-                ItemStack item = kit.itemAt(index);
+                ItemStack item = context.getLoadout().itemAt(context.getIndex());
                 if (item != null) {
                     item.removeEnchantment(enchantment);
+                    context.getOnSave().run();
                     Profile profile = API.getProfile(p);
                     if (profile != null) Profile.save(profile);
                 }
-                new EnchantmentBrowserMenu(kit, index).open(p);
+                new EnchantmentBrowserMenu(context).open(p);
             }
         });
-        buttons.add(new ReturnButton(getSize() - 1, new EnchantmentBrowserMenu(kit, index)));
+        buttons.add(new ReturnButton(getSize() - 1, new EnchantmentBrowserMenu(context)));
         return buttons;
     }
 }

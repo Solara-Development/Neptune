@@ -1,6 +1,7 @@
 package dev.lrxh.neptune.feature.customkit;
 
 import com.google.gson.Gson;
+import dev.lrxh.neptune.feature.rankedloadout.EditableLoadout;
 import dev.lrxh.neptune.game.arena.Arena;
 import dev.lrxh.neptune.game.arena.ArenaService;
 import dev.lrxh.neptune.game.kit.Kit;
@@ -17,7 +18,7 @@ import java.util.*;
 
 @Getter
 @Setter
-public class CustomKit {
+public class CustomKit implements EditableLoadout {
     public static final int CONTENTS_SIZE = 41;
     private static final Gson GSON = new Gson();
     private final UUID owner;
@@ -129,8 +130,10 @@ public class CustomKit {
         }
         HashMap<KitRule, Boolean> r = new HashMap<>(rules);
         r.put(KitRule.HIDDEN, true);
-        return new Kit(name, displayName, new ArrayList<>(items), arenas, icon, r,
-                0, 0, 0, 0, 0, health, new ArrayList<>(potionEffects), 1.0, rounds);
+        Kit kit = new Kit(name, displayName, new ArrayList<>(items), arenas, icon, r,
+                1, health, 1, 1, new ArrayList<>(potionEffects), 1.0);
+        kit.setRounds(rounds);
+        return kit;
     }
 
     public String serialize() {
