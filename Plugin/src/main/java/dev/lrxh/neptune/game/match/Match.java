@@ -397,13 +397,18 @@ public abstract class Match implements IMatch {
 
     private void showHealth() {
         forEachPlayer(player -> {
-            Objective objective = player.getScoreboard().getObjective("neptune_health");
-
-            if (objective == null) {
-                objective = player.getScoreboard().registerNewObjective("neptune_health", Criteria.HEALTH,
-                        CC.color("&c❤"));
+            // Use a per-player scoreboard so each player has their own objective
+            org.bukkit.scoreboard.Scoreboard scoreboard = player.getScoreboard();
+            if (scoreboard.equals(Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard())) {
+                scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+                player.setScoreboard(scoreboard);
             }
 
+            Objective objective = scoreboard.getObjective("neptune_health");
+            if (objective == null) {
+                objective = scoreboard.registerNewObjective("neptune_health", Criteria.HEALTH,
+                        CC.color("&c❤"));
+            }
             objective.setDisplaySlot(DisplaySlot.BELOW_NAME);
 
             // Force health sync so it doesn't show 0
@@ -424,6 +429,15 @@ public abstract class Match implements IMatch {
                 if (profile == null || !profile.getState().equals(ProfileState.IN_GAME) || !profile.getMatch().getUuid().equals(getUuid())) {
                     cancel();
                     return;
+                }
+
+                // Update heart color based on absorption (per-player objective)
+                boolean hasAbsorption = player.hasPotionEffect(org.bukkit.potion.PotionEffectType.ABSORPTION);
+                String displayName = hasAbsorption ? ChatColor.GOLD + "\u2764" : ChatColor.RED + "\u2764";
+
+                if (!objective.getDisplayName().equals(displayName)) {
+                    objective.setDisplayName(displayName);
+                    objective.setDisplaySlot(DisplaySlot.BELOW_NAME);
                 }
 
                 // Force health sync to ensure decimal precision at low HP
