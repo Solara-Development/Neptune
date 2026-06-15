@@ -26,6 +26,7 @@ import dev.lrxh.neptune.profile.data.KitData;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
 import dev.lrxh.neptune.utils.CC;
+import dev.lrxh.neptune.utils.ServerUtils;
 import dev.lrxh.neptune.utils.PlayerUtil;
 import dev.lrxh.neptune.utils.Time;
 import dev.lrxh.neptune.utils.tasks.NeptuneRunnable;
@@ -68,6 +69,7 @@ public abstract class Match implements IMatch {
     private int currentRound;
     private boolean duel;
     private boolean ended;
+    private static final boolean DEBUG_HEALTH = true;
 
     @Override
     public List<IParticipant> getParticipants() {
@@ -371,10 +373,13 @@ public abstract class Match implements IMatch {
     }
 
     public void hideHealth() {
+        if (DEBUG_HEALTH) ServerUtils.info("hideHealth() called for match " + uuid + ", state=" + state);
         forEachPlayer(player -> {
             Objective objective = player.getScoreboard().getObjective("neptune_health");
+            if (DEBUG_HEALTH) ServerUtils.info("  hideHealth for " + player.getName() + ": objective exists=" + (objective != null));
             if (objective != null) {
                 objective.unregister();
+                if (DEBUG_HEALTH) ServerUtils.info("  unregistered health objective for " + player.getName());
             }
         });
     }
@@ -396,23 +401,35 @@ public abstract class Match implements IMatch {
     }
 
     private void showHealth() {
+        if (DEBUG_HEALTH) ServerUtils.info("showHealth() called for match " + uuid + ", kit=" + (kit != null ? kit.getName() : "null") + ", kitRule.SHOW_HP=" + (kit != null ? kit.is(KitRule.SHOW_HP) : "N/A") + ", state=" + state);
         forEachPlayer(player -> {
+            if (DEBUG_HEALTH) ServerUtils.info("  showHealth processing player: " + player.getName());
+
             // Use a per-player scoreboard so each player has their own objective
             org.bukkit.scoreboard.Scoreboard scoreboard = player.getScoreboard();
-            if (scoreboard.equals(Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard())) {
+            boolean onMainScoreboard = scoreboard.equals(Objects.requireNonNull(Bukkit.getScoreboardManager()).getMainScoreboard());
+            if (DEBUG_HEALTH) ServerUtils.info("    onMainScoreboard=" + onMainScoreboard);
+
+            if (onMainScoreboard) {
                 scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
                 player.setScoreboard(scoreboard);
+                if (DEBUG_HEALTH) ServerUtils.info("    created new per-player scoreboard for " + player.getName());
             }
 
             Objective objective = scoreboard.getObjective("neptune_health");
+            if (DEBUG_HEALTH) ServerUtils.info("    existing objective=" + (objective != null));
+
             if (objective == null) {
                 objective = scoreboard.registerNewObjective("neptune_health", Criteria.HEALTH,
-                        CC.color("&c❤"));
+                        CC.color("&c\u2764"));
+                if (DEBUG_HEALTH) ServerUtils.info("    registered new objective for " + player.getName());
             }
             objective.setDisplaySlot(DisplaySlot.BELOW_NAME);
+            if (DEBUG_HEALTH) ServerUtils.info("    set BELOW_NAME display slot for " + player.getName() + ", displayName=" + objective.getDisplayName());
 
             // Force health sync so it doesn't show 0
             player.sendHealthUpdate();
+            if (DEBUG_HEALTH) ServerUtils.info("    called sendHealthUpdate() for " + player.getName());
 
             // Start a repeating task to update heart color and decimals
             startHealthDisplayTask(player, objective);
@@ -420,13 +437,25 @@ public abstract class Match implements IMatch {
     }
 
     private void startHealthDisplayTask(Player player, Objective objective) {
+        if (DEBUG_HEALTH) ServerUtils.info("    starting health display task for " + player.getName());
         new NeptuneRunnable() {
 
             @Override
             public void run() {
                 // Cancel if player is no longer in this match
                 Profile profile = API.getProfile(player);
-                if (profile == null || !profile.getState().equals(ProfileState.IN_GAME) || !profile.getMatch().getUuid().equals(getUuid())) {
+                if (profile == null) {
+                    if (DEBUG_HEALTH) ServerUtils.info("    [HEALTH TASK] cancelling for " + player.getName() + " - profile is null");
+                    cancel();
+                    return;
+                }
+                if (!profile.getState().equals(ProfileState.IN_GAME)) {
+                    if (DEBUG_HEALTH) ServerUtils.info("    [HEALTH TASK] cancelling for " + player.getName() + " - state=" + profile.getState());
+                    cancel();
+                    return;
+                }
+                if (!profile.getMatch().getUuid().equals(getUuid())) {
+                    if (DEBUG_HEALTH) ServerUtils.info("    [HEALTH TASK] cancelling for " + player.getName() + " - match UUID mismatch");
                     cancel();
                     return;
                 }
@@ -436,6 +465,7 @@ public abstract class Match implements IMatch {
                 String displayName = hasAbsorption ? ChatColor.GOLD + "\u2764" : ChatColor.RED + "\u2764";
 
                 if (!objective.getDisplayName().equals(displayName)) {
+                    if (DEBUG_HEALTH) ServerUtils.info("    [HEALTH TASK] updating displayName for " + player.getName() + ": " + displayName + " (absorption=" + hasAbsorption + ")");
                     objective.setDisplayName(displayName);
                     objective.setDisplaySlot(DisplaySlot.BELOW_NAME);
                 }
@@ -444,6 +474,7 @@ public abstract class Match implements IMatch {
                 player.sendHealthUpdate();
             }
         }.runTaskTimer(Neptune.get(), 0L, 2L);
+        if (DEBUG_HEALTH) ServerUtils.info("    health display task scheduled for " + player.getName());
     }
 
     public void removeEntities() {
