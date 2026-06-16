@@ -43,7 +43,18 @@ public class ItemBrowserService implements IItemBrowserService {
             default -> {
                 List<ItemStack> list = new ArrayList<>();
                 for (Material m : sectionMaterials.getOrDefault(section, Collections.emptyList())) {
-                    list.add(new ItemStack(m));
+                    if (POTION_MATERIALS.contains(m)) {
+                        for (PotionType type : PotionType.values()) {
+                            ItemStack stack = new ItemStack(m);
+                            if (stack.getItemMeta() instanceof PotionMeta meta) {
+                                meta.setBasePotionType(type);
+                                stack.setItemMeta(meta);
+                            }
+                            list.add(stack);
+                        }
+                    } else {
+                        list.add(new ItemStack(m));
+                    }
                 }
                 yield list;
             }

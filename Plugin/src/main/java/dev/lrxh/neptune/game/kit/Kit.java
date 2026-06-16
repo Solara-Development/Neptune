@@ -165,8 +165,17 @@ public class Kit implements IKit, ConfigData {
         List<Material> list = new ArrayList<>();
         if (names == null) return list;
         for (String name : names) {
-            Material mat = Material.matchMaterial(name);
-            if (mat != null && mat.isItem()) list.add(mat);
+            if (name.startsWith("*_")) {
+                String suffix = name.substring(1);
+                for (Material mat : Material.values()) {
+                    if (mat.isItem() && !mat.isLegacy() && mat.name().endsWith(suffix)) {
+                        list.add(mat);
+                    }
+                }
+            } else {
+                Material mat = Material.matchMaterial(name);
+                if (mat != null && mat.isItem()) list.add(mat);
+            }
         }
         return list;
     }
