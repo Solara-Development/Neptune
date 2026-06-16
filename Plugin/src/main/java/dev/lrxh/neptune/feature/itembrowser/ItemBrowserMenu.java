@@ -1,6 +1,7 @@
 package dev.lrxh.neptune.feature.itembrowser;
 
 import dev.lrxh.neptune.configs.impl.MenusLocale;
+import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.ItemBuilder;
 import dev.lrxh.neptune.utils.menu.Button;
 import dev.lrxh.neptune.utils.menu.Filter;
@@ -9,7 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.FireworkMeta;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 
 import java.util.ArrayList;
@@ -71,9 +72,13 @@ public class ItemBrowserMenu extends PaginatedMenu {
             buttons.add(new Button(i++) {
                 @Override
                 public ItemStack getItemStack(Player p) {
-                    return new ItemBuilder(stack.clone())
-                            .name("&f" + displayName(stack))
-                            .build();
+                    ItemStack display = stack.clone();
+                    ItemMeta meta = display.getItemMeta();
+                    if (meta != null) {
+                        meta.displayName(CC.color("&f" + displayName(stack)));
+                        display.setItemMeta(meta);
+                    }
+                    return display;
                 }
 
                 @Override
