@@ -50,6 +50,7 @@ public class Kit implements IKit, ConfigData {
     private int rounds = 1;
     private List<Material> loadoutWhitelist = new ArrayList<>();
     private List<Material> loadoutBlacklist = new ArrayList<>();
+    private List<String> loadoutWhitelistRaw = new ArrayList<>();
     private int maxItemStack = 64;
 
     public Kit(String name, String displayName, List<ItemStack> items, HashSet<Arena> arenas, ItemStack icon,
@@ -152,10 +153,13 @@ public class Kit implements IKit, ConfigData {
 
         int rounds = clampRounds(s.getInt("rounds", defaultRounds(s.getBoolean("bestOfThree", false))));
 
+        List<String> rawWhitelist = s.getStringList("loadoutWhitelist");
+
         Kit kit = new Kit(name, s.getString("displayName", name), items, arenas, icon, rules,
                 slot, health, kitEditorSlot, leaderboardSlot, potionEffects, damageMultiplier);
         kit.setRounds(rounds);
-        kit.setLoadoutWhitelist(parseMaterials(s.getStringList("loadoutWhitelist")));
+        kit.setLoadoutWhitelist(parseMaterials(rawWhitelist));
+        kit.setLoadoutWhitelistRaw(rawWhitelist);
         kit.setLoadoutBlacklist(parseMaterials(s.getStringList("loadoutBlacklist")));
         kit.setMaxItemStack(s.getInt("maxItemStack", 64));
         return kit;
@@ -172,6 +176,10 @@ public class Kit implements IKit, ConfigData {
                         list.add(mat);
                     }
                 }
+            } else if (name.startsWith("FIREWORK_ROCKET_")) {
+                // FIREWORK_ROCKET_1, FIREWORK_ROCKET_2, FIREWORK_ROCKET_3
+                Material mat = Material.FIREWORK_ROCKET;
+                if (mat != null && mat.isItem()) list.add(mat);
             } else {
                 Material mat = Material.matchMaterial(name);
                 if (mat != null && mat.isItem()) list.add(mat);

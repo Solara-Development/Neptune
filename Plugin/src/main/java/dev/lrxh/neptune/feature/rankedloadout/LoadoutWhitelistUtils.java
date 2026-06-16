@@ -20,8 +20,7 @@ public class LoadoutWhitelistUtils {
     }
 
     public static void registerBrowserSection(Kit kit) {
-        List<String> names = kit.getLoadoutWhitelist().stream().map(Material::name).toList();
-        ItemBrowserService.get().registerSection(sectionFor(kit), names);
+        ItemBrowserService.get().registerSection(sectionFor(kit), kit.getLoadoutWhitelistRaw());
     }
 
     public static boolean isAllowed(Kit kit, ItemStack item) {

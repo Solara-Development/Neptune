@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.FireworkMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 
 import java.util.ArrayList;
@@ -72,7 +73,6 @@ public class ItemBrowserMenu extends PaginatedMenu {
                 public ItemStack getItemStack(Player p) {
                     return new ItemBuilder(stack.clone())
                             .name("&f" + displayName(stack))
-                            .lore(MenusLocale.ITEM_BROWSER_ITEM_LORE.getStringList())
                             .build();
                 }
 
