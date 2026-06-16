@@ -27,6 +27,7 @@ public class KitService extends IService implements IKitService {
 
     @Override
     public void load() {
+        kits.clear();
         loadAll("kits", kits, Kit::read);
         registerLoadoutBrowserSections();
     }

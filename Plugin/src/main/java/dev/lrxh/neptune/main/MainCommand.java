@@ -11,6 +11,7 @@ import dev.lrxh.neptune.feature.cosmetics.impl.cosmetics.shieldpatterns.ShieldPa
 import dev.lrxh.neptune.feature.cosmetics.impl.cosmetics.shieldpatterns.ShieldPatternPackage;
 import dev.lrxh.neptune.feature.hotbar.HotbarService;
 import dev.lrxh.neptune.game.kit.Kit;
+import dev.lrxh.neptune.game.kit.KitService;
 import dev.lrxh.neptune.game.match.Match;
 import dev.lrxh.neptune.game.match.MatchService;
 import dev.lrxh.neptune.profile.data.ProfileState;
@@ -62,6 +63,7 @@ public class MainCommand {
     @Require("neptune.admin")
     public void reload(@Sender CommandSender sender) {
         ConfigService.get().load();
+        KitService.get().load();
         CosmeticService.get().load();
         HotbarService.get().load();
 
