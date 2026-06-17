@@ -1,5 +1,7 @@
 package dev.lrxh.neptune.game.arena;
 
+import com.sk89q.worldedit.extent.clipboard.Clipboard;
+import com.sk89q.worldedit.math.BlockVector3;
 import dev.lrxh.api.arena.IArena;
 import dev.lrxh.blockChanger.BlockChanger;
 import dev.lrxh.blockChanger.snapshot.CuboidSnapshot;
@@ -21,6 +23,12 @@ import java.util.concurrent.CompletableFuture;
 @Getter
 @Setter
 public class Arena implements IArena, ConfigData {
+    private static boolean skipCapture = false;
+
+    static void setSkipCapture(boolean skip) {
+        skipCapture = skip;
+    }
+
     private String name;
     private String displayName;
     private Location redSpawn;
@@ -105,6 +113,21 @@ public class Arena implements IArena, ConfigData {
 
     private static boolean useFawe() {
         return "FAWE".equalsIgnoreCase(SettingsLocale.ARENA_CLEANUP_METHOD.getString()) && ArenaDuplicator.isAvailable();
+    }
+
+    private Object getEffectiveFaweClipboard() {
+        if (owner != null) return owner.getEffectiveFaweClipboard();
+        return faweClipboard;
+    }
+
+    private CuboidSnapshot getEffectiveSnapshot() {
+        if (owner != null) return owner.getEffectiveSnapshot();
+        return snapshot;
+    }
+
+    public boolean isDoneLoading() {
+        if (owner != null) return owner.isDoneLoading();
+        return doneLoading;
     }
 
     @Override
@@ -254,28 +277,53 @@ public class Arena implements IArena, ConfigData {
     }
 
     public void restore() {
-        if (faweClipboard != null) {
-            Bukkit.getScheduler().runTaskAsynchronously(Neptune.get(),
-                    () -> ArenaDuplicator.restore(min.getWorld(), faweClipboard));
-        } else if (snapshot != null) {
-            snapshot.restore(true);
+        if (owner != null) {
+            Object clip = owner.getFaweClipboard();
+            CuboidSnapshot snap = owner.getSnapshot();
+            if (clip != null) {
+                BlockVector3 target = BlockVector3.at(min.getBlockX(), min.getBlockY(), min.getBlockZ());
+                Bukkit.getScheduler().runTaskAsynchronously(Neptune.get(),
+                        () -> ArenaDuplicator.restore(min.getWorld(), clip, target));
+            } else if (snap != null) {
+                snap.restore(true);
+            }
+        } else {
+            if (faweClipboard != null) {
+                BlockVector3 origin = ((Clipboard) faweClipboard).getOrigin();
+                Bukkit.getScheduler().runTaskAsynchronously(Neptune.get(),
+                        () -> ArenaDuplicator.restore(min.getWorld(), faweClipboard, origin));
+            } else if (snapshot != null) {
+                snapshot.restore(true);
+            }
         }
     }
 
     public void capture() {
         if (min == null || max == null) return;
+        if (owner != null) {
+            doneLoading = owner.isDoneLoading();
+            return;
+        }
+        if (skipCapture) return;
         this.doneLoading = false;
         if (useFawe()) {
             this.snapshot = null;
             Bukkit.getScheduler().runTaskAsynchronously(Neptune.get(), () -> {
-                this.faweClipboard = ArenaDuplicator.capture(min.getWorld(), min, max);
-                this.doneLoading = true;
+                try {
+                    this.faweClipboard = ArenaDuplicator.capture(min.getWorld(), min, max);
+                    this.doneLoading = true;
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                }
             });
         } else {
             this.faweClipboard = null;
             CuboidSnapshot.create(min, max).thenAccept(cuboidSnapshot -> {
                 this.snapshot = cuboidSnapshot;
                 this.doneLoading = true;
+            }).exceptionally(t -> {
+                t.printStackTrace();
+                return null;
             });
         }
     }

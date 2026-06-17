@@ -137,11 +137,15 @@ public final class Neptune extends JavaPlugin {
             return;
 
         BlockChanger.initialize(this);
-        ArenaService.get().load();
         if (arenaGenerationDisabled) {
             duplicatesEnabled = ArenaDuplicator.isAvailable();
             if (duplicatesEnabled) {
                 ArenaService.get().setupDuplicatesWorld();
+            }
+        }
+        ArenaService.get().load();
+        if (arenaGenerationDisabled) {
+            if (duplicatesEnabled) {
                 ArenaService.get().loadDuplicates();
             } else {
                 ServerUtils.error("FastAsyncWorldEdit is not installed - arena duplicates are disabled.");
