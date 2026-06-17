@@ -9,6 +9,8 @@ import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
 import lombok.Getter;
 import lombok.Setter;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.minimessage.tag.Tag;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Bukkit;
@@ -64,10 +66,12 @@ public class Party {
         if (player == null)
             return;
 
+        String leaderName = getLeaderName();
         MessagesLocale.PARTY_INVITATION.send(playerUUID, TagResolver.resolver(
-                Placeholder.unparsed("leader", getLeaderName()),
+                Placeholder.unparsed("leader", leaderName),
                 Placeholder.unparsed("party-max", String.valueOf(getMaxUsers())),
-                Placeholder.unparsed("party-size", String.valueOf(getUsers().size()))
+                Placeholder.unparsed("party-size", String.valueOf(getUsers().size())),
+                TagResolver.resolver("accept", Tag.styling(ClickEvent.runCommand("/party accept " + leaderName)))
         ));
 
         Profile profile = API.getProfile(playerUUID);
@@ -175,10 +179,13 @@ public class Party {
             leaderProfile.addCooldown("party_advertise", 300_000);
 
             setOpen(true);
+            String leaderName = getLeaderName();
+            TagResolver resolver = TagResolver.resolver(
+                    Placeholder.parsed("leader", leaderName),
+                    TagResolver.resolver("join", Tag.styling(ClickEvent.runCommand("/party joinad " + leaderName)))
+            );
             for (Profile profile : ProfileService.get().profiles.values()) {
-                MessagesLocale.PARTY_ADVERTISE_MESSAGE.send(profile.getPlayerUUID(), TagResolver.resolver(
-                        Placeholder.parsed("leader", getLeaderName())
-                ));
+                MessagesLocale.PARTY_ADVERTISE_MESSAGE.send(profile.getPlayerUUID(), resolver);
             }
 
             return true;

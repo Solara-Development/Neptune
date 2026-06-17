@@ -195,7 +195,7 @@ public enum MessagesLocale implements IDataAccessor {
     PARTY_JOINED_FROM_ADVERTISEMENT("PARTY.JOINED_FROM_ADVERTISEMENT", DataType.STRING_LIST,
             "&f<player> &bjoined the party from the advertisement!"),
     PARTY_INVITATION("PARTY.INVITATION", DataType.STRING_LIST,
-            "&bYou have been invited to &f<leader>&b's party <click:run_command:'/party accept <leader>'><hover:show_text:'Click to join party'><green>(ACCEPT)</hover></click>"),
+            "&bYou have been invited to &f<leader>&b's party <accept><hover:show_text:'Click to join party'><green>(ACCEPT)</hover></accept>"),
     PARTY_INVITE_OWN("PARTY.INVITE_OWN", DataType.STRING_LIST, "&cYou can't invite yourself to the party."),
     PARTY_TRANSFER_OWN("PARTY.TRANSFER", DataType.STRING_LIST, "&cYou can't transfer a party to yourself."),
     PARTY_NO_PERMISSION("PARTY.NO_PERMISSION", DataType.STRING_LIST, "&cYou do not have permission to do this."),
@@ -206,7 +206,7 @@ public enum MessagesLocale implements IDataAccessor {
     PARTY_TRANSFER("PARTY.TRANSFER.MEMBERS", DataType.STRING_LIST,
             "&f<leader> &btransferred the party to &f<target>&b."),
     PARTY_ADVERTISE_MESSAGE("PARTY.ADVERTISE.MESSAGE", DataType.STRING_LIST,
-            "&d&l[AD] &r&f<leader> &6wants you in their party! <click:run_command:'/party joinad <leader>'><hover:show_text:'&aClick to join their party'>&a(JOIN)</hover></click>"),
+            "&d&l[AD] &r&f<leader> &6wants you in their party! <join><hover:show_text:'&aClick to join their party'>&a(JOIN)</hover></join>"),
     PARTY_KICK("PARTY.KICK", DataType.STRING_LIST, "&f<player> &bhas been kicked from the party."),
     PARTY_CANNOT_CREATE("PARTY.CANNOT_CREATE", DataType.STRING_LIST, "&cYou can only create a party while in lobby!"),
     PARTY_CANNOT_JOIN("PARTY.CANNOT_JOIN", DataType.STRING_LIST, "&cYou can only join a party while in lobby!"),
@@ -382,14 +382,12 @@ public enum MessagesLocale implements IDataAccessor {
         );
         PARTY_ADVERTISE_MESSAGE.set(
                 PARTY_ADVERTISE_MESSAGE.getStringList().stream().map(
-                        str -> str.replace("<join>", "<click:run_command:'/party joinad <leader>'>")
-                                .replace("</join>", "</click>")
+                        str -> str.replace("<click:run_command:'/party joinad <leader>'><hover:show_text:'&aClick to join their party'>&a(JOIN)</hover></click>", "<join><hover:show_text:'&aClick to join their party'>&a(JOIN)</hover></join>")
                 ).toList()
         );
         PARTY_INVITATION.set(
                 PARTY_INVITATION.getStringList().stream().map(
-                        str -> str.replace("<accept>", "<click:run_command:'/party accept <leader>'>")
-                                .replace("</accept>", "</click>")
+                        str -> str.replace("<click:run_command:'/party accept <leader>'><hover:show_text:'Click to join party'><green>(ACCEPT)</hover></click>", "<accept><hover:show_text:'Click to join party'><green>(ACCEPT)</hover></accept>")
                 ).toList()
         );
         getConfigFile().save();
