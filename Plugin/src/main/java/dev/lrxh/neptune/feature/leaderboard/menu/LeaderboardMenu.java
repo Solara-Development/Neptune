@@ -1,6 +1,7 @@
 package dev.lrxh.neptune.feature.leaderboard.menu;
 
 import dev.lrxh.neptune.configs.impl.MenusLocale;
+import dev.lrxh.neptune.configs.impl.SettingsLocale;
 import dev.lrxh.neptune.feature.leaderboard.impl.LeaderboardType;
 import dev.lrxh.neptune.feature.leaderboard.impl.PlayerEntry;
 import dev.lrxh.neptune.feature.leaderboard.menu.button.LeaderboardSwitchButton;
@@ -83,7 +84,7 @@ public class LeaderboardMenu extends Menu {
     private String replaceLeaderboardPlaceholders(String template, Kit kit) {
         String result = template;
 
-        for (int i = 1; i <= 10; i++) {
+        for (int i = 1; i <= SettingsLocale.LEADERBOARD_MAX_POSITIONS.getInt(); i++) {
             PlayerEntry entry = LeaderboardCacheService.get().getPosition(leaderboardType, kit, i);
             String player = (entry != null && entry.username() != null) ? entry.username() : "???";
             String value = (entry != null) ? String.valueOf(entry.value()) : "???";

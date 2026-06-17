@@ -1,6 +1,7 @@
 package dev.lrxh.neptune.feature.leaderboard;
 
 import dev.lrxh.neptune.API;
+import dev.lrxh.neptune.configs.impl.SettingsLocale;
 import dev.lrxh.neptune.feature.divisions.DivisionService;
 import dev.lrxh.neptune.feature.leaderboard.impl.LeaderboardPlayerEntry;
 import dev.lrxh.neptune.feature.leaderboard.impl.LeaderboardType;
@@ -24,8 +25,8 @@ import java.util.regex.Pattern;
 @Getter
 public class LeaderboardService {
     private static LeaderboardService instance;
-    public final Pattern PATTERN = Pattern.compile("(KILLS|BEST_WIN_STREAK|DEATHS|ELO)_(.*)_(10|[1-9])_(name|value)");
-    private final int MAX_ENTRIES = 10;
+    public final Pattern PATTERN = Pattern.compile("(KILLS|BEST_WIN_STREAK|DEATHS|ELO)_(.*)_(\\d+)_(name|value)");
+    private final int MAX_ENTRIES = SettingsLocale.LEADERBOARD_MAX_POSITIONS.getInt();
     private final Comparator<PlayerEntry> BY_VALUE_DESC =
             Comparator.comparingInt(PlayerEntry::value).reversed();
     private final List<LeaderboardPlayerEntry> changes;
@@ -48,6 +49,8 @@ public class LeaderboardService {
             String type = matcher.group(1);
             String kitName = matcher.group(2);
             int entry = Integer.parseInt(matcher.group(3));
+            if (entry < 1 || entry > MAX_ENTRIES)
+                return placeholder;
             boolean name = matcher.group(4).equals("name");
 
             Kit kit = KitService.get().getKitByName(kitName);
