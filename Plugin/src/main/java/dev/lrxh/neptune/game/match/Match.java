@@ -41,6 +41,7 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
@@ -432,7 +433,7 @@ public abstract class Match implements IMatch {
                 double rz = (max.getZ() + 1 - min.getZ()) / 2.0;
                 for (Entity nearby : new ArrayList<>(world.getNearbyEntities(
                         new Location(world, cx, cy, cz), rx, ry, rz))) {
-                    if (nearby instanceof Item) {
+                    if (nearby instanceof Item || nearby instanceof Projectile) {
                         nearby.remove();
                     }
                 }
