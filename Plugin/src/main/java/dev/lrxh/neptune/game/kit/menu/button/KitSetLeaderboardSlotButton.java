@@ -26,6 +26,9 @@ public class KitSetLeaderboardSlotButton extends Button {
 
     @Override
     public ItemStack getItemStack(Player player) {
-        return new ItemBuilder(Material.ITEM_FRAME).name("&9Change leaderboard slot &7(" + kit.getLeaderboardSlot() + ")").build();
+        return new ItemBuilder(Material.ITEM_FRAME)
+                .name("&9Change leaderboard slot &7(" + kit.getLeaderboardSlot() + ")")
+                .lore("&7Click to change this kit's leaderboard display slot")
+                .build();
     }
 }

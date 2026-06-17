@@ -33,6 +33,9 @@ public class KitRenameButton extends Button {
 
     @Override
     public ItemStack getItemStack(Player player) {
-        return new ItemBuilder(Material.NAME_TAG).name("&eRename kit &7(" + kit.getDisplayName() + "&7)").build();
+        return new ItemBuilder(Material.NAME_TAG)
+                .name("&eRename kit &7(" + kit.getDisplayName() + "&7)")
+                .lore("&7Click to change the display name of this kit")
+                .build();
     }
 }

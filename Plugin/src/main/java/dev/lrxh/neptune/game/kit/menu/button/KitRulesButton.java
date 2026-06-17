@@ -24,6 +24,9 @@ public class KitRulesButton extends Button {
 
     @Override
     public ItemStack getItemStack(Player player) {
-        return new ItemBuilder(Material.COMPARATOR).name("&bView Rules").build();
+        return new ItemBuilder(Material.COMPARATOR)
+                .name("&bView Rules")
+                .lore("&7Click to view and configure this kit's rules")
+                .build();
     }
 }

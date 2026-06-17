@@ -26,6 +26,9 @@ public class KitSetKitEditorSlotButton extends Button {
 
     @Override
     public ItemStack getItemStack(Player player) {
-        return new ItemBuilder(Material.LADDER).name("&9Change kit-editor slot &7(" + kit.getKitEditorSlot() + ")").build();
+        return new ItemBuilder(Material.LADDER)
+                .name("&9Change kit-editor slot &7(" + kit.getKitEditorSlot() + ")")
+                .lore("&7Click to change this kit's position in the kit editor")
+                .build();
     }
 }

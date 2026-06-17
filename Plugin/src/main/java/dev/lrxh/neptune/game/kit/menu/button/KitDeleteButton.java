@@ -27,6 +27,9 @@ public class KitDeleteButton extends Button {
 
     @Override
     public ItemStack getItemStack(Player player) {
-        return new ItemBuilder(Material.RED_DYE).name("&cDelete kit").build();
+        return new ItemBuilder(Material.RED_DYE)
+                .name("&cDelete kit")
+                .lore("&7Click to permanently remove this kit")
+                .build();
     }
 }

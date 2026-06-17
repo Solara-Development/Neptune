@@ -37,6 +37,9 @@ public class KitSetDamageMultiplierButton extends Button {
 
     @Override
     public ItemStack getItemStack(Player player) {
-        return new ItemBuilder(Material.BLAZE_POWDER).name("&9Change Damage Multiplier &7(x" + kit.getDamageMultiplier() + ")").build();
+        return new ItemBuilder(Material.BLAZE_POWDER)
+                .name("&9Change Damage Multiplier &7(x" + kit.getDamageMultiplier() + ")")
+                .lore("&7Click to change the damage multiplier for this kit")
+                .build();
     }
 }

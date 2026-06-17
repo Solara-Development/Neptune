@@ -32,6 +32,9 @@ public class KitSetInvButton extends Button {
 
     @Override
     public ItemStack getItemStack(Player player) {
-        return new ItemBuilder(Material.LAVA_BUCKET).name("&dSet Inventory").build();
+        return new ItemBuilder(Material.LAVA_BUCKET)
+                .name("&dSet Inventory")
+                .lore("&7Click to edit this kit's inventory")
+                .build();
     }
 }

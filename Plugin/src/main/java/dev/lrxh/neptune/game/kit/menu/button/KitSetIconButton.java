@@ -32,6 +32,9 @@ public class KitSetIconButton extends Button {
 
     @Override
     public ItemStack getItemStack(Player player) {
-        return new ItemBuilder(Material.PAINTING).name("&dSet Icon").build();
+        return new ItemBuilder(Material.PAINTING)
+                .name("&dSet Icon")
+                .lore("&7Hold an item and click to set it as this kit's icon")
+                .build();
     }
 }

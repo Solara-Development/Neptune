@@ -42,6 +42,9 @@ public class KitSetHealthButton extends Button {
 
     @Override
     public ItemStack getItemStack(Player player) {
-        return new ItemBuilder(Material.GOLDEN_APPLE).name("&cSet Max Health &7(" + kit.getHealth() + ")").build();
+        return new ItemBuilder(Material.GOLDEN_APPLE)
+                .name("&cSet Max Health &7(" + kit.getHealth() + ")")
+                .lore("&7Click to set the maximum health for this kit")
+                .build();
     }
 }

@@ -24,6 +24,9 @@ public class KitArenaManageButton extends Button {
 
     @Override
     public ItemStack getItemStack(Player player) {
-        return new ItemBuilder(Material.EMERALD).name("&aManage Arenas").build();
+        return new ItemBuilder(Material.EMERALD)
+                .name("&aManage Arenas")
+                .lore("&7Click to manage which arenas this kit can be played on")
+                .build();
     }
 }

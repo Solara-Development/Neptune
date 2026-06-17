@@ -26,6 +26,9 @@ public class KitSetSlotButton extends Button {
 
     @Override
     public ItemStack getItemStack(Player player) {
-        return new ItemBuilder(Material.IRON_DOOR).name("&9Change slot &7(" + kit.getSlot() + ")").build();
+        return new ItemBuilder(Material.IRON_DOOR)
+                .name("&9Change slot &7(" + kit.getSlot() + ")")
+                .lore("&7Click to change this kit's menu slot position")
+                .build();
     }
 }
