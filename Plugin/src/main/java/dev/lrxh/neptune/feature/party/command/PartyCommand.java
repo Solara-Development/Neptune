@@ -14,7 +14,6 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 
 import org.bukkit.entity.Player;
 
-import java.util.UUID;
 
 public class PartyCommand {
 
@@ -138,8 +137,8 @@ public class PartyCommand {
                 Placeholder.unparsed("player", target.getName()));
     }
 
-    @Command(name = "accept", desc = "", usage = "<uuid>")
-    public void accept(@Sender Player player, UUID uuid) {
+    @Command(name = "accept", desc = "", usage = "<player>")
+    public void accept(@Sender Player player, Player target) {
         Profile profile = API.getProfile(player);
         if (!profile.getState().equals(ProfileState.IN_LOBBY))
             return;
@@ -149,7 +148,7 @@ public class PartyCommand {
             return;
         }
 
-        Request request = profile.getGameData().getRequests().get(uuid);
+        Request request = profile.getGameData().getRequests().get(target.getUniqueId());
         if (request instanceof PartyRequest partyRequest) {
             partyRequest.getParty().accept(player.getUniqueId(), false);
         }
