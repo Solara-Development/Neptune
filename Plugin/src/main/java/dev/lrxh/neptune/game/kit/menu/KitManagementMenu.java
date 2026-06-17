@@ -7,6 +7,7 @@ import dev.lrxh.neptune.utils.menu.Filter;
 import dev.lrxh.neptune.utils.menu.Menu;
 import dev.lrxh.neptune.utils.menu.impl.DisplayButton;
 import dev.lrxh.neptune.utils.menu.impl.ReturnButton;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
@@ -25,18 +26,23 @@ public class KitManagementMenu extends Menu {
         List<Button> buttons = new ArrayList<>();
 
         buttons.add(new KitSetInvButton(0, kit));
-        buttons.add(new KitSetKitEditorSlotButton(8, kit));
+        buttons.add(new KitSetIconButton(1, kit));
 
-        buttons.add(new KitArenaManageButton(31, kit));
-        buttons.add(new KitRenameButton(20, kit));
+        buttons.add(new KitSetHealthButton(4, kit));
+
+        buttons.add(new KitSetKitEditorSlotButton(7, kit));
+        buttons.add(new KitSetDamageMultiplierButton(8, kit));
+
+        buttons.add(new KitRulesButton(9, kit));
+        buttons.add(new KitSetSlotButton(10, kit));
+
         buttons.add(new KitDeleteButton(21, kit));
         buttons.add(new DisplayButton(22, kit.getIcon(), " "));
-        buttons.add(new KitRulesButton(13, kit));
-        buttons.add(new KitSetSlotButton(23, kit));
-        buttons.add(new KitSetLeaderboardSlotButton(32, kit));
-        buttons.add(new KitSetIconButton(24, kit));
-        buttons.add(new KitSetDamageMultiplierButton(25, kit));
-        buttons.add(new KitSetHealthButton(26, kit));
+        buttons.add(new KitRenameButton(23, kit));
+
+        buttons.add(new KitSetLeaderboardSlotButton(31, kit));
+
+        buttons.add(new DisplayButton(getSize() - 5, Material.EMERALD, "&aManage Arenas", List.of("&7Click to manage which arenas this kit can be played on"), o -> new KitArenaManagementMenu(kit).open(player)));
 
         buttons.add(new ReturnButton(getSize() - 9, new KitsManagementMenu()));
 
