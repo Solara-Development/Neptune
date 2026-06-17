@@ -29,6 +29,7 @@ import dev.lrxh.neptune.feature.itembrowser.ItemBrowserService;
 import dev.lrxh.neptune.feature.leaderboard.LeaderboardService;
 import dev.lrxh.neptune.feature.leaderboard.command.LeaderboardCommand;
 import dev.lrxh.neptune.feature.leaderboard.task.LeaderboardTask;
+import dev.lrxh.neptune.feature.party.command.PartyChatCommand;
 import dev.lrxh.neptune.feature.party.command.PartyCommand;
 import dev.lrxh.neptune.feature.queue.command.QueueCommand;
 import dev.lrxh.neptune.feature.queue.command.QueueMenuCommand;
@@ -234,6 +235,7 @@ public final class Neptune extends JavaPlugin {
         drink.register(new KitEditorCommand(), "kiteditor").setDefaultCommandIsHelp(true);
         drink.register(new StatsCommand(), "stats").setDefaultCommandIsHelp(true);
         drink.register(new PartyCommand(), "party", "p");
+        drink.register(new PartyChatCommand(), "pc", "partychat");
         drink.register(new FollowCommand(), "follow");
         drink.register(new QueueCommand(), "queue").registerSub(new QueueMenuCommand());
         drink.register(new DuelCommand(), "duel", "1v1").setDefaultCommandIsHelp(true);

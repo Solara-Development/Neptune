@@ -137,6 +137,14 @@ public class Party {
         forEachMemberAsUUID(uuid -> messagesLocale.send(uuid, resolver));
     }
 
+    public void chat(UUID senderUUID, String playerName, String message) {
+        TagResolver resolver = TagResolver.resolver(
+                Placeholder.unparsed("player", playerName),
+                Placeholder.unparsed("message", message)
+        );
+        forEachMemberAsUUID(uuid -> MessagesLocale.PARTY_CHAT_FORMAT.send(uuid, resolver));
+    }
+
     public String getUserNames() {
         StringBuilder playerNames = new StringBuilder();
         forEachMemberAsPlayer(player -> {
