@@ -201,7 +201,7 @@ public enum ItemAction {
                 Profile opponentProfile = API.getProfile(opponent);
                 if (opponentProfile == null)
                     return;
-                opponentProfile.sendRematch(duelRequest);
+                opponentProfile.sendRequest(duelRequest, true);
             });
         }
     },

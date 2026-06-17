@@ -58,7 +58,7 @@ public class ArenaSelectMenu extends Menu {
                         return;
                     }
                     DuelRequest duelRequest = new DuelRequest(p.getUniqueId(), kit, arena, false, round);
-                    profile.sendDuel(duelRequest);
+                    profile.sendRequest(duelRequest, false);
                     Bukkit.getScheduler().runTask(Neptune.get(), () -> p.closeInventory());
                 });
             }
@@ -92,7 +92,7 @@ public class ArenaSelectMenu extends Menu {
                             return;
                         }
                         DuelRequest duelRequest = new DuelRequest(p.getUniqueId(), kit, duplicate, false, round);
-                        profile.sendDuel(duelRequest);
+                        profile.sendRequest(duelRequest, false);
                     });
                 }
             });

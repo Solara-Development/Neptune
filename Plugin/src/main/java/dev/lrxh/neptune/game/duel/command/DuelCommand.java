@@ -19,31 +19,30 @@ import java.util.UUID;
 
 public class DuelCommand {
 
-    @Command(name = "", desc = "", usage = "<player>")
-    public void duel(@Sender Player player, Player target) {
+    private boolean canSendDuel(Player player, Player target) {
         Profile userProfile = API.getProfile(player);
         Profile targetProfile = API.getProfile(target);
 
         if (userProfile.getMatch() != null) {
             MessagesLocale.YOU_CANT_SEND_DUEL.send(player.getUniqueId());
-            return;
+            return false;
         }
 
         if (player.getName().equalsIgnoreCase(target.getName())) {
             MessagesLocale.CANT_DUEL_SELF.send(player.getUniqueId());
-            return;
+            return false;
         }
 
         if (targetProfile.getMatch() != null || targetProfile.hasState(ProfileState.IN_KIT_EDITOR)
                 || !targetProfile.getSettingData().isAllowDuels()) {
             MessagesLocale.PLAYER_CANT_ACCEPT_DUEL.send(player.getUniqueId());
-            return;
+            return false;
         }
 
         if (targetProfile.getGameData().getRequests().contains(player.getUniqueId())) {
             MessagesLocale.DUEL_ALREADY_SENT.send(player.getUniqueId(),
                     Placeholder.unparsed("player", target.getName()));
-            return;
+            return false;
         }
 
         if (userProfile.getState().equals(ProfileState.IN_PARTY)
@@ -51,15 +50,22 @@ public class DuelCommand {
                 || targetProfile.getState().equals(ProfileState.IN_PARTY)
                 && !userProfile.getState().equals(ProfileState.IN_PARTY)) {
             MessagesLocale.YOU_CANT_SEND_DUEL.send(player.getUniqueId());
-            return;
+            return false;
         }
 
         if (targetProfile.getState().equals(ProfileState.IN_PARTY)
                 && !targetProfile.getGameData().getParty().isLeader(target.getUniqueId())) {
             MessagesLocale.PLAYER_CANT_ACCEPT_DUEL.send(player.getUniqueId());
-            return;
+            return false;
         }
 
+        return true;
+    }
+
+    @Command(name = "", desc = "", usage = "<player>")
+    public void duel(@Sender Player player, Player target) {
+        if (!canSendDuel(player, target)) return;
+        Profile userProfile = API.getProfile(player);
         new KitSelectMenu(target, userProfile.getState().equals(ProfileState.IN_PARTY)).open(player);
     }
 
@@ -100,51 +106,16 @@ public class DuelCommand {
 
     @Command(name = "specific", desc = "", usage = "<player> <kit> <rounds>")
     public void duel(@Sender Player player, Player target, Kit kit, int rounds) {
+        if (!canSendDuel(player, target)) return;
         Profile userProfile = API.getProfile(player);
         Profile targetProfile = API.getProfile(target);
-
-        if (userProfile.getMatch() != null) {
-            MessagesLocale.YOU_CANT_SEND_DUEL.send(player.getUniqueId());
-            return;
-        }
-
-        if (player.getName().equalsIgnoreCase(target.getName())) {
-            MessagesLocale.CANT_DUEL_SELF.send(player.getUniqueId());
-            return;
-        }
-
-        if (targetProfile.getMatch() != null || targetProfile.hasState(ProfileState.IN_KIT_EDITOR)
-                || !targetProfile.getSettingData().isAllowDuels()) {
-            MessagesLocale.PLAYER_CANT_ACCEPT_DUEL.send(player.getUniqueId());
-            return;
-        }
-
-        if (targetProfile.getGameData().getRequests().contains(player.getUniqueId())) {
-            MessagesLocale.DUEL_ALREADY_SENT.send(player.getUniqueId(),
-                    Placeholder.unparsed("player", target.getName()));
-            return;
-        }
-
-        if (userProfile.getState().equals(ProfileState.IN_PARTY)
-                && !targetProfile.getState().equals(ProfileState.IN_PARTY)
-                || targetProfile.getState().equals(ProfileState.IN_PARTY)
-                && !userProfile.getState().equals(ProfileState.IN_PARTY)) {
-            MessagesLocale.YOU_CANT_SEND_DUEL.send(player.getUniqueId());
-            return;
-        }
-
-        if (targetProfile.getState().equals(ProfileState.IN_PARTY)
-                && !targetProfile.getGameData().getParty().isLeader(target.getUniqueId())) {
-            MessagesLocale.PLAYER_CANT_ACCEPT_DUEL.send(player.getUniqueId());
-            return;
-        }
 
         boolean party = userProfile.getState().equals(ProfileState.IN_PARTY)
                 && targetProfile.getState().equals(ProfileState.IN_PARTY);
 
         kit.getRandomArena().thenAccept(arena -> {
             DuelRequest duelRequest = new DuelRequest(player.getUniqueId(), kit, arena, party, rounds);
-            targetProfile.sendDuel(duelRequest);
+            targetProfile.sendRequest(duelRequest, false);
         });
     }
 

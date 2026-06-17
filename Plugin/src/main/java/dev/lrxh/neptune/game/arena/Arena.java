@@ -148,7 +148,7 @@ public class Arena implements IArena, ConfigData {
 
     @Override
     public void remove() {
-
+        inUse = false;
     }
 
     public synchronized CompletableFuture<IArena> acquire() {

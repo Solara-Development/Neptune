@@ -56,7 +56,7 @@ public class CustomKitSelectMenu extends Menu {
                             return;
                         }
                         DuelRequest duelRequest = new DuelRequest(p.getUniqueId(), transientKit, arena, party, transientKit.getRounds());
-                        profile.sendDuel(duelRequest);
+                        profile.sendRequest(duelRequest, false);
                         Bukkit.getScheduler().runTask(Neptune.get(), () -> p.closeInventory());
                     });
                 }

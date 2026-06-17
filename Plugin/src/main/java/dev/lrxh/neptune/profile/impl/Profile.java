@@ -331,7 +331,7 @@ public class Profile implements IProfile {
         return Bukkit.getPlayer(playerUUID);
     }
 
-    public void sendDuel(DuelRequest duelRequest) {
+    public void sendRequest(DuelRequest duelRequest, boolean rematch) {
         UUID senderUUID = duelRequest.getSender();
 
         Player sender = Bukkit.getPlayer(senderUUID);
@@ -342,33 +342,15 @@ public class Profile implements IProfile {
         if (player == null)
             return;
 
-        duelRequest.sendSenderMessage(playerUUID, false);
+        duelRequest.sendSenderMessage(playerUUID, rematch);
 
-        gameData.addRequest(duelRequest, senderUUID,
-                ignore -> {
-                    MessagesLocale.DUEL_EXPIRED.send(senderUUID, Placeholder.unparsed("player", player.getName()));
-                    duelRequest.getArena().remove();
-                });
+        gameData.addRequest(duelRequest, senderUUID, ignore -> {
+            (rematch ? MessagesLocale.REMATCH_EXPIRED : MessagesLocale.DUEL_EXPIRED)
+                    .send(senderUUID, Placeholder.unparsed("player", player.getName()));
+            duelRequest.getArena().remove();
+        });
 
-        duelRequest.sendReceiverMessage(playerUUID, false);
-    }
-
-    public void sendRematch(DuelRequest duelRequest) {
-        UUID senderUUID = duelRequest.getSender();
-
-        Player sender = Bukkit.getPlayer(senderUUID);
-        if (sender == null)
-            return;
-
-        Player player = Bukkit.getPlayer(playerUUID);
-        if (player == null)
-            return;
-        duelRequest.sendSenderMessage(playerUUID, true);
-        gameData.addRequest(duelRequest, senderUUID, ignore ->
-                MessagesLocale.REMATCH_EXPIRED.send(senderUUID, Placeholder.unparsed("player", player.getName()))
-        );
-
-        duelRequest.sendReceiverMessage(playerUUID, true);
+        duelRequest.sendReceiverMessage(playerUUID, rematch);
     }
 
     public Party createParty() {
