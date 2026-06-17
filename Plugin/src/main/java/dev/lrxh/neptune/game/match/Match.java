@@ -301,6 +301,11 @@ public abstract class Match implements IMatch {
         PlayerUtil.teleportToSpawn(playerUUID);
         player.setCollidable(true);
 
+        Participant participant = getParticipant(playerUUID);
+        if (participant != null) {
+            participant.setLeft(true);
+        }
+
         profile.setState(profile.getGameData().getParty() == null ? ProfileState.IN_LOBBY : ProfileState.IN_PARTY);
 
         if (sendMessage) {
