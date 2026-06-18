@@ -30,6 +30,7 @@ import dev.lrxh.neptune.feature.leaderboard.LeaderboardService;
 import dev.lrxh.neptune.feature.leaderboard.command.LeaderboardCommand;
 import dev.lrxh.neptune.feature.leaderboard.task.LeaderboardTask;
 import dev.lrxh.neptune.feature.party.command.PartyChatCommand;
+import dev.lrxh.neptune.feature.party.PartyChatListener;
 import dev.lrxh.neptune.feature.party.command.PartyCommand;
 import dev.lrxh.neptune.feature.queue.command.QueueCommand;
 import dev.lrxh.neptune.feature.queue.command.QueueMenuCommand;
@@ -184,7 +185,8 @@ public final class Neptune extends JavaPlugin {
                         new ArenaEditorChatListener(),
                         new KitEditorChatListener(),
                         new KitEditorListener(),
-                        new CustomKitListener())
+                        new CustomKitListener(),
+                        new PartyChatListener())
                 .forEach(listener -> getServer().getPluginManager().registerEvents(listener, this));
 
         getServer().getPluginManager().registerEvents(new EventListener(), this);

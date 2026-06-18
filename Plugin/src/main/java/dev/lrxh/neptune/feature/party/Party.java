@@ -114,6 +114,7 @@ public class Party {
         users.remove(playerUUID);
         profile.setState(ProfileState.IN_LOBBY);
         profile.getGameData().setParty(null);
+        profile.getGameData().setPartyChatEnabled(false);
     }
 
     public void disband() {
@@ -122,6 +123,7 @@ public class Party {
         forEachMemberAsUUID(uuid -> {
             Profile profile = API.getProfile(uuid);
             profile.getGameData().setParty(null);
+            profile.getGameData().setPartyChatEnabled(false);
             if (profile.getState().equals(ProfileState.IN_PARTY))
                 profile.setState(ProfileState.IN_LOBBY);
         });

@@ -34,6 +34,7 @@ public class GameData implements IGameData {
     private Gson gson;
     private Kit kitEditor;
     private Party party;
+    private boolean partyChatEnabled;
     private GlobalStats globalStats;
     private String lastPlayedKit;
 
