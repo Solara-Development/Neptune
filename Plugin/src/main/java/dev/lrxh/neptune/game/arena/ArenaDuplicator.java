@@ -1,7 +1,5 @@
 package dev.lrxh.neptune.game.arena;
 
-import com.fastasyncworldedit.core.extent.clipboard.CPUOptimizedClipboard;
-import com.fastasyncworldedit.core.extent.clipboard.MemoryOptimizedClipboard;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
@@ -18,6 +16,8 @@ import org.bukkit.World;
 
 public final class ArenaDuplicator {
 
+    // Serializes FAWE operations: all arena duplicates share one world and FAWE's
+    // per-world chunk cache is not safe under concurrent EditSessions (stray blocks).
     private static final Object FAWE_LOCK = new Object();
 
     public static boolean isAvailable() {
@@ -28,29 +28,17 @@ public final class ArenaDuplicator {
         CuboidRegion region = new CuboidRegion(BukkitAdapter.adapt(sourceWorld),
                 BlockVector3.at(min.getBlockX(), min.getBlockY(), min.getBlockZ()),
                 BlockVector3.at(max.getBlockX(), max.getBlockY(), max.getBlockZ()));
-        BlockArrayClipboard clipboard = createMemoryClipboard(region);
+        BlockArrayClipboard clipboard = new BlockArrayClipboard(region);
         clipboard.setOrigin(region.getMinimumPoint());
 
         synchronized (FAWE_LOCK) {
-            try (EditSession source = WorldEdit.getInstance().newEditSessionBuilder()
-                    .world(BukkitAdapter.adapt(sourceWorld))
-                    .changeSetNull()
-                    .fastMode(true)
-                    .checkMemory(false)
-                    .limitUnlimited()
-                    .build()) {
+            try (EditSession source = WorldEdit.getInstance().newEditSession(BukkitAdapter.adapt(sourceWorld))) {
                 ForwardExtentCopy copy = new ForwardExtentCopy(source, region, clipboard, region.getMinimumPoint());
                 copy.setCopyingEntities(false);
                 Operations.complete(copy);
             }
 
-            try (EditSession target = WorldEdit.getInstance().newEditSessionBuilder()
-                    .world(BukkitAdapter.adapt(targetWorld))
-                    .changeSetNull()
-                    .fastMode(true)
-                    .checkMemory(false)
-                    .limitUnlimited()
-                    .build()) {
+            try (EditSession target = WorldEdit.getInstance().newEditSession(BukkitAdapter.adapt(targetWorld))) {
                 Operations.complete(new ClipboardHolder(clipboard)
                         .createPaste(target)
                         .to(BlockVector3.at(tx, ty, tz))
@@ -64,17 +52,11 @@ public final class ArenaDuplicator {
         CuboidRegion region = new CuboidRegion(BukkitAdapter.adapt(world),
                 BlockVector3.at(min.getBlockX(), min.getBlockY(), min.getBlockZ()),
                 BlockVector3.at(max.getBlockX(), max.getBlockY(), max.getBlockZ()));
-        BlockArrayClipboard clipboard = createMemoryClipboard(region);
+        BlockArrayClipboard clipboard = new BlockArrayClipboard(region);
         clipboard.setOrigin(region.getMinimumPoint());
 
         synchronized (FAWE_LOCK) {
-            try (EditSession source = WorldEdit.getInstance().newEditSessionBuilder()
-                    .world(BukkitAdapter.adapt(world))
-                    .changeSetNull()
-                    .fastMode(true)
-                    .checkMemory(false)
-                    .limitUnlimited()
-                    .build()) {
+            try (EditSession source = WorldEdit.getInstance().newEditSession(BukkitAdapter.adapt(world))) {
                 ForwardExtentCopy copy = new ForwardExtentCopy(source, region, clipboard, region.getMinimumPoint());
                 copy.setCopyingEntities(false);
                 Operations.complete(copy);
@@ -83,10 +65,10 @@ public final class ArenaDuplicator {
         return clipboard;
     }
 
-    public static void restore(World world, Object clipboard, BlockVector3 target) {
+    public static void restore(World world, Object clipboard) {
         Clipboard clip = (Clipboard) clipboard;
         synchronized (FAWE_LOCK) {
-            try (EditSession editSession = WorldEdit.getInstance().newEditSessionBuilder()
+            try (EditSession target = WorldEdit.getInstance().newEditSessionBuilder()
                     .world(BukkitAdapter.adapt(world))
                     .changeSetNull()
                     .fastMode(true)
@@ -94,20 +76,12 @@ public final class ArenaDuplicator {
                     .limitUnlimited()
                     .build()) {
                 Operations.complete(new ClipboardHolder(clip)
-                        .createPaste(editSession)
-                        .to(target)
+                        .createPaste(target)
+                        .to(clip.getOrigin())
                         .ignoreAirBlocks(false)
                         .copyEntities(false)
                         .build());
             }
-        }
-    }
-
-    private static BlockArrayClipboard createMemoryClipboard(CuboidRegion region) {
-        try {
-            return new BlockArrayClipboard(region, new MemoryOptimizedClipboard(region));
-        } catch (Throwable t) {
-            return new BlockArrayClipboard(region, new CPUOptimizedClipboard(region));
         }
     }
 }

@@ -51,16 +51,9 @@ public class ArenaService extends IService implements IArenaService {
     }
 
     private Arena readDuplicate(String name, ConfigurationSection s) {
-        Arena.setSkipCapture(true);
-        try {
-            Arena dup = Arena.read(name, s);
-            if (dup != null) {
-                dup.setOwner(getArenaByName(s.getString("owner")));
-            }
-            return dup;
-        } finally {
-            Arena.setSkipCapture(false);
-        }
+        Arena dup = Arena.read(name, s);
+        if (dup != null) dup.setOwner(getArenaByName(s.getString("owner")));
+        return dup;
     }
 
     public List<Arena> getDuplicates(IArena owner) {
@@ -133,14 +126,12 @@ public class ArenaService extends IService implements IArenaService {
                 ArenaDuplicator.copyPaste(ownerWorld, owner.getMin(), owner.getMax(), world, tx, ty, tz);
                 Bukkit.getScheduler().runTask(Neptune.get(), () -> {
                     reservedIndices.remove(index);
-                    Arena.setSkipCapture(true);
                     Arena dup = new Arena(owner.getName() + "#" + index, owner.getDisplayName(),
                             shift(owner.getRedSpawn(), dx, dz, world), shift(owner.getBlueSpawn(), dx, dz, world),
                             shift(owner.getMin(), dx, dz, world), shift(owner.getMax(), dx, dz, world),
                             owner.getBuildLimit(), owner.isEnabled(), new ArrayList<>(owner.getWhitelistedBlocks()),
                             owner.getDeathY(), owner.getTime());
                     dup.setOwner(owner);
-                    Arena.setSkipCapture(false);
                     duplicates.add(dup);
                     save();
                     future.complete(dup);
@@ -177,8 +168,8 @@ public class ArenaService extends IService implements IArenaService {
                     dup.setTime(owner.getTime());
                     dup.setEnabled(owner.isEnabled());
                     dup.setAllowedInCustomKit(owner.isAllowedInCustomKit());
+                    dup.capture();
                 }
-                owner.capture();
             });
         });
     }

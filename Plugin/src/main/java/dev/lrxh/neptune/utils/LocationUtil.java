@@ -30,10 +30,7 @@ public class LocationUtil {
         if (parts.length < 6) return null;
 
         World world = Bukkit.getWorld(parts[0]);
-        if (world == null) {
-            world = Bukkit.getWorlds().isEmpty() ? null : Bukkit.getWorlds().get(0);
-            if (world == null) return null;
-        }
+        if (world == null) return null;
 
         try {
             double x = Double.parseDouble(parts[1]);
