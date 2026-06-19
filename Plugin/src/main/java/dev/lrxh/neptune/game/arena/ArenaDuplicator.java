@@ -14,17 +14,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-import java.util.concurrent.ConcurrentHashMap;
-
 public final class ArenaDuplicator {
 
-    // Per-world locks: FAWE's chunk cache is not safe under concurrent EditSessions
-    // in the same world, but different worlds can safely run in parallel.
-    private static final ConcurrentHashMap<World, Object> WORLD_LOCKS = new ConcurrentHashMap<>();
-
-    private static Object getLock(World world) {
-        return WORLD_LOCKS.computeIfAbsent(world, k -> new Object());
-    }
+    // Only used for cold-path operations (capture, copyPaste). Restores are lock-free
+    // since each duplicate operates on a non-overlapping region with fastMode + changeSetNull.
+    private static final Object COLD_LOCK = new Object();
 
     public static boolean isAvailable() {
         return Bukkit.getPluginManager().getPlugin("FastAsyncWorldEdit") != null;
@@ -37,7 +31,7 @@ public final class ArenaDuplicator {
         BlockArrayClipboard clipboard = new BlockArrayClipboard(region);
         clipboard.setOrigin(region.getMinimumPoint());
 
-        synchronized (getLock(targetWorld)) {
+        synchronized (COLD_LOCK) {
             try (EditSession source = WorldEdit.getInstance().newEditSessionBuilder()
                     .world(BukkitAdapter.adapt(sourceWorld))
                     .changeSetNull()
@@ -73,7 +67,7 @@ public final class ArenaDuplicator {
         BlockArrayClipboard clipboard = new BlockArrayClipboard(region);
         clipboard.setOrigin(region.getMinimumPoint());
 
-        synchronized (getLock(world)) {
+        synchronized (COLD_LOCK) {
             try (EditSession source = WorldEdit.getInstance().newEditSessionBuilder()
                     .world(BukkitAdapter.adapt(world))
                     .changeSetNull()
@@ -91,21 +85,19 @@ public final class ArenaDuplicator {
 
     public static void restore(World world, Object clipboard) {
         Clipboard clip = (Clipboard) clipboard;
-        synchronized (getLock(world)) {
-            try (EditSession target = WorldEdit.getInstance().newEditSessionBuilder()
-                    .world(BukkitAdapter.adapt(world))
-                    .changeSetNull()
-                    .fastMode(true)
-                    .checkMemory(false)
-                    .limitUnlimited()
-                    .build()) {
-                Operations.complete(new ClipboardHolder(clip)
-                        .createPaste(target)
-                        .to(clip.getOrigin())
-                        .ignoreAirBlocks(false)
-                        .copyEntities(false)
-                        .build());
-            }
+        try (EditSession target = WorldEdit.getInstance().newEditSessionBuilder()
+                .world(BukkitAdapter.adapt(world))
+                .changeSetNull()
+                .fastMode(true)
+                .checkMemory(false)
+                .limitUnlimited()
+                .build()) {
+            Operations.complete(new ClipboardHolder(clip)
+                    .createPaste(target)
+                    .to(clip.getOrigin())
+                    .ignoreAirBlocks(false)
+                    .copyEntities(false)
+                    .build());
         }
     }
 }
