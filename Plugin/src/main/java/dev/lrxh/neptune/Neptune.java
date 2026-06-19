@@ -43,6 +43,7 @@ import dev.lrxh.neptune.feature.settings.command.SettingsCommand;
 import dev.lrxh.neptune.game.arena.Arena;
 import dev.lrxh.neptune.game.arena.ArenaDuplicator;
 import dev.lrxh.neptune.game.arena.ArenaService;
+import com.fastasyncworldedit.core.configuration.Settings;
 import dev.lrxh.neptune.game.arena.command.ArenaProvider;
 import dev.lrxh.neptune.game.arena.listener.ArenaEditorChatListener;
 import dev.lrxh.neptune.game.duel.command.DuelCommand;
@@ -143,6 +144,7 @@ public final class Neptune extends JavaPlugin {
         if (arenaGenerationDisabled) {
             duplicatesEnabled = ArenaDuplicator.isAvailable();
             if (duplicatesEnabled) {
+                Settings.settings().CLIPBOARD.USE_DISK = false;
                 ArenaService.get().setupDuplicatesWorld();
                 ArenaService.get().loadDuplicates();
             } else {
