@@ -100,4 +100,22 @@ public final class ArenaDuplicator {
                     .build());
         }
     }
+
+    public static void restoreAt(World world, Object clipboard, int x, int y, int z) {
+        Clipboard clip = (Clipboard) clipboard;
+        try (EditSession target = WorldEdit.getInstance().newEditSessionBuilder()
+                .world(BukkitAdapter.adapt(world))
+                .changeSetNull()
+                .fastMode(true)
+                .checkMemory(false)
+                .limitUnlimited()
+                .build()) {
+            Operations.complete(new ClipboardHolder(clip)
+                    .createPaste(target)
+                    .to(BlockVector3.at(x, y, z))
+                    .ignoreAirBlocks(false)
+                    .copyEntities(false)
+                    .build());
+        }
+    }
 }
