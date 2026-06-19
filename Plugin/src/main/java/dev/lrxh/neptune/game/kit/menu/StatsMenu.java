@@ -11,6 +11,7 @@ import dev.lrxh.neptune.utils.menu.Filter;
 import dev.lrxh.neptune.utils.menu.Menu;
 import net.kyori.adventure.text.Component;
 
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
@@ -32,7 +33,7 @@ public class StatsMenu extends Menu {
 
     @Override
     public Component getTitle(Player player) {
-        return CC.returnMessage(player, MenusLocale.STAT_TITLE.getString());
+        return CC.returnMessage(player, MenusLocale.STAT_TITLE.getString(), Placeholder.unparsed("target", target.getName()));
     }
 
     @Override
