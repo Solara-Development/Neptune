@@ -14,11 +14,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 public final class ArenaDuplicator {
 
-    // Serializes FAWE operations: all arena duplicates share one world and FAWE's
-    // per-world chunk cache is not safe under concurrent EditSessions (stray blocks).
-    private static final Object FAWE_LOCK = new Object();
+    // Per-world locks: FAWE's chunk cache is not safe under concurrent EditSessions
+    // in the same world, but different worlds can safely run in parallel.
+    private static final ConcurrentHashMap<World, Object> WORLD_LOCKS = new ConcurrentHashMap<>();
+
+    private static Object getLock(World world) {
+        return WORLD_LOCKS.computeIfAbsent(world, k -> new Object());
+    }
 
     public static boolean isAvailable() {
         return Bukkit.getPluginManager().getPlugin("FastAsyncWorldEdit") != null;
@@ -31,14 +37,26 @@ public final class ArenaDuplicator {
         BlockArrayClipboard clipboard = new BlockArrayClipboard(region);
         clipboard.setOrigin(region.getMinimumPoint());
 
-        synchronized (FAWE_LOCK) {
-            try (EditSession source = WorldEdit.getInstance().newEditSession(BukkitAdapter.adapt(sourceWorld))) {
+        synchronized (getLock(targetWorld)) {
+            try (EditSession source = WorldEdit.getInstance().newEditSessionBuilder()
+                    .world(BukkitAdapter.adapt(sourceWorld))
+                    .changeSetNull()
+                    .fastMode(true)
+                    .checkMemory(false)
+                    .limitUnlimited()
+                    .build()) {
                 ForwardExtentCopy copy = new ForwardExtentCopy(source, region, clipboard, region.getMinimumPoint());
                 copy.setCopyingEntities(false);
                 Operations.complete(copy);
             }
 
-            try (EditSession target = WorldEdit.getInstance().newEditSession(BukkitAdapter.adapt(targetWorld))) {
+            try (EditSession target = WorldEdit.getInstance().newEditSessionBuilder()
+                    .world(BukkitAdapter.adapt(targetWorld))
+                    .changeSetNull()
+                    .fastMode(true)
+                    .checkMemory(false)
+                    .limitUnlimited()
+                    .build()) {
                 Operations.complete(new ClipboardHolder(clipboard)
                         .createPaste(target)
                         .to(BlockVector3.at(tx, ty, tz))
@@ -55,8 +73,14 @@ public final class ArenaDuplicator {
         BlockArrayClipboard clipboard = new BlockArrayClipboard(region);
         clipboard.setOrigin(region.getMinimumPoint());
 
-        synchronized (FAWE_LOCK) {
-            try (EditSession source = WorldEdit.getInstance().newEditSession(BukkitAdapter.adapt(world))) {
+        synchronized (getLock(world)) {
+            try (EditSession source = WorldEdit.getInstance().newEditSessionBuilder()
+                    .world(BukkitAdapter.adapt(world))
+                    .changeSetNull()
+                    .fastMode(true)
+                    .checkMemory(false)
+                    .limitUnlimited()
+                    .build()) {
                 ForwardExtentCopy copy = new ForwardExtentCopy(source, region, clipboard, region.getMinimumPoint());
                 copy.setCopyingEntities(false);
                 Operations.complete(copy);
@@ -67,7 +91,7 @@ public final class ArenaDuplicator {
 
     public static void restore(World world, Object clipboard) {
         Clipboard clip = (Clipboard) clipboard;
-        synchronized (FAWE_LOCK) {
+        synchronized (getLock(world)) {
             try (EditSession target = WorldEdit.getInstance().newEditSessionBuilder()
                     .world(BukkitAdapter.adapt(world))
                     .changeSetNull()

@@ -72,7 +72,8 @@ public class Arena implements IArena, ConfigData {
         this.buildLimit = buildLimit;
         this.whitelistedBlocks = (whitelistedBlocks != null ? whitelistedBlocks : new ArrayList<>());
         this.owner = owner;
-        this.doneLoading = true;
+
+        capture();
     }
 
     public Arena(String name, long time) {
@@ -182,18 +183,6 @@ public class Arena implements IArena, ConfigData {
     }
 
     public void restore() {
-        if (owner != null && faweClipboard == null) {
-            Arena source = owner;
-            if (source.getMin() != null && source.getMin().getWorld() != null) {
-                int tx = Math.min(min.getBlockX(), max.getBlockX());
-                int ty = Math.min(min.getBlockY(), max.getBlockY());
-                int tz = Math.min(min.getBlockZ(), max.getBlockZ());
-                Bukkit.getScheduler().runTaskAsynchronously(Neptune.get(), () ->
-                        ArenaDuplicator.copyPaste(source.getMin().getWorld(), source.getMin(), source.getMax(),
-                                min.getWorld(), tx, ty, tz));
-            }
-            return;
-        }
         if (faweClipboard != null) {
             Bukkit.getScheduler().runTaskAsynchronously(Neptune.get(),
                     () -> ArenaDuplicator.restore(min.getWorld(), faweClipboard));
@@ -202,15 +191,9 @@ public class Arena implements IArena, ConfigData {
 
     public void capture() {
         if (min == null || max == null) return;
-        if (owner != null) {
-            this.doneLoading = true;
-            return;
-        }
         this.doneLoading = false;
         Bukkit.getScheduler().runTaskAsynchronously(Neptune.get(), () -> {
-            if (owner == null) {
-                this.faweClipboard = ArenaDuplicator.capture(min.getWorld(), min, max);
-            }
+            this.faweClipboard = ArenaDuplicator.capture(min.getWorld(), min, max);
             this.doneLoading = true;
         });
     }
