@@ -62,7 +62,7 @@ public enum MenusLocale implements IDataAccessor {
     STAT_KIT_NAME("STAT.NAME", DataType.STRING, "&b<kit>"),
     STAT_SIZE("STAT.SIZE", DataType.INT, "36"),
     STAT_FILTER("STAT.FILTER-TYPE", "FILL, BORDER, NONE", DataType.STRING, "FILL"),
-    STAT_TITLE("STAT.TITLE", DataType.STRING, "&7<player> Statistics"),
+    STAT_TITLE("STAT.TITLE", DataType.STRING, "&7<target> Statistics"),
     STAT_LORE("STAT.LORE", DataType.STRING_LIST,
             " &f&7* &fWins: &b<wins>",
             " &f&7* &fElo: &b<elo>",
@@ -857,6 +857,7 @@ public enum MenusLocale implements IDataAccessor {
                                 .replaceAll("<ping>", "<max-ping>")
                 ).toList()
         );
+        STAT_TITLE.set(STAT_TITLE.getString().replace("<player>", "<target>"));
         if (MATCH_LIST_SIZE.getInt() == 36) MATCH_LIST_SIZE.set(54);
         if (MATCH_LIST_STARTING_SLOT.getInt() == 10 && MATCH_LIST_FILTER.getString().equals("FILTER"))
             MATCH_LIST_FILTER.set("BORDER");
