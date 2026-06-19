@@ -8,7 +8,6 @@ import com.jonahseguin.drink.annotation.Text;
 import com.jonahseguin.drink.provider.spigot.UUIDProvider;
 import dev.lrxh.api.NeptuneAPI;
 import dev.lrxh.api.NeptuneAPIImpl;
-import dev.lrxh.blockChanger.BlockChanger;
 import dev.lrxh.neptune.cache.Cache;
 import dev.lrxh.neptune.commands.FollowCommand;
 import dev.lrxh.neptune.commands.LeaveCommand;
@@ -95,7 +94,6 @@ public final class Neptune extends JavaPlugin {
     private boolean placeholder = false;
     @Setter
     private boolean allowMatches;
-    private boolean arenaGenerationDisabled;
     private boolean duplicatesEnabled;
 
     private boolean errored;
@@ -129,7 +127,6 @@ public final class Neptune extends JavaPlugin {
 
     private void loadManager() {
         ConfigService.get().load();
-        arenaGenerationDisabled = !SettingsLocale.DYNAMIC_ARENA_GENERATION.getBoolean();
 
         loadExtensions();
         if (!isEnabled())
@@ -139,17 +136,14 @@ public final class Neptune extends JavaPlugin {
         if (!isEnabled())
             return;
 
-        BlockChanger.initialize(this);
         ArenaService.get().load();
-        if (arenaGenerationDisabled) {
-            duplicatesEnabled = ArenaDuplicator.isAvailable();
-            if (duplicatesEnabled) {
-                Settings.settings().CLIPBOARD.USE_DISK = false;
-                ArenaService.get().setupDuplicatesWorld();
-                ArenaService.get().loadDuplicates();
-            } else {
-                ServerUtils.error("FastAsyncWorldEdit is not installed - arena duplicates are disabled.");
-            }
+        duplicatesEnabled = ArenaDuplicator.isAvailable();
+        if (duplicatesEnabled) {
+            Settings.settings().CLIPBOARD.USE_DISK = false;
+            ArenaService.get().setupDuplicatesWorld();
+            ArenaService.get().loadDuplicates();
+        } else {
+            ServerUtils.error("FastAsyncWorldEdit is not installed - arena duplicates are disabled.");
         }
         KitService.get().load();
         this.cache = new Cache();

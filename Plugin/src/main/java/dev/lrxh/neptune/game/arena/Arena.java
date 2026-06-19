@@ -1,10 +1,7 @@
 package dev.lrxh.neptune.game.arena;
 
 import dev.lrxh.api.arena.IArena;
-import dev.lrxh.blockChanger.BlockChanger;
-import dev.lrxh.blockChanger.snapshot.CuboidSnapshot;
 import dev.lrxh.neptune.Neptune;
-import dev.lrxh.neptune.configs.impl.SettingsLocale;
 import dev.lrxh.neptune.game.kit.KitService;
 import dev.lrxh.neptune.providers.manager.ConfigData;
 import dev.lrxh.neptune.utils.LocationUtil;
@@ -15,7 +12,6 @@ import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @Getter
@@ -32,7 +28,6 @@ public class Arena implements IArena, ConfigData {
     private double buildLimit;
     private long time;
     private List<Material> whitelistedBlocks;
-    private CuboidSnapshot snapshot;
     private Object faweClipboard;
     private Arena owner;
     private boolean doneLoading;
@@ -67,14 +62,17 @@ public class Arena implements IArena, ConfigData {
         capture();
     }
 
-    public Arena(String name, String displayName, Location redSpawn, Location blueSpawn,
-                 Location min, Location max, double buildLimit, boolean enabled,
-                 List<Material> whitelistedBlocks, int deathY, long time, CuboidSnapshot snapshot, Arena owner) {
+    Arena(String name, String displayName, Location redSpawn, Location blueSpawn,
+          Location min, Location max, double buildLimit, boolean enabled,
+          List<Material> whitelistedBlocks, int deathY, long time, Arena owner) {
 
-        this(name, displayName, redSpawn, blueSpawn, min, max, buildLimit, enabled, whitelistedBlocks, deathY, time);
-        this.snapshot = snapshot;
+        this(name, displayName, redSpawn, blueSpawn, enabled, deathY, time);
+        this.min = min;
+        this.max = max;
+        this.buildLimit = buildLimit;
+        this.whitelistedBlocks = (whitelistedBlocks != null ? whitelistedBlocks : new ArrayList<>());
         this.owner = owner;
-        this.doneLoading = (snapshot != null);
+        this.doneLoading = true;
     }
 
     public Arena(String name, long time) {
@@ -101,10 +99,6 @@ public class Arena implements IArena, ConfigData {
                 blocks, s.getInt("deathY", -68321), s.getLong("time"));
         arena.setAllowedInCustomKit(s.getBoolean("allowedInCustomKit", true));
         return arena;
-    }
-
-    private static boolean useFawe() {
-        return "FAWE".equalsIgnoreCase(SettingsLocale.ARENA_CLEANUP_METHOD.getString()) && ArenaDuplicator.isAvailable();
     }
 
     @Override
@@ -152,81 +146,15 @@ public class Arena implements IArena, ConfigData {
     }
 
     public synchronized CompletableFuture<IArena> acquire() {
-        if (Neptune.get().isArenaGenerationDisabled()) {
-            if (Neptune.get().isDuplicatesEnabled()) {
-                Arena duplicate = ArenaService.get().getFreeDuplicate(this);
-                if (duplicate == null) return CompletableFuture.completedFuture(null);
-                duplicate.setInUse(true);
-                return CompletableFuture.completedFuture(duplicate);
-            }
-            if (inUse) return CompletableFuture.completedFuture(null);
-            inUse = true;
-            return CompletableFuture.completedFuture(this);
+        if (Neptune.get().isDuplicatesEnabled()) {
+            Arena duplicate = ArenaService.get().getFreeDuplicate(this);
+            if (duplicate == null) return CompletableFuture.completedFuture(null);
+            duplicate.setInUse(true);
+            return CompletableFuture.completedFuture(duplicate);
         }
-        return createDuplicate().thenApply(arena -> arena);
-    }
-
-    public synchronized CompletableFuture<VirtualArena> createDuplicate() {
-        CompletableFuture<VirtualArena> future = new CompletableFuture<>();
-        UUID uuid = UUID.randomUUID();
-        WorldCreator creator = new WorldCreator(uuid.toString())
-                .type(WorldType.NORMAL)
-                .generator(new VoidChunkGenerator())
-                .biomeProvider(new VoidBiomeProvider());
-
-        BlockChanger.createVirtualWorld(creator).thenAccept(virtualWorld -> {
-            try {
-                World world = virtualWorld.getWorld();
-                Bukkit.getScheduler().runTask(Neptune.get(), () -> {
-                    world.setGameRule(GameRules.ADVANCE_TIME, false);
-                    world.setGameRule(GameRules.ADVANCE_WEATHER, false);
-                    world.setGameRule(GameRules.SHOW_ADVANCEMENT_MESSAGES, false);
-                    world.setGameRule(GameRules.IMMEDIATE_RESPAWN, true);
-                    world.setDifficulty(Difficulty.HARD);
-                    world.setTime(time);
-                });
-
-                Location min = this.min.clone();
-                min.setWorld(world);
-                Location max = this.max.clone();
-                max.setWorld(world);
-                Location redSpawn = this.redSpawn.clone();
-                redSpawn.setWorld(world);
-                Location blueSpawn = this.blueSpawn.clone();
-                blueSpawn.setWorld(world);
-
-
-                virtualWorld.paste(snapshot);
-
-                String dupName = this.name + "_" + uuid;
-
-                VirtualArena duplicate = new VirtualArena(
-                        dupName,
-                        this.displayName,
-                        redSpawn,
-                        blueSpawn,
-                        min,
-                        max,
-                        this.buildLimit,
-                        this.enabled,
-                        new ArrayList<>(this.whitelistedBlocks),
-                        this.deathY,
-                        this.time,
-                        this,
-                        virtualWorld
-                );
-
-                future.complete(duplicate);
-
-            } catch (Exception ex) {
-                future.completeExceptionally(ex);
-            }
-        }).exceptionally(ex -> {
-            future.completeExceptionally(ex);
-            return null;
-        });
-
-        return future;
+        if (inUse) return CompletableFuture.completedFuture(null);
+        inUse = true;
+        return CompletableFuture.completedFuture(this);
     }
 
     public List<String> getWhitelistedBlocksAsString() {
@@ -254,30 +182,37 @@ public class Arena implements IArena, ConfigData {
     }
 
     public void restore() {
+        if (owner != null && faweClipboard == null) {
+            Arena source = owner;
+            if (source.getMin() != null && source.getMin().getWorld() != null) {
+                int tx = Math.min(min.getBlockX(), max.getBlockX());
+                int ty = Math.min(min.getBlockY(), max.getBlockY());
+                int tz = Math.min(min.getBlockZ(), max.getBlockZ());
+                Bukkit.getScheduler().runTaskAsynchronously(Neptune.get(), () ->
+                        ArenaDuplicator.copyPaste(source.getMin().getWorld(), source.getMin(), source.getMax(),
+                                min.getWorld(), tx, ty, tz));
+            }
+            return;
+        }
         if (faweClipboard != null) {
             Bukkit.getScheduler().runTaskAsynchronously(Neptune.get(),
                     () -> ArenaDuplicator.restore(min.getWorld(), faweClipboard));
-        } else if (snapshot != null) {
-            snapshot.restore(true);
         }
     }
 
     public void capture() {
         if (min == null || max == null) return;
-        this.doneLoading = false;
-        if (useFawe()) {
-            this.snapshot = null;
-            Bukkit.getScheduler().runTaskAsynchronously(Neptune.get(), () -> {
-                this.faweClipboard = ArenaDuplicator.capture(min.getWorld(), min, max);
-                this.doneLoading = true;
-            });
-        } else {
-            this.faweClipboard = null;
-            CuboidSnapshot.create(min, max).thenAccept(cuboidSnapshot -> {
-                this.snapshot = cuboidSnapshot;
-                this.doneLoading = true;
-            });
+        if (owner != null) {
+            this.doneLoading = true;
+            return;
         }
+        this.doneLoading = false;
+        Bukkit.getScheduler().runTaskAsynchronously(Neptune.get(), () -> {
+            if (owner == null) {
+                this.faweClipboard = ArenaDuplicator.capture(min.getWorld(), min, max);
+            }
+            this.doneLoading = true;
+        });
     }
 
     public void setMin(Location min) {

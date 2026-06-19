@@ -130,8 +130,7 @@ public class ArenaService extends IService implements IArenaService {
                             shift(owner.getRedSpawn(), dx, dz, world), shift(owner.getBlueSpawn(), dx, dz, world),
                             shift(owner.getMin(), dx, dz, world), shift(owner.getMax(), dx, dz, world),
                             owner.getBuildLimit(), owner.isEnabled(), new ArrayList<>(owner.getWhitelistedBlocks()),
-                            owner.getDeathY(), owner.getTime());
-                    dup.setOwner(owner);
+                            owner.getDeathY(), owner.getTime(), owner);
                     duplicates.add(dup);
                     save();
                     future.complete(dup);
@@ -168,7 +167,6 @@ public class ArenaService extends IService implements IArenaService {
                     dup.setTime(owner.getTime());
                     dup.setEnabled(owner.isEnabled());
                     dup.setAllowedInCustomKit(owner.isAllowedInCustomKit());
-                    dup.capture();
                 }
             });
         });

@@ -114,9 +114,9 @@ public class MatchService implements IMatchService {
         }
 
         Arena source = ArenaService.get().getArenaByName(match.getArena().getName());
-        CompletableFuture<? extends IArena> arenaFuture = (Neptune.get().isArenaGenerationDisabled() && source != null)
+        CompletableFuture<? extends IArena> arenaFuture = (source != null)
                 ? source.acquire()
-                : ArenaService.get().copyFrom(match.getArena()).createDuplicate();
+                : ArenaService.get().copyFrom(match.getArena()).acquire();
 
         arenaFuture.thenAccept(arena -> {
             if (arena == null) return;

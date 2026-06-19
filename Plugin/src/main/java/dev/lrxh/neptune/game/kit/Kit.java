@@ -272,12 +272,10 @@ public class Kit implements IKit, ConfigData {
                 continue;
             if (!arena.isSetup() || !arena.isDoneLoading())
                 continue;
-            if (Neptune.get().isArenaGenerationDisabled()) {
-                if (Neptune.get().isDuplicatesEnabled()) {
-                    if (ArenaService.get().getFreeDuplicate(arena) == null) continue;
-                } else if (arena.isInUse()) {
-                    continue;
-                }
+            if (Neptune.get().isDuplicatesEnabled()) {
+                if (ArenaService.get().getFreeDuplicate(arena) == null) continue;
+            } else if (arena.isInUse()) {
+                continue;
             }
             arenas1.add(arena);
         }
