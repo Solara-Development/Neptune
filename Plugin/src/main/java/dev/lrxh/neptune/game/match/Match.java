@@ -323,6 +323,7 @@ public abstract class Match implements IMatch {
         profile.setMatch(this);
         profile.setState(ProfileState.IN_GAME);
         PlayerUtil.reset(player);
+        player.setCollidable(true);
         Participant participant = getParticipant(playerUUID);
         participant.setLastAttacker(null);
         kit.giveLoadout(participant);
