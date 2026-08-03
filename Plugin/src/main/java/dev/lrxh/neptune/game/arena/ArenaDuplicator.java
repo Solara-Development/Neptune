@@ -20,10 +20,6 @@ public final class ArenaDuplicator {
     // since each duplicate operates on a non-overlapping region with fastMode + changeSetNull.
     private static final Object COLD_LOCK = new Object();
 
-    public static boolean isAvailable() {
-        return Bukkit.getPluginManager().getPlugin("FastAsyncWorldEdit") != null;
-    }
-
     public static void copyPaste(World sourceWorld, Location min, Location max, World targetWorld, int tx, int ty, int tz) {
         CuboidRegion region = new CuboidRegion(BukkitAdapter.adapt(sourceWorld),
                 BlockVector3.at(min.getBlockX(), min.getBlockY(), min.getBlockZ()),

@@ -75,6 +75,7 @@ import dev.lrxh.neptune.utils.tasks.TaskScheduler;
 import fr.mrmicky.fastboard.FastManager;
 import lombok.Getter;
 import lombok.Setter;
+import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.GameRules;
 import org.bukkit.World;
@@ -137,8 +138,7 @@ public final class Neptune extends JavaPlugin {
             return;
 
         ArenaService.get().load();
-        duplicatesEnabled = ArenaDuplicator.isAvailable();
-        if (duplicatesEnabled) {
+        if (Bukkit.getPluginManager().getPlugin("FastAsyncWorldEdit") != null) {
             Settings.settings().CLIPBOARD.USE_DISK = false;
             ArenaService.get().setupDuplicatesWorld();
             ArenaService.get().loadDuplicates();

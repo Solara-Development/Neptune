@@ -1,7 +1,6 @@
 package dev.lrxh.neptune.game.arena.menu;
 
 import dev.lrxh.neptune.game.arena.Arena;
-import dev.lrxh.neptune.game.arena.ArenaDuplicator;
 import dev.lrxh.neptune.game.arena.ArenaService;
 import dev.lrxh.neptune.utils.CC;
 import dev.lrxh.neptune.utils.ItemBuilder;
@@ -11,13 +10,13 @@ import dev.lrxh.neptune.utils.menu.Menu;
 import dev.lrxh.neptune.utils.menu.impl.DisplayButton;
 import dev.lrxh.neptune.utils.menu.impl.ReturnButton;
 import dev.lrxh.neptune.utils.sign.SignInputMenu;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -97,7 +96,7 @@ public class ArenaDuplicatesMenu extends Menu {
         }));
 
         buttons.add(new DisplayButton(getSize() - 6, Material.EMERALD, "&aRecopy Duplicates", List.of("&7Click to repaste all duplicate copies of this arena"), p -> {
-            if (!ArenaDuplicator.isAvailable()) {
+            if (Bukkit.getPluginManager().getPlugin("FastAsyncWorldEdit") == null) {
                 p.sendMessage(CC.error("FastAsyncWorldEdit is not installed."));
                 return;
             }
