@@ -88,7 +88,7 @@ public class ItemBrowserService implements IItemBrowserService {
     private List<Material> bySuffix(String suffix) {
         List<Material> list = new ArrayList<>();
         for (Material m : Registry.MATERIAL) {
-            if (m.isItem() && !m.isLegacy() && m.name().endsWith(suffix)) list.add(m);
+            if (m.isItem() && m.name().endsWith(suffix)) list.add(m);
         }
         return list;
     }
@@ -96,7 +96,7 @@ public class ItemBrowserService implements IItemBrowserService {
     public List<Material> getAllItems() {
         List<Material> list = new ArrayList<>();
         for (Material m : Registry.MATERIAL) {
-            if (m.isItem() && !m.isAir() && !m.isLegacy()) list.add(m);
+            if (m.isItem() && !m.isAir()) list.add(m);
         }
         return list;
     }
