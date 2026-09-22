@@ -51,7 +51,7 @@ public class QueueService implements IQueueService {
 
         if (add) {
             QueueJoinEvent event = new QueueJoinEvent(queueEntry);
-            Bukkit.getScheduler().runTask(Neptune.get(), () -> Bukkit.getPluginManager().callEvent(event));
+            Bukkit.getPluginManager().callEvent(event);
             if (event.isCancelled()) return;
             MessagesLocale.QUEUE_JOIN.send(playerUUID, TagResolver.resolver(
                     Placeholder.parsed("kit", kit.getDisplayName()),
