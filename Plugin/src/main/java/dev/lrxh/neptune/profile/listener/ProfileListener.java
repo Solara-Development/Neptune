@@ -18,6 +18,7 @@ import dev.lrxh.neptune.utils.ServerUtils;
 import dev.lrxh.neptune.utils.sign.SignInputMenu;
 import dev.lrxh.neptune.utils.tasks.NeptuneRunnable;
 import dev.lrxh.neptune.utils.tasks.TaskScheduler;
+import io.papermc.paper.event.player.AsyncPlayerSpawnLocationEvent;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 
 import org.bukkit.Bukkit;
@@ -28,6 +29,11 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class ProfileListener implements Listener {
+
+    @EventHandler
+    public void onPlayerSpawnLocation(AsyncPlayerSpawnLocationEvent event) {
+        event.setSpawnLocation(Neptune.get().getCache().getSpawn());
+    }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
@@ -44,7 +50,6 @@ public class ProfileListener implements Listener {
                 .thenAccept(unused -> TaskScheduler.get().startTask(new NeptuneRunnable() {
                     @Override
                     public void run() {
-                        PlayerUtil.teleportToSpawn(player.getUniqueId());
                         if (!MessagesLocale.JOIN_MESSAGE.getString().equals("NONE")) {
                             ServerUtils.broadcast(MessagesLocale.JOIN_MESSAGE,
                                     Placeholder.unparsed("player", player.getName()));
