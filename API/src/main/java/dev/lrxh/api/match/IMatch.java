@@ -24,15 +24,21 @@ public interface IMatch {
 
     int getRounds();
 
+    int getCurrentRound();
+
     boolean isDuel();
 
     boolean isEnded();
 
     IParticipant getParticipant(Player player);
 
+    IParticipant getParticipant(UUID playerUUID);
+
+    boolean isSpectator(UUID playerUUID);
+
     void broadcast(String message);
 
     String getWinnerName();
-    
+
     String getLoserName();
 }

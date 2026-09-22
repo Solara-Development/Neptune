@@ -72,4 +72,14 @@ public class ProfileService implements IProfileService {
                 ? CompletableFuture.completedFuture(profile)
                 : createFakeProfile(uuid).thenApply(p -> p);
     }
+
+    @Override
+    public IProfile getCachedProfile(UUID uuid) {
+        return profiles.get(uuid);
+    }
+
+    @Override
+    public boolean isLoaded(UUID uuid) {
+        return profiles.containsKey(uuid);
+    }
 }

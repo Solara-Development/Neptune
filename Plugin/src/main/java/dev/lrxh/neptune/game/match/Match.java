@@ -103,62 +103,14 @@ public abstract class Match implements IMatch {
         return getParticipant(player.getUniqueId());
     }
 
-    public void sendTitle(TextComponent header, TextComponent footer, int duration) {
-        forEachParticipant(participant -> PlayerUtil.sendTitle(participant.getPlayer(), header, footer, duration));
+    @Override
+    public int getCurrentRound() {
+        return currentRound;
     }
 
-    public void sendMessage(MessagesLocale message) {
-        forEachParticipant(participant -> message.send(participant.getPlayerUUID(), TagResolver.empty()));
-        forEachSpectator(player -> message.send(player.getUniqueId(), TagResolver.empty()));
-    }
-
-    public void sendMessage(MessagesLocale message, TagResolver resolver) {
-        forEachParticipant(participant -> message.send(participant.getPlayerUUID(), resolver));
-        forEachSpectator(player -> message.send(player.getUniqueId(), resolver));
-    }
-
-    public void addSpectator(Player player, Player target, boolean sendMessage, boolean add) {
-        Profile profile = API.getProfile(player);
-
-        profile.setState(ProfileState.IN_SPECTATOR);
-        profile.setMatch(this);
-
-        if (add)
-            spectators.add(player.getUniqueId());
-
-        showPlayerForSpectators();
-
-        if (sendMessage)
-            broadcast(MessagesLocale.SPECTATE_START, Placeholder.unparsed("player", player.getName()));
-
-        player.setHealth(20);
-        player.setFoodLevel(20);
-        player.setCollidable(false);
-        player.teleportAsync(target.getLocation()).thenAccept(success -> {
-            if (!success)
-                return;
-
-            forEachPlayer(alivePlayer -> {
-                if (!alivePlayer.equals(player)) {
-                    player.showPlayer(Neptune.get(), alivePlayer);
-                    alivePlayer.hidePlayer(Neptune.get(), player);
-                }
-            });
-
-            Bukkit.getScheduler().runTaskLater(Neptune.get(), () -> {
-                player.setAllowFlight(true);
-                player.setFlying(true);
-            }, 5L);
-        });
-
-        player.setGameMode(GameMode.SURVIVAL);
-        player.setAllowFlight(true);
-        player.setFlying(true);
-
-        HotbarService.get().giveItems(player);
-
-        MatchSpectatorAddEvent event = new MatchSpectatorAddEvent(this, player);
-        Bukkit.getPluginManager().callEvent(event);
+    @Override
+    public boolean isSpectator(UUID playerUUID) {
+        return spectators.contains(playerUUID);
     }
 
     public void showPlayerForSpectators() {
@@ -219,6 +171,64 @@ public abstract class Match implements IMatch {
         arena.restore();
     }
 
+    public void sendTitle(TextComponent header, TextComponent footer, int duration) {
+        forEachParticipant(participant -> PlayerUtil.sendTitle(participant.getPlayer(), header, footer, duration));
+    }
+
+    public void sendMessage(MessagesLocale message) {
+        forEachParticipant(participant -> message.send(participant.getPlayerUUID(), TagResolver.empty()));
+        forEachSpectator(player -> message.send(player.getUniqueId(), TagResolver.empty()));
+    }
+
+    public void sendMessage(MessagesLocale message, TagResolver resolver) {
+        forEachParticipant(participant -> message.send(participant.getPlayerUUID(), resolver));
+        forEachSpectator(player -> message.send(player.getUniqueId(), resolver));
+    }
+
+    public void addSpectator(Player player, Player target, boolean sendMessage, boolean add) {
+        Profile profile = API.getProfile(player);
+
+        profile.setState(ProfileState.IN_SPECTATOR);
+        profile.setMatch(this);
+
+        if (add)
+            spectators.add(player.getUniqueId());
+
+        showPlayerForSpectators();
+
+        if (sendMessage)
+            broadcast(MessagesLocale.SPECTATE_START, Placeholder.unparsed("player", player.getName()));
+
+        player.setHealth(20);
+        player.setFoodLevel(20);
+        player.setCollidable(false);
+        player.teleportAsync(target.getLocation()).thenAccept(success -> {
+            if (!success)
+                return;
+
+            forEachPlayer(alivePlayer -> {
+                if (!alivePlayer.equals(player)) {
+                    player.showPlayer(Neptune.get(), alivePlayer);
+                    alivePlayer.hidePlayer(Neptune.get(), player);
+                }
+            });
+
+            Bukkit.getScheduler().runTaskLater(Neptune.get(), () -> {
+                player.setAllowFlight(true);
+                player.setFlying(true);
+            }, 5L);
+        });
+
+        player.setGameMode(GameMode.SURVIVAL);
+        player.setAllowFlight(true);
+        player.setFlying(true);
+
+        HotbarService.get().giveItems(player);
+
+        MatchSpectatorAddEvent event = new MatchSpectatorAddEvent(this, player);
+        Bukkit.getPluginManager().callEvent(event);
+    }
+
     public List<Component> getScoreboard(UUID playerUUID) {
         Player player = Bukkit.getPlayer(playerUUID);
         if (player == null)
@@ -237,51 +247,57 @@ public abstract class Match implements IMatch {
             }
         }
 
-        if (this instanceof SoloFightMatch) {
-            MatchState matchState = this.getState();
+        switch (this) {
+            case SoloFightMatch soloFightMatch -> {
+                MatchState matchState = this.getState();
 
-            if (getRounds() > 1 && matchState.equals(MatchState.STARTING)) {
-                return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME_BEST_OF.getStringList());
-            }
+                if (getRounds() > 1 && matchState.equals(MatchState.STARTING)) {
+                    return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME_BEST_OF.getStringList());
+                }
 
-            switch (matchState) {
-                case STARTING:
-                    return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME_STARTING.getStringList());
-                case IN_ROUND:
-                    if (this.getRounds() > 1) {
-                        return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME_BEST_OF.getStringList());
-                    }
-                    if (this.getKit().is(KitRule.BOXING)) {
-                        return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME_BOXING.getStringList());
-                    }
-                    if (this.getKit().is(KitRule.BED_WARS)) {
-                        return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME_BEDWARS.getStringList());
-                    }
-                    return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME.getStringList());
-                case ENDING:
-                    String winnerName = getWinnerName();
-                    String loserName = getLoserName();
-                    return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME_ENDED.getStringList()
-                            .stream()
-                            .map(str -> str
-                                    .replace("<winner>", winnerName)
-                                    .replace("<loser>", loserName))
-                            .toList());
-                default:
-                    break;
+                switch (matchState) {
+                    case STARTING:
+                        return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME_STARTING.getStringList());
+                    case IN_ROUND:
+                        if (this.getRounds() > 1) {
+                            return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME_BEST_OF.getStringList());
+                        }
+                        if (this.getKit().is(KitRule.BOXING)) {
+                            return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME_BOXING.getStringList());
+                        }
+                        if (this.getKit().is(KitRule.BED_WARS)) {
+                            return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME_BEDWARS.getStringList());
+                        }
+                        return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME.getStringList());
+                    case ENDING:
+                        String winnerName = getWinnerName();
+                        String loserName = getLoserName();
+                        return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME_ENDED.getStringList()
+                                .stream()
+                                .map(str -> str
+                                        .replace("<winner>", winnerName)
+                                        .replace("<loser>", loserName))
+                                .toList());
+                    default:
+                        break;
+                }
             }
-        } else if (this instanceof TeamFightMatch) {
-            if (this.getKit().is(KitRule.BED_WARS)) {
-                return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME_BEDWARS_TEAM.getStringList());
-            } else if (this.getKit().is(KitRule.BOXING)) {
-                return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME_BOXING_TEAM.getStringList());
+            case TeamFightMatch teamFightMatch -> {
+                if (this.getKit().is(KitRule.BED_WARS)) {
+                    return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME_BEDWARS_TEAM.getStringList());
+                } else if (this.getKit().is(KitRule.BOXING)) {
+                    return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME_BOXING_TEAM.getStringList());
+                }
+                return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME_TEAM.getStringList());
             }
-            return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME_TEAM.getStringList());
-        } else if (this instanceof FfaFightMatch) {
-            if (this.getKit().is(KitRule.BOXING)) {
-                return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME_BOXING_FFA.getStringList());
+            case FfaFightMatch ffaFightMatch -> {
+                if (this.getKit().is(KitRule.BOXING)) {
+                    return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME_BOXING_FFA.getStringList());
+                }
+                return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME_FFA.getStringList());
             }
-            return CC.getComponentsArray(player, ScoreboardLocale.IN_GAME_FFA.getStringList());
+            default -> {
+            }
         }
 
         return null;

@@ -114,6 +114,10 @@ public class DuelCommand {
                 && targetProfile.getState().equals(ProfileState.IN_PARTY);
 
         kit.getRandomArena().thenAccept(arena -> {
+            if (arena == null) {
+                MessagesLocale.QUEUE_NO_ARENAS.send(player.getUniqueId());
+                return;
+            }
             DuelRequest duelRequest = new DuelRequest(player.getUniqueId(), kit, arena, party, rounds);
             targetProfile.sendRequest(duelRequest, false);
         });

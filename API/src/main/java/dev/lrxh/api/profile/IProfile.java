@@ -1,6 +1,7 @@
 package dev.lrxh.api.profile;
 
 import dev.lrxh.api.data.IGameData;
+import dev.lrxh.api.match.IMatch;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
@@ -11,6 +12,8 @@ public interface IProfile {
     UUID getPlayerUUID();
 
     IGameData getGameData();
+
+    IMatch getIMatch();
 
     void setState(String customState);
 
@@ -23,4 +26,6 @@ public interface IProfile {
     void addCooldown(String name, int millis);
 
     boolean hasCooldownEnded(String name);
+
+    void forfeit();
 }

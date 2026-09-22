@@ -58,6 +58,8 @@ public class FfaFightMatch extends Match implements IFffaFightMatch {
 
         loser.playKillEffect();
 
+        getKit().removePlaying(participants.size());
+
         new MatchEndRunnable(this).start(0L, 20L);
     }
 
@@ -104,7 +106,7 @@ public class FfaFightMatch extends Match implements IFffaFightMatch {
     }
 
     public String getLoserName() {
-        return deadParticipants.stream().map(p -> p.getNameColored()).toList().toString();
+        return deadParticipants.stream().map(Participant::getNameColored).toList().toString();
     }
 
     private boolean isLastPlayerStanding() {
@@ -113,7 +115,7 @@ public class FfaFightMatch extends Match implements IFffaFightMatch {
 
     private Participant getLastPlayerStanding() {
         for (IParticipant participant : getParticipants()) {
-            if (!deadParticipants.contains(participant)) {
+            if (!deadParticipants.contains((Participant) participant)) {
                 return (Participant) participant;
             }
         }

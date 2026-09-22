@@ -8,6 +8,7 @@ import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
 import dev.lrxh.neptune.game.kit.Kit;
+import dev.lrxh.neptune.game.kit.KitService;
 import dev.lrxh.neptune.game.kit.impl.KitRule;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
@@ -15,6 +16,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -42,7 +44,7 @@ public class QueueService implements IQueueService {
         if (profile.getGameData().getParty() != null) return;
         if (queueEntry.getKit().is(KitRule.HIDDEN)) return;
 
-        kitQueues.computeIfAbsent(kit, k -> new ConcurrentLinkedQueue<>()).offer(queueEntry);
+        kitQueues.computeIfAbsent(kit, _ -> new ConcurrentLinkedQueue<>()).offer(queueEntry);
 
         if (!profile.hasState(ProfileState.IN_QUEUE)) profile.setState(ProfileState.IN_QUEUE);
         kit.addQueue();
@@ -55,6 +57,22 @@ public class QueueService implements IQueueService {
                     Placeholder.parsed("kit", kit.getDisplayName()),
                     Placeholder.unparsed("max-ping", String.valueOf(profile.getSettingData().getMaxPing()))));
         }
+    }
+
+    @Override
+    public void addPlayerToQueue(Player player, IKit kit) {
+        Kit implKit = KitService.get().getKitByName(kit.getName());
+        if (implKit == null) return;
+        add(new QueueEntry(implKit, player.getUniqueId()), true);
+    }
+
+    @Override
+    public boolean isInQueue(UUID playerUUID) {
+        return get(playerUUID) != null;
+    }
+    @Override
+    public boolean isInQueue(UUID playerUUID, IKit kit) {
+        return get(playerUUID, kit) != null;
     }
 
     public QueueEntry remove(UUID playerUUID) {
@@ -88,6 +106,17 @@ public class QueueService implements IQueueService {
             for (QueueEntry entry : queue) {
                 if (entry.getUuid().equals(uuid)) return entry;
             }
+        }
+        return null;
+    }
+    public QueueEntry get(UUID uuid, IKit kit) {
+        if (kit == null) return null;
+        Kit implKit = KitService.get().getKitByName(kit.getName());
+        if (implKit == null) return null;
+        Queue<QueueEntry> queue = kitQueues.get(implKit);
+        if (queue == null) return null;
+        for (QueueEntry entry : queue) {
+            if (entry.getUuid().equals(uuid)) return entry;
         }
         return null;
     }

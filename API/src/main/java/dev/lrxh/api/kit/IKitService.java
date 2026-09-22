@@ -14,4 +14,6 @@ public interface IKitService {
     void removeArena(IArena arena);
 
     boolean addKit(IKit kit);
+
+    void save();
 }

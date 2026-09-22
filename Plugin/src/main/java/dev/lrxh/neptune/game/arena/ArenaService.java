@@ -64,6 +64,11 @@ public class ArenaService extends IService implements IArenaService {
         return result;
     }
 
+    @Override
+    public List<IArena> getDuplicatesApi(IArena owner) {
+        return new ArrayList<>(getDuplicates(owner));
+    }
+
     public Arena getFreeDuplicate(IArena owner) {
         for (Arena dup : duplicates) {
             if (dup.getOwner() != null && dup.getOwner().getName().equalsIgnoreCase(owner.getName())
@@ -72,6 +77,11 @@ public class ArenaService extends IService implements IArenaService {
             }
         }
         return null;
+    }
+
+    @Override
+    public IArena getFreeDuplicateApi(IArena owner) {
+        return getFreeDuplicate(owner);
     }
 
     public int gridDistance() {

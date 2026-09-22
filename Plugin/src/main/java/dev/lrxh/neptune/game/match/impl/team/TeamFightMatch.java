@@ -80,6 +80,8 @@ public class TeamFightMatch extends Match implements ITeamFightMatch {
 
         loser.playKillEffect();
 
+        getKit().removePlaying(winnerTeam.participants().size() + loserTeam.participants().size());
+
         new MatchEndRunnable(this).start(0L, 20L);
     }
 

@@ -40,7 +40,6 @@ import dev.lrxh.neptune.feature.settings.Setting;
 import dev.lrxh.neptune.feature.settings.command.SettingProvider;
 import dev.lrxh.neptune.feature.settings.command.SettingsCommand;
 import dev.lrxh.neptune.game.arena.Arena;
-import dev.lrxh.neptune.game.arena.ArenaDuplicator;
 import dev.lrxh.neptune.game.arena.ArenaService;
 import com.fastasyncworldedit.core.configuration.Settings;
 import dev.lrxh.neptune.game.arena.command.ArenaProvider;
@@ -120,7 +119,8 @@ public final class Neptune extends JavaPlugin {
         getServer().getServicesManager().register(
                 NeptuneAPI.class,
                 new NeptuneAPIImpl(ProfileService.get(), MatchService.get(), KitService.get(), ScoreboardService.get(),
-                        ArenaService.get(), DivisionService.get(), CosmeticService.get(), ItemBrowserService.get()),
+                        ArenaService.get(), DivisionService.get(), CosmeticService.get(), ItemBrowserService.get(),
+                        LeaderboardService.get()),
                 this,
                 ServicePriority.Normal);
         ServerUtils.info("Neptune API Initialized");

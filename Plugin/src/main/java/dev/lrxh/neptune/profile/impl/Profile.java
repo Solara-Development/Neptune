@@ -1,7 +1,9 @@
 package dev.lrxh.neptune.profile.impl;
 
+import dev.lrxh.api.events.PlayerLeaveEvent;
 import dev.lrxh.api.profile.IProfile;
 import dev.lrxh.api.profile.IProfileState;
+import dev.lrxh.api.match.IMatch;
 import dev.lrxh.neptune.API;
 import dev.lrxh.neptune.Neptune;
 import dev.lrxh.neptune.configs.impl.MessagesLocale;
@@ -331,16 +333,44 @@ public class Profile implements IProfile {
         return Bukkit.getPlayer(playerUUID);
     }
 
+    public void forfeit() {
+        ProfileState state = getState();
+        String previousStatus = getProfileState();
+        switch (state) {
+            case IN_SPECTATOR:
+                getMatch().removeSpectator(getPlayer().getUniqueId(), true);
+                return;
+            case IN_GAME:
+                getMatch().onLeave(getMatch().getParticipant(getPlayer().getUniqueId()), false);
+                MessagesLocale.MATCH_FORFEIT.send(getPlayer());
+                return;
+            case IN_CUSTOM:
+                PlayerUtil.reset(getPlayer());
+                setState(ProfileState.IN_LOBBY);
+                PlayerUtil.teleportToSpawn(getPlayer().getUniqueId());
+                return;
+            default:
+                break;
+        }
+        PlayerLeaveEvent event = new PlayerLeaveEvent(this, previousStatus);
+        Bukkit.getPluginManager().callEvent(event);
+        PlayerUtil.teleportToSpawn(getPlayer().getUniqueId());
+    }
+
     public void sendRequest(DuelRequest duelRequest, boolean rematch) {
         UUID senderUUID = duelRequest.getSender();
 
         Player sender = Bukkit.getPlayer(senderUUID);
-        if (sender == null)
+        if (sender == null) {
+            if (duelRequest.getArena() != null) duelRequest.getArena().remove();
             return;
+        }
 
         Player player = Bukkit.getPlayer(playerUUID);
-        if (player == null)
+        if (player == null) {
+            if (duelRequest.getArena() != null) duelRequest.getArena().remove();
             return;
+        }
 
         duelRequest.sendSenderMessage(playerUUID, rematch);
 
@@ -399,6 +429,11 @@ public class Profile implements IProfile {
     }
 
     public Match getMatch() {
+        return gameData.getMatch();
+    }
+
+    @Override
+    public IMatch getIMatch() {
         return gameData.getMatch();
     }
 

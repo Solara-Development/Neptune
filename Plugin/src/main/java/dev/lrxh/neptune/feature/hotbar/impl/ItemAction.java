@@ -196,11 +196,15 @@ public enum ItemAction {
                 DuelRequest duelRequest = new DuelRequest(profile.getPlayerUUID(), match.getKit(), arena, false,
                         match.getRounds());
                 Player opponent = match.getParticipant(player).getOpponent().getPlayer();
-                if (opponent == null)
+                if (opponent == null) {
+                    arena.remove();
                     return;
+                }
                 Profile opponentProfile = API.getProfile(opponent);
-                if (opponentProfile == null)
+                if (opponentProfile == null) {
+                    arena.remove();
                     return;
+                }
                 opponentProfile.sendRequest(duelRequest, true);
             });
         }

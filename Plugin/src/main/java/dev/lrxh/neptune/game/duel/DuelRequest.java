@@ -50,8 +50,10 @@ public class DuelRequest extends Request {
         Player sender = Bukkit.getPlayer(getSender());
         Player reciverPlayer = Bukkit.getPlayer(receiver);
 
-        if (reciverPlayer == null || sender == null)
+        if (reciverPlayer == null || sender == null) {
+            if (arena != null) arena.remove();
             return;
+        }
 
         Participant participant1 = new Participant(sender);
 
@@ -108,6 +110,7 @@ public class DuelRequest extends Request {
                 participant.sendMessage(
                         CC.error("Arena wasn't setup up properly! Please contact an admin if you see this."));
             }
+            arena.remove();
             return;
         }
 

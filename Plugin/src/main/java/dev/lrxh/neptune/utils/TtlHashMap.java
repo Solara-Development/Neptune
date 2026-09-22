@@ -2,7 +2,6 @@ package dev.lrxh.neptune.utils;
 
 import dev.lrxh.neptune.utils.tasks.NeptuneRunnable;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,10 +23,7 @@ public class TtlHashMap<K, V> extends HashMap<K, V> {
     public void onExpire(K key) {
         TtlAction action = actions.get(key);
         if (action != null) {
-            Player player = Bukkit.getPlayer(action.getPlayerUUID());
-            if (player != null) {
-                action.getConsumer().accept(player);
-            }
+            action.getConsumer().accept(Bukkit.getPlayer(action.getPlayerUUID()));
             actions.remove(key);
         }
     }

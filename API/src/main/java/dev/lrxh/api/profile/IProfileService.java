@@ -6,4 +6,8 @@ import java.util.concurrent.CompletableFuture;
 
 public interface IProfileService {
     CompletableFuture<IProfile> getProfile(UUID uuid);
+
+    IProfile getCachedProfile(UUID uuid);
+
+    boolean isLoaded(UUID uuid);
 }
