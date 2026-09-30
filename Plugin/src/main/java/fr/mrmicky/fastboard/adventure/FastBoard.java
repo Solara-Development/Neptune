@@ -1,7 +1,7 @@
 /*
  * This file is part of FastBoard, licensed under the MIT License.
  *
- * Copyright (c) 2019-2023 MrMicky
+ * Copyright (c) 2019-2026 MrMicky
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,7 +35,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 
 /**
- * {@inheritDoc}
+ * Adventure {@link Component}-based implementation of {@link FastBoardBase}.
  */
 public class FastBoard extends FastBoardBase<Component> {
 
@@ -66,7 +66,9 @@ public class FastBoard extends FastBoardBase<Component> {
     }
 
     /**
-     * {@inheritDoc}
+     * Creates a new FastBoard.
+     *
+     * @param player the owner of the scoreboard
      */
     public FastBoard(Player player) {
         super(player);
@@ -79,7 +81,11 @@ public class FastBoard extends FastBoardBase<Component> {
     protected void sendLineChange(int score) throws Throwable {
         Component line = getLineByScore(score);
 
-        sendTeamPacket(score, FastBoardBase.TeamMode.UPDATE, line, null);
+        if (VersionType.V1_20_3.isCurrentAtLeast() && hasCustomScores()) {
+            sendModernScorePacket(score, ScoreboardAction.CHANGE);
+        } else {
+            sendTeamPacket(score, TeamMode.UPDATE, line, null);
+        }
     }
 
     @Override
