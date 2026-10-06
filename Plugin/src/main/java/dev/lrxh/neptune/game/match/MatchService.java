@@ -147,21 +147,41 @@ public class MatchService implements IMatchService {
                 ? source.acquire()
                 : ArenaService.get().copyFrom(match.getArena()).acquire();
 
-        arenaFuture.thenAccept(arena -> {
-            if (arena == null) return;
-            Match neptuneMatch = new SoloFightMatch(
-                    arena,
-                    KitService.get().copyFrom(match.getKit()),
-                    true,
-                    new ArrayList<>(),
-                    new Participant(redPlayer),
-                    new Participant(bluePlayer),
-                    1
-            );
+        arenaFuture.thenAccept(arena -> startApiMatch(match, redPlayer, bluePlayer, arena));
+    }
 
-            matches.add(neptuneMatch);
-            new MatchStartRunnable(neptuneMatch).start(0L, 20L);
-        });
+    private void startApiMatch(IMatch match, Player redPlayer, Player bluePlayer, IArena arena) {
+        if (arena == null) return;
+        if (redPlayer == null || bluePlayer == null || !redPlayer.isOnline() || !bluePlayer.isOnline()) {
+            arena.remove();
+            return;
+        }
+        if (match.getKit() == null) {
+            arena.remove();
+            return;
+        }
+        Kit kit = KitService.get().copyFrom(match.getKit());
+        kit.addPlaying(2);
+        Participant participantRed = new Participant(redPlayer);
+        Participant participantBlue = new Participant(bluePlayer);
+        participantRed.setOpponent(participantBlue);
+        participantRed.setColor(ParticipantColor.RED);
+        participantBlue.setOpponent(participantRed);
+        participantBlue.setColor(ParticipantColor.BLUE);
+        Match neptuneMatch = new SoloFightMatch(
+                arena,
+                kit,
+                match.isDuel(),
+                new ArrayList<>(List.of(participantRed, participantBlue)),
+                participantRed,
+                participantBlue,
+                Math.max(1, match.getRounds())
+        );
+        participantRed.setMatch(neptuneMatch);
+        participantBlue.setMatch(neptuneMatch);
+
+        matches.add(neptuneMatch);
+        new MatchStartRunnable(neptuneMatch).start(0L, 20L);
     }
 
     @Override

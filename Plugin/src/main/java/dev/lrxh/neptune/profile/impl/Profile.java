@@ -25,6 +25,7 @@ import dev.lrxh.neptune.game.kit.procedure.KitProcedure;
 import dev.lrxh.neptune.game.match.Match;
 import dev.lrxh.neptune.profile.data.*;
 import dev.lrxh.neptune.providers.database.DatabaseService;
+import dev.lrxh.neptune.providers.request.Request;
 import dev.lrxh.neptune.providers.database.impl.DataDocument;
 import dev.lrxh.neptune.utils.Cooldown;
 import dev.lrxh.neptune.utils.ItemUtils;
@@ -407,7 +408,9 @@ public class Profile implements IProfile {
     }
 
     public void acceptDuel(UUID senderUUID) {
-        ((DuelRequest) gameData.getRequests().get(senderUUID)).start(playerUUID);
+        Request request = gameData.getRequests().get(senderUUID);
+        if (!(request instanceof DuelRequest duelRequest)) return;
+        duelRequest.start(playerUUID);
         gameData.removeRequest(senderUUID);
     }
 

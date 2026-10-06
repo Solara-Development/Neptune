@@ -10,6 +10,7 @@ import dev.lrxh.neptune.game.kit.Kit;
 import dev.lrxh.neptune.profile.data.GameData;
 import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
+import dev.lrxh.neptune.providers.request.Request;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 
 import org.bukkit.Bukkit;
@@ -74,8 +75,8 @@ public class DuelCommand {
         Profile profile = API.getProfile(player);
         GameData playerGameData = profile.getGameData();
 
-        if (profile.getMatch() != null || profile.getState().equals(ProfileState.IN_SPECTATOR)
-                || profile.hasState(ProfileState.IN_KIT_EDITOR) || profile.hasState(ProfileState.IN_QUEUE)) {
+        if (profile.getMatch() != null
+                || profile.hasState(ProfileState.IN_SPECTATOR, ProfileState.IN_KIT_EDITOR)) {
             MessagesLocale.YOU_CANT_SEND_DUEL.send(player.getUniqueId());
             return;
         }
@@ -87,16 +88,21 @@ public class DuelCommand {
         }
 
         Profile targetProfile = API.getProfile(target);
-        DuelRequest duelRequest = (DuelRequest) playerGameData.getRequests().get(uuid);
-
-        if (duelRequest == null) {
+        Request request = playerGameData.getRequests().get(uuid);
+        if (!(request instanceof DuelRequest duelRequest)) {
             MessagesLocale.YOU_DONT_HAVE_DUEL_REQUEST.send(player.getUniqueId());
             return;
         }
 
         if (!duelRequest.isParty() && targetProfile.getState().equals(ProfileState.IN_PARTY)
-                || duelRequest.isParty() && !profile.getState().equals(ProfileState.IN_PARTY)
-                || duelRequest.isParty() && !targetProfile.getState().equals(ProfileState.IN_PARTY)) {
+                || (duelRequest.isParty() && !profile.getState().equals(ProfileState.IN_PARTY))
+                || (duelRequest.isParty() && !targetProfile.getState().equals(ProfileState.IN_PARTY))) {
+            MessagesLocale.DUEL_REQUEST_COULDNT_BE_ACCEPTED.send(player.getUniqueId());
+            return;
+        }
+
+        if (targetProfile.getMatch() != null
+                || targetProfile.hasState(ProfileState.IN_SPECTATOR, ProfileState.IN_KIT_EDITOR, ProfileState.IN_GAME)) {
             MessagesLocale.DUEL_REQUEST_COULDNT_BE_ACCEPTED.send(player.getUniqueId());
             return;
         }
@@ -128,14 +134,18 @@ public class DuelCommand {
         Profile profile = API.getProfile(player);
         GameData playerGameData = profile.getGameData();
 
-        DuelRequest duelRequest = (DuelRequest) playerGameData.getRequests().get(uuid);
-        if (duelRequest == null) {
+        Request denyRequest = playerGameData.getRequests().get(uuid);
+        if (!(denyRequest instanceof DuelRequest duelRequest)) {
             MessagesLocale.YOU_DONT_HAVE_DUEL_REQUEST.send(player.getUniqueId());
             return;
         }
 
         Player sender = Bukkit.getPlayer(uuid);
-        if (sender == null) return;
+        if (sender == null) {
+            duelRequest.getArena().remove();
+            playerGameData.removeRequest(uuid);
+            return;
+        }
 
         MessagesLocale.DUEL_DENY_SENDER.send(player.getUniqueId(), Placeholder.unparsed("player", sender.getName()));
         MessagesLocale.DUEL_DENY_RECEIVER.send(uuid, Placeholder.unparsed("player", player.getName()));
