@@ -8,6 +8,8 @@ import dev.lrxh.neptune.game.kit.Kit;
 import dev.lrxh.neptune.game.match.MatchService;
 import dev.lrxh.neptune.game.match.impl.participant.Participant;
 import dev.lrxh.neptune.game.match.impl.team.MatchTeam;
+import dev.lrxh.neptune.feature.queue.QueueService;
+import dev.lrxh.neptune.profile.data.ProfileState;
 import dev.lrxh.neptune.profile.impl.Profile;
 import dev.lrxh.neptune.providers.request.Request;
 import dev.lrxh.neptune.utils.CC;
@@ -48,16 +50,31 @@ public class DuelRequest extends Request {
 
     public void normalDuel(UUID receiver) {
         Player sender = Bukkit.getPlayer(getSender());
-        Player reciverPlayer = Bukkit.getPlayer(receiver);
+        Player receiverPlayer = Bukkit.getPlayer(receiver);
 
-        if (reciverPlayer == null || sender == null) {
+        if (receiverPlayer == null || sender == null) {
             if (arena != null) arena.remove();
             return;
         }
 
+        Profile senderProfile = API.getProfile(sender.getUniqueId());
+        Profile receiverProfile = API.getProfile(receiver);
+        if (senderProfile == null || receiverProfile == null
+                || senderProfile.getMatch() != null || receiverProfile.getMatch() != null
+                || senderProfile.hasState(ProfileState.IN_GAME, ProfileState.IN_SPECTATOR, ProfileState.IN_KIT_EDITOR)
+                || receiverProfile.hasState(ProfileState.IN_GAME, ProfileState.IN_SPECTATOR, ProfileState.IN_KIT_EDITOR)) {
+            if (arena != null) arena.remove();
+            MessagesLocale.DUEL_REQUEST_COULDNT_BE_ACCEPTED.send(sender.getUniqueId());
+            MessagesLocale.DUEL_REQUEST_COULDNT_BE_ACCEPTED.send(receiverPlayer.getUniqueId());
+            return;
+        }
+
+        QueueService.get().remove(sender.getUniqueId());
+        QueueService.get().remove(receiver);
+
         Participant participant1 = new Participant(sender);
 
-        Participant participant2 = new Participant(reciverPlayer);
+        Participant participant2 = new Participant(receiverPlayer);
 
         MatchService.get().startMatch(participant1, participant2, kit,
                 arena, true, rounds);

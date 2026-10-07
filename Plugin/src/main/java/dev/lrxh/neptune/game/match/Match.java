@@ -37,6 +37,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.*;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -48,6 +49,7 @@ import org.bukkit.scoreboard.Objective;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.logging.Level;
 
 @AllArgsConstructor
 @Getter
@@ -336,15 +338,21 @@ public abstract class Match implements IMatch {
         if (player == null)
             return;
         Profile profile = API.getProfile(playerUUID);
+        Participant participant = getParticipant(playerUUID);
+        if (profile == null || participant == null)
+            return;
         profile.setMatch(this);
         profile.setState(ProfileState.IN_GAME);
         PlayerUtil.reset(player);
         player.setCollidable(true);
-        Participant participant = getParticipant(playerUUID);
         participant.setLastAttacker(null);
         kit.giveLoadout(participant);
-        player.getAttribute(Attribute.MAX_HEALTH).setBaseValue(kit.getHealth());
-        player.setHealth(kit.getHealth());
+        AttributeInstance maxHealthAttribute = player.getAttribute(Attribute.MAX_HEALTH);
+        if (maxHealthAttribute != null) {
+            maxHealthAttribute.setBaseValue(kit.getHealth());
+        }
+        double maxHealth = maxHealthAttribute != null ? maxHealthAttribute.getValue() : kit.getHealth();
+        player.setHealth(Math.min(kit.getHealth(), maxHealth));
         player.sendHealthUpdate();
     }
 
@@ -362,14 +370,12 @@ public abstract class Match implements IMatch {
     }
 
     public void checkRules() {
+        boolean freeze = state != null && state.equals(MatchState.STARTING) && kit.is(KitRule.DENY_MOVEMENT)
+                && !(this instanceof FfaFightMatch);
         forEachParticipant(participant -> {
-            if (!(this instanceof FfaFightMatch)) {
-                if (kit.is(KitRule.DENY_MOVEMENT)) {
-                    participant.toggleFreeze();
-                }
-            }
+            participant.setFrozen(freeze);
             if (kit.is(KitRule.SHOW_HP)) {
-                if (state.equals(MatchState.STARTING)) {
+                if (MatchState.STARTING.equals(state)) {
                     showHealth();
                 }
             }
@@ -464,7 +470,23 @@ public abstract class Match implements IMatch {
     }
 
     public void setupParticipants() {
-        forEachPlayer(player -> setupPlayer(player.getUniqueId()));
+        for (Participant participant : new ArrayList<>(participants)) {
+            try {
+                Player player = participant.getPlayer();
+                if (player == null) continue;
+                setupPlayer(player.getUniqueId());
+            } catch (Exception e) {
+                Neptune.get().getLogger().log(Level.WARNING, "Failed to setup participant "
+                        + participant.getPlayerUUID() + " for match " + uuid, e);
+                try {
+                    Profile profile = API.getProfile(participant.getPlayerUUID());
+                    if (profile != null && profile.getMatch() == this) {
+                        profile.setMatch(null);
+                    }
+                } catch (Exception ignored) {
+                }
+            }
+        }
         forEachParticipant(par -> {
             par.reset();
             showParticipant(par);

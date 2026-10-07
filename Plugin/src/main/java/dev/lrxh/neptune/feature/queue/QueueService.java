@@ -86,6 +86,11 @@ public class QueueService implements IQueueService {
             entry.getKit().removeQueue();
         }
 
+        Profile profile = API.getProfile(playerUUID);
+        if (profile != null && profile.hasState(ProfileState.IN_QUEUE)) {
+            profile.setState(ProfileState.IN_LOBBY);
+        }
+
         return entry;
     }
 
