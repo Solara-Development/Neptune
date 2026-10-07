@@ -140,10 +140,12 @@ public final class Neptune extends JavaPlugin {
 
         ArenaService.get().load();
         if (Bukkit.getPluginManager().getPlugin("FastAsyncWorldEdit") != null) {
+            duplicatesEnabled = true;
             Settings.settings().CLIPBOARD.USE_DISK = false;
             ArenaService.get().setupDuplicatesWorld();
             ArenaService.get().loadDuplicates();
         } else {
+            duplicatesEnabled = false;
             ServerUtils.error("FastAsyncWorldEdit is not installed - arena duplicates are disabled.");
         }
         KitService.get().load();
