@@ -182,17 +182,36 @@ public class Arena implements IArena, ConfigData {
     }
 
     public void restore() {
+        if (Neptune.get() != null && !Neptune.get().isDuplicatesEnabled()) return;
+        if (min == null || min.getWorld() == null) return;
         if (faweClipboard != null) {
             Bukkit.getScheduler().runTaskAsynchronously(Neptune.get(),
-                    () -> ArenaDuplicator.restore(min.getWorld(), faweClipboard));
+                    () -> {
+                        try {
+                            ArenaDuplicator.restore(min.getWorld(), faweClipboard);
+                        } catch (Throwable t) {
+                            Neptune.get().getLogger().warning("Failed to restore arena snapshot for " + name + ": " + t.getMessage());
+                        }
+                    });
         } else if (owner != null && owner.getFaweClipboard() != null) {
             int x = Math.min(min.getBlockX(), max.getBlockX());
             int y = Math.min(min.getBlockY(), max.getBlockY());
             int z = Math.min(min.getBlockZ(), max.getBlockZ());
             Object clip = owner.getFaweClipboard();
             Bukkit.getScheduler().runTaskAsynchronously(Neptune.get(),
-                    () -> ArenaDuplicator.restoreAt(min.getWorld(), clip, x, y, z));
+                    () -> {
+                        try {
+                            ArenaDuplicator.restoreAt(min.getWorld(), clip, x, y, z);
+                        } catch (Throwable t) {
+                            Neptune.get().getLogger().warning("Failed to restore arena snapshot for " + name + ": " + t.getMessage());
+                        }
+                    });
         }
+    }
+
+    public boolean isDoneLoading() {
+        if (Neptune.get() != null && !Neptune.get().isDuplicatesEnabled()) return true;
+        return doneLoading;
     }
 
     public void capture() {
@@ -201,12 +220,23 @@ public class Arena implements IArena, ConfigData {
             this.doneLoading = true;
             return;
         }
+        if (Neptune.get() != null && !Neptune.get().isDuplicatesEnabled()) {
+            this.faweClipboard = null;
+            this.doneLoading = true;
+            return;
+        }
         this.doneLoading = false;
         Bukkit.getScheduler().runTaskAsynchronously(Neptune.get(), () -> {
-            if (owner == null) {
-                this.faweClipboard = ArenaDuplicator.capture(min.getWorld(), min, max);
+            try {
+                if (owner == null) {
+                    this.faweClipboard = ArenaDuplicator.capture(min.getWorld(), min, max);
+                }
+            } catch (Throwable t) {
+                this.faweClipboard = null;
+                Neptune.get().getLogger().warning("Failed to capture arena snapshot for " + name + ": " + t.getMessage());
+            } finally {
+                this.doneLoading = true;
             }
-            this.doneLoading = true;
         });
     }
 
