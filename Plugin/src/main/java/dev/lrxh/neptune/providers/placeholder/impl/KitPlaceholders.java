@@ -16,6 +16,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class KitPlaceholders implements PAPIPlaceholder {
+    private static final Pattern KNOWN_TYPE = Pattern.compile("kit_(?:(?<kit>[A-Za-z0-9_,.()-]+)_)?(?<type>name|division|rounds|current_win_streak|best_win_streak|wins|losses|kills|deaths|elo|queued|in_match)");
+    private static final Pattern ANY_TYPE = Pattern.compile("kit_(?:(?<kit>[A-Za-z0-9_,.-]+)_)?(?<type>[A-Za-z_]+)");
+
     @Override
     public boolean match(String string) {
         return string.startsWith("kit_");
@@ -27,8 +30,10 @@ public class KitPlaceholders implements PAPIPlaceholder {
 
         Kit kit = null;
 
-        Pattern pattern = Pattern.compile("kit_(?:(?<kit>[A-Za-z0-9_,.-]+)_)?(?<type>[A-Za-z_]+)");
-        Matcher matcher = pattern.matcher(string);
+        // match the known types first, so a type with an underscore (in_match) isnt cut in half
+        // and kit names with brackets like Sumo(Bestof3) still parse
+        Matcher matcher = KNOWN_TYPE.matcher(string);
+        if (!matcher.matches()) matcher = ANY_TYPE.matcher(string);
         if (!matcher.matches()) {
             throw new IllegalArgumentException("Invalid string for kit placeholder: " + string);
         }
