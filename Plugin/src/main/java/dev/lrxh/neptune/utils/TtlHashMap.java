@@ -15,6 +15,8 @@ public class TtlHashMap<K, V> extends HashMap<K, V> {
     }
 
     public void put(K key, V value, TtlAction action) {
+        // cancel the old timer, otherwise it would expire the new entry early
+        remove(key);
         super.put(key, value);
         actions.put(key, action);
         scheduleRemoval(key);
