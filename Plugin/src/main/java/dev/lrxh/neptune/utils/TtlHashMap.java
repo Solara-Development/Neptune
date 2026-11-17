@@ -52,8 +52,12 @@ public class TtlHashMap<K, V> extends HashMap<K, V> {
             action.setRunnable(new NeptuneRunnable() {
                 @Override
                 public void run() {
+                    // grab the action first, remove() clears it from the map
+                    TtlAction expired = actions.get(key);
                     remove(key);
-                    onExpire(key);
+                    if (expired != null) {
+                        expired.getConsumer().accept(Bukkit.getPlayer(expired.getPlayerUUID()));
+                    }
                 }
             }, leaveTime);
         }
