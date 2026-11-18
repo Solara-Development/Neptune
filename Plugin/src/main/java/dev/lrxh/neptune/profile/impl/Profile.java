@@ -375,10 +375,16 @@ public class Profile implements IProfile {
 
         duelRequest.sendSenderMessage(playerUUID, rematch);
 
+        // sending again replaces the old request, so give its arena back
+        if (gameData.getRequests().get(senderUUID) instanceof DuelRequest previous
+                && previous.getArena() != null) {
+            previous.getArena().remove();
+        }
+
         gameData.addRequest(duelRequest, senderUUID, ignore -> {
             (rematch ? MessagesLocale.REMATCH_EXPIRED : MessagesLocale.DUEL_EXPIRED)
                     .send(senderUUID, Placeholder.unparsed("player", player.getName()));
-            duelRequest.getArena().remove();
+            if (duelRequest.getArena() != null) duelRequest.getArena().remove();
         });
 
         duelRequest.sendReceiverMessage(playerUUID, rematch);
